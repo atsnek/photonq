@@ -23,9 +23,15 @@ export const colors = {
     500: '#333333'
   },
   brand: {
-    ...baseTheme.colors.red,
-    500: '#E3000F',
-    600: '#E3000F'
+    100: 'hsl(217, 50%, 94%)',
+    200: 'hsl(217, 48%, 87%)',
+    300: 'hsl(216, 48%, 81%)',
+    400: 'hsl(214, 48%, 74%)',
+    500: 'hsl(212, 47%, 67%)',
+    600: 'hsl(210, 48%, 60%)',
+    700: 'hsl(207, 50%, 52%)',
+    800: 'hsl(203, 75%, 41%)',
+    900: 'hsl(202, 99%, 34%)',
   }
 }
 
@@ -85,9 +91,9 @@ const theme = extendTheme(
               bg: '#FCE5E7',
               color: 'red.500',
               borderRadius: 'full',
-              px: {base: '2', md: '4'},
+              px: { base: '2', md: '4' },
               py: '1',
-              fontSize: {base: 'xs', md: 'sm'},
+              fontSize: { base: 'xs', md: 'sm' },
               span: {
                 color: 'green'
               }
@@ -99,9 +105,9 @@ const theme = extendTheme(
               filter: 'drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.25))',
               color: 'red.500',
               borderRadius: '.625rem',
-              px: {base: '4', md: '4'},
+              px: { base: '4', md: '4' },
               py: '1',
-              fontSize: {base: 'xs', md: 'sm'},
+              fontSize: { base: 'xs', md: 'sm' },
               span: {
                 color: 'green'
               }
@@ -158,25 +164,25 @@ const theme = extendTheme(
           // Heading
           // Example h5030 =  h = heading, 50px = max-font-size 30px = min-font-size
           h6020: {
-            fontSize: {base: 'md', md: 'xl', lg: '2xl', xl: '4xl'}
+            fontSize: { base: 'md', md: 'xl', lg: '2xl', xl: '4xl' }
           },
           h5030: {
-            fontSize: {base: 'xl', lg: '2xl', xl: '3xl'}
+            fontSize: { base: 'xl', lg: '2xl', xl: '3xl' }
           },
           h5020: {
-            fontSize: {base: 'md', md: 'xl', lg: '2xl', xl: '3xl'}
+            fontSize: { base: 'md', md: 'xl', lg: '2xl', xl: '3xl' }
           },
           h4015: {
-            fontSize: {base: 'sm', md: 'lg', lg: 'xl', xl: '2xl'}
+            fontSize: { base: 'sm', md: 'lg', lg: 'xl', xl: '2xl' }
           },
           h4020: {
-            fontSize: {base: 'md', md: 'lg', lg: 'xl', xl: '2xl'}
+            fontSize: { base: 'md', md: 'lg', lg: 'xl', xl: '2xl' }
           },
           h3015: {
-            fontSize: {base: 'sm', md: 'lg', lg: 'xl'}
+            fontSize: { base: 'sm', md: 'lg', lg: 'xl' }
           },
           h2418: {
-            fontSize: {base: '1.125rem', md: 'md', lg: 'lg'}
+            fontSize: { base: '1.125rem', md: 'md', lg: 'lg' }
           },
           h8020: {
             fontSize: {
@@ -210,23 +216,23 @@ const theme = extendTheme(
           // Paragraph Text Sizes
           // Example b2015 =  b = body 20px = max-font-size 15px = min-font-size
           b2015: {
-            fontSize: {base: 'sm', lg: 'md'}
+            fontSize: { base: 'sm', lg: 'md' }
           },
           b2012: {
-            fontSize: {base: 'sm', lg: 'md'}
+            fontSize: { base: 'sm', lg: 'md' }
           },
           b2412: {
-            fontSize: {base: 'sm', lg: 'lg'}
+            fontSize: { base: 'sm', lg: 'lg' }
           },
           b2415: {
-            fontSize: {base: 'sm', lg: 'lg'}
+            fontSize: { base: 'sm', lg: 'lg' }
           },
 
           50: {
-            fontSize: {base: 'xl', lg: '2xl', xl: '3xl'}
+            fontSize: { base: 'xl', lg: '2xl', xl: '3xl' }
           },
           60: {
-            fontSize: {base: 'xl', lg: '3xl', xl: '4xl'}
+            fontSize: { base: 'xl', lg: '3xl', xl: '4xl' }
           },
           80: {
             fontSize: {
@@ -238,11 +244,11 @@ const theme = extendTheme(
             }
           },
           100: {
-            fontSize: {base: 'xl', md: '3xl', lg: '7xl', '2xl': '8xl'}
+            fontSize: { base: 'xl', md: '3xl', lg: '7xl', '2xl': '8xl' }
           },
           120: {
-            fontSize: {base: 'xl', md: '4xl', lg: '8xl', '2xl': '10xl'},
-            lineHeight: {md: '5rem'}
+            fontSize: { base: 'xl', md: '4xl', lg: '8xl', '2xl': '10xl' },
+            lineHeight: { md: '5rem' }
           }
         },
 
@@ -260,7 +266,7 @@ const theme = extendTheme(
 
       Modal: {
         sizes: {
-          '2xl': {dialog: {maxWidth: '72rem'}}
+          '2xl': { dialog: { maxWidth: '72rem' } }
         }
       }
     },
