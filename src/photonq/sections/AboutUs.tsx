@@ -27,7 +27,7 @@ const AboutUs: FC = () => {
             textAlign="center"
           />
         </Center>
-        <Center h="10vw" minH="35px" maxH="70px" mt={10}>
+        <Center h="10vw" minH="35px" maxH="150px" mt={10}>
           <Field.Image name="AboutUsImage" objectFit="contain" />
         </Center>
       </Container>
