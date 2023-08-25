@@ -1,4 +1,8 @@
-import type { GatsbyConfig } from 'gatsby'
+import type {GatsbyConfig} from 'gatsby'
+
+require('dotenv').config({
+  path: `.env.public`
+})
 
 const config: GatsbyConfig = {
   siteMetadata: {
@@ -12,6 +16,7 @@ const config: GatsbyConfig = {
     DEV_SSR: true
   },
   plugins: [
+    'gatsby-jaen-lens',
     {
       resolve: 'gatsby-plugin-compile-es6-packages',
       options: {
@@ -26,7 +31,7 @@ const config: GatsbyConfig = {
         snekResourceId: `a58477a4-6e2a-4dca-80a9-e59d86bcac10`
       }
     }
-  ],
+  ]
 }
 
 export default config

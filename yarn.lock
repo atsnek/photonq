@@ -7579,6 +7579,13 @@ gatsby-graphiql-explorer@^3.12.0:
   resolved "https://registry.yarnpkg.com/gatsby-graphiql-explorer/-/gatsby-graphiql-explorer-3.12.0.tgz#13122bcd742de0f4ad51ff87c9f4c7c4def78da1"
   integrity sha512-vr86oLhif5uZ+VSTE34DYjtBDCIHWpJHh4+65fmgZh+WtDv1lyONJ/WWmyD+dNMHlGsZtR6wVvBjrj5iFRDGRw==
 
+gatsby-jaen-lens@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.2.tgz#42fdd239e538a4136bf755aed5b47f52b074743c"
+  integrity sha512-tz+rvpmD9Z4pEeWEolUg0mCzvkJPhcl8278VBLK9Rq+uokLzwU020j9N0Pdcbzp9FW0GXWbX3wFAE8imzDYr+g==
+  dependencies:
+    snek-query "^0.0.82"
+
 gatsby-legacy-polyfills@^3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/gatsby-legacy-polyfills/-/gatsby-legacy-polyfills-3.12.0.tgz#f9333ee90457e4c1549a62ce81abb7198c433293"
@@ -13384,7 +13391,7 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
-snek-query@*:
+snek-query@*, snek-query@^0.0.82:
   version "0.0.82"
   resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.82.tgz#54964bdc879b0f4a48c23b9ba56377d8e433dc66"
   integrity sha512-nhCd774fmXWGOH0a/CIy9cOPmLej6AFKHKVh5dS1Iw+wMUQbTr/90Cly+PSstVnmD5RrprLB50cHBgM2ChGsgA==
