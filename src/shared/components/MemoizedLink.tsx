@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { LinkProps } from '@chakra-ui/react';
-import { LinkData } from '../types/navigation';
 import Link from './Link';
+import { TLinkData } from '../types/navigation';
 
 interface LinksProps {
-  links: LinkData[];
+  links: TLinkData[];
   props: LinkProps;
   activeProps?: LinkProps;
 }
@@ -12,10 +12,10 @@ interface LinksProps {
 const Links: FC<LinksProps> = ({ links, props, activeProps }) => {
   return (
     <>
-      {links.map(link => {
+      {links.map((link, i) => {
         return (
           <Link
-            key={link.name}
+            key={i}
             href={link.href}
             {...props}
             {...(link.isActive ? activeProps : {})}
