@@ -173,14 +173,17 @@ const TopNav: FC<ITopNavProps> = ({
             <Spacer />
             <Center>
               <HStack spacing={4}>
-                <MemoizedLinks
+                {
+                  //! Causes hydration issue
+                }
+                {/* <MemoizedLinks
                   links={activatedLinks}
                   props={{ ...navLinkProps, ...linkProps }}
                   activeProps={{
                     opacity: 1,
                     fontWeight: 'semibold'
                   }}
-                />
+                /> */}
                 <Box display={{ base: 'none', md: 'initial' }}>
                   <SearchMenu
                     // width base 0 is a hack to prevent the menu from causing a horizontal scrollbar

@@ -33,6 +33,7 @@ const Features: FC = () => {
     mt: 10
   };
 
+  //! Causes hydration issue
   return (
     <Box
       as="section"
