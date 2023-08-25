@@ -7656,10 +7656,10 @@ gatsby-plugin-image@^3.11.0:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.1:
-  version "1.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.1.tgz#4a1583bbc49b0cddb0c3c0fc3097289a4548a31b"
-  integrity sha512-yW2zZj9MqFH6PeSeMPql82sh0BX0Y1AloE04fgP94s0Rjy0LN33YYIvUsUm7cbh9GuhgCZbnizAyZiktzmvE0A==
+gatsby-plugin-jaen@^1.0.0-rc.3:
+  version "1.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.3.tgz#b1508ab0011b6df0ce9430c2a51f6b937027342e"
+  integrity sha512-uyflO51nnV+3/RyWg01tTjcLzhtz5zTiXrexyelOJWKGthhZXSt99OI/7WDaCFgnjF86fspLmP+mtBpBo31Jvw==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@codemirror/lang-markdown" "^6.2.0"
@@ -7674,7 +7674,7 @@ gatsby-plugin-jaen@^1.0.0-rc.1:
     gatsby-plugin-sharp "^5.11.0"
     gatsby-plugin-ts-config "^2.1.3"
     gatsby-source-filesystem "^5.11.0"
-    gatsby-source-jaen "^1.0.0-rc.1"
+    gatsby-source-jaen "^1.0.0-rc.3"
     gatsby-transformer-sharp "^5.11.0"
     hast "^1.0.0"
     isomorphic-dompurify "^1.8.0"
@@ -7835,11 +7835,13 @@ gatsby-source-filesystem@^5.11.0:
     valid-url "^1.0.9"
     xstate "^4.38.0"
 
-gatsby-source-jaen@^1.0.0-rc.1:
-  version "1.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.1.tgz#30d10ae5ff5f9afc665f1a74b308a0e8c83bf4be"
-  integrity sha512-2Pc50aFN8m33tM1HyxV4ngVvQ2VFeKJ3Bwc4dcuK5dRPFU0+3N+KtOgKFXXYM4PIqpHIaxKgfxksWhfHSn38ng==
+gatsby-source-jaen@^1.0.0-rc.3:
+  version "1.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.3.tgz#5381abeab8f8fd13d3068b681d44ee4ca45a1888"
+  integrity sha512-dAA5vqFsPW8uBBNEdXr8cJ7TkDvf1ZBv5H5N9+FpvUKgl61N6jPLDcUCYzJ0aAzXzMnQa19kQ9b67fz3GsZK8w==
   dependencies:
+    "@babel/parser" "^7.22.11"
+    "@babel/traverse" "^7.22.11"
     deepmerge "^4.2.2"
 
 gatsby-telemetry@^4.12.0:

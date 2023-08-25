@@ -6,3 +6,4 @@ node_modules
 **/dist
 
 **/tsconfig.tsbuildinfo
+src/.DS_Store

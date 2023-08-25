@@ -1,7 +1,7 @@
-import {LayoutProps} from '@atsnek/jaen'
-import {Box, Heading} from '@chakra-ui/react'
+import { LayoutProps } from '@atsnek/jaen';
+import { Box, Heading } from '@chakra-ui/react';
 
-const Layout: React.FC<LayoutProps> = ({children, pageProps}) => {
+const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   return (
     <Box>
       <Box
@@ -11,13 +11,14 @@ const Layout: React.FC<LayoutProps> = ({children, pageProps}) => {
         p="4"
         pos="sticky"
         top="0"
-        zIndex="sticky">
+        zIndex="sticky"
+      >
         <Heading as="h1">My Site</Heading>
       </Box>
 
       {children}
     </Box>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;
