@@ -3,22 +3,20 @@ import { Field, PageConfig, PageProps } from '@atsnek/jaen';
 import { Box } from '@chakra-ui/react';
 import { graphql } from 'gatsby';
 import * as React from 'react';
-import { LandingPageContent } from '../photonq/LandingPageContent';
 
-const IndexPage: React.FC<PageProps> = () => {
+const TestoPage: React.FC<PageProps> = () => {
   return (
     <Box as="main">
-      <LandingPageContent />
+      <Field.Text name="welcome" placeholder="Welcome to your Jaen website!" />
     </Box>
   );
 };
 
-export default IndexPage;
+export default TestoPage;
 
 export const pageConfig: PageConfig = {
-  label: 'Home Page',
+  label: 'Testo Page',
   icon: 'FaHome',
-  childTemplates: ['BlogPage'],
   menu: {
     type: 'app'
   }
