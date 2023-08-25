@@ -4,10 +4,15 @@ const Logo = () => {
   return (
     <chakra.svg
       filter="drop-shadow(1px 2px 2px rgb(0 0 0 / 0.1))"
-      xmlns="http://www.w3.org/2000/svg"
       width="full"
       height="full"
-      viewBox="0 0 16356 1380"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      fillRule="evenodd"
+      strokeLinejoin="round"
+      strokeMiterlimit="2"
+      clipRule="evenodd"
+      viewBox="0 0 310 101"
     >
       <g transform="translate(9.857 -30.979)">
         <use
