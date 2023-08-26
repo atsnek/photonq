@@ -1,7 +1,6 @@
 import {
   extendTheme,
-  StyleFunctionProps,
-  type ThemeConfig
+  type ThemeConfig,
 } from '@chakra-ui/react';
 import themeComponents from './components';
 import themeColors from './colors';

@@ -4,17 +4,20 @@ import {
   withDefaultColorScheme,
   baseTheme
 } from '@chakra-ui/react'
+import themeColors from '../../styles/theme/colors'
+import themeComponents from '../../styles/theme/components'
+import themeSemanticTokens from '../../styles/theme/semanticTokens/semanticTokens'
 
 export const colors = {
-  gray: {
-    100: '#f6f8fa',
-    500: '#E6E6E6',
-    700: '#606060'
-  },
-  red: {
-    500: '#E3000F',
-    600: '#E3000F'
-  },
+  // gray: {
+  //   100: '#f6f8fa',
+  //   500: '#E6E6E6',
+  //   700: '#606060'
+  // },
+  // red: {
+  //   500: '#E3000F',
+  //   600: '#E3000F'
+  // },
   jaen: {
     300: '#D737CC',
     500: '#AF23A5'
@@ -33,7 +36,8 @@ export const colors = {
     700: 'rgb(0, 91, 153)',
     800: 'rgb(0, 61, 102)',
     900: 'rgb(0, 30, 51)',
-  }
+  },
+  ...themeColors
 }
 
 export const fonts = {
@@ -269,13 +273,16 @@ const theme = extendTheme(
         sizes: {
           '2xl': { dialog: { maxWidth: '72rem' } }
         }
-      }
+      },
+
+      ...themeComponents
     },
     styles: {
       global: {
-        'html, body': {
-          background: '#f6f8fa !important'
-        },
+        //! This breaks the dark mode (background color)
+        // 'html, body': {
+        //   background: '#f6f8fa !important'
+        // },
         'i, em': {
           fontFamily: 'Red Buttery, sans-serif',
           fontWeight: 'normal',
@@ -285,10 +292,9 @@ const theme = extendTheme(
       }
     },
     config,
-
     colors,
-
-    fonts
+    fonts,
+    semanticTokens: themeSemanticTokens
   },
   withDefaultColorScheme({
     colorScheme: 'blue'
