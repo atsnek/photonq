@@ -30,29 +30,7 @@ import { useNavOffset } from '../../hooks/use-nav-offset';
 import { TTopNavLinkData } from '../../types/navigation';
 import MobileNavDrawer from './MobileNavDrawer';
 import Link from '../../components/Link';
-
-const links: TTopNavLinkData[] = [
-  {
-    name: 'Home',
-    href: '/photonq/',
-    matchMethod: 'exact'
-  },
-  {
-    name: 'Documentation',
-    href: '/docs/',
-    matchMethod: 'includes'
-  },
-  {
-    name: 'Sign In',
-    matchMethod: 'exact',
-    href: '/admin/'
-  },
-  {
-    name: 'Sign Up',
-    matchMethod: 'exact',
-    href: '/admin/'
-  }
-];
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 const navLinkProps = {
   display: { base: 'none', md: 'initial' },
@@ -96,21 +74,46 @@ const TopNav: FC<ITopNavProps> = ({
   children
 }) => {
   const [hamburgerClass, setHamburgerClass] = useState('');
+  const { openLoginModal } = useAuthenticationContext();
   const { isOpen, onOpen, onClose } = drawerDisclosure;
 
   const navTopOffset = useNavOffset();
   const location = useLocation();
   const windowSize = useWindowSize();
 
+  const links: TTopNavLinkData[] = [
+    {
+      name: 'Home',
+      href: '/',
+      matchMethod: 'exact'
+    },
+    {
+      name: 'Documentation',
+      href: '/docs/',
+      matchMethod: 'includes'
+    },
+    {
+      name: 'Sign In',
+      matchMethod: 'exact',
+      onClick: openLoginModal
+    },
+    {
+      name: 'Sign Up',
+      matchMethod: 'exact',
+      href: '/admin/'
+    }
+  ];
+
   const activatedLinks = useMemo(() => {
     let activeLinkFound = false;
     return links.map(link => {
       if (activeLinkFound) return link;
-      const isActive = link.matchMethod
-        ? link.matchMethod === 'exact'
-          ? location.pathname === link.href
-          : location.pathname.includes(link.href)
-        : false;
+      const isActive =
+        link.href && link.matchMethod
+          ? link.matchMethod === 'exact'
+            ? location.pathname === link.href
+            : location.pathname.includes(link.href)
+          : false;
 
       if (isActive) activeLinkFound = true;
       return {
@@ -176,14 +179,14 @@ const TopNav: FC<ITopNavProps> = ({
                 {
                   //! Causes hydration issue
                 }
-                {/* <MemoizedLinks
+                <MemoizedLinks
                   links={activatedLinks}
                   props={{ ...navLinkProps, ...linkProps }}
                   activeProps={{
                     opacity: 1,
                     fontWeight: 'semibold'
                   }}
-                /> */}
+                />
                 <Box display={{ base: 'none', md: 'initial' }}>
                   <SearchMenu
                     // width base 0 is a hack to prevent the menu from causing a horizontal scrollbar

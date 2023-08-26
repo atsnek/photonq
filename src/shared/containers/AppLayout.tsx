@@ -17,6 +17,7 @@ import { useNavOffset } from '../hooks/use-nav-offset';
 import { convertPageTreeToMenu } from '../utils/navigation';
 import theme from '../../styles/theme/theme';
 import Toast from '../components/toast/Toast';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -52,6 +53,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   // const pageTree = useJaenPageTree(); //TODO: Implement this
   const location = useLocation();
   const topNavDisclosure = useDisclosure(); // for the top nav mobile drawer
+  const { isAuthenticated } = useAuthenticationContext();
 
   // This generates the menu structure from the page tree that is used over the whole app by accessing the context.
   // const menuStructure = useMemo(
@@ -61,7 +63,7 @@ const AppLayout: FC<AppLayoutProps> = ({
 
   const navTopOffset = useNavOffset();
 
-  const FooterComp = footer ? footer : Footer;
+  const FooterComp = footer ?? Footer;
 
   return (
     <ChakraProvider
@@ -78,7 +80,7 @@ const AppLayout: FC<AppLayoutProps> = ({
         direction="column"
         pb={5}
       >
-        {topNavProps?.isVisible && (
+        {!isAuthenticated && topNavProps?.isVisible && (
           <TopNav
             drawerDisclosure={customTopNavDisclosure ?? topNavDisclosure}
             linkProps={topNavProps?.link}

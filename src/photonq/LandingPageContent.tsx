@@ -8,13 +8,12 @@ import Footer from './sections/Footer';
 import useScrollPosition from '../shared/hooks/use-scroll-position';
 import { useDisclosure } from '@chakra-ui/react';
 
-import GrayedUniWienLogo from '../photonq/assets/icons/uni-wien-logo-gray.svg';
-import ColorizedUniWienLogo from '../photonq/assets/icons/uni-wien-logo-colorized.svg';
 import AppLayout from '../shared/containers/AppLayout';
 import {
   TTopNavLinkProps,
   TTopNavWrapperProps
 } from '../shared/containers/navigation/TopNav';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface ILandingPageContentProps {
   path?: string;
@@ -23,6 +22,7 @@ interface ILandingPageContentProps {
 export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
   const scrollPos = useScrollPosition();
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
+  const { isAuthenticated } = useAuthenticationContext();
 
   const topNavDisclosure = useDisclosure(); // Mobile menu drawer
 
@@ -74,6 +74,7 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
       footer={Footer}
       customTopNavDisclosure={topNavDisclosure}
       topNavProps={{
+        isVisible: !isAuthenticated,
         link: linkProps,
         wrapper: wrapperProps,
         hamburger: {

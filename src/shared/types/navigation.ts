@@ -17,7 +17,8 @@ export type NavMenuSection = {
 
 export type TLinkData = {
   name: ReactNode;
-  href: string;
+  href?: string;
+  onClick?: () => void;
   isActive?: boolean;
 };
 

@@ -17,6 +17,7 @@ const Links: FC<LinksProps> = ({ links, props, activeProps }) => {
           <Link
             key={i}
             href={link.href}
+            onClick={link.onClick}
             {...props}
             {...(link.isActive ? activeProps : {})}
           >
