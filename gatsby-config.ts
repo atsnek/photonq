@@ -18,12 +18,6 @@ const config: GatsbyConfig = {
   plugins: [
     'gatsby-jaen-lens',
     {
-      resolve: 'gatsby-plugin-compile-es6-packages',
-      options: {
-        modules: ['`gatsby-plugin-jaen']
-      }
-    },
-    {
       resolve: `gatsby-plugin-jaen`,
       options: {
         // The folder where the page templates are located
