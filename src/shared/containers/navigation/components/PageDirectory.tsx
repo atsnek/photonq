@@ -278,7 +278,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
 
   if (!isAuthenticated) {
     baseMenuItems.unshift({
-      name: 'Jaen',
+      name: '',
       items: [
         {
           name: 'Sign In',
