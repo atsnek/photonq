@@ -10,6 +10,7 @@ const PhotonQ: FC = () => {
       bgColor="pq.shared.section.bgColor"
       py={20}
       px={{ base: 5 }}
+      color="gray.900"
     >
       <Flex maxW="7xl" mx="auto" wrap="wrap">
         <Box

@@ -10,6 +10,7 @@ const AboutUs: FC = () => {
       bgColor="pq.shared.section.bgColor"
       py={20}
       borderBottomRadius="3xl"
+      color="gray.900"
     >
       <Container maxW="7xl" mx="auto">
         <SectionTitle

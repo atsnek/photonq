@@ -40,6 +40,7 @@ const Features: FC = () => {
       bgColor="pq.shared.section.bgColor"
       py={20}
       borderTopRadius="3xl"
+      color="gray.900"
     >
       <Container maxW="7xl">
         <SectionTitle
