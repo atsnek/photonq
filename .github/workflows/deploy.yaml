@@ -26,7 +26,7 @@ on:
 # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobs
 jobs:
   deploy:
-    uses: schett-net/ami/.github/workflows/jaen-deploy.yaml@main
+    uses: atsnek/jaen/.github/workflows/jaen-deploy.yaml@main
     # https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow
     with:
       CLOUDFLARE_PROJECT_NAME: 'photonq'
