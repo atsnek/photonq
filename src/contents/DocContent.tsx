@@ -5,7 +5,8 @@ import MemoizedLinks from '../shared/components/MemoizedLink';
 import TableOfContent from '../shared/containers/navigation/components/TableOfContent';
 import MainBottomNav from '../shared/containers/navigation/MainBottomNav';
 import RightNav from '../shared/containers/navigation/RightNav';
-import MdxEditor from '../shared/components/MdxEditor';
+import Link from '../shared/components/Link';
+// import MdxEditor from '../shared/components/MdxEditor';
 
 // Example links - these would probably be fetched from a CMS or other data source
 const links = [
@@ -21,27 +22,32 @@ const links = [
 
 export interface DocContentProps {}
 
+//TODO: Re-implement commented out jsx below
 export const DocContent: FC<DocContentProps> = () => {
   const navTopOffset = useNavOffset();
 
   // This can be memoized since it doesn't change and switching pages re-renders most of the app anyway.
-  const MemoizedToc = memo(TableOfContent, () => false);
+  // const MemoizedToc = memo(TableOfContent, () => false);
 
   return (
     <>
       <Stack spacing={{ base: 0, xl: 12 }} direction="row">
         <Box maxW="900px" w="full">
-          <MdxEditor />
-          <MainBottomNav />
+          {/* <MdxEditor /> */}
+          {/* <MainBottomNav /> */}
         </Box>
 
         <Box position="sticky" top={`calc(0px + ${navTopOffset})`}>
           <RightNav>
-            <ChText color="rightNav.titleTop.color" fontWeight="semibold">
+            <ChText
+              color="rightNav.titleTop.color"
+              fontWeight="semibold"
+              fontSize="sm"
+            >
               On This Page
             </ChText>
             <Flex as="nav" direction="column" mt={5}>
-              <MemoizedToc />
+              {/* <MemoizedToc /> */}
             </Flex>
             <Box
               mt={7}

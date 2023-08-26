@@ -71,14 +71,14 @@ const Hero: FC = () => {
           </Box>
         </Center>
       </Box>
-      <Box
+      {/* <Box
         position="relative"
         bottom={{ base: -5, lg: 0 }}
         w={{ base: 'calc(100% + 2.5rem)', lg: 'full' }}
         h="50px"
         bgColor="pq.shared.section.bgColor"
         borderTopRadius="3xl"
-      />
+      /> */}
     </VStack>
   );
 };

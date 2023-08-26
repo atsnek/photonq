@@ -101,7 +101,7 @@ const TopNav: FC<ITopNavProps> = ({
     {
       name: 'Sign Up',
       matchMethod: 'exact',
-      href: '/admin/'
+      href: '/signup'
     }
   ];
 

@@ -25,7 +25,7 @@ const props = {
     opacity: 1
   }
 };
-
+//TODO: Re-implement commented out jsx below
 /**
  * Main bottom navigation component.
  * This shows links to the respective previous and next page.

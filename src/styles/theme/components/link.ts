@@ -1,8 +1,8 @@
 const themeLinkComponent = {
   baseStyle: {
     _hover: {
-      textDecoration: 'none'
-    }
+      textDecoration: 'none',
+    },
   },
   variants: {
     'hover-opacity': {

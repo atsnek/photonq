@@ -32,7 +32,11 @@ const RightNavPostReader: FC<IRightNavPostReaderProps> = ({}) => {
   return (
     <Box position="sticky" top={`calc(0px + ${navTopOffset})`}>
       <RightNav>
-        <Text color="rightNav.titleTop.color" fontWeight="semibold">
+        <Text
+          color="rightNav.titleTop.color"
+          fontWeight="semibold"
+          fontSize="sm"
+        >
           On This Page
         </Text>
         <Flex as="nav" direction="column" mt={5}>

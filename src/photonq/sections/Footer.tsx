@@ -133,7 +133,7 @@ const Footer: FC = () => {
         boxSize="290px"
         filter="blur(140px)"
       />
-      <Box
+      {/* <Box
         position="relative"
         // top={{ base: '-1.5rem', lg: 0 }}
         left={{ base: '-1.6rem', lg: 0 }}
@@ -142,7 +142,7 @@ const Footer: FC = () => {
         bgColor="pq.shared.section.bgColor"
         borderBottomRadius="3xl"
         // zIndex={1}
-      />
+      /> */}
       <Container maxW="7xl" h="100%">
         <Box mt="20vh" color="white">
           <Flex

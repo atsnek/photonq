@@ -9,7 +9,8 @@ import {
   Box,
   Center,
   CenterProps,
-  LinkProps
+  LinkProps,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import { FC, Fragment, MouseEvent, createRef, useMemo, useState } from 'react';
 import { NavMenuSection, NavMenuItem } from '../../../types/navigation';
@@ -249,6 +250,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
   const { isAuthenticated, openLoginModal } = useAuthenticationContext();
+  const isSmallScreen = useBreakpointValue({ base: true, md: false });
 
   const updateExpandedIdx = (idx: number, mode: 'toggle' | 'set') => {
     const isIncluded = expandedIdx.includes(idx);
@@ -276,7 +278,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
     }
   ];
 
-  if (!isAuthenticated) {
+  if (isSmallScreen && !isAuthenticated) {
     baseMenuItems.unshift({
       name: '',
       items: [

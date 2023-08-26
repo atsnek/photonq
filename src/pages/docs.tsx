@@ -1,9 +1,7 @@
-import { Field, PageConfig, PageProps } from '@atsnek/jaen';
+import { PageConfig, PageProps } from '@atsnek/jaen';
 
-import { Box } from '@chakra-ui/react';
 import { graphql } from 'gatsby';
 import * as React from 'react';
-import { LandingPageContent } from '../photonq/LandingPageContent';
 import { DocContent } from '../contents/DocContent';
 
 const DocsPage: React.FC<PageProps> = () => {
