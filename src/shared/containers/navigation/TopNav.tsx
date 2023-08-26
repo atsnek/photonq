@@ -228,10 +228,10 @@ const TopNav: FC<ITopNavProps> = ({
                   variant="ghost-hover"
                   size="sm"
                   display={{ base: 'initial', md: 'none' }}
+                  onClick={toggleMobileMenu}
                   {...mobileMenuButtonProps}
                 >
                   <HamburgerMenuIcon
-                    handleClick={toggleMobileMenu}
                     wrapperProps={{ className: hamburgerClass }}
                     iconProps={hamburgerIconProps}
                   />
