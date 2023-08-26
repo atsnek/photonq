@@ -2,7 +2,8 @@ import { ReactNode } from 'react';
 
 export type NavMenuItem = {
   name: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
   isExternal?: boolean;
   isActive?: boolean;
   hasActiveChild?: boolean;

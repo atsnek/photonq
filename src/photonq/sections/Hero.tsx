@@ -40,7 +40,7 @@ const Hero: FC = () => {
               filter="blur(140px)"
               opacity={1}
             />
-            <Box zIndex={1} position="relative">
+            <Box position="relative">
               <Field.Text
                 name="heroTitle"
                 fontSize="6xl"
@@ -73,11 +73,11 @@ const Hero: FC = () => {
       </Box>
       <Box
         position="relative"
-        w="full"
+        bottom={{ base: -5, lg: 0 }}
+        w={{ base: 'calc(100% + 2.5rem)', lg: 'full' }}
         h="50px"
         bgColor="pq.shared.section.bgColor"
         borderTopRadius="3xl"
-        zIndex={1}
       />
     </VStack>
   );

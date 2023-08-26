@@ -113,15 +113,8 @@ const Footer: FC = () => {
       px={{ base: 5, lg: 0 }}
       overflowX="hidden"
       bgColor="pq.shared.body.bgColor"
+      zIndex={0}
     >
-      <Box
-        position="relative"
-        w="full"
-        h="50px"
-        bgColor="pq.shared.section.bgColor"
-        borderBottomRadius="3xl"
-        zIndex={1}
-      />
       <Box
         position="absolute"
         top="-122px"
@@ -139,6 +132,16 @@ const Footer: FC = () => {
         bgColor="#A71C48"
         boxSize="290px"
         filter="blur(140px)"
+      />
+      <Box
+        position="relative"
+        // top={{ base: '-1.5rem', lg: 0 }}
+        left={{ base: '-1.6rem', lg: 0 }}
+        w={{ base: 'calc(100% + 3.2rem)', lg: 'full' }}
+        h="50px"
+        bgColor="pq.shared.section.bgColor"
+        borderBottomRadius="3xl"
+        // zIndex={1}
       />
       <Container maxW="7xl" h="100%">
         <Box mt="20vh" color="white">

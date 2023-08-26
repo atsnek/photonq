@@ -31,6 +31,7 @@ import { TTopNavLinkData } from '../../types/navigation';
 import MobileNavDrawer from './MobileNavDrawer';
 import Link from '../../components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import Logo from '../../../gatsby-plugin-jaen/components/Logo';
 
 const navLinkProps = {
   display: { base: 'none', md: 'initial' },
@@ -160,18 +161,20 @@ const TopNav: FC<ITopNavProps> = ({
         <VStack w="full" spacing={0}>
           <Flex w="full" maxW="7xl">
             <Link
+              h="60px"
               href="/"
               _hover={{
                 transform: 'scale(1.1)'
               }}
               transition="transform 0.2s ease-in-out"
             >
-              <Image
+              <Logo />
+              {/* <Image
                 h="32px"
                 {...brandImage?.props}
                 src={brandImage?.src ?? SnekIcon}
                 alt={brandImage?.alt ?? 'Snek Logo'}
-              />
+              /> */}
             </Link>
             <Spacer />
             <Center>

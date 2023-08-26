@@ -18,23 +18,7 @@ import {
   getExpandedMenuItemIndices
 } from '../../../utils/navigation';
 import Link from '../../../components/Link';
-
-const baseMenuItems: NavMenuSection[] = [
-  {
-    name: 'More',
-    items: [
-      {
-        name: 'About Snek',
-        href: '/docs/about-snek'
-      },
-      {
-        name: 'Snek CLI',
-        href: 'https://snek.at',
-        isExternal: true
-      }
-    ]
-  }
-];
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 const baseMenuItemProps = {
   transition: 'opacity 0.2s ease-in-out, background-color 0.2s ease-in-out'
@@ -227,6 +211,7 @@ const generateMenuItem = (
         cursor="pointer"
         borderRadius="md"
         onClick={closeMobileDrawer}
+        onClickCapture={item.onClick}
       >
         {item.isSection && (
           <Box key={-5} as="span" mr={2} fontSize="sm" color="gray.400">
@@ -263,6 +248,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
 
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
+  const { isAuthenticated, openLoginModal } = useAuthenticationContext();
 
   const updateExpandedIdx = (idx: number, mode: 'toggle' | 'set') => {
     const isIncluded = expandedIdx.includes(idx);
@@ -272,6 +258,35 @@ const PageDirectory: FC<PageDirectoryProps> = ({
     }
     if (!isIncluded) setExpandedIdx([...expandedIdx, idx]);
   };
+
+  const baseMenuItems: NavMenuSection[] = [
+    {
+      name: 'More',
+      items: [
+        {
+          name: 'About Snek',
+          href: '/docs/about-snek'
+        },
+        {
+          name: 'Snek CLI',
+          href: 'https://snek.at',
+          isExternal: true
+        }
+      ]
+    }
+  ];
+
+  if (!isAuthenticated) {
+    baseMenuItems.unshift({
+      name: 'Jaen',
+      items: [
+        {
+          name: 'Sign In',
+          onClick: openLoginModal
+        }
+      ]
+    });
+  }
 
   let menuRootExpandedIdx = 0;
   return (
