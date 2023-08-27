@@ -14,8 +14,8 @@ interface LogoProps {
 const Logo: FC<LogoProps> = ({ forceColorMode }) => {
   const { colorMode } = useColorMode();
   const isLightMode = (forceColorMode ?? colorMode) === 'light';
-  const iconColor = isLightMode ? '#1266ac' : '#fff';
-  const textColor = isLightMode ? '#706d6e' : '#fff';
+  const textColor = isLightMode ? '#1266ac' : '#fff';
+  const iconColor = isLightMode ? '#706d6e' : '#fff';
 
   return (
     <chakra.svg
