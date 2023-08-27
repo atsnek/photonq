@@ -1,5 +1,6 @@
 const smtInputComponent = {
   a: 'b', // Remove after adding another property (otherwise _focus won't work)
+  test: 'red.500',
   _focus: {
     borderColor: {
       default: 'theme.500',
