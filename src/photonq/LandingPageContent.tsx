@@ -131,6 +131,9 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
             : undefined,
         colorMode
       }}
+      branding={{
+        colorMode: colorMode
+      }}
       // brandImage={{
       //   props: { h: '50px' },
       //   src: colorMode === 'dark' ? GrayedUniWienLogo : ColorizedUniWienLogo,

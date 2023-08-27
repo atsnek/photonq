@@ -49,7 +49,10 @@ export type TMobileMenuButtonProps = ButtonProps;
 export type TBrandImage = { props?: ImageProps; src: string; alt: string };
 
 interface ITopNavProps {
-  brandImage?: TBrandImage;
+  branding?: {
+    image?: TBrandImage;
+    colorMode?: 'light' | 'dark';
+  };
   wrapperProps?: StackProps;
   linkProps?: LinkProps;
   searchProps?: TSearchMenuStyleProps;
@@ -64,7 +67,7 @@ interface ITopNavProps {
  * Top navigation bar.
  */
 const TopNav: FC<ITopNavProps> = ({
-  brandImage,
+  branding,
   wrapperProps,
   linkProps,
   searchProps,
@@ -168,13 +171,16 @@ const TopNav: FC<ITopNavProps> = ({
               }}
               transition="transform 0.2s ease-in-out"
             >
-              <Logo />
-              {/* <Image
-                h="32px"
-                {...brandImage?.props}
-                src={brandImage?.src ?? SnekIcon}
-                alt={brandImage?.alt ?? 'Snek Logo'}
-              /> */}
+              {branding?.image ? (
+                <Image
+                  h="32px"
+                  {...branding.image?.props}
+                  src={branding.image?.src ?? SnekIcon}
+                  alt={branding.image?.alt ?? 'Snek Logo'}
+                />
+              ) : (
+                <Logo forceColorMode={branding?.colorMode} />
+              )}
             </Link>
             <Spacer />
             <Center>
