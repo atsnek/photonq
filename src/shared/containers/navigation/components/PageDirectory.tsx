@@ -263,16 +263,24 @@ const PageDirectory: FC<PageDirectoryProps> = ({
 
   const baseMenuItems: NavMenuSection[] = [
     {
+      name: 'Community',
+      items: [
+        {
+          name: 'Posts',
+          href: '/docs/community'
+        },
+        {
+          name: 'User Profile',
+          href: '/user'
+        }
+      ]
+    },
+    {
       name: 'More',
       items: [
         {
-          name: 'About Snek',
-          href: '/docs/about-snek'
-        },
-        {
-          name: 'Snek CLI',
-          href: 'https://snek.at',
-          isExternal: true
+          name: 'PhotonQ',
+          href: '/'
         }
       ]
     }

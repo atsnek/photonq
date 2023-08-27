@@ -12,7 +12,8 @@ import {
   Spacer,
   StackProps,
   VStack,
-  useDisclosure
+  useDisclosure,
+  useColorMode
 } from '@chakra-ui/react';
 import { useLocation } from '@reach/router';
 import { FC, useEffect, useMemo, useState } from 'react';
@@ -77,6 +78,7 @@ const TopNav: FC<ITopNavProps> = ({
   colorMode,
   children
 }) => {
+  const { colorMode: chakraColorMode } = useColorMode();
   const [hamburgerClass, setHamburgerClass] = useState('');
   const { openLoginModal } = useAuthenticationContext();
   const { isOpen, onOpen, onClose } = drawerDisclosure;
@@ -84,6 +86,8 @@ const TopNav: FC<ITopNavProps> = ({
   const navTopOffset = useNavOffset();
   const location = useLocation();
   const windowSize = useWindowSize();
+
+  console.log('color mode: ', colorMode);
 
   const links: TTopNavLinkData[] = [
     {
@@ -222,11 +226,7 @@ const TopNav: FC<ITopNavProps> = ({
                 >
                   <GitHub
                     boxSize="32px"
-                    fill={
-                      colorMode
-                        ? `topNav.${colorMode}.GitHubFill`
-                        : 'topNav.GitHubFill'
-                    }
+                    fill={`topNav.${colorMode ?? chakraColorMode}.GitHubFill`}
                     transition="fill 0.2s ease-in-out"
                   />
                 </Link>

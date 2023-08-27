@@ -137,14 +137,12 @@ const UserProfileContent: FC = () => {
     }, 1000);
   }, []);
 
+  //! Sticky doesnt work
   return (
     <>
-      <TopNav
-        drawerDisclosure={topNavDisclosure}
-        wrapperProps={{ h: 'max-content', spacing: 5, pb: 0, pt: 3 }}
-      >
-        <HStack>{tabNavButtons}</HStack>
-      </TopNav>
+      <HStack justifyContent="center" p={3} position="sticky">
+        {tabNavButtons}
+      </HStack>
       <MainGrid mt={10}>
         <Box>
           <LeftNavProfile userData={user} />

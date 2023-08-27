@@ -1,14 +1,15 @@
-import {Field, PageConfig, PageProps} from '@atsnek/jaen'
+import { Field, PageConfig, PageProps } from '@atsnek/jaen';
 
-import {Box} from '@chakra-ui/react'
-import {graphql} from 'gatsby'
-import * as React from 'react'
+import { Box } from '@chakra-ui/react';
+import { graphql } from 'gatsby';
+import * as React from 'react';
+import PostsContent from '../../contents/PostsContent';
 
 const IndexPage: React.FC<PageProps> = () => {
-  return <Box as="main"></Box>
-}
+  return <PostsContent />;
+};
 
-export default IndexPage
+export default IndexPage;
 
 export const pageConfig: PageConfig = {
   label: 'Community',
@@ -18,7 +19,7 @@ export const pageConfig: PageConfig = {
     order: 200,
     group: 'photonq'
   }
-}
+};
 
 export const query = graphql`
   query ($jaenPageId: String!) {
@@ -32,6 +33,6 @@ export const query = graphql`
       }
     }
   }
-`
+`;
 
-export {Head} from '@atsnek/jaen'
+export { Head } from '@atsnek/jaen';

@@ -44,14 +44,14 @@ const PostsContent: FC = () => {
   }, []);
 
   return (
-    <MainGrid>
-      <Box display={{ base: 'none', md: 'block' }} position="sticky">
+    <>
+      {/* <Box display={{ base: 'none', md: 'block' }} position="sticky">
         <LeftNav isExpanded={isExpanded} setIsExpanded={setIsExpanded}>
           <Box w={isExpanded ? 'auto' : 0}>
             <PageDirectory data={menuStructure} isExpanded={isExpanded} />
           </Box>
         </LeftNav>
-      </Box>
+      </Box> */}
       <VStack>
         <PostListControls
           setPosts={setPostResults}
@@ -119,7 +119,7 @@ const PostsContent: FC = () => {
           <PostList mt={10} postData={postResults} />
         )}
       </VStack>
-    </MainGrid>
+    </>
   );
 };
 

@@ -1,15 +1,12 @@
-import {PageConfig, PageProps} from '@atsnek/jaen'
+import { PageConfig, PageProps } from '@atsnek/jaen';
+import UserProfileContent from '../../contents/UserProfileContent';
 
 const Page: React.FC<PageProps> = () => {
-  return (
-    <>
-      <h1>User</h1>
-    </>
-  )
-}
+  return <UserProfileContent />;
+};
 
-export default Page
+export default Page;
 
 export const pageConfig: PageConfig = {
   label: 'User'
-}
+};
