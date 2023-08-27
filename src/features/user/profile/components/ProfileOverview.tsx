@@ -28,7 +28,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ posts, setPosts }) => {
       summary:
         'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
       likes: 1423,
-      url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+      url: '#'
     },
     {
       id: '2',
@@ -38,7 +38,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ posts, setPosts }) => {
       summary:
         'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
       likes: 1423,
-      url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/',
+      url: '#',
       canManage: true
     },
     {
@@ -49,7 +49,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ posts, setPosts }) => {
       summary:
         'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
       likes: 1423,
-      url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/',
+      url: '#',
       canManage: true
     },
     {
@@ -61,7 +61,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ posts, setPosts }) => {
         'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
       likes: 1423,
       hasLiked: true,
-      url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/',
+      url: '#',
       canManage: false
     },
     {
@@ -72,7 +72,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ posts, setPosts }) => {
       summary:
         'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
       likes: 500,
-      url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/',
+      url: '#',
       canManage: true
     }
   ];
