@@ -3,22 +3,21 @@ import {Field, PageConfig, PageProps} from '@atsnek/jaen'
 import {Box} from '@chakra-ui/react'
 import {graphql} from 'gatsby'
 import * as React from 'react'
-import {LandingPageContent} from '../photonq/LandingPageContent'
 
 const IndexPage: React.FC<PageProps> = () => {
-  return (
-    <Box as="main">
-      <LandingPageContent />
-    </Box>
-  )
+  return <Box as="main"></Box>
 }
 
 export default IndexPage
 
 export const pageConfig: PageConfig = {
-  label: 'Home Page',
-  icon: 'FaHome',
-  childTemplates: ['BlogPage']
+  label: 'Community',
+  icon: 'FaUsers',
+  menu: {
+    type: 'app',
+    order: 200,
+    group: 'photonq'
+  }
 }
 
 export const query = graphql`
