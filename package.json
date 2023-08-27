@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atsnek/jaen": "^1.0.0-rc.1",
+    "@atsnek/jaen": "^1.0.0-rc.2",
     "@chakra-ui/anatomy": "^2.2.0",
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/theme-tools": "^2.1.0",
@@ -26,8 +26,8 @@
     "flexsearch": "^0.7.31",
     "framer-motion": "^10.16.1",
     "gatsby": "^5.11.0",
-    "gatsby-jaen-lens": "^0.0.5",
-    "gatsby-plugin-jaen": "^1.0.0-rc.7",
+    "gatsby-jaen-lens": "^0.0.6",
+    "gatsby-plugin-jaen": "^1.0.0-rc.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-highlight-words": "^0.20.0",
