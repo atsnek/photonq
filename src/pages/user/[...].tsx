@@ -1,18 +1,14 @@
-import {PageConfig, PageProps} from '@atsnek/jaen'
+import { PageConfig, PageProps } from '@atsnek/jaen';
+import UserProfileContent from '../../contents/UserProfileContent';
 
-const Page: React.FC<PageProps> = ({location, pageContext}) => {
+const Page: React.FC<PageProps> = ({ location, pageContext }) => {
   // everything after /user/ is the handle
-  const handle = location.pathname.split('/user/')[1]
+  const handle = location.pathname.split('/user/')[1];
 
-  return (
-    <>
-      <h1>handle {handle}</h1>
-      <pre>{JSON.stringify(pageContext, null, 2)}</pre>
-    </>
-  )
-}
+  return <UserProfileContent />;
+};
 
-export default Page
+export default Page;
 
 export const pageConfig: PageConfig = {
   label: 'User [...]',
@@ -27,4 +23,4 @@ export const pageConfig: PageConfig = {
     type: 'user',
     label: 'Your profile'
   }
-}
+};
