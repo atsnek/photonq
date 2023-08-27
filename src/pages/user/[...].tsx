@@ -16,10 +16,15 @@ export default Page
 
 export const pageConfig: PageConfig = {
   label: 'User [...]',
+  icon: 'FaUser',
   breadcrumbs: [
     {
       label: 'schettn',
       path: '/user/schettn/'
     }
-  ]
+  ],
+  menu: {
+    type: 'user',
+    label: 'Your profile'
+  }
 }
