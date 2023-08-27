@@ -1,8 +1,8 @@
 import {chakra, useColorMode, useColorModeValue} from '@chakra-ui/react'
 
 const Logo = () => {
-  const iconColor = useColorModeValue('#1266ac', '#fff')
-  const textColor = useColorModeValue('#706d6e', '#fff')
+  const iconColor = useColorModeValue('#706d6e', '#fff')
+  const textColor = useColorModeValue('#1266ac', '#fff')
 
   return (
     <chakra.svg
