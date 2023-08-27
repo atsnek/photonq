@@ -10,7 +10,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '2',
@@ -20,7 +20,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '3',
@@ -30,7 +30,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '4',
@@ -41,7 +41,7 @@ const posts: TPostPreview[] = [
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
     hasLiked: true,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '5',
@@ -51,7 +51,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 500,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   //....
   {
@@ -62,7 +62,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/',
+    url: '#',
     canManage: true
   },
   {
@@ -73,7 +73,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '3',
@@ -83,7 +83,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '4',
@@ -94,7 +94,7 @@ const posts: TPostPreview[] = [
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
     hasLiked: true,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '5',
@@ -104,7 +104,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 500,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '1',
@@ -114,7 +114,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '2',
@@ -124,7 +124,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '3',
@@ -134,7 +134,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '4',
@@ -145,7 +145,7 @@ const posts: TPostPreview[] = [
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 1423,
     hasLiked: true,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   },
   {
     id: '5',
@@ -155,7 +155,7 @@ const posts: TPostPreview[] = [
     summary:
       'Quantum computing is a rapidly developing field that has the potential to revolutionize the way we solve complex problems.',
     likes: 500,
-    url: 'https://snek-docs-git-photonq-jem-at.vercel.app/docs/how-to-photonq/'
+    url: '#'
   }
 ];
 
