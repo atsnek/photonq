@@ -11,6 +11,7 @@ import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
 import { Field } from '@atsnek/jaen';
 import { TextFieldProps } from '@atsnek/jaen/dist/fields/TextField/TextField';
+import Link from '../../shared/components/Link';
 
 const Features: FC = () => {
   const cardProps: BoxProps = {
@@ -67,8 +68,9 @@ const Features: FC = () => {
                   color="pq.components.featureCard.color"
                   mt={3}
                 />
-                <Button my={5} variant="pq-solid">
+                <Button as={Link} my={5} variant="pq-solid" href="/docs">
                   <Field.Text
+                    as="span"
                     name="LeftCardButtonText"
                     defaultValue="Get Started"
                   ></Field.Text>
@@ -87,8 +89,9 @@ const Features: FC = () => {
                     color="pq.components.featureCard.color"
                     mt={3}
                   />
-                  <Button my={5} variant="pq-solid">
+                  <Button as={Link} my={5} variant="pq-solid" href="/docs">
                     <Field.Text
+                      as="span"
                       name="RightCardButtonText"
                       defaultValue="Get Started"
                     ></Field.Text>
@@ -127,8 +130,9 @@ const Features: FC = () => {
                 />
               </Center>
               <Center>
-                <Button my={5} variant="pq-solid">
+                <Button as={Link} my={5} variant="pq-solid" href="/docs">
                   <Field.Text
+                    as="span"
                     name="RightCardButtonText"
                     defaultValue="Get Started"
                   ></Field.Text>

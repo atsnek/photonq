@@ -172,6 +172,7 @@ const Footer: FC = () => {
             </Box>
             <Spacer />
             <Button
+              as={Link}
               variant="pq-outline"
               colorScheme="blue"
               borderRadius="xl"
@@ -181,8 +182,13 @@ const Footer: FC = () => {
               mr="auto"
               ml={{ base: 'auto', lg: 'initial' }}
               mb={3}
+              href="/signup"
             >
-              <Field.Text name="FooterButtonText" defaultValue="Register Now" />
+              <Field.Text
+                as="span"
+                name="FooterButtonText"
+                defaultValue="Register Now"
+              />
             </Button>
           </Flex>
           <Field.Text

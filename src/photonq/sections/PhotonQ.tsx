@@ -2,6 +2,7 @@ import { Box, Button, Container, Flex, Spacer } from '@chakra-ui/react';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
 import { Field } from '@atsnek/jaen';
+import Link from '../../shared/components/Link';
 
 const PhotonQ: FC = () => {
   return (
@@ -30,12 +31,14 @@ const PhotonQ: FC = () => {
             mt={5}
           />
           <Button
+            as={Link}
             mt={7}
             variant="pq-solid"
-            display="block"
             mx={{ base: 'auto', sm: 0 }}
+            href="/signup"
           >
             <Field.Text
+              as="span"
               name="PhotonQButtonText"
               defaultValue="Register Now"
             ></Field.Text>

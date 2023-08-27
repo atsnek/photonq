@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { useNavOffset } from '../../shared/hooks/use-nav-offset';
 
 import { Field } from '@atsnek/jaen';
+import Link from '../../shared/components/Link';
 
 const Hero: FC = () => {
   const navOffset = useNavOffset();
@@ -53,14 +54,20 @@ const Hero: FC = () => {
                 defaultValue="Learn quantum computing and run your circuits on your photonic quantum hardawre"
               />
               <Button
+                as={Link}
                 mt={10}
                 variant="pq-outline"
                 colorScheme="blue"
                 px={5}
                 borderRadius="xl"
                 bgColor="rgba(2, 116, 192, 0.07)"
+                href="/signup"
               >
-                <Field.Text name="HeroButtonText" defaultValue="Register Now" />
+                <Field.Text
+                  as="span"
+                  name="HeroButtonText"
+                  defaultValue="Register Now"
+                />
               </Button>
               <Center>
                 <Box mt={20} w="50vw" maxW="512px" minW="250px">
