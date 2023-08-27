@@ -1,4 +1,16 @@
 const themeColors = {
+  brand: {
+    50: 'rgb(229, 245, 255)',
+    100: 'rgb(184, 226, 255)',
+    200: 'rgb(138, 208, 255)',
+    300: 'rgb(92, 189, 255)',
+    400: 'rgb(46, 171, 255)',
+    500: 'rgb(0, 99, 166)',
+    600: 'rgb(1, 94, 157)',
+    700: 'rgb(0, 91, 153)',
+    800: 'rgb(0, 61, 102)',
+    900: 'rgb(0, 30, 51)'
+  },
   theme: {
     brand: '#00A9CE',
     100: '#e9f3fc',
@@ -14,7 +26,7 @@ const themeColors = {
   },
   gray: {
     550: '#5F6C81',
-    750: '#212836',
+    750: '#212836'
   },
   pq: {
     500: '#0580D2'
@@ -29,7 +41,7 @@ const themeColors = {
     600: '#CC0B00',
     700: '#990800',
     800: '#660600',
-    900: '#330300',
+    900: '#330300'
   },
   blue: {
     50: '#EBECF9',
@@ -41,7 +53,7 @@ const themeColors = {
     600: '#2E319E',
     700: '#232576',
     800: '#17194F',
-    900: '#0C0C27',
+    900: '#0C0C27'
   },
   yellow: {
     50: '#FFF6E5',
@@ -53,7 +65,7 @@ const themeColors = {
     600: '#CC8600',
     700: '#996500',
     800: '#664300',
-    900: '#332200',
+    900: '#332200'
   },
   green: {
     50: '#E7EF3',
@@ -66,7 +78,7 @@ const themeColors = {
     600: '#09C36C',
     700: '#079251',
     800: '#056136',
-    900: '#02311B',
+    900: '#02311B'
   },
   flat: {
     // https://flatuicolors.com/palette/se
@@ -83,14 +95,14 @@ const themeColors = {
         600: '#09C36C',
         700: '#079251',
         800: '#056136',
-        900: '#02311B',
-      },
+        900: '#02311B'
+      }
     },
     // https://flatuicolors.com/palette/nl
     nl: {
-      sunflower: '#FFC312',
+      sunflower: '#FFC312'
     }
   }
-};
+}
 
-export default themeColors;
+export default themeColors

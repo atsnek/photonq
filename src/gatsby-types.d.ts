@@ -410,7 +410,6 @@ type File = Node & {
   readonly size: Scalars['Int'];
   readonly sourceInstanceName: Scalars['String'];
   readonly uid: Scalars['Int'];
-  readonly url: Maybe<Scalars['String']>;
 };
 
 
@@ -555,7 +554,6 @@ type FileFieldSelector = {
   readonly size: InputMaybe<FieldSelectorEnum>;
   readonly sourceInstanceName: InputMaybe<FieldSelectorEnum>;
   readonly uid: InputMaybe<FieldSelectorEnum>;
-  readonly url: InputMaybe<FieldSelectorEnum>;
 };
 
 type FileFilterInput = {
@@ -599,7 +597,6 @@ type FileFilterInput = {
   readonly size: InputMaybe<IntQueryOperatorInput>;
   readonly sourceInstanceName: InputMaybe<StringQueryOperatorInput>;
   readonly uid: InputMaybe<IntQueryOperatorInput>;
-  readonly url: InputMaybe<StringQueryOperatorInput>;
 };
 
 type FileGroupConnection = {
@@ -684,7 +681,6 @@ type FileSortInput = {
   readonly size: InputMaybe<SortOrderEnum>;
   readonly sourceInstanceName: InputMaybe<SortOrderEnum>;
   readonly uid: InputMaybe<SortOrderEnum>;
-  readonly url: InputMaybe<SortOrderEnum>;
 };
 
 type FloatQueryOperatorInput = {
@@ -1405,36 +1401,18 @@ type JaenPage = Node & {
   readonly childPages: ReadonlyArray<JaenPage>;
   readonly childTemplates: ReadonlyArray<Scalars['String']>;
   readonly children: ReadonlyArray<Node>;
-  readonly createdAt: Maybe<Scalars['Date']>;
   readonly excludedFromIndex: Maybe<Scalars['Boolean']>;
   readonly id: Scalars['ID'];
   readonly internal: Internal;
   readonly jaenFields: Maybe<Scalars['JSON']>;
   readonly jaenPageMetadata: JaenPageMetadata;
   readonly mediaNodes: ReadonlyArray<MediaNode>;
-  readonly modifiedAt: Maybe<Scalars['Date']>;
   readonly pageConfig: Maybe<Scalars['JSON']>;
   readonly parent: Maybe<Node>;
   readonly parentPage: Maybe<JaenPage>;
   readonly sections: ReadonlyArray<JaenSection>;
   readonly slug: Scalars['String'];
   readonly template: Maybe<Scalars['String']>;
-};
-
-
-type JaenPage_createdAtArgs = {
-  difference: InputMaybe<Scalars['String']>;
-  formatString: InputMaybe<Scalars['String']>;
-  fromNow: InputMaybe<Scalars['Boolean']>;
-  locale: InputMaybe<Scalars['String']>;
-};
-
-
-type JaenPage_modifiedAtArgs = {
-  difference: InputMaybe<Scalars['String']>;
-  formatString: InputMaybe<Scalars['String']>;
-  fromNow: InputMaybe<Scalars['Boolean']>;
-  locale: InputMaybe<Scalars['String']>;
 };
 
 type JaenPageConnection = {
@@ -1487,14 +1465,12 @@ type JaenPageFieldSelector = {
   readonly childPages: InputMaybe<JaenPageFieldSelector>;
   readonly childTemplates: InputMaybe<FieldSelectorEnum>;
   readonly children: InputMaybe<NodeFieldSelector>;
-  readonly createdAt: InputMaybe<FieldSelectorEnum>;
   readonly excludedFromIndex: InputMaybe<FieldSelectorEnum>;
   readonly id: InputMaybe<FieldSelectorEnum>;
   readonly internal: InputMaybe<InternalFieldSelector>;
   readonly jaenFields: InputMaybe<FieldSelectorEnum>;
   readonly jaenPageMetadata: InputMaybe<JaenPageMetadataFieldSelector>;
   readonly mediaNodes: InputMaybe<MediaNodeFieldSelector>;
-  readonly modifiedAt: InputMaybe<FieldSelectorEnum>;
   readonly pageConfig: InputMaybe<FieldSelectorEnum>;
   readonly parent: InputMaybe<NodeFieldSelector>;
   readonly parentPage: InputMaybe<JaenPageFieldSelector>;
@@ -1508,14 +1484,12 @@ type JaenPageFilterInput = {
   readonly childPages: InputMaybe<JaenPageFilterListInput>;
   readonly childTemplates: InputMaybe<StringQueryOperatorInput>;
   readonly children: InputMaybe<NodeFilterListInput>;
-  readonly createdAt: InputMaybe<DateQueryOperatorInput>;
   readonly excludedFromIndex: InputMaybe<BooleanQueryOperatorInput>;
   readonly id: InputMaybe<StringQueryOperatorInput>;
   readonly internal: InputMaybe<InternalFilterInput>;
   readonly jaenFields: InputMaybe<JSONQueryOperatorInput>;
   readonly jaenPageMetadata: InputMaybe<JaenPageMetadataFilterInput>;
   readonly mediaNodes: InputMaybe<MediaNodeFilterListInput>;
-  readonly modifiedAt: InputMaybe<DateQueryOperatorInput>;
   readonly pageConfig: InputMaybe<JSONQueryOperatorInput>;
   readonly parent: InputMaybe<NodeFilterInput>;
   readonly parentPage: InputMaybe<JaenPageFilterInput>;
@@ -1626,14 +1600,12 @@ type JaenPageSortInput = {
   readonly childPages: InputMaybe<JaenPageSortInput>;
   readonly childTemplates: InputMaybe<SortOrderEnum>;
   readonly children: InputMaybe<NodeSortInput>;
-  readonly createdAt: InputMaybe<SortOrderEnum>;
   readonly excludedFromIndex: InputMaybe<SortOrderEnum>;
   readonly id: InputMaybe<SortOrderEnum>;
   readonly internal: InputMaybe<InternalSortInput>;
   readonly jaenFields: InputMaybe<SortOrderEnum>;
   readonly jaenPageMetadata: InputMaybe<JaenPageMetadataSortInput>;
   readonly mediaNodes: InputMaybe<MediaNodeSortInput>;
-  readonly modifiedAt: InputMaybe<SortOrderEnum>;
   readonly pageConfig: InputMaybe<SortOrderEnum>;
   readonly parent: InputMaybe<NodeSortInput>;
   readonly parentPage: InputMaybe<JaenPageSortInput>;
@@ -2483,7 +2455,6 @@ type Query_fileArgs = {
   size: InputMaybe<IntQueryOperatorInput>;
   sourceInstanceName: InputMaybe<StringQueryOperatorInput>;
   uid: InputMaybe<IntQueryOperatorInput>;
-  url: InputMaybe<StringQueryOperatorInput>;
 };
 
 
@@ -2516,14 +2487,12 @@ type Query_jaenPageArgs = {
   childPages: InputMaybe<JaenPageFilterListInput>;
   childTemplates: InputMaybe<StringQueryOperatorInput>;
   children: InputMaybe<NodeFilterListInput>;
-  createdAt: InputMaybe<DateQueryOperatorInput>;
   excludedFromIndex: InputMaybe<BooleanQueryOperatorInput>;
   id: InputMaybe<StringQueryOperatorInput>;
   internal: InputMaybe<InternalFilterInput>;
   jaenFields: InputMaybe<JSONQueryOperatorInput>;
   jaenPageMetadata: InputMaybe<JaenPageMetadataFilterInput>;
   mediaNodes: InputMaybe<MediaNodeFilterListInput>;
-  modifiedAt: InputMaybe<DateQueryOperatorInput>;
   pageConfig: InputMaybe<JSONQueryOperatorInput>;
   parent: InputMaybe<NodeFilterInput>;
   parentPage: InputMaybe<JaenPageFilterInput>;
