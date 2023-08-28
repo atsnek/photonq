@@ -135,7 +135,10 @@ const PostListControls: FC<IPostListControlsProps> = ({
           borderRadius="lg"
           defaultValue={defaultQuery}
           onChange={handleInputChange}
-          focusBorderColor="components.input._focus.borderColor"
+          focusBorderColor="theme.600"
+          //! focusBorderColor - semantic token not working
+          // focusBorderColor="components.input._focus.borderColor"
+          // bgColor="components.input._focus.borderColor"
         />
         <Menu>
           <MenuButton
@@ -160,6 +163,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
         </Menu>
         {enableAdvancedSearch && (
           <IconButton
+            colorScheme="gray"
             size="sm"
             variant="outline"
             icon={isAdvancedSearchOpen ? <TbFilterDown /> : <TbFilterUp />}
@@ -170,6 +174,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
         {showCreatePostButton && (
           <Tooltip openDelay={500} label="Create a new post">
             <IconButton
+              colorScheme="gray"
               size="sm"
               variant="outline"
               icon={<TbPlus />}

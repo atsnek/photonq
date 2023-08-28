@@ -268,10 +268,6 @@ const PageDirectory: FC<PageDirectoryProps> = ({
         {
           name: 'Posts',
           href: '/docs/community'
-        },
-        {
-          name: 'User Profile',
-          href: '/user'
         }
       ]
     },
