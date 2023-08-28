@@ -58,29 +58,20 @@ const PostEditorTopNav: FC<IPostEditorTopNavProps> = ({
             <Text fontWeight="medium">{user.displayName}</Text>
             <Spacer />
             <HStack spacing={3}>
-              <Button size="sm" leftIcon={<TbStar />}>
+              <Button colorScheme="gray" size="sm" leftIcon={<TbStar />}>
                 {post.likes || 0}
               </Button>
-              <Button size="sm" leftIcon={<TbPhoto />}>
+              <Button colorScheme="gray" size="sm" leftIcon={<TbPhoto />}>
                 Image
               </Button>
-              {isPublic ? (
-                <Button
-                  size="sm"
-                  leftIcon={<TbBookDownload />}
-                  onClick={handlePublish}
-                >
-                  Unpublish
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  leftIcon={<TbBookUpload />}
-                  onClick={handlePublish}
-                >
-                  Publish
-                </Button>
-              )}
+              <Button
+                colorScheme="gray"
+                size="sm"
+                leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
+                onClick={isPublic ? handlePublish : handlePublish}
+              >
+                {isPublic ? 'Unpublish' : 'Publish'}
+              </Button>
             </HStack>
           </HStack>
         </Center>
