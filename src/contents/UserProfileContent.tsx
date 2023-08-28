@@ -10,37 +10,20 @@ import TbBook from '../shared/components/icons/tabler/TbBook';
 import { TPostListData } from '../features/post/types/post';
 import TopNav from '../shared/containers/navigation/TopNav';
 import { TUser } from '../features/user/types/user';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
-const userData: TUser = {
-  displayName: 'Emily Brooks',
-  username: 'emilybrooks',
-  location: 'San Francisco, CA',
-  // company: 'Snek',
-  avatarUrl:
-    'https://onedrive.live.com/embed?resid=AE2DDC816CEF3E1E%21220972&authkey=%21AIUh8CadUcYw3cg&width=999999&height=1024',
-  bio: "Adventurous spirit with a knack for words and a passion for knowledge. Exploring the world of academia, one document at a time. Forever curious, forever learning. Let's dive into the realm of information together uncover the wonders of education.",
-  socials: [
-    {
-      type: 'company',
-      label: 'Snek',
-      url: 'https://snek.at'
-    },
-    {
-      type: 'email',
-      label: 'emily.brooks@snek.at',
-      url: 'mailto:emily.brooks@snek.at'
-    },
-    {
-      type: 'linkedin',
-      label: 'Emily-Brooks',
-      url: 'https://www.linkedin.com/in/emily-brooks-1a2b3c4d/'
-    },
-    {
-      type: 'location',
-      label: 'San Francisco, CA'
-    }
-  ]
-};
+const tabNavItems = [
+  {
+    label: 'Overview',
+    value: 'overview',
+    icon: <TbUser />
+  },
+  {
+    label: 'Posts',
+    value: 'posts',
+    icon: <TbBook />
+  }
+] as const;
 
 /**
  * Component for displaying a certain user profile.
@@ -52,7 +35,8 @@ const UserProfileContent: FC = () => {
     state: 'inactive',
     posts: []
   });
-  const [user, setUser] = useState<TUser>();
+  // const [user, setUser] = useState<TUser>();
+  const { user } = useAuthenticationContext();
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [overviewPosts, setOverviewPosts] = useState<TPostListData>({
     state: 'loading',
@@ -60,19 +44,6 @@ const UserProfileContent: FC = () => {
   });
   const [activeTab, setActiveTab] =
     useState<(typeof tabNavItems)[number]['value']>('posts');
-
-  const tabNavItems = [
-    {
-      label: 'Overview',
-      value: 'overview',
-      icon: <TbUser />
-    },
-    {
-      label: 'Posts',
-      value: 'posts',
-      icon: <TbBook />
-    }
-  ] as const;
 
   const tabNavButtons = useMemo(
     () =>
@@ -132,9 +103,9 @@ const UserProfileContent: FC = () => {
     setActiveTab(hash === '#posts' ? 'posts' : 'overview');
 
     // Simulate loading the user data
-    setTimeout(() => {
-      setUser(userData);
-    }, 1000);
+    // setTimeout(() => {
+    //   setUser(userData);
+    // }, 1000);
   }, []);
 
   //! Sticky doesnt work
