@@ -1,11 +1,12 @@
-import {PageConfig, PageProps} from '@atsnek/jaen'
-import {graphql} from 'gatsby'
+import { PageConfig, PageProps } from '@atsnek/jaen';
+import { graphql } from 'gatsby';
+import BlogPostContent from '../../contents/BlogPostContent';
 
 const NewPostPage: React.FC<PageProps> = () => {
-  return <>WIP</>
-}
+  return <BlogPostContent />;
+};
 
-export default NewPostPage
+export default NewPostPage;
 
 export const pageConfig: PageConfig = {
   label: 'New post',
@@ -24,7 +25,7 @@ export const pageConfig: PageConfig = {
     type: 'user',
     label: 'New post'
   }
-}
+};
 
 export const query = graphql`
   query ($jaenPageId: String!) {
@@ -38,6 +39,6 @@ export const query = graphql`
       }
     }
   }
-`
+`;
 
-export {Head} from '@atsnek/jaen'
+export { Head } from '@atsnek/jaen';

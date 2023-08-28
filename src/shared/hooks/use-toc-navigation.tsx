@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useField } from '@snek-at/jaen';
+import { useField } from '@atsnek/jaen';
 import { MdastRoot } from '@snek-at/jaen/dist/fields/MdxField/components/types';
 import { TableOfContentItem } from '../types/navigation';
 

@@ -37,7 +37,7 @@ const PostEditorTopNav: FC<IPostEditorTopNavProps> = ({
   const isPublic = post.publicationDate !== undefined;
   return (
     <>
-      <TopNav drawerDisclosure={topNavDisclosure} />
+      {/* <TopNav drawerDisclosure={topNavDisclosure} /> */}
       <Box
         w="full"
         borderBottom="1px solid"
