@@ -109,10 +109,11 @@ const PostEditorView: FC = () => {
     visibilityAlertDisclosure.onClose();
     setAlertContent(alertText.unpublish);
     // setPost({ ...post, publicationDate: '2023-09-11' }); // TODO: Remove after connecting to Jaen
+    //!Bug: This toast get's called exponentially (hello, memory leak)
     customToast({
       title: 'Post published.',
       description: 'Your post has been published.',
-      status: 'error'
+      status: 'success'
     });
     return;
     // displayToast({

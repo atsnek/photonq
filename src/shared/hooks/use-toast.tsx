@@ -35,59 +35,67 @@ const useToast = () => {
   return ({
     status = 'success',
     icon,
-    duration,
+    duration = 5000000,
     title,
     description,
     containerStyle
   }: IToastProps) => {
     const FallbackIcon = statusIcons[status];
+    console.log('calling...');
     return chakraToast({
-      duration: 500000,
+      duration,
       isClosable: true,
-      render: () => (
-        <HStack
-          position="relative"
-          bgColor="components.toast.container.bgColor"
-          borderRadius="lg"
-          px={9}
-          py={6}
-          spacing={6}
-          _after={{
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            w: 'full',
-            h: 'full',
-            borderRadius: 'lg',
-            opacity: 0.2,
-            bg: `components.toast.status.${status}.bgColor`,
-            zIndex: 0
-          }}
-          fontWeight="semibold"
-          {...containerStyle}
-        >
-          {icon ?? (
-            <FallbackIcon
-              fontSize="2xl"
-              color={`components.toast.status.${status}.color`}
-            />
-          )}
-          <Box>
-            {title && (
-              <Heading
-                as="h6"
-                size="sm"
-                mb={1}
+      render: () => {
+        console.log('!!!');
+        return (
+          <HStack
+            position="relative"
+            bgColor="components.toast.container.bgColor"
+            borderRadius="lg"
+            px={9}
+            py={6}
+            spacing={6}
+            _after={{
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              w: 'full',
+              h: 'full',
+              borderRadius: 'lg',
+              opacity: 0.2,
+              bg: `components.toast.status.${status}.bgColor`,
+              zIndex: 0
+            }}
+            fontWeight="semibold"
+            {...containerStyle}
+          >
+            {icon ?? (
+              <FallbackIcon
+                fontSize="2xl"
                 color={`components.toast.status.${status}.color`}
-              >
-                {title}
-              </Heading>
+              />
             )}
-            {description && <Text color={`pq.500`}>{description}</Text>}
-          </Box>
-        </HStack>
-      )
+            <Box>
+              {title && (
+                <Heading
+                  as="h6"
+                  size="sm"
+                  mb={1}
+                  color={`components.toast.status.${status}.color`}
+                >
+                  {title}
+                </Heading>
+              )}
+              {description && (
+                <Text color={`components.toast.description.color`}>
+                  {description}
+                </Text>
+              )}
+            </Box>
+          </HStack>
+        );
+      }
     });
   };
 };
