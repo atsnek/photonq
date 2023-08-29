@@ -143,6 +143,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
         <Menu>
           <MenuButton
             as={Button}
+            colorScheme="gray"
             size="sm"
             borderRadius="lg"
             variant="outline"

@@ -5,7 +5,7 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react';
 import { FC, useState } from 'react';
-import MdxEditor from '../../../../shared/components/MdxEditor';
+// import MdxEditor from '../../../../shared/components/MdxEditor';
 import { variantFontSizes } from '../../../main-content/heading/components/Heading';
 import LeftNavPostEditor from './LeftNavPostEditor';
 import TbBookUpload from '../../../../shared/components/icons/tabler/TbBookUpload';
@@ -161,7 +161,7 @@ const PostEditorView: FC = () => {
           position="relative"
         >
           <Box maxW="900px" w="full">
-            <MdxEditor hideHeadingHash />
+            {/* <MdxEditor hideHeadingHash /> */}
             <ActionToolbar
               active={isMobile || scrollPosition > 90}
               actions={[

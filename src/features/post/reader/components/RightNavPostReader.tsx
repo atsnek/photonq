@@ -27,7 +27,7 @@ interface IRightNavPostReaderProps {}
 const RightNavPostReader: FC<IRightNavPostReaderProps> = ({}) => {
   const navTopOffset = useNavOffset();
 
-  const MemoizedToc = memo(TableOfContent, () => false);
+  // const MemoizedToc = memo(TableOfContent, () => false);
 
   return (
     <Box position="sticky" top={`calc(0px + ${navTopOffset})`}>
@@ -40,7 +40,7 @@ const RightNavPostReader: FC<IRightNavPostReaderProps> = ({}) => {
           On This Page
         </Text>
         <Flex as="nav" direction="column" mt={5}>
-          <MemoizedToc />
+          {/* <MemoizedToc /> */}
         </Flex>
         <Box
           mt={7}

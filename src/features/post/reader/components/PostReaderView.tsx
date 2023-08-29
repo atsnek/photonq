@@ -80,7 +80,7 @@ const PostReaderView: FC = () => {
 
   return (
     <>
-      <TopNav drawerDisclosure={topNavDisclosure} />
+      {/* <TopNav drawerDisclosure={topNavDisclosure} /> */}
       <MainGrid>
         <LeftNavPostReader post={post as any} user={userData} />
         <Stack spacing={{ base: 0, xl: 12 }} direction="row" mb={10}>
