@@ -9,7 +9,6 @@ import TbUser from '../shared/components/icons/tabler/TbUser';
 import TbBook from '../shared/components/icons/tabler/TbBook';
 import { TPostListData } from '../features/post/types/post';
 import TopNav from '../shared/containers/navigation/TopNav';
-import { TUser } from '../features/user/types/user';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 const tabNavItems = [
@@ -35,7 +34,6 @@ const UserProfileContent: FC = () => {
     state: 'inactive',
     posts: []
   });
-  // const [user, setUser] = useState<TUser>();
   const { user } = useAuthenticationContext();
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [overviewPosts, setOverviewPosts] = useState<TPostListData>({
@@ -101,14 +99,10 @@ const UserProfileContent: FC = () => {
 
   useEffect(() => {
     setActiveTab(hash === '#posts' ? 'posts' : 'overview');
-
-    // Simulate loading the user data
-    // setTimeout(() => {
-    //   setUser(userData);
-    // }, 1000);
   }, []);
 
   //! Sticky doesnt work
+  //TODO: Fix hydration issue
   return (
     <>
       <HStack justifyContent="center" p={3} position="sticky">

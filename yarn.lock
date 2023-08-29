@@ -38,10 +38,10 @@
     signedsource "^1.0.0"
     yargs "^15.3.1"
 
-"@atsnek/jaen@^1.0.0-rc.2":
-  version "1.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.2.tgz#5f91289d0d4c3d8a80bcd40f120e95327bd23974"
-  integrity sha512-stKN3PORuhY+qCZgfL5K7F0VAONaa9CsB0OeR6Y74N280QK64YG667d2HussH0ALHuDh0QhPxwd+GZ6lw2bT/g==
+"@atsnek/jaen@^1.0.0-rc.4":
+  version "1.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.4.tgz#b82c558c831a7e9320db2b9f218cce65a21fa763"
+  integrity sha512-B8Vq+EkkPeyWtXmDs3Ah5ByXQRiaB+vL8CIBmkwbhxAa/Zic+Ikh+RfxAsqUWJiEuGZKb7YMYb5HPNXquaTCLQ==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@reduxjs/toolkit" "^1.9.5"

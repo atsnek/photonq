@@ -25,7 +25,10 @@ import LeftNav, {
 import { TUser } from '../../types/user';
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
 import { useAuthenticationContext } from '@atsnek/jaen';
-import { AuthenticationContext } from '@atsnek/jaen/dist/contexts/authentication';
+import {
+  AuthenticationContext,
+  SnekUser
+} from '@atsnek/jaen/dist/contexts/authentication';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -101,7 +104,7 @@ export const leftNavProfileStyling = {
 };
 
 interface LeftNavProfileProps {
-  userData?: any; //TODO: Replace with SnekUser as soon as the interface is exposed
+  userData: SnekUser | null;
 }
 
 /**
@@ -119,42 +122,42 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ userData }) => {
 
   const hideControlsFallback = useBreakpointValue({ base: true, md: false });
 
-  const memoizedSocialLink = useMemo(() => {
-    return user.socials?.map((data: any, idx: number) => {
-      const { type, label } = data;
-      const IconComp = socialLinkIcons[type as TSocialLink];
-      return (
-        <Fragment key={idx}>
-          <GridItem
-            {...leftNavProfileStyling.socialInfo.gridItems}
-            as={HStack}
-            // We currently display only the email link on mobile.
-            display={{ base: type !== 'email' ? 'none' : 'flex', md: 'flex' }}
-          >
-            <IconComp
-              strokeWidth={2.2}
-              h="full"
-              color="pages.userProfile.leftNav.socialLinks.icon.color"
-            />
-            {'url' in data ? (
-              <Link
-                href={data.url}
-                _hover={{
-                  color:
-                    'pages.userProfile.leftNav.socialLinks.text.hover.color'
-                }}
-                transition="color 0.2s ease-in-out"
-              >
-                {label}
-              </Link>
-            ) : (
-              <Text cursor="default">{label}</Text>
-            )}
-          </GridItem>
-        </Fragment>
-      );
-    });
-  }, [userData?.socials]);
+  // const memoizedSocialLink = useMemo(() => {
+  //   return user.socials?.map((data: any, idx: number) => {
+  //     const { type, label } = data;
+  //     const IconComp = socialLinkIcons[type as TSocialLink];
+  //     return (
+  //       <Fragment key={idx}>
+  //         <GridItem
+  //           {...leftNavProfileStyling.socialInfo.gridItems}
+  //           as={HStack}
+  //           // We currently display only the email link on mobile.
+  //           display={{ base: type !== 'email' ? 'none' : 'flex', md: 'flex' }}
+  //         >
+  //           <IconComp
+  //             strokeWidth={2.2}
+  //             h="full"
+  //             color="pages.userProfile.leftNav.socialLinks.icon.color"
+  //           />
+  //           {'url' in data ? (
+  //             <Link
+  //               href={data.url}
+  //               _hover={{
+  //                 color:
+  //                   'pages.userProfile.leftNav.socialLinks.text.hover.color'
+  //               }}
+  //               transition="color 0.2s ease-in-out"
+  //             >
+  //               {label}
+  //             </Link>
+  //           ) : (
+  //             <Text cursor="default">{label}</Text>
+  //           )}
+  //         </GridItem>
+  //       </Fragment>
+  //     );
+  //   });
+  // }, [userData?.socials]);
 
   const leftNavProps: ILeftNavProps = {
     hideControls: hideControlsFallback,
@@ -181,6 +184,8 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ userData }) => {
     userData.details?.lastName ?? ''
   }`;
 
+  console.log('userData: ', userData);
+
   return (
     <LeftNav {...leftNavProps}>
       <VStack
@@ -196,8 +201,8 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ userData }) => {
       >
         <Avatar
           {...leftNavProfileStyling.avatar}
-          name={userData.details.username}
-          src={userData.details.avatarUrl}
+          name={userData.username}
+          src={userData.details?.avatarURL}
           aspectRatio={1}
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
@@ -231,9 +236,9 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ userData }) => {
           <Text {...leftNavProfileStyling.bio}>{user.bio}</Text>
         </VStack>
         <Divider {...leftNavProfileStyling.bioDividers} />
-        <Grid {...leftNavProfileStyling.socialInfo.grid}>
+        {/* <Grid {...leftNavProfileStyling.socialInfo.grid}>
           {memoizedSocialLink}
-        </Grid>
+        </Grid> */}
       </VStack>
     </LeftNav>
   );
