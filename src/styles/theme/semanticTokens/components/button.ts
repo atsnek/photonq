@@ -9,7 +9,7 @@ const smtButtonComponent = {
       },
       bgColor: {
         default: 'gray.100',
-        _dark: 'whiteAlpha.700'
+        _dark: 'gray.700'
       }
     }
   },

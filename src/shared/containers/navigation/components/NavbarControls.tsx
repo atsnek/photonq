@@ -89,6 +89,7 @@ const NavbarControls: FC<NavbarControlsProps> = ({
           aria-label={`${isExpanded ? 'Close' : 'Open'}`}
           size="sm"
           variant="ghost"
+          color="shared.text.default"
           onClick={() => setIsExpanded(!isExpanded)}
         />
       )}

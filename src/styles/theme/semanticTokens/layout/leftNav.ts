@@ -47,6 +47,9 @@ const smtLeftNav = {
   },
   bottomNav: {
     menu: {
+      button: {
+
+      },
       item: {
         active: {
           bgColor: {
@@ -59,8 +62,8 @@ const smtLeftNav = {
           }
         }
       }
-    }
-  }
+    },
+  },
 };
 
 export default smtLeftNav;
