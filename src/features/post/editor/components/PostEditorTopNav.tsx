@@ -3,25 +3,23 @@ import {
   Button,
   Center,
   HStack,
-  Image,
   Spacer,
-  Tag,
   Text,
   useDisclosure
 } from '@chakra-ui/react';
 import { FC } from 'react';
-import TopNav from '../../../../shared/containers/navigation/TopNav';
 import { TPost } from '../../types/post';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import TbBookUpload from '../../../../shared/components/icons/tabler/TbBookUpload';
 import TbBookDownload from '../../../../shared/components/icons/tabler/TbBookDownload';
 import TbPhoto from '../../../../shared/components/icons/tabler/TbPhoto';
-import { TUser } from '../../../user/types/user';
 import UserAvatar from '../../../user/avatar/components/UserAvatar';
+import { SnekUser } from '@atsnek/jaen';
+import { getUserDisplayname } from '../../../user/utils/user';
 
 interface IPostEditorTopNavProps {
   post: Partial<TPost>;
-  user: TUser;
+  user: SnekUser | null;
   handlePublish: () => void;
 }
 
@@ -49,13 +47,19 @@ const PostEditorTopNav: FC<IPostEditorTopNavProps> = ({
       >
         <Center>
           <HStack w="full" maxW="7xl">
-            <UserAvatar
-              user={user}
-              boxSize="30px"
-              redirectToProfile
-              scaleOnHover
-            />
-            <Text fontWeight="medium">{user.displayName}</Text>
+            {user && (
+              <>
+                {
+                  <UserAvatar
+                    user={user}
+                    boxSize="30px"
+                    redirectToProfile
+                    scaleOnHover
+                  />
+                }
+                <Text fontWeight="medium">{getUserDisplayname(user)}</Text>
+              </>
+            )}
             <Spacer />
             <HStack spacing={3}>
               <Button colorScheme="gray" size="sm" leftIcon={<TbStar />}>

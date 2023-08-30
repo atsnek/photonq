@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { TUser } from '../../types/user';
 import {
   Avatar,
   AvatarProps,
@@ -8,9 +7,10 @@ import {
   Tooltip
 } from '@chakra-ui/react';
 import UserPreview from './UserPreview';
+import { SnekUser } from '@atsnek/jaen';
 
 export interface IUserAvatarProps extends AvatarProps {
-  user: TUser;
+  user: SnekUser;
   showTooltip?: boolean;
   redirectToProfile?: boolean;
   scaleOnHover?: boolean;
@@ -23,7 +23,8 @@ const UserAvatar: FC<IUserAvatarProps> = ({
   scaleOnHover,
   ...props
 }) => {
-  const imgSrc = user.avatarUrl ?? 'https://api.dicebear.com/6.x/thumbs/svg';
+  const imgSrc =
+    user.details?.avatarURL ?? 'https://api.dicebear.com/6.x/thumbs/svg';
   let avatarProps: AvatarProps = {};
 
   if (scaleOnHover) {
@@ -48,19 +49,14 @@ const UserAvatar: FC<IUserAvatarProps> = ({
       </LinkBox>
     );
   } else {
-    avatar = (
-      <Avatar
-        src={user.avatarUrl ?? 'https://api.dicebear.com/6.x/thumbs/svg'}
-        {...avatarProps}
-      />
-    );
+    avatar = <Avatar src={imgSrc} {...avatarProps} />;
   }
 
   if (showTooltip) {
     return (
       <Tooltip
         label={<UserPreview user={user} />}
-        aria-label={user.displayName}
+        aria-label={user.username}
         bgColor="transparent"
         boxShadow="lg"
       >

@@ -19,10 +19,10 @@ import PostEditorTopNav from './PostEditorTopNav';
 import { TPost } from '../../types/post';
 import { TActionToolbarItem } from '../../../../shared/components/action-toolbar/types/actionToolbar';
 import TbPhoto from '../../../../shared/components/icons/tabler/TbPhoto';
-import { TUser } from '../../../user/types/user';
 import useScrollPosition from '../../../../shared/hooks/use-scroll-position';
 import TbBookDownload from '../../../../shared/components/icons/tabler/TbBookDownload';
 import useToast from '../../../../shared/hooks/use-toast';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 const alertText = {
   publish: {
@@ -39,38 +39,6 @@ const alertText = {
   }
 };
 
-//* This would be the data that comes from Jaen.
-const userData: TUser = {
-  displayName: 'Emily Brooks',
-  username: 'emilybrooks',
-  location: 'San Francisco, CA',
-  // company: 'Snek',
-  avatarUrl:
-    'https://onedrive.live.com/embed?resid=AE2DDC816CEF3E1E%21220972&authkey=%21AIUh8CadUcYw3cg&width=999999&height=1024',
-  bio: "Adventurous spirit with a knack for words and a passion for knowledge. Exploring the world of academia, one document at a time. Forever curious, forever learning. Let's dive into the realm of information together uncover the wonders of education.",
-  socials: [
-    {
-      type: 'company',
-      label: 'Snek',
-      url: 'https://snek.at'
-    },
-    {
-      type: 'email',
-      label: 'emily.brooks@snek.at',
-      url: 'mailto:emily.brooks@snek.at'
-    },
-    {
-      type: 'linkedin',
-      label: 'Emily-Brooks',
-      url: 'https://www.linkedin.com/in/emily-brooks-1a2b3c4d/'
-    },
-    {
-      type: 'location',
-      label: 'San Francisco, CA'
-    }
-  ]
-};
-
 /**
  * Component for editing a post.
  */
@@ -85,6 +53,7 @@ const PostEditorView: FC = () => {
     isPublic ? alertText.unpublish : alertText.publish
   );
   const customToast = useToast();
+  const { user } = useAuthenticationContext();
 
   const scrollPosition = useScrollPosition();
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -146,7 +115,7 @@ const PostEditorView: FC = () => {
       <PostEditorTopNav
         post={post}
         handlePublish={visibilityAlertDisclosure.onOpen}
-        user={userData}
+        user={user}
       />
       <MainGrid
         templateColumns={{
