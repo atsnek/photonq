@@ -10,7 +10,7 @@ import {
   Box,
   Text
 } from '@chakra-ui/react';
-import { Field } from '@snek-at/jaen';
+// import { Field } from '@snek-at/jaen';
 import { FC } from 'react';
 import Callout from '../../features/main-content/callout/components/Callouts';
 import Link from './Link';
@@ -22,6 +22,7 @@ import CodeSnippet from '../../features/main-content/code-snippet/components/Cod
 import Filesystem from '../../features/main-content/filesystem/components/Filesystem';
 import IconCard from '../../features/main-content/icon-card/components/IconCard';
 import ImageCard from '../../features/main-content/image-card/components/ImageCard';
+import { MdxField } from '@atsnek/jaen-fields-mdx';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -29,7 +30,7 @@ interface IMdxEditorProps {
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
   return (
-    <Field.Mdx
+    <MdxField
       name="documentation"
       components={{
         // TEXT

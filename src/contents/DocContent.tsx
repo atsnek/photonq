@@ -6,7 +6,7 @@ import TableOfContent from '../shared/containers/navigation/components/TableOfCo
 import MainBottomNav from '../shared/containers/navigation/MainBottomNav';
 import RightNav from '../shared/containers/navigation/RightNav';
 import Link from '../shared/components/Link';
-// import MdxEditor from '../shared/components/MdxEditor';
+import MdxEditor from '../shared/components/MdxEditor';
 
 // Example links - these would probably be fetched from a CMS or other data source
 const links = [
@@ -33,7 +33,7 @@ export const DocContent: FC<DocContentProps> = () => {
     <>
       <Stack spacing={{ base: 0, xl: 12 }} direction="row">
         <Box maxW="900px" w="full">
-          {/* <MdxEditor /> */}
+          <MdxEditor />
           {/* <MainBottomNav /> */}
         </Box>
 
