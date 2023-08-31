@@ -32,7 +32,7 @@ export const DocContent: FC<DocContentProps> = () => {
   return (
     <>
       <Stack spacing={{ base: 0, xl: 12 }} direction="row">
-        <Box maxW="900px" w="full">
+        <Box w="full" overflow="hidden">
           <MdxEditor />
           {/* <MainBottomNav /> */}
         </Box>

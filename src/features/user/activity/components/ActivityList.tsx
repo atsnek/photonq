@@ -10,7 +10,7 @@ import {
   Spacer,
   Text
 } from '@chakra-ui/react';
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, ReactNode } from 'react';
 import { TActivitySection, TActivityType } from '../types/activity';
 import { TStepperSection } from '../../../../shared/components/stepper/types/stepper';
 import Stepper from '../../../../shared/components/stepper/Stepper';
@@ -41,7 +41,6 @@ interface IActivityListProps extends BoxProps {
  * Component for displaying a list of activities.
  */
 const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
-  // const [activity, setActivity] = useState<TActivitySection[]>();
   const pagination = usePagination({
     itemsPerPage: 3,
     totalItems: activity?.length ?? 0
