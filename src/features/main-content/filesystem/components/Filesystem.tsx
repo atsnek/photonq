@@ -192,6 +192,43 @@ const Filesystem: FC<IFileSystemProps> = ({ structure }) => {
     </Box>
   );
 };
-Filesystem.defaultProps = {};
+Filesystem.defaultProps = {
+  structure: [
+    {
+      name: 'src',
+      type: 'folder',
+      defaultOpen: true,
+      children: [
+        {
+          name: 'features',
+          type: 'folder',
+          defaultOpen: true,
+          children: [
+            {
+              name: 'index.tsx',
+              type: 'file',
+              isSelected: true
+            }
+          ]
+        },
+        {
+          name: 'apples.tsx',
+          type: 'file',
+          tooltip: {
+            text: 'This is a tooltip'
+          }
+        },
+        {
+          name: 'bananas.tsx',
+          type: 'file'
+        },
+        {
+          name: 'strawberries.tsx',
+          type: 'file'
+        }
+      ]
+    }
+  ]
+};
 
 export default Filesystem;
