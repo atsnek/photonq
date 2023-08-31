@@ -129,8 +129,9 @@ const PostEditorView: FC = () => {
           spacing={{ base: 0, xl: 12 }}
           direction="row"
           position="relative"
+          w={{ base: 'calc(90vw - 25px)', sm: 'calc(90vw - 50px)', md: '50vw' }}
         >
-          <Box maxW="900px" w="full">
+          <Box w="full" overflow="hidden">
             <MdxEditor hideHeadingHash />
             <ActionToolbar
               active={isMobile || scrollPosition > 90}
