@@ -10,6 +10,7 @@ import TbBook from '../shared/components/icons/tabler/TbBook';
 import { TPostListData } from '../features/post/types/post';
 import TopNav from '../shared/containers/navigation/TopNav';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import { TActivitySection } from '../features/user/activity/types/activity';
 
 const tabNavItems = [
   {
@@ -24,6 +25,165 @@ const tabNavItems = [
   }
 ] as const;
 
+//TODO: This would be fetched from the API
+const activities: TActivitySection[] = [
+  {
+    timestamp: '2023-07-15',
+    activities: [
+      {
+        id: '1',
+        title: {
+          name: 'Unlocking the Power of Quantum Computing',
+          href: '#'
+        },
+        timestamp: '2023-07-15',
+        type: 'published'
+      },
+      {
+        id: '2',
+        title: {
+          name: 'Unlocking the Power of Quantum Computing',
+          href: '#'
+        },
+        timestamp: '2023-07-15',
+        type: 'commented'
+      },
+      {
+        id: '4',
+        title: {
+          name: 'Learn Quantum Computing with Python and Qiskit',
+          href: '#'
+        },
+        timestamp: '2023-07-10',
+        type: 'published'
+      }
+    ]
+  },
+  {
+    timestamp: '2023-06-22',
+    activities: [
+      {
+        id: '3',
+        title: {
+          name: 'How to PhotonQ',
+          href: '/docs'
+        },
+        timestamp: '2023-06-01',
+        type: 'rated'
+      },
+      {
+        id: '5',
+        title: {
+          name: 'Exploring Quantum Algorithms',
+          href: '#'
+        },
+        timestamp: '2023-07-12',
+        type: 'published'
+      },
+      {
+        id: '6',
+        title: {
+          name: 'Introduction to Quantum Mechanics',
+          href: '#'
+        },
+        timestamp: '2023-07-17',
+        type: 'published'
+      },
+      {
+        id: '7',
+        title: {
+          name: 'Introduction to Quantum Mechanics',
+          href: '#'
+        },
+        timestamp: '2023-07-17',
+        type: 'commented'
+      }
+    ]
+  },
+  {
+    timestamp: '2023-05-30',
+    activities: [
+      {
+        id: '8',
+        title: {
+          name: "Quantum Computing: A Beginner's Guide",
+          href: '#'
+        },
+        timestamp: '2023-07-09',
+        type: 'published'
+      },
+      {
+        id: '9',
+        title: {
+          name: 'Quantum Computing Hardware Overview',
+          href: '#'
+        },
+        timestamp: '2023-07-16',
+        type: 'published'
+      },
+      {
+        id: '10',
+        title: {
+          name: 'Quantum Cryptography: Ensuring Secure Communication',
+          href: '#'
+        },
+        timestamp: '2023-07-15',
+        type: 'published'
+      }
+    ]
+  },
+  {
+    timestamp: '2023-04-20',
+    activities: [
+      {
+        id: '11',
+        title: {
+          name: 'Quantum Machine Learning: Enhancing AI with Qubits',
+          href: '#'
+        },
+        timestamp: '2023-07-14',
+        type: 'published'
+      },
+      {
+        id: '12',
+        title: {
+          name: 'Quantum Error Correction: Protecting Qubits',
+          href: '#'
+        },
+        timestamp: '2023-07-13',
+        type: 'published'
+      },
+      {
+        id: '13',
+        title: {
+          name: 'Quantum Supremacy: Breaking Computational Barriers',
+          href: '#'
+        },
+        timestamp: '2023-07-12',
+        type: 'published'
+      },
+      {
+        id: '14',
+        title: {
+          name: 'Quantum Entanglement: Spooky Action at a Distance',
+          href: '#'
+        },
+        timestamp: '2023-07-11',
+        type: 'published'
+      },
+      {
+        id: '15',
+        title: {
+          name: 'Quantum Algorithms for Optimization Problems',
+          href: '#'
+        },
+        timestamp: '2023-07-10',
+        type: 'published'
+      }
+    ]
+  }
+];
+
 /**
  * Component for displaying a certain user profile.
  */
@@ -34,6 +194,7 @@ const UserProfileContent: FC = () => {
     state: 'inactive',
     posts: []
   });
+  const [activity, setActivity] = useState<TActivitySection[]>();
   const { user } = useAuthenticationContext();
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [overviewPosts, setOverviewPosts] = useState<TPostListData>({
@@ -78,10 +239,21 @@ const UserProfileContent: FC = () => {
     [tabNavItems, activeTab]
   );
 
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setActivity(activities);
+    }, 2000);
+  }, []);
+
   let mainContent: ReactNode;
   if (activeTab === 'overview') {
     mainContent = (
-      <ProfileOverview posts={overviewPosts} setPosts={setOverviewPosts} />
+      <ProfileOverview
+        posts={overviewPosts}
+        setPosts={setOverviewPosts}
+        activity={activity}
+      />
     );
   } else {
     mainContent = (
