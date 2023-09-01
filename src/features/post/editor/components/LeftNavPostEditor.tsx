@@ -7,10 +7,7 @@ import {
   Box,
   Tag,
   Input,
-  InputGroup,
-  InputRightAddon,
-  Divider,
-  Spacer
+  Divider
 } from '@chakra-ui/react';
 import { TPost } from '../../types/post';
 import TbEdit from '../../../../shared/components/icons/tabler/TbEdit';
@@ -27,7 +24,11 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({ post }) => {
   const hasPublished = post.publicationDate !== undefined;
 
   return (
-    <LeftNav w="full" isExpanded={true} display={{ base: 'none', md: 'flex' }}>
+    <LeftNav
+      w="max-content"
+      isExpanded={true}
+      display={{ base: 'none', md: 'flex' }}
+    >
       <VStack
         spacing={2}
         __css={{
