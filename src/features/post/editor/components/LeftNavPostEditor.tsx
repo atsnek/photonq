@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import LeftNav from '../../../../shared/containers/navigation/LeftNav';
 import {
   VStack,
@@ -12,6 +12,8 @@ import {
 import { TPost } from '../../types/post';
 import TbEdit from '../../../../shared/components/icons/tabler/TbEdit';
 import Image from '../../../../shared/components/image/Image';
+import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
+import useScrollPosition from '../../../../shared/hooks/use-scroll-position';
 
 interface ILeftNavPostEditorProps {
   post: Partial<TPost>;
@@ -22,12 +24,29 @@ interface ILeftNavPostEditorProps {
  */
 const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({ post }) => {
   const hasPublished = post.publicationDate !== undefined;
+  const navOffset = useNavOffset();
+  // const [height, setHeight] = useState(`calc(100vh - 100px  - ${navOffset})`);
+
+  // const scrollPosition = useScrollPosition();
+
+  // useEffect(() => {
+  //   const convertedNavOffset = parseInt(navOffset.replace('em', '')) * 16;
+  //   console.log('convertedNavOffset', convertedNavOffset);
+  //   console.log('scrollPosition', scrollPosition);
+  //   if (scrollPosition > convertedNavOffset + 110) {
+  //     setHeight(`calc(100vh - 20px  - ${navOffset})`);
+  //   } else {
+  //     setHeight(`calc(100vh - 100px  - ${navOffset})`);
+  //   }
+  // }, [scrollPosition]);
 
   return (
     <LeftNav
       w="max-content"
       isExpanded={true}
       display={{ base: 'none', md: 'flex' }}
+      // top={`${navOffset}`}
+      h={`calc(100vh - 100px  - ${navOffset})`}
     >
       <VStack
         spacing={2}

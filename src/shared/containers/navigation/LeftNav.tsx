@@ -25,11 +25,11 @@ const LeftNav: FC<ILeftNavProps> = ({
   return (
     <Flex
       position="sticky"
-      top={`calc(70px + ${navTopOffset})`}
+      top={`calc(20px + ${navTopOffset})`}
       as="nav"
       fontSize="sm"
       flexDirection="column"
-      h={`calc(100vh - 100px - ${navTopOffset})`}
+      h={`calc(100vh - 40px - ${navTopOffset})`}
       w={isExpanded ? 'auto' : '5rem'}
       color="shared.text.default"
       {...props}

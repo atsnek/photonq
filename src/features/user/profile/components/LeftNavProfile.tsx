@@ -164,9 +164,9 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ userData }) => {
     isExpanded: true,
     h: {
       base: 'max-content',
-      md: `calc(100vh - 110px - ${navTopOffset})`
+      md: `calc(100vh - 50px - ${navTopOffset})`
     },
-    top: `calc(102px + ${navTopOffset})`,
+    top: `calc(20px + ${navTopOffset})`,
     minH: 'fit-content',
     w: 'full',
     mb: { base: 10, md: 0 }
@@ -183,8 +183,6 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ userData }) => {
   const displayName = `${userData.details?.firstName ?? ''} ${
     userData.details?.lastName ?? ''
   }`;
-
-  console.log('userData: ', userData);
 
   return (
     <LeftNav {...leftNavProps}>
