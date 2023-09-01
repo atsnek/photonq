@@ -1,16 +1,18 @@
 import { Grid, GridProps } from '@chakra-ui/react';
 import { FC } from 'react';
 import { mainContentWrapperProps } from '../../vars/layout';
+import { useNavOffset } from '../../hooks/use-nav-offset';
 
 interface IMainGridProps extends GridProps {}
 
 const MainGrid: FC<IMainGridProps> = ({ children, ...props }) => {
+  const navOffset = useNavOffset();
   return (
     <Grid
       flex={1}
       mt={5}
       maxW={mainContentWrapperProps.default.maxW}
-      h="100%"
+      h={`max(mac-content, calc(100vh - ${navOffset}))`}
       mx="auto"
       templateRows="1fr"
       templateColumns={{
