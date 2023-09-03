@@ -6,7 +6,6 @@ import {
 } from '@chakra-ui/react';
 import { FC, useState } from 'react';
 import MdxEditor from '../../../../shared/components/MdxEditor';
-import { variantFontSizes } from '../../../main-content/heading/components/Heading';
 import LeftNavPostEditor from './LeftNavPostEditor';
 import TbBookUpload from '../../../../shared/components/icons/tabler/TbBookUpload';
 import TbDeviceFloppy from '../../../../shared/components/icons/tabler/TbDeviceFloppy';
@@ -14,7 +13,6 @@ import { wait } from '../../../../shared/utils/utils';
 import Toast from '../../../../shared/components/toast/Toast';
 import ActionToolbar from '../../../../shared/components/action-toolbar/ActionToolbar';
 import Alert from '../../../../shared/components/alert/Alert';
-import MainGrid from '../../../../shared/containers/components/MainGrid';
 import PostEditorTopNav from './PostEditorTopNav';
 import { TPost } from '../../types/post';
 import { TActionToolbarItem } from '../../../../shared/components/action-toolbar/types/actionToolbar';
@@ -23,6 +21,7 @@ import useScrollPosition from '../../../../shared/hooks/use-scroll-position';
 import TbBookDownload from '../../../../shared/components/icons/tabler/TbBookDownload';
 import useToast from '../../../../shared/hooks/use-toast';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import MainFlex from '../../../../shared/containers/components/MainFlex';
 
 const alertText = {
   publish: {
@@ -85,14 +84,6 @@ const PostEditorView: FC = () => {
       status: 'success'
     });
     return;
-    // displayToast({
-    //   title: 'Post published.',
-    //   description: 'Your post has been published.',
-    //   status: 'info'
-    // });
-    // toast({
-    //   title: ''
-    // });
   };
 
   const unpublishPost = async () => {
@@ -117,20 +108,9 @@ const PostEditorView: FC = () => {
         handlePublish={visibilityAlertDisclosure.onOpen}
         user={user}
       />
-      <MainGrid
-        templateColumns={{
-          base: '1fr',
-          md: '0.8fr 2fr',
-          xl: 'minmax(auto, 250px) minmax(auto, 4fr) minmax(auto, 250px)'
-        }}
-      >
+      <MainFlex>
         <LeftNavPostEditor post={post} />
-        <Stack
-          spacing={{ base: 0, xl: 12 }}
-          direction="row"
-          position="relative"
-          w={{ base: 'calc(90vw - 25px)', sm: 'calc(90vw - 50px)', md: '50vw' }}
-        >
+        <Stack direction="row" position="relative" flex={1}>
           <Box w="full" overflow="hidden">
             <MdxEditor hideHeadingHash />
             <ActionToolbar
@@ -164,7 +144,7 @@ const PostEditorView: FC = () => {
           </Box>
           <Box />
         </Stack>
-      </MainGrid>
+      </MainFlex>
       <Alert
         disclosure={visibilityAlertDisclosure}
         confirmationAction={togglePostVisibility}

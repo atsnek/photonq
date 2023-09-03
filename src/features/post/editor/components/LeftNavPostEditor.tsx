@@ -42,11 +42,12 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({ post }) => {
 
   return (
     <LeftNav
-      w="max-content"
+      w="max(250px, max-content)"
       isExpanded={true}
       display={{ base: 'none', md: 'flex' }}
       // top={`${navOffset}`}
       h={`calc(100vh - 100px  - ${navOffset})`}
+      mr={10}
     >
       <VStack
         spacing={2}

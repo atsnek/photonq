@@ -5,6 +5,9 @@ import { useNavOffset } from '../../hooks/use-nav-offset';
 
 interface IMainGridProps extends GridProps {}
 
+/**
+ * Main grid for the content of the official doc pages.
+ */
 const MainGrid: FC<IMainGridProps> = ({ children, ...props }) => {
   const navOffset = useNavOffset();
   return (
