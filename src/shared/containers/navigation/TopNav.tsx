@@ -147,22 +147,24 @@ const TopNav: FC<ITopNavProps> = ({
 
   useEffect(() => {
     if (scrollPosition > stateRef.current.prevScrollPosition) {
-      const translateValue = Math.min(
-        stateRef.current.translateValue +
-          (scrollPosition - stateRef.current.prevScrollPosition),
-        64
-      );
+      const translateValue =
+        Math.min(
+          Math.abs(stateRef.current.translateValue) +
+            (scrollPosition - stateRef.current.prevScrollPosition),
+          64
+        ) * -1;
       stateRef.current.translateValue = translateValue;
-      setTopNavProps({ transform: `translateY(${translateValue * -1}px)` });
+      setTopNavProps({ transform: `translateY(${translateValue}px)` });
     } else {
       // user is scrolling up
-      const translateValue = Math.max(
-        stateRef.current.translateValue +
-          (stateRef.current.prevScrollPosition - scrollPosition) * -1,
-        0
-      );
+      const translateValue =
+        Math.max(
+          Math.abs(stateRef.current.translateValue) +
+            (stateRef.current.prevScrollPosition - scrollPosition) * -1,
+          0
+        ) * -1;
       stateRef.current.translateValue = translateValue;
-      setTopNavProps({ transform: `translateY(${translateValue * -1}px)` });
+      setTopNavProps({ transform: `translateY(${translateValue}px)` });
     }
     stateRef.current.prevScrollPosition = scrollPosition;
   }, [scrollPosition]);
@@ -197,6 +199,10 @@ const TopNav: FC<ITopNavProps> = ({
         backdropFilter="blur(10px)"
         zIndex={3}
         {...wrapperProps}
+        _hover={{
+          top: stateRef.current.translateValue * -1 + 'px'
+        }}
+        transition="top 0.2s ease-in-out"
       >
         <VStack w="full" spacing={0}>
           <Flex w="full" maxW="7xl">
