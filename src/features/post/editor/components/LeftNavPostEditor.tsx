@@ -14,6 +14,7 @@ import TbEdit from '../../../../shared/components/icons/tabler/TbEdit';
 import Image from '../../../../shared/components/image/Image';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
 import useScrollPosition from '../../../../shared/hooks/use-scroll-position';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface ILeftNavPostEditorProps {
   post: Partial<TPost>;
@@ -28,6 +29,7 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({
   setPostPreviewImage
 }) => {
   const hasPublished = post.publicationDate !== undefined;
+  const isAuthenticated = useAuthenticationContext().user !== null;
   const navOffset = useNavOffset();
 
   return (
@@ -35,7 +37,7 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({
       w="max(250px, max-content)"
       isExpanded={true}
       display={{ base: 'none', md: 'flex' }}
-      // top={`${navOffset}`}
+      top={isAuthenticated ? `${navOffset}` : '75px'}
       h={`calc(100vh - 100px  - ${navOffset})`}
       mr={10}
     >
