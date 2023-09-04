@@ -4,6 +4,7 @@ import {
   Button,
   ButtonProps,
   Center,
+  CenterProps,
   Flex,
   HStack,
   Image,
@@ -16,7 +17,7 @@ import {
   useColorMode
 } from '@chakra-ui/react';
 import { useLocation } from '@reach/router';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import SnekIcon from '../../../assets/icons/brand.svg';
 import SearchMenu, {
   TSearchMenuStyleProps
@@ -33,6 +34,8 @@ import MobileNavDrawer from './MobileNavDrawer';
 import Link from '../../components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import Logo from '../../../gatsby-plugin-jaen/components/Logo';
+import useScrollPosition from '../../hooks/use-scroll-position';
+import { transferableAbortSignal } from 'util';
 
 const navLinkProps = {
   display: { base: 'none', md: 'initial' },
@@ -80,14 +83,21 @@ const TopNav: FC<ITopNavProps> = ({
 }) => {
   const { colorMode: chakraColorMode } = useColorMode();
   const [hamburgerClass, setHamburgerClass] = useState('');
+  const [topNavProps, setTopNavProps] = useState<CenterProps>({});
   const { openLoginModal } = useAuthenticationContext();
   const { isOpen, onOpen, onClose } = drawerDisclosure;
 
-  const navTopOffset = useNavOffset();
   const location = useLocation();
   const windowSize = useWindowSize();
+  const scrollPosition = useScrollPosition();
 
-  console.log('color mode: ', colorMode);
+  const stateRef = useRef<{
+    prevScrollPosition: number;
+    translateValue: number;
+  }>({
+    prevScrollPosition: -1,
+    translateValue: 0
+  });
 
   const links: TTopNavLinkData[] = [
     {
@@ -135,6 +145,28 @@ const TopNav: FC<ITopNavProps> = ({
     if (windowSize.width >= 768 && isOpen) closeDrawer();
   }, [windowSize.width]);
 
+  useEffect(() => {
+    if (scrollPosition > stateRef.current.prevScrollPosition) {
+      const translateValue = Math.min(
+        stateRef.current.translateValue +
+          (scrollPosition - stateRef.current.prevScrollPosition),
+        64
+      );
+      stateRef.current.translateValue = translateValue;
+      setTopNavProps({ transform: `translateY(${translateValue * -1}px)` });
+    } else {
+      // user is scrolling up
+      const translateValue = Math.max(
+        stateRef.current.translateValue +
+          (stateRef.current.prevScrollPosition - scrollPosition) * -1,
+        0
+      );
+      stateRef.current.translateValue = translateValue;
+      setTopNavProps({ transform: `translateY(${translateValue * -1}px)` });
+    }
+    stateRef.current.prevScrollPosition = scrollPosition;
+  }, [scrollPosition]);
+
   const openDrawer = () => {
     setHamburgerClass('open');
     onOpen();
@@ -155,7 +187,8 @@ const TopNav: FC<ITopNavProps> = ({
       <Center
         as="nav"
         position="sticky"
-        top={navTopOffset}
+        top={0}
+        {...topNavProps}
         h="64px"
         px={{ base: 5, xl: 0 }}
         borderBottom="1px solid"
