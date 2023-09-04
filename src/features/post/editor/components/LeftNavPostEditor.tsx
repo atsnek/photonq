@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import LeftNav from '../../../../shared/containers/navigation/LeftNav';
 import {
   VStack,
@@ -25,20 +25,6 @@ interface ILeftNavPostEditorProps {
 const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({ post }) => {
   const hasPublished = post.publicationDate !== undefined;
   const navOffset = useNavOffset();
-  // const [height, setHeight] = useState(`calc(100vh - 100px  - ${navOffset})`);
-
-  // const scrollPosition = useScrollPosition();
-
-  // useEffect(() => {
-  //   const convertedNavOffset = parseInt(navOffset.replace('em', '')) * 16;
-  //   console.log('convertedNavOffset', convertedNavOffset);
-  //   console.log('scrollPosition', scrollPosition);
-  //   if (scrollPosition > convertedNavOffset + 110) {
-  //     setHeight(`calc(100vh - 20px  - ${navOffset})`);
-  //   } else {
-  //     setHeight(`calc(100vh - 100px  - ${navOffset})`);
-  //   }
-  // }, [scrollPosition]);
 
   return (
     <LeftNav
