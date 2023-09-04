@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useField } from '@atsnek/jaen';
-import { MdastRoot } from '@snek-at/jaen/dist/fields/MdxField/components/types';
 import { TableOfContentItem } from '../types/navigation';
+import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
 
 export const useTocNavigation = (mdxFieldName: string) => {
   const field = useField<MdastRoot>(mdxFieldName, 'IMA:MdxField');
