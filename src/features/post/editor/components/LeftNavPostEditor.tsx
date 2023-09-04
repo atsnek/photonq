@@ -17,12 +17,16 @@ import useScrollPosition from '../../../../shared/hooks/use-scroll-position';
 
 interface ILeftNavPostEditorProps {
   post: Partial<TPost>;
+  setPostPreviewImage: (src: File) => void;
 }
 
 /**
  * Left navigation for editing a post.
  */
-const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({ post }) => {
+const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({
+  post,
+  setPostPreviewImage
+}) => {
   const hasPublished = post.publicationDate !== undefined;
   const navOffset = useNavOffset();
 
@@ -48,7 +52,7 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({ post }) => {
       >
         <Box overflow="hidden" borderRadius="full">
           <Image
-            src="https://picsum.photos/200"
+            src={post.previewImage}
             w={{ base: '50%', md: 'full' }}
             maxW="120px"
             h="max-content"
@@ -56,6 +60,7 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({ post }) => {
               transform: 'scale(1.05)'
             }}
             transition="transform 0.2s cubic-bezier(.17,.67,.83,.67)"
+            handleImageChange={setPostPreviewImage}
             editable
           />
         </Box>

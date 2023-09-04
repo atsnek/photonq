@@ -101,17 +101,27 @@ const PostEditorView: FC = () => {
     else publishPost();
   };
 
+  const setPostPreviewImage = (src: File) => {
+    setPost({
+      ...post,
+      previewImage: URL.createObjectURL(src)
+    });
+  };
   return (
     <>
       <PostEditorTopNav
         post={post}
         handlePublish={visibilityAlertDisclosure.onOpen}
+        setPostPreviewImage={setPostPreviewImage}
         user={user}
       />
       <MainFlex>
-        <LeftNavPostEditor post={post} />
-        <Stack direction="row" position="relative" flex={1}>
-          <Box w="full" overflow="hidden">
+        <LeftNavPostEditor
+          post={post}
+          setPostPreviewImage={setPostPreviewImage}
+        />
+        <Stack direction="row" position="relative" flex={1} overflow="hidden">
+          <Box w="full">
             <MdxEditor hideHeadingHash />
             <ActionToolbar
               active={isMobile || scrollPosition > 90}

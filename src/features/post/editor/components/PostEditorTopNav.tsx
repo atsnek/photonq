@@ -5,9 +5,10 @@ import {
   HStack,
   Spacer,
   Text,
+  Input,
   useDisclosure
 } from '@chakra-ui/react';
-import { FC } from 'react';
+import { ChangeEvent, FC, useRef } from 'react';
 import { TPost } from '../../types/post';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import TbBookUpload from '../../../../shared/components/icons/tabler/TbBookUpload';
@@ -21,6 +22,7 @@ interface IPostEditorTopNavProps {
   post: Partial<TPost>;
   user: SnekUser | null;
   handlePublish: () => void;
+  setPostPreviewImage: (src: File) => void;
 }
 
 /**
@@ -29,10 +31,19 @@ interface IPostEditorTopNavProps {
 const PostEditorTopNav: FC<IPostEditorTopNavProps> = ({
   post,
   handlePublish,
-  user
+  user,
+  setPostPreviewImage
 }) => {
   const topNavDisclosure = useDisclosure();
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const isPublic = post.publicationDate !== undefined;
+
+  const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.currentTarget?.files || e.currentTarget.files?.length === 0) return;
+    const file = e.currentTarget.files[0];
+    setPostPreviewImage(file);
+  };
+
   return (
     <>
       {/* <TopNav drawerDisclosure={topNavDisclosure} /> */}
@@ -65,7 +76,21 @@ const PostEditorTopNav: FC<IPostEditorTopNavProps> = ({
               <Button colorScheme="gray" size="sm" leftIcon={<TbStar />}>
                 {post.likes || 0}
               </Button>
-              <Button colorScheme="gray" size="sm" leftIcon={<TbPhoto />}>
+              <Input
+                ref={imageInputRef}
+                type="file"
+                display="none"
+                visibility="hidden"
+                zIndex={-9999}
+                accept="image/*"
+                onChange={handleImageInputChange}
+              />
+              <Button
+                colorScheme="gray"
+                size="sm"
+                leftIcon={<TbPhoto />}
+                onClick={() => imageInputRef.current?.click()}
+              >
                 Image
               </Button>
               <Button

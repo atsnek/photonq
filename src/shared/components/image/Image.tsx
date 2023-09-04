@@ -9,25 +9,27 @@ import {
 import TbPhotoEdit from '../icons/tabler/TbPhotoEdit';
 
 interface ImageProps extends ChImageProps {
+  handleImageChange?: (src: File) => void;
   editable?: boolean;
 }
 
 /**
  * (Static) Image component that can not be edited using Jaen but with the os-native file selector.
  */
-const Image: FC<ImageProps> = ({ editable, ...props }) => {
+const Image: FC<ImageProps> = ({ editable, handleImageChange, ...props }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [imageSrc, setImageSrc] = useState<ImageProps['src']>(props.src);
+  // const [imageSrc, setImageSrc] = useState<ImageProps['src']>(props.src);
 
-  const image = <ChImage {...props} src={imageSrc} />;
+  const image = <ChImage {...props} />;
   if (!editable) {
     return image;
   }
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.currentTarget?.files || e.currentTarget.files?.length === 0) return;
     const file = e.currentTarget.files[0];
-    setImageSrc(URL.createObjectURL(file));
+    if (handleImageChange) handleImageChange(file);
+    // setImageSrc(URL.createObjectURL(file));
   };
 
   return (
@@ -56,7 +58,7 @@ const Image: FC<ImageProps> = ({ editable, ...props }) => {
         display="none"
         visibility="hidden"
         zIndex={-9999}
-        onChange={handleImageChange}
+        onChange={handleChange}
       />
       {image}
       <Box
