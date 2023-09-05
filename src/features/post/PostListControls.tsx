@@ -21,13 +21,14 @@ import {
 } from '@chakra-ui/react';
 import { ChangeEvent, FC, useMemo, useRef, useState } from 'react';
 import { TDebounceData } from '../../shared/types/comm';
-import { posts } from '../../shared/utils/features/post';
-import { TPostListData } from './types/post';
+import { TPostListData, TPostPreview } from './types/post';
 import TbFilterDown from '../../shared/components/icons/tabler/TbFilterDown';
 import TbFilterUp from '../../shared/components/icons/tabler/TbFilterUp';
 import { wait } from '../../shared/utils/utils';
 import TbPlus from '../../shared/components/icons/tabler/TbPlus';
 import Link from '../../shared/components/Link';
+import { sq } from '@snek-functions/origin';
+import { formatPostDate } from '../../shared/utils/features/post';
 
 interface IPostListControlsProps extends StackProps {
   setPosts: (data: TPostListData) => void;
@@ -112,13 +113,14 @@ const PostListControls: FC<IPostListControlsProps> = ({
         setPosts({ state: 'inactive', posts: [] });
         return;
       }
-
+      console.log('dkjfklsfjkd');
       stateRef.current.state = 'loading';
       setPosts({
         state: 'loading',
         posts: []
       });
-      await wait(3000);
+      const posts = await fetchPosts(query);
+      console.log('fetched posts: ', posts);
       //@ts-expect-error - The state might be changed by another call
       if (stateRef.current.state === 'inactive') return;
       stateRef.current.state = 'success';
@@ -127,6 +129,27 @@ const PostListControls: FC<IPostListControlsProps> = ({
         posts: posts
       });
     }, 300);
+  };
+
+  const fetchPosts = async (query: string): Promise<TPostPreview[]> => {
+    const [rawPosts, errors] = await sq.query(q =>
+      q.allSocialPost({ filters: { limit: 10, offset: 0 } })
+    );
+
+    if (errors?.length) return [];
+
+    const posts: TPostPreview[] = rawPosts.map(post => ({
+      id: post.id,
+      title: post.title,
+      summary: post.summary,
+      createdAt: formatPostDate(post.createdAt),
+      stars: post.stars?.length ?? 0,
+      avatarUrl: post.avatarURL,
+      profileId: post.profileId,
+      privacy: post.privacy ?? 'private'
+    }));
+
+    return posts;
   };
 
   return (

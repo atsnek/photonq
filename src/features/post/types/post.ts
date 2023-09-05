@@ -19,7 +19,7 @@ import { TUser } from '../../user/types/user';
 //   canManage: boolean;
 // };
 
-export type TPostPrivacy = 'public' | 'private';
+export type TPostPrivacy = 'public' | 'private' | 'friends';
 
 //TODO: This type needs to be improved to better fit the needs of the current system
 export type TPost = {
