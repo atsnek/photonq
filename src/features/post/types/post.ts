@@ -19,14 +19,19 @@ import { TUser } from '../../user/types/user';
 //   canManage: boolean;
 // };
 
+export type TPostPrivacy = 'public' | 'private';
+
+//TODO: This type needs to be improved to better fit the needs of the current system
 export type TPost = {
   id: string;
   title: string;
   summary: string | null;
+  content?: string;
   stars: number;
   avatarUrl: string | null;
   createdAt: string;
   canManage?: boolean;
+  privacy: TPostPrivacy
 }
 
 /**
@@ -36,7 +41,17 @@ export type TPost = {
 //   Optional<TPost, 'hasLiked' | 'canManage'>,
 //   'content'
 // >;
-export type TPostPreview = TPost;
+export type TPostPreview = {
+  id: string;
+  title: string;
+  summary: string | null;
+  stars: number;
+  avatarUrl: string | null;
+  createdAt: string;
+  canManage?: boolean;
+  privacy: TPostPrivacy;
+  profileId: string;
+};
 
 /**TSearchMetaData
  * Metadata for fetching posts

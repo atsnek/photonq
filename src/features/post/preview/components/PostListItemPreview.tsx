@@ -48,18 +48,17 @@ const postListItemPreviewStyling = {
  */
 const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   id,
-  publicationDate,
-  author,
-  hideAuthor,
-  title,
-  previewImage = 'https://picsum.photos/200',
-  summary,
-  hasLiked,
+  wrapperProps,
+  avatarUrl,
+  privacy,
   toggleLike,
-  likes,
-  url,
+  title,
+  createdAt,
+  summary,
   canManage,
-  wrapperProps
+  hideAuthor,
+  stars,
+  profileId
 }) => {
   return (
     <LinkBox
@@ -76,18 +75,18 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
     >
       <VStack spacing={3} alignItems="flex-start">
         <HStack spacing={4} w="full">
-          {previewImage && (
+          {avatarUrl !== null && (
             <Image
               display={{ base: 'none', md: 'initial' }}
               boxSize="75px"
               objectFit="cover"
-              src={previewImage}
+              src={avatarUrl}
               borderRadius="md"
             />
           )}
           <VStack alignItems="flex-start">
             <LinkOverlay
-              href={url}
+              href={`/docs/${id}`}
               _hover={{
                 h5: {
                   color: 'components.postPreview.listItem._hover.title.color'
@@ -107,7 +106,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
               color="components.postPreview.listItem.initial.date.color"
               fontSize="sm"
             >
-              {publicationDate}
+              {createdAt}
             </Text>
           </VStack>
           <Spacer />
@@ -124,19 +123,19 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
         <HStack {...postListItemPreviewStyling.bottomHStack}>
           {!hideAuthor && (
             <Link
-              href={`/profile/${author}`}
+              href={`/profile/${profileId}`}
               color="components.postPreview.author.color"
               fontSize="sm"
               variant="hover-theme"
             >
-              @{author}
+              @emilybrooks
             </Link>
           )}
           <PostPreviewRating
             id={id}
-            likes={likes}
-            toggleLike={toggleLike}
-            hasLiked={hasLiked}
+            likes={stars}
+            toggleLike={() => {}}
+            hasLiked={false}
             isPostManagable={canManage}
             useHighContrast
           />

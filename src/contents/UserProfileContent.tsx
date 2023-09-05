@@ -7,7 +7,7 @@ import ProfileOverview from '../features/user/profile/components/ProfileOverview
 import { useLocation } from '@reach/router';
 import TbUser from '../shared/components/icons/tabler/TbUser';
 import TbBook from '../shared/components/icons/tabler/TbBook';
-import { TPostListData } from '../features/post/types/post';
+import { TPostListData, TPostPrivacy } from '../features/post/types/post';
 import TopNav from '../shared/containers/navigation/TopNav';
 import { SnekUser, useAuthenticationContext } from '@atsnek/jaen';
 import {
@@ -17,6 +17,7 @@ import {
 import { sq } from '@snek-functions/origin';
 import { TProfile } from '../features/user/types/user';
 import { TLinkData } from '../shared/types/navigation';
+import { Post } from '@snek-functions/origin/dist/schema.generated';
 
 const tabNavItems = [
   {
@@ -201,7 +202,6 @@ const UserProfileContent: FC = () => {
     posts: []
   });
   const [activity, setActivity] = useState<TActivitySection[]>();
-  const [user, setUser] = useState<SnekUser>();
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [overviewPosts, setOverviewPosts] = useState<TPostListData>({
     state: 'loading',
@@ -214,7 +214,7 @@ const UserProfileContent: FC = () => {
     fetchProfileData('c2040ccf-e16b-498a-892e-9f1947644dc5').then(data => {
       console.log('data: ', data);
       if (!data) return;
-      setPosts({ state: 'success', posts: data.posts });
+      setOverviewPosts({ state: 'success', posts: data.posts });
       setActivity(data.activity);
     });
     // sq.query(q => q.allSocialPostTrending().map(post => post.title)).then(
@@ -238,6 +238,7 @@ const UserProfileContent: FC = () => {
   ): Promise<TProfile | undefined> => {
     const [profile, error] = await sq.query((q): TProfile => {
       const profile = q.socialProfile({ profileId: id });
+      const { id: currentUserId } = q.userMe;
 
       const activitySections: TActivitySection[] = [];
 
@@ -265,17 +266,21 @@ const UserProfileContent: FC = () => {
         }
 
         let title = '';
+        let href = '';
 
         if (type === 'blog_create' && post) {
           title = `Created a blog post \"${post.title.substring(0, 20)}${
             post.title.length > 20 ? '...' : ''
           }\"`;
+          href = '/docs/' + post.id;
         } else if (type === 'profile_create') {
           title = `Created a profile`;
+          href = '#';
         } else if (type === 'follow_follow' && follow) {
           title = `Followed ${
             follow.followed ? follow.followed.userId : 'a user'
           }`;
+          href = '/profile/' + follow.followed?.userId;
         }
 
         currentActivitySection.activities.push({
@@ -283,54 +288,38 @@ const UserProfileContent: FC = () => {
           timestamp: createdAt,
           title: {
             name: title,
-            href: post?.id
+            href
           }
         });
       });
-
-      // for (const activity of profile.activity) {
-      //   const date = new Date(activity.createdAt);
-      //   const sectionDate = new Date(
-      //     date.getFullYear(),
-      //     date.getMonth(),
-      //     date.getDate()
-      //   );
-
-      //   if (
-      //     !currentActivitySection ||
-      //     currentActivitySection.timestamp !== sectionDate.toISOString()
-      //   ) {
-      //     currentActivitySection = {
-      //       timestamp: sectionDate.toISOString(),
-      //       activities: []
-      //     };
-      //     activitySections.push(currentActivitySection);
-      //   }
-
-      //   console.log('activity', activity);
-      //   currentActivitySection.activities.push({
-      //     type: activity.type as TActivityType,
-      //     timestamp: activity.createdAt,
-      //     title: {
-      //       name: activity.post?.title ?? '',
-      //       href: activity.post?.id
-      //     }
-      //   });
-      // }
 
       return {
         userId: profile.userId,
         bio: profile.bio,
         activity: activitySections,
-        posts: profile.posts.map(post => ({
-          id: post.id,
-          title: post.title,
-          summary: post.summary,
-          stars: post.stars.length,
-          avatarUrl: post.avatarURL,
-          createdAt: post.createdAt,
-          canManage: post.profileId === id
-        }))
+        posts: profile.posts
+          .filter(
+            ({ privacy }) =>
+              privacy === 'public' || profile.userId === currentUserId
+          )
+          .map(post => {
+            const date = new Date(post.createdAt);
+            return {
+              id: post.id,
+              title: post.title,
+              summary: post.summary,
+              stars: post.stars.length,
+              avatarUrl: post.avatarURL,
+              createdAt: `
+                ${date.getFullYear()}-
+                ${date.getMonth().toString().padStart(2, '0')}-
+                ${date.getDate().toString().padStart(2, '0')}
+              `,
+              canManage: post.profile?.userId === currentUserId,
+              privacy: post.privacy as TPostPrivacy,
+              profileId: post.profileId
+            };
+          })
       };
     });
 
@@ -345,7 +334,6 @@ const UserProfileContent: FC = () => {
       };
     });
 
-    console.log('user', user);
     if (!user) return; //TODO: Redirect
 
     const profileData = {
@@ -356,8 +344,6 @@ const UserProfileContent: FC = () => {
     };
 
     // setOverviewPosts({ state: 'success', posts: profile.posts });
-
-    console.log(profileData);
 
     // const user = q.user({ id: profile.userId });
     // return {

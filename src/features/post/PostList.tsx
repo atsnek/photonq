@@ -74,6 +74,7 @@ const PostList: FC<IPostListProps> = ({
       PreviewComp = PostListItemPreview;
       PreviewSkeletonComp = PostListItemPreviewSkeleton;
     }
+    console.log('post data: ', postData);
     if (postData.state === 'loading') {
       return Array.from({ length: pagination.itemsPerPage }).map((_, i) => (
         <PreviewSkeletonComp

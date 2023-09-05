@@ -1,4 +1,4 @@
-import { TPost } from "../../post/types/post";
+import { TPostPreview } from "../../post/types/post";
 import { TActivity, TActivitySection } from "../activity/types/activity";
 
 /**
@@ -20,7 +20,7 @@ export type TProfile = {
     userId: string;
     bio: string | null;
     activity: TActivitySection[];
-    posts: TPost[];
+    posts: TPostPreview[];
 }
 
 /**

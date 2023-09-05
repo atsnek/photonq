@@ -44,6 +44,7 @@ const postCardPreviewStyling = {
 const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   id,
   avatarUrl,
+  profileId,
   createdAt,
   stars,
   hideAuthor,
@@ -97,9 +98,9 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
               variant="hover-theme"
               fontSize="sm"
               color="components.postPreview.author.color"
-              href={`/profile/${author}`}
+              href={`/profile/${profileId}`} //TODO: Change to author username
             >
-              @{author}
+              @{profileId}
             </Link>
           )}
           <Heading
@@ -109,7 +110,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             flex={1}
             w={{ base: 'full', md: 'auto' }}
           >
-            <LinkOverlay href={url}>{title}</LinkOverlay>
+            <LinkOverlay href={`/docs/${id}`}>{title}</LinkOverlay>
           </Heading>
         </Box>
       </HStack>
