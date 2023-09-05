@@ -15,7 +15,9 @@ import {
   InputRightAddon,
   Select,
   Collapse,
-  Tooltip
+  Tooltip,
+  LinkBox,
+  LinkOverlay
 } from '@chakra-ui/react';
 import { ChangeEvent, FC, useMemo, useRef, useState } from 'react';
 import { TDebounceData } from '../../shared/types/comm';
@@ -25,6 +27,7 @@ import TbFilterDown from '../../shared/components/icons/tabler/TbFilterDown';
 import TbFilterUp from '../../shared/components/icons/tabler/TbFilterUp';
 import { wait } from '../../shared/utils/utils';
 import TbPlus from '../../shared/components/icons/tabler/TbPlus';
+import Link from '../../shared/components/Link';
 
 interface IPostListControlsProps extends StackProps {
   setPosts: (data: TPostListData) => void;
@@ -175,11 +178,13 @@ const PostListControls: FC<IPostListControlsProps> = ({
         {showCreatePostButton && (
           <Tooltip openDelay={500} label="Create a new post">
             <IconButton
+              as={Link}
               colorScheme="gray"
               size="sm"
               variant="outline"
               icon={<TbPlus />}
               aria-label="Create new post"
+              href="/docs/new-post"
             />
           </Tooltip>
         )}
