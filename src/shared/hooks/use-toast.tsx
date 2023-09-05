@@ -35,18 +35,18 @@ const useToast = () => {
   return ({
     status = 'success',
     icon,
-    duration = 5000000,
+    duration = 5000,
     title,
     description,
     containerStyle
   }: IToastProps) => {
+    console.log('toast function call');
     const FallbackIcon = statusIcons[status];
-    console.log('calling...');
     return chakraToast({
       duration,
       isClosable: true,
       render: () => {
-        console.log('!!!');
+        console.log('toast render call', this);
         return (
           <HStack
             position="relative"

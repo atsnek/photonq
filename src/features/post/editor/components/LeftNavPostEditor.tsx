@@ -54,7 +54,7 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({
       >
         <Box overflow="hidden" borderRadius="full">
           <Image
-            src={post.previewImage}
+            src={post.previewImage ?? 'https://api.dicebear.com/7.x/shapes/svg'}
             w={{ base: '50%', md: 'full' }}
             maxW="120px"
             h="max-content"

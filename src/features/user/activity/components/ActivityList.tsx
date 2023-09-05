@@ -27,10 +27,11 @@ export const activityListStyling = {
   }
 };
 
+//TODO: Adapt icons for the new activity types
 const activityIcons: Record<TActivityType, ReactNode> = {
-  commented: <TbMessagesCircle2 />,
-  published: <TbPencil />,
-  rated: <TbStar />
+  follow_follow: <TbMessagesCircle2 />,
+  blog_create: <TbPencil />,
+  profile_create: <TbStar />
 };
 
 interface IActivityListProps extends BoxProps {

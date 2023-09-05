@@ -43,25 +43,22 @@ const postCardPreviewStyling = {
  */
 const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   id,
-  previewImage,
-  publicationDate,
-  author,
+  avatarUrl,
+  createdAt,
+  stars,
   hideAuthor,
   title,
   summary,
-  hasLiked,
   toggleLike,
-  likes,
-  url,
   canManage,
   wrapperProps
 }) => {
   let ratingComp: ReactNode = (
     <PostPreviewRating
       id={id}
-      likes={likes}
+      likes={stars}
       toggleLike={toggleLike}
-      hasLiked={hasLiked}
+      // hasLiked={hasLiked}
       isPostManagable={canManage}
     />
   );
@@ -91,7 +88,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       <HStack {...postCardPreviewStyling.topHStack}>
         <Image
           {...postCardPreviewStyling.previewImage}
-          src={previewImage ?? 'https://picsum.photos/200'}
+          src={avatarUrl ?? 'https://picsum.photos/200'}
           borderRadius="md"
         />
         <Box>
@@ -138,7 +135,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
           color="components.postPreview.date.color"
           opacity={0.8}
         >
-          {publicationDate}
+          {createdAt}
         </Text>
         <Box pointerEvents="all">
           {canManage ? <PostPreviewManageMenu /> : ratingComp}

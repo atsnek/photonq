@@ -1,3 +1,6 @@
+import { TPost } from "../../post/types/post";
+import { TActivity, TActivitySection } from "../activity/types/activity";
+
 /**
  * This represents a single user.
  */
@@ -8,6 +11,16 @@ export type TUser = {
     avatarUrl?: string;
     socials: TUserSocials[];
     location?: string;
+}
+
+/**
+ * This represents the profile of a user.
+ */
+export type TProfile = {
+    userId: string;
+    bio: string | null;
+    activity: TActivitySection[];
+    posts: TPost[];
 }
 
 /**

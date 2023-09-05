@@ -49,7 +49,7 @@ const PostEditorView: FC = () => {
   const [post, setPost] = useState<Partial<TPost>>({ title: 'My Post' });
   const isPublic = post.publicationDate !== undefined;
   const [alertContent, setAlertContent] = useState(
-    isPublic ? alertText.unpublish : alertText.publish
+    isPublic ? alertText.publish : alertText.publish
   );
   const customToast = useToast();
   const { user } = useAuthenticationContext();
@@ -73,16 +73,17 @@ const PostEditorView: FC = () => {
   const publishPost = async () => {
     //TODO: Connect to Jaen
     console.log('publishing...');
-    await wait(1000); // Simulate publishing
-    visibilityAlertDisclosure.onClose();
-    setAlertContent(alertText.unpublish);
+    // await wait(1000); // Simulate publishing
+    console.log('::::');
     // setPost({ ...post, publicationDate: '2023-09-11' }); // TODO: Remove after connecting to Jaen
     //!Bug: This toast get's called exponentially (hello, memory leak)
     customToast({
-      title: 'Post published.',
-      description: 'Your post has been published.',
+      // duration: null,
+      title: alertContent.header,
+      description: alertContent.body,
       status: 'success'
     });
+    setAlertContent(alertText.unpublish);
     return;
   };
 

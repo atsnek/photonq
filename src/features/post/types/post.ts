@@ -5,27 +5,38 @@ import { TUser } from '../../user/types/user';
 /**
  * A single post
  */
+// export type TPost = {
+//   id: string;
+//   publicationDate: string;
+//   author: string;
+//   title: string;
+//   previewImage?: string;
+//   content: ReactNode;
+//   summary: string;
+//   likes: number;
+//   hasLiked: boolean;
+//   url: string;
+//   canManage: boolean;
+// };
+
 export type TPost = {
   id: string;
-  publicationDate: string;
-  author: string;
   title: string;
-  previewImage?: string;
-  content: ReactNode;
-  summary: string;
-  likes: number;
-  hasLiked: boolean;
-  url: string;
-  canManage: boolean;
-};
+  summary: string | null;
+  stars: number;
+  avatarUrl: string | null;
+  createdAt: string;
+  canManage?: boolean;
+}
 
 /**
  * A single preview of a post
  */
-export type TPostPreview = Omit<
-  Optional<TPost, 'hasLiked' | 'canManage'>,
-  'content'
->;
+// export type TPostPreview = Omit<
+//   Optional<TPost, 'hasLiked' | 'canManage'>,
+//   'content'
+// >;
+export type TPostPreview = TPost;
 
 /**TSearchMetaData
  * Metadata for fetching posts
