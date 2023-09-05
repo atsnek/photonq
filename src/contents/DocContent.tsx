@@ -27,7 +27,7 @@ export const DocContent: FC<DocContentProps> = () => {
   const navTopOffset = useNavOffset();
 
   // This can be memoized since it doesn't change and switching pages re-renders most of the app anyway.
-  // const MemoizedToc = memo(TableOfContent, () => false);
+  const MemoizedToc = memo(TableOfContent, () => false);
 
   return (
     <>
@@ -47,7 +47,7 @@ export const DocContent: FC<DocContentProps> = () => {
               On This Page
             </ChText>
             <Flex as="nav" direction="column" mt={5}>
-              {/* <MemoizedToc /> */}
+              <MemoizedToc />
             </Flex>
             <Box
               mt={7}
