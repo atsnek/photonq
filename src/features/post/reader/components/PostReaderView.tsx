@@ -17,7 +17,7 @@ import UserPreview from '../../../user/avatar/components/UserPreview';
 import { TUser } from '../../../user/types/user';
 import Link from '../../../../shared/components/Link';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
-import { posts } from '../../../../shared/utils/features/post';
+// import { posts } from '../../../../shared/utils/features/post';
 import { formatNumber } from '../../../../shared/utils/utils';
 import MainGrid from '../../../../shared/containers/components/MainGrid';
 import TopNav from '../../../../shared/containers/navigation/TopNav';
@@ -54,7 +54,7 @@ const userData: TUser = {
   ]
 };
 
-const post = posts[0];
+// const post = posts[0];
 
 /**
  * Component for reading a post.
@@ -82,13 +82,13 @@ const PostReaderView: FC = () => {
     <>
       {/* <TopNav drawerDisclosure={topNavDisclosure} /> */}
       <MainGrid>
-        <LeftNavPostReader post={post as any} user={userData} />
+        {/* <LeftNavPostReader post={post as any} user={userData} /> */}
         <Stack spacing={{ base: 0, xl: 12 }} direction="row" mb={10}>
           <Box maxW="900px" w="full">
             <MainBreadcrumb parts={breadcrumbParts} />
             <HStack opacity={0.75} spacing={0}>
               <Text fontSize="sm" color="gray.500">
-                {post.publicationDate}
+                {/* {post.publicationDate} */}
               </Text>
             </HStack>
             <Heading variant="h1" mt={0}>
