@@ -70,10 +70,10 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.4":
-  version "1.0.0-rc.5"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.5.tgz#d58619a04afb3eb74b332294b6f2ff396a9acc39"
-  integrity sha512-pvenSGHdpIVwRWiHjmjskorE+e2MLdidZlY5QuedY9WN7nss4fjbapVdy0rPH1Y25p0L+jZ9lUoDmellN1TVeQ==
+"@atsnek/jaen@^1.0.0-rc.6":
+  version "1.0.0-rc.6"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.6.tgz#6157a04f0e99d17465dea7d2cdfc1500f23f8524"
+  integrity sha512-eJuGRhGDipUH4YyW6IBP31DWl/z0yEKw5sDrprSqeU5VzyBkzJqNe5/BIpKghPg0bLu97ar2MPj7KFhMoqY9eQ==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@reduxjs/toolkit" "^1.9.5"
@@ -7614,13 +7614,15 @@ gatsby-graphiql-explorer@^3.12.0:
   resolved "https://registry.yarnpkg.com/gatsby-graphiql-explorer/-/gatsby-graphiql-explorer-3.12.0.tgz#13122bcd742de0f4ad51ff87c9f4c7c4def78da1"
   integrity sha512-vr86oLhif5uZ+VSTE34DYjtBDCIHWpJHh4+65fmgZh+WtDv1lyONJ/WWmyD+dNMHlGsZtR6wVvBjrj5iFRDGRw==
 
-gatsby-jaen-lens@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.8.tgz#dce2f016493c63314ff8abd3409b70ae5fb11cc8"
-  integrity sha512-uGOwvlLar7hUFb20rwHQUDEiG3Zbzh0pZkIFIIhbr2FRRNM0ig3maGITo/TZwhXn3+Shzh+I4PzhNoEqMp8swQ==
+gatsby-jaen-lens@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.9.tgz#40193b48818e0a0e33865afd1a381f3e4d3bba07"
+  integrity sha512-UWy9vmu712LO51qBpK0WJaToYhA7Iak4+aaJp1yQ/diQhg/xcWC3CdWQUD1cMJKaFXXeC3Ndb6NmPVhsStLAEA==
   dependencies:
+    react-hook-form "^7.46.1"
     snek-query "^0.0.82"
     use-debounce "^9.0.4"
+    zxcvbn "^4.4.2"
 
 gatsby-legacy-polyfills@^3.12.0:
   version "3.12.0"
@@ -12544,6 +12546,11 @@ react-hook-form@^7.45.2, react-hook-form@^7.45.4:
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.45.4.tgz#73d228b704026ae95d7e5f7b207a681b173ec62a"
   integrity sha512-HGDV1JOOBPZj10LB3+OZgfDBTn+IeEsNOKiq/cxbQAIbKaiJUe/KV8DBUzsx0Gx/7IG/orWqRRm736JwOfUSWQ==
 
+react-hook-form@^7.46.1:
+  version "7.46.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.46.1.tgz#39347dbff19d980cb41087ac32a57abdc6045bb3"
+  integrity sha512-0GfI31LRTBd5tqbXMGXT1Rdsv3rnvy0FjEk8Gn9/4tp6+s77T7DPZuGEpBRXOauL+NhyGT5iaXzdIM2R6F/E+w==
+
 react-icons@^4.10.1:
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.10.1.tgz#3f3b5eec1f63c1796f6a26174a1091ca6437a500"
@@ -15251,3 +15258,8 @@ zwitch@^2.0.0, zwitch@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/zwitch/-/zwitch-2.0.4.tgz#c827d4b0acb76fc3e685a4c6ec2902d51070e9d7"
   integrity sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==
+
+zxcvbn@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/zxcvbn/-/zxcvbn-4.4.2.tgz#28ec17cf09743edcab056ddd8b1b06262cc73c30"
+  integrity sha512-Bq0B+ixT/DMyG8kgX2xWcI5jUvCwqrMxSFam7m0lAf78nf04hv6lNCsyLYdyYTrCVMqNDY/206K7eExYCeSyUQ==
