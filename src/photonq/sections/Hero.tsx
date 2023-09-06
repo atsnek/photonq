@@ -11,11 +11,11 @@ const Hero: FC = () => {
   return (
     <VStack
       h={{ base: 'max-content', md: `calc(100vh - ${navOffset} - 200px)` }}
-      minH="max-content"
+      minH="700px"
       bgColor="pq.shared.body.bgColor"
       spacing={0}
       id="hero"
-      overflowX="hidden"
+      overflow="hidden"
       p={{ base: 5, lg: 0 }}
     >
       <Box w="full" flexGrow={1} color="white" pt="64px">
