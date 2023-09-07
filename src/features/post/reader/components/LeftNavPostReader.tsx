@@ -18,14 +18,17 @@ import { formatNumber } from '../../../../shared/utils/utils';
 import Link from '../../../../shared/components/Link';
 
 interface ILeftNavPostReaderProps {
-  post: TPost;
+  post?: TPost;
   user: TUser;
 }
 
 /**
  * Left navigation for reading a post.
  */
+//TODO: Add LeftNavPostReader skeleton component
 const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
+  if (!post) return;
+
   return (
     <LeftNav w="full" isExpanded textAlign="center">
       <VStack
@@ -84,7 +87,7 @@ const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
           fill="features.rating.rated.color"
         />
         <Text fontSize="xs" color="gray.500" verticalAlign="middle">
-          {formatNumber(post.likes)}
+          {formatNumber(post.stars)}
         </Text>
       </HStack>
       <Heading

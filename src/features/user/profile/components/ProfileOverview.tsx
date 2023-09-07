@@ -5,8 +5,11 @@ import PostPreview from '../../../post/preview/components/PostCardPreview';
 import ActivityList from '../../activity/components/ActivityList';
 import PostList from '../../../post/PostList';
 import { TActivitySection } from '../../activity/types/activity';
+import { sq } from '@snek-functions/origin';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IProfileOverviewProps {
+  isOwnProfile?: boolean;
   posts: TPostListData;
   setPosts: (data: TPostListData) => void;
   activity?: TActivitySection[];
@@ -16,12 +19,15 @@ interface IProfileOverviewProps {
  * Component for displaying a user's profile overview.
  */
 const ProfileOverview: FC<IProfileOverviewProps> = ({
+  isOwnProfile,
   posts,
   setPosts,
   activity
 }) => {
   //TODO: implement toggleLike with API call
   const toggleLike = (id: TPostPreview['id']) => {
+    if (isOwnProfile) return;
+    // sq.mutate;
     console.log('toggle like for post ', id);
   };
 

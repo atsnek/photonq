@@ -3,7 +3,7 @@ import { Field, PageConfig, PageProps } from '@atsnek/jaen';
 import { Box } from '@chakra-ui/react';
 import { graphql } from 'gatsby';
 import * as React from 'react';
-import PostsContent from '../../contents/PostsContent';
+import PostsContent from '../../../contents/PostsContent';
 
 const IndexPage: React.FC<PageProps> = () => {
   return <PostsContent />;

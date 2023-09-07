@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { MainBreadcrumbPart } from '../../../../shared/types/navigation';
 import LeftNavPostReader from './LeftNavPostReader';
 import {
@@ -21,6 +21,9 @@ import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import { formatNumber } from '../../../../shared/utils/utils';
 import MainGrid from '../../../../shared/containers/components/MainGrid';
 import TopNav from '../../../../shared/containers/navigation/TopNav';
+import { TPost } from '../../types/post';
+import { sq } from '@snek-functions/origin';
+import useAuth from '../../../../shared/hooks/use-auth';
 
 //* This would be the data that comes from Jaen.
 const userData: TUser = {
@@ -56,10 +59,14 @@ const userData: TUser = {
 
 // const post = posts[0];
 
+interface IPostReaderViewProps {
+  postId: string;
+}
+
 /**
  * Component for reading a post.
  */
-const PostReaderView: FC = () => {
+const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
   const topNavDisclosure = useDisclosure();
   const breadcrumbParts: MainBreadcrumbPart[] = [
     {
@@ -78,10 +85,44 @@ const PostReaderView: FC = () => {
     }
   ];
 
+  const [post, setPost] = useState<TPost>();
+  const isAuthenticated = useAuth();
+
+  useEffect(() => {
+    fetchPost(postId);
+  }, []);
+
+  const fetchPost = async (id: string): Promise<TPost | undefined> => {
+    const [post, error] = await sq.query((q): TPost | undefined => {
+      const post = q.socialPost({ postId: id });
+      if (!post) return;
+      const { id: currentUserId } = isAuthenticated
+        ? q.userMe
+        : { id: undefined };
+
+      return {
+        id: post.id,
+        title: post.title,
+        summary: post.summary,
+        content: post.content ?? undefined,
+        createdAt: post.createdAt,
+        avatarUrl: post.avatarURL,
+        stars: post.stars.length,
+        privacy: post.privacy ?? 'private',
+        canManage: false
+      } as TPost;
+    });
+
+    if (error) return;
+    console.log('fetched post', post);
+    return post;
+  };
+
   return (
     <>
       {/* <TopNav drawerDisclosure={topNavDisclosure} /> */}
       <MainGrid>
+        <div></div>
         {/* <LeftNavPostReader post={post as any} user={userData} /> */}
         <Stack spacing={{ base: 0, xl: 12 }} direction="row" mb={10}>
           <Box maxW="900px" w="full">
