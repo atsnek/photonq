@@ -18,6 +18,7 @@ import { sq } from '@snek-functions/origin';
 import { TProfile } from '../features/user/types/user';
 import { TLinkData } from '../shared/types/navigation';
 import { Post } from '@snek-functions/origin/dist/schema.generated';
+import useAuth from '../shared/hooks/use-auth';
 
 const tabNavItems = [
   {
@@ -191,16 +192,21 @@ const tabNavItems = [
 //   }
 // ];
 
+interface IUserProfileContent {
+  profileId: string;
+}
+
 /**
  * Component for displaying a certain user profile.
  */
-const UserProfileContent: FC = () => {
+const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
   const { hash } = useLocation();
   const topNavDisclosure = useDisclosure();
   const [posts, setPosts] = useState<TPostListData>({
     state: 'inactive',
     posts: []
   });
+  // const [profile, setProfile] = useSta;
   const [activity, setActivity] = useState<TActivitySection[]>();
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [overviewPosts, setOverviewPosts] = useState<TPostListData>({
@@ -209,9 +215,12 @@ const UserProfileContent: FC = () => {
   });
   const [activeTab, setActiveTab] =
     useState<(typeof tabNavItems)[number]['value']>('posts');
+  const isAuthenticated = useAuth();
 
   useEffect(() => {
-    fetchProfileData('c2040ccf-e16b-498a-892e-9f1947644dc5').then(data => {
+    console.log('fetching data for profile', profileId);
+    // 'c2040ccf-e16b-498a-892e-9f1947644dc5'
+    fetchProfileData(profileId).then(data => {
       console.log('data: ', data);
       if (!data) return;
       setOverviewPosts({ state: 'success', posts: data.posts });
@@ -238,7 +247,9 @@ const UserProfileContent: FC = () => {
   ): Promise<TProfile | undefined> => {
     const [profile, error] = await sq.query((q): TProfile => {
       const profile = q.socialProfile({ profileId: id });
-      const { id: currentUserId } = q.userMe;
+      const { id: currentUserId } = isAuthenticated
+        ? q.userMe
+        : { id: undefined };
 
       const activitySections: TActivitySection[] = [];
 
@@ -300,7 +311,8 @@ const UserProfileContent: FC = () => {
         posts: profile.posts
           .filter(
             ({ privacy }) =>
-              privacy === 'public' || profile.userId === currentUserId
+              privacy === 'public' ||
+              (currentUserId && profile.userId === currentUserId)
           )
           .map(post => {
             const date = new Date(post.createdAt);
@@ -396,6 +408,7 @@ const UserProfileContent: FC = () => {
   if (activeTab === 'overview') {
     mainContent = (
       <ProfileOverview
+        isOwnProfile={false}
         posts={overviewPosts}
         setPosts={setOverviewPosts}
         activity={activity}

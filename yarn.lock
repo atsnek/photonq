@@ -7614,13 +7614,13 @@ gatsby-graphiql-explorer@^3.12.0:
   resolved "https://registry.yarnpkg.com/gatsby-graphiql-explorer/-/gatsby-graphiql-explorer-3.12.0.tgz#13122bcd742de0f4ad51ff87c9f4c7c4def78da1"
   integrity sha512-vr86oLhif5uZ+VSTE34DYjtBDCIHWpJHh4+65fmgZh+WtDv1lyONJ/WWmyD+dNMHlGsZtR6wVvBjrj5iFRDGRw==
 
-gatsby-jaen-lens@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.9.tgz#40193b48818e0a0e33865afd1a381f3e4d3bba07"
-  integrity sha512-UWy9vmu712LO51qBpK0WJaToYhA7Iak4+aaJp1yQ/diQhg/xcWC3CdWQUD1cMJKaFXXeC3Ndb6NmPVhsStLAEA==
+gatsby-jaen-lens@^0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.12.tgz#c3ba3dbb9c5a91b5a419b4b645092eb015209c77"
+  integrity sha512-MYICN49QSIyI8omx0cUTUWhn8GrkOurDQPJU+rw3AzWYCvYnLZF6VXBZKRoWB5wFYXYgVWn/LLAyIt4D1n+Z6Q==
   dependencies:
     react-hook-form "^7.46.1"
-    snek-query "^0.0.82"
+    snek-query "^0.0.83"
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
 
@@ -13551,10 +13551,23 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
-snek-query@*, snek-query@^0.0.82:
+snek-query@*:
   version "0.0.82"
   resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.82.tgz#54964bdc879b0f4a48c23b9ba56377d8e433dc66"
   integrity sha512-nhCd774fmXWGOH0a/CIy9cOPmLej6AFKHKVh5dS1Iw+wMUQbTr/90Cly+PSstVnmD5RrprLB50cHBgM2ChGsgA==
+  dependencies:
+    commander "^9.4.1"
+    graphql "^16.6.0"
+    lodash.clonedeep "^4.5.0"
+    pino "^8.8.0"
+    pino-pretty "^9.1.1"
+    rxjs "^7.8.0"
+    typescript "^4.9.4"
+
+snek-query@^0.0.83:
+  version "0.0.83"
+  resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.83.tgz#57fcadb2f63a0c26f1ac05de666ba0e05e841b6a"
+  integrity sha512-fbbwMZ7XUxvmBpIGDQ13lNQGvShs1TgveRDrlKWY5JSbOTKEu+AJUv09mcNb5sgm+na7bMEmcTEky6IfvOfdEg==
   dependencies:
     commander "^9.4.1"
     graphql "^16.6.0"
