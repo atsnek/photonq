@@ -22,6 +22,7 @@ import { useAuthenticationContext } from '@atsnek/jaen';
 interface AppLayoutProps {
   children?: React.ReactNode;
   isDocs?: boolean;
+  isCommunity?: boolean;
   path?: string;
   footer?: FC;
   customTopNavDisclosure?: ReturnType<typeof useDisclosure>;
@@ -47,6 +48,7 @@ interface AppLayoutProps {
 const AppLayout: FC<AppLayoutProps> = ({
   children,
   isDocs,
+  isCommunity,
   path,
   footer,
   customTopNavDisclosure,
@@ -93,7 +95,9 @@ const AppLayout: FC<AppLayoutProps> = ({
         {/*`mt={navTopOffset} */}
         <Box flex="1">
           {isDocs ? (
-            <DocsLayout path={path}>{children}</DocsLayout>
+            <DocsLayout path={path} isCommunity={isCommunity}>
+              {children}
+            </DocsLayout>
           ) : (
             <>{children}</>
           )}

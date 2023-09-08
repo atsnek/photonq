@@ -29,6 +29,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   return (
     <AppLayout
       isDocs={path.startsWith('/docs') && path !== '/docs/new-post/'}
+      isCommunity={path.startsWith('/docs/community')}
       path={path}
       topNavProps={{
         isVisible: !hiddenTopNavPaths.some(hiddenPath =>

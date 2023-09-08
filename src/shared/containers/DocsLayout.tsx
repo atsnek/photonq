@@ -11,9 +11,10 @@ import { createBreadCrumbParts } from '../utils/navigation';
 interface DocsLayoutProps {
   children?: React.ReactNode;
   path?: string;
+  isCommunity?: boolean;
 }
 
-const DocsLayout: FC<DocsLayoutProps> = ({ children, path }) => {
+const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
   const { menuStructure } = useMenuContext();
 
   const [isExpanded, setIsExpanded] = useState(true);
@@ -42,9 +43,11 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path }) => {
       </Box>
 
       <Box minW="full">
-        <Box overflow="hidden">
-          <MainBreadcrumb parts={breadcrumbParts} />
-        </Box>
+        {!isCommunity && (
+          <Box overflow="hidden">
+            <MainBreadcrumb parts={breadcrumbParts} />
+          </Box>
+        )}
         <Box>{memoedChildren}</Box>
       </Box>
     </MainGrid>
