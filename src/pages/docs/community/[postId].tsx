@@ -22,9 +22,5 @@ export const pageConfig: PageConfig = {
       label: 'schettn',
       path: '/user/schettn/'
     }
-  ],
-  menu: {
-    type: 'user',
-    label: 'Your profile'
-  }
+  ]
 };

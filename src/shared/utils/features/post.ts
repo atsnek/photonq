@@ -180,7 +180,7 @@ export const fetchPost = async (id: string, isAuthenticated?: boolean): Promise<
     const [post, error] = await sq.query((q): TPost | undefined => {
         const post = q.socialPost({ postId: id });
         if (!post) return;
-        const { id: currentUserId } = isAuthenticated
+        const { id: currentUserId } = isAuthenticated && q.userMe
             ? q.userMe
             : { id: undefined };
 

@@ -25,10 +25,8 @@ import { TPost } from '../../types/post';
 import { sq } from '@snek-functions/origin';
 import useAuth from '../../../../shared/hooks/use-auth';
 import { fetchProfile } from '../../../user/utils/user';
-import {
-  fetchPost,
-  formatPostDate
-} from '../../../../shared/utils/features/post';
+import { formatPostDate } from '../../../../shared/utils/features/post';
+import { useAppStore } from '../../../../shared/store/store';
 
 interface IPostReaderViewProps {
   postId: string;
@@ -56,8 +54,11 @@ const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
     }
   ];
 
-  const [post, setPost] = useState<TPost>();
-  const [author, setAuthor] = useState<TUser>();
+  // const [post, setPost] = useState<TPost>();
+  const post = useAppStore(state => state.post);
+  const fetchPost = useAppStore(state => state.fetchPost);
+  const fetchPostAuthor = useAppStore(state => state.fetchPostAuthor);
+  // const [author, setAuthor] = useState<TUser>();
   const isAuthenticated = useAuth();
 
   const publicationDate = useMemo(
@@ -66,19 +67,12 @@ const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
   );
 
   useEffect(() => {
-    fetchPost(postId).then(post => {
-      if (!post) return;
-      setPost(post);
-
-      if (post.authorProfileId !== null) {
-        fetchProfile(post.authorProfileId).then(user => {
-          console.log('fetched user: ', user);
-          if (!user) return;
-          setAuthor(user);
-        });
-      }
-    });
+    fetchPost(postId);
   }, []);
+
+  useEffect(() => {
+    fetchPostAuthor();
+  }, [post?.id]);
 
   const ratePost = () => {
     if (!isAuthenticated || !post) return;
@@ -86,10 +80,12 @@ const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
     sq.lazyMutation;
   };
 
+  console.log('received post: ', post);
+
   return (
     <>
       <MainGrid>
-        <LeftNavPostReader post={post} user={author} />
+        <LeftNavPostReader post={post} />
         <Stack spacing={{ base: 0, xl: 12 }} direction="row" mb={10}>
           <Box maxW="900px" w="full">
             <MainBreadcrumb parts={breadcrumbParts} />

@@ -20,10 +20,10 @@ import Link from '../../../../shared/components/Link';
 import { SnekUser } from '@atsnek/jaen';
 import { leftNavProfileStyling } from '../../../user/profile/components/LeftNavProfile';
 import LeftNavPostReaderSkeleton from './LeftNavPostReaderSkeleton';
+import { useAppStore } from '../../../../shared/store/store';
 
 interface ILeftNavPostReaderProps {
   post?: TPost;
-  user?: TUser;
 }
 
 export const leftNavPostReaderStyling = {
@@ -68,8 +68,12 @@ export const leftNavPostReaderStyling = {
  * Left navigation for reading a post.
  */
 //TODO: Add LeftNavPostReader skeleton component
-const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
-  if (!post || !user) return <LeftNavPostReaderSkeleton />;
+const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post }) => {
+  const author = useAppStore(state => state.postAuthor);
+
+  console.log('left nav author: ', author);
+
+  if (!post || !author) return <LeftNavPostReaderSkeleton />;
 
   return (
     <LeftNav w="full" isExpanded textAlign="center">
@@ -89,7 +93,7 @@ const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
           maxW="120px"
           {...leftNavProfileStyling.avatar}
           aspectRatio={1}
-          name={user.displayName}
+          name={author.displayName}
           src="https://onedrive.live.com/embed?resid=AE2DDC816CEF3E1E%21220972&authkey=%21AIUh8CadUcYw3cg&width=999999&height=1024"
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
@@ -106,7 +110,7 @@ const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
               fontSize="lg"
               color="views.postReader.leftNav.author.displayName.color"
             >
-              {user.displayName}
+              {author.displayName}
             </Heading>
           </Link>
           <Text
