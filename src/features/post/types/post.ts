@@ -31,7 +31,8 @@ export type TPost = {
   avatarUrl: string | null;
   createdAt: string;
   canManage?: boolean;
-  privacy: TPostPrivacy
+  privacy: TPostPrivacy,
+  authorProfileId: string | null;
 }
 
 /**

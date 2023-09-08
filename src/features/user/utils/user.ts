@@ -1,4 +1,6 @@
 import { SnekUser } from "@atsnek/jaen"
+import { TUser } from "../types/user";
+import { sq } from "@snek-functions/origin";
 
 /**
  * Returns the display name of a user
@@ -9,7 +11,7 @@ import { SnekUser } from "@atsnek/jaen"
  * @example getDisplayname({ username: "test", details: { lastName: "User" } }) // "User"
  * @example getDisplayname({ username: "test" }) // "test"
  */
-const getUserDisplayname = (user: SnekUser) => {
+export const getUserDisplayname = (user: SnekUser) => {
     let displayName: string | undefined = undefined;
     if (user.details?.firstName) {
         displayName = user.details.firstName;
@@ -24,4 +26,25 @@ const getUserDisplayname = (user: SnekUser) => {
     return displayName;
 }
 
-export { getUserDisplayname };
+/**
+ * Fetches a user profile from the database
+ * @param profileId The id of the profile to fetch
+ * @returns The profile data of the user
+ */
+export const fetchProfile = async (profileId: string): Promise<TUser | undefined> => {
+    const [user, error] = await sq.query((q): TUser => {
+        //TODO: Re-enable this once the backend is ready again
+        // const user = q.socialProfile({ profileId });
+
+        //TODO: Replace this with actual data as soon as it's available
+        return {
+            username: 'emilybrooks',
+            bio: 'Adventurous spirit with a knack for words and a passion for knowledge. Exploring the world of academia, one document at a time. Forever curious, forever learning. Let\'s dive into the realm of information together uncover the wonders of education.',
+            displayName: 'Emily Brooks',
+            avatarUrl: 'https://onedrive.live.com/embed?resid=AE2DDC816CEF3E1E%21220972&authkey=%21AIUh8CadUcYw3cg&width=999999&height=1024',
+            socials: []
+        }
+    })
+
+    return (error) ? undefined : user;
+}

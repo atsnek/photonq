@@ -10,6 +10,8 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   const path = useLocation().pathname;
   const hiddenTopNavPaths = ['/profile', '/blog-post'];
 
+  const docsPaths = ['/docs', '/docs/community', '/docs/new-post/'];
+
   const jaenFrame = useJaenFrameMenuContext();
 
   useEffect(() => {
@@ -28,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
 
   return (
     <AppLayout
-      isDocs={path.startsWith('/docs') && path !== '/docs/new-post/'}
+      isDocs={docsPaths.some(docsPath => path.startsWith(docsPath))}
       isCommunity={path.startsWith('/docs/community')}
       path={path}
       topNavProps={{

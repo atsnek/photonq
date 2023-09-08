@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, memo, useMemo, useState } from 'react';
 import LeftNav from './navigation/LeftNav';
 import MainBreadcrumb from './navigation/components/MainBreadcrumb';
 import PageDirectory from './navigation/components/PageDirectory';
@@ -31,6 +31,8 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
   }, [menuStructure]);
 
   const memoedChildren = useMemo(() => children, [children]);
+
+  if (isCommunity) return memoedChildren;
 
   return (
     <MainGrid>

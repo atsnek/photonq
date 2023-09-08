@@ -10,24 +10,66 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
-  VStack
+  VStack,
+  HeadingProps
 } from '@chakra-ui/react';
 import { TUser } from '../../../user/types/user';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import { formatNumber } from '../../../../shared/utils/utils';
 import Link from '../../../../shared/components/Link';
+import { SnekUser } from '@atsnek/jaen';
+import { leftNavProfileStyling } from '../../../user/profile/components/LeftNavProfile';
+import LeftNavPostReaderSkeleton from './LeftNavPostReaderSkeleton';
 
 interface ILeftNavPostReaderProps {
   post?: TPost;
-  user: TUser;
+  user?: TUser;
 }
+
+export const leftNavPostReaderStyling = {
+  avatar: {
+    width: {
+      base: '50%',
+      md: 'full'
+    },
+    maxW: '120px',
+    aspectRatio: 1
+  },
+  divider: {
+    mt: 3
+  },
+  rating: {
+    hstack: {
+      spacing: 1,
+      my: 3,
+      justifyContent: 'center'
+    },
+    icon: {
+      fontSize: 'xs',
+      stroke: 'features.rating.rated.color',
+      fill: 'features.rating.rated.color'
+    },
+    text: {
+      verticalAlign: 'middle'
+    }
+  },
+  summary: {
+    heading: {
+      as: 'h6' as HeadingProps['as'],
+      fontSize: 'sm',
+      color: 'gray.500',
+      my: 1,
+      fontWeight: 'medium'
+    }
+  }
+};
 
 /**
  * Left navigation for reading a post.
  */
 //TODO: Add LeftNavPostReader skeleton component
 const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
-  if (!post) return;
+  if (!post || !user) return <LeftNavPostReaderSkeleton />;
 
   return (
     <LeftNav w="full" isExpanded textAlign="center">
@@ -44,15 +86,11 @@ const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
       >
         <LinkBox
           as={Avatar}
-          width={{
-            base: '50%',
-            md: 'full'
-          }}
           maxW="120px"
-          h="max-content"
+          {...leftNavProfileStyling.avatar}
+          aspectRatio={1}
           name={user.displayName}
           src="https://onedrive.live.com/embed?resid=AE2DDC816CEF3E1E%21220972&authkey=%21AIUh8CadUcYw3cg&width=999999&height=1024"
-          aspectRatio={1}
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
             transform: 'scale(1.02)'
@@ -79,29 +117,23 @@ const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post, user }) => {
           </Text>
         </Box>
       </VStack>
-      <Divider />
-      <HStack spacing={1} my={3} justifyContent="center">
-        <TbStar
-          fontSize="xs"
-          stroke="features.rating.rated.color"
-          fill="features.rating.rated.color"
-        />
+      <Divider {...leftNavPostReaderStyling.divider} />
+      <HStack {...leftNavPostReaderStyling.rating.hstack}>
+        <TbStar {...leftNavPostReaderStyling.rating.icon} />
         <Text fontSize="xs" color="gray.500" verticalAlign="middle">
           {formatNumber(post.stars)}
         </Text>
       </HStack>
-      <Heading
-        as="h6"
-        fontSize="sm"
-        color="gray.500"
-        mb={1}
-        fontWeight="medium"
-      >
-        Post Summary
-      </Heading>
-      <Text fontSize="sm" color="gray.500" mb="2">
-        {post.summary}
-      </Text>
+      {post.summary && post.summary.length > 0 && (
+        <>
+          <Heading {...leftNavPostReaderStyling.summary.heading}>
+            Post Summary
+          </Heading>
+          <Text fontSize="sm" color="gray.500" mb="2">
+            {post.summary}
+          </Text>
+        </>
+      )}
     </LeftNav>
   );
 };
