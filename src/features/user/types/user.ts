@@ -7,7 +7,7 @@ import { TActivity, TActivitySection } from "../activity/types/activity";
 export type TUser = {
     username: string; // This identifies the user and needs to be unique
     displayName: string; // This is the name that is displayed to other users
-    bio: string;
+    bio: string | null;
     avatarUrl?: string;
     socials: TUserSocials[];
     location?: string;
@@ -17,8 +17,7 @@ export type TUser = {
  * This represents the profile of a user.
  */
 export type TProfile = {
-    userId: string;
-    bio: string | null;
+    user: TUser;
     activity: TActivitySection[];
     posts: TPostPreview[];
 }

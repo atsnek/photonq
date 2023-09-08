@@ -19,6 +19,8 @@ import { TProfile } from '../features/user/types/user';
 import { TLinkData } from '../shared/types/navigation';
 import { Post } from '@snek-functions/origin/dist/schema.generated';
 import useAuth from '../shared/hooks/use-auth';
+import { useAppSelector } from '@atsnek/jaen/dist/redux';
+import { useAppStore } from '../shared/store/store';
 
 const tabNavItems = [
   {
@@ -32,165 +34,6 @@ const tabNavItems = [
     icon: <TbBook />
   }
 ] as const;
-
-//TODO: This would be fetched from the API
-// const activities: TActivitySection[] = [
-//   {
-//     timestamp: '2023-07-15',
-//     activities: [
-//       {
-//         id: '1',
-//         title: {
-//           name: 'Unlocking the Power of Quantum Computing',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-15',
-//         type: 'published'
-//       },
-//       {
-//         id: '2',
-//         title: {
-//           name: 'Unlocking the Power of Quantum Computing',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-15',
-//         type: 'commented'
-//       },
-//       {
-//         id: '4',
-//         title: {
-//           name: 'Learn Quantum Computing with Python and Qiskit',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-10',
-//         type: 'published'
-//       }
-//     ]
-//   },
-//   {
-//     timestamp: '2023-06-22',
-//     activities: [
-//       {
-//         id: '3',
-//         title: {
-//           name: 'How to PhotonQ',
-//           href: '/docs'
-//         },
-//         timestamp: '2023-06-01',
-//         type: 'rated'
-//       },
-//       {
-//         id: '5',
-//         title: {
-//           name: 'Exploring Quantum Algorithms',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-12',
-//         type: 'published'
-//       },
-//       {
-//         id: '6',
-//         title: {
-//           name: 'Introduction to Quantum Mechanics',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-17',
-//         type: 'published'
-//       },
-//       {
-//         id: '7',
-//         title: {
-//           name: 'Introduction to Quantum Mechanics',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-17',
-//         type: 'commented'
-//       }
-//     ]
-//   },
-//   {
-//     timestamp: '2023-05-30',
-//     activities: [
-//       {
-//         id: '8',
-//         title: {
-//           name: "Quantum Computing: A Beginner's Guide",
-//           href: '#'
-//         },
-//         timestamp: '2023-07-09',
-//         type: 'published'
-//       },
-//       {
-//         id: '9',
-//         title: {
-//           name: 'Quantum Computing Hardware Overview',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-16',
-//         type: 'published'
-//       },
-//       {
-//         id: '10',
-//         title: {
-//           name: 'Quantum Cryptography: Ensuring Secure Communication',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-15',
-//         type: 'published'
-//       }
-//     ]
-//   },
-//   {
-//     timestamp: '2023-04-20',
-//     activities: [
-//       {
-//         id: '11',
-//         title: {
-//           name: 'Quantum Machine Learning: Enhancing AI with Qubits',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-14',
-//         type: 'published'
-//       },
-//       {
-//         id: '12',
-//         title: {
-//           name: 'Quantum Error Correction: Protecting Qubits',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-13',
-//         type: 'published'
-//       },
-//       {
-//         id: '13',
-//         title: {
-//           name: 'Quantum Supremacy: Breaking Computational Barriers',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-12',
-//         type: 'published'
-//       },
-//       {
-//         id: '14',
-//         title: {
-//           name: 'Quantum Entanglement: Spooky Action at a Distance',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-11',
-//         type: 'published'
-//       },
-//       {
-//         id: '15',
-//         title: {
-//           name: 'Quantum Algorithms for Optimization Problems',
-//           href: '#'
-//         },
-//         timestamp: '2023-07-10',
-//         type: 'published'
-//       }
-//     ]
-//   }
-// ];
 
 interface IUserProfileContent {
   profileId: string;
@@ -207,12 +50,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
     posts: []
   });
   // const [profile, setProfile] = useSta;
-  const [activity, setActivity] = useState<TActivitySection[]>();
+  const fetchProfile = useAppStore(state => state.fetchProfile);
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
-  const [overviewPosts, setOverviewPosts] = useState<TPostListData>({
-    state: 'loading',
-    posts: []
-  });
   const [activeTab, setActiveTab] =
     useState<(typeof tabNavItems)[number]['value']>('posts');
   const isAuthenticated = useAuth();
@@ -220,12 +59,13 @@ const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
   useEffect(() => {
     console.log('fetching data for profile', profileId);
     // 'c2040ccf-e16b-498a-892e-9f1947644dc5'
-    fetchProfileData(profileId).then(data => {
-      console.log('data: ', data);
-      if (!data) return;
-      setOverviewPosts({ state: 'success', posts: data.posts });
-      setActivity(data.activity);
-    });
+
+    // fetchProfileData(profileId).then(data => {
+    //   console.log('data: ', data);
+    //   if (!data) return;
+    //   setOverviewPosts({ state: 'success', posts: data.posts });
+    //   setActivity(data.activity);
+    // });
     // sq.query(q => q.allSocialPostTrending().map(post => post.title)).then(
     //   ([posts, errors]) => {
     //     if (errors) {
@@ -235,6 +75,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
     //     console.log(posts);
     //   }
     // );
+    fetchProfile('jan');
   }, []);
 
   /**
@@ -242,132 +83,132 @@ const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
    * @param id The id of the user to fetch
    * @returns The user with the given id or undefined if no user was found
    */
-  const fetchProfileData = async (
-    id: string
-  ): Promise<TProfile | undefined> => {
-    const [profile, error] = await sq.query((q): TProfile => {
-      const profile = q.socialProfile({ profileId: id });
-      const { id: currentUserId } = isAuthenticated
-        ? q.userMe
-        : { id: undefined };
+  // const fetchProfileData = async (
+  //   id: string
+  // ): Promise<TProfile | undefined> => {
+  //   const [profile, error] = await sq.query((q): TProfile => {
+  //     const profile = q.socialProfile({ profileId: id });
+  //     const { id: currentUserId } = isAuthenticated
+  //       ? q.userMe
+  //       : { id: undefined };
 
-      const activitySections: TActivitySection[] = [];
+  //     const activitySections: TActivitySection[] = [];
 
-      let currentActivitySection: TActivitySection | null = null;
+  //     let currentActivitySection: TActivitySection | null = null;
 
-      profile.activity.forEach(({ createdAt, follow, post, type }) => {
-        if (!createdAt) return;
+  //     profile.activity.forEach(({ createdAt, follow, post, type }) => {
+  //       if (!createdAt) return;
 
-        const date = new Date(createdAt);
-        const sectionDate = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate()
-        );
+  //       const date = new Date(createdAt);
+  //       const sectionDate = new Date(
+  //         date.getFullYear(),
+  //         date.getMonth(),
+  //         date.getDate()
+  //       );
 
-        if (
-          !currentActivitySection ||
-          currentActivitySection.timestamp !== sectionDate.toISOString()
-        ) {
-          currentActivitySection = {
-            timestamp: sectionDate.toISOString(),
-            activities: []
-          };
-          activitySections.push(currentActivitySection);
-        }
+  //       if (
+  //         !currentActivitySection ||
+  //         currentActivitySection.timestamp !== sectionDate.toISOString()
+  //       ) {
+  //         currentActivitySection = {
+  //           timestamp: sectionDate.toISOString(),
+  //           activities: []
+  //         };
+  //         activitySections.push(currentActivitySection);
+  //       }
 
-        let title = '';
-        let href = '';
+  //       let title = '';
+  //       let href = '';
 
-        if (type === 'blog_create' && post) {
-          title = `Created a blog post \"${post.title.substring(0, 20)}${
-            post.title.length > 20 ? '...' : ''
-          }\"`;
-          href = '/docs/' + post.id;
-        } else if (type === 'profile_create') {
-          title = `Created a profile`;
-          href = '#';
-        } else if (type === 'follow_follow' && follow) {
-          title = `Followed ${
-            follow.followed ? follow.followed.userId : 'a user'
-          }`;
-          href = '/profile/' + follow.followed?.userId;
-        }
+  //       if (type === 'blog_create' && post) {
+  //         title = `Created a blog post \"${post.title.substring(0, 20)}${
+  //           post.title.length > 20 ? '...' : ''
+  //         }\"`;
+  //         href = '/docs/' + post.id;
+  //       } else if (type === 'profile_create') {
+  //         title = `Created a profile`;
+  //         href = '#';
+  //       } else if (type === 'follow_follow' && follow) {
+  //         title = `Followed ${
+  //           follow.followed ? follow.followed.userId : 'a user'
+  //         }`;
+  //         href = '/profile/' + follow.followed?.userId;
+  //       }
 
-        currentActivitySection.activities.push({
-          type: type as TActivityType,
-          timestamp: createdAt,
-          title: {
-            name: title,
-            href
-          }
-        });
-      });
+  //       currentActivitySection.activities.push({
+  //         type: type as TActivityType,
+  //         timestamp: createdAt,
+  //         title: {
+  //           name: title,
+  //           href
+  //         }
+  //       });
+  //     });
 
-      return {
-        userId: profile.userId,
-        bio: profile.bio,
-        activity: activitySections,
-        posts: profile.posts
-          .filter(
-            ({ privacy }) =>
-              privacy === 'public' ||
-              (currentUserId && profile.userId === currentUserId)
-          )
-          .map(post => {
-            const date = new Date(post.createdAt);
-            return {
-              id: post.id,
-              title: post.title,
-              summary: post.summary,
-              stars: post.stars.length,
-              avatarUrl: post.avatarURL,
-              createdAt: `
-                ${date.getFullYear()}-
-                ${date.getMonth().toString().padStart(2, '0')}-
-                ${date.getDate().toString().padStart(2, '0')}
-              `,
-              canManage: post.profile?.userId === currentUserId,
-              privacy: post.privacy as TPostPrivacy,
-              profileId: post.profileId
-            };
-          })
-      };
-    });
+  //     return {
+  //       userId: profile.userId,
+  //       bio: profile.bio,
+  //       activity: activitySections,
+  //       posts: profile.posts
+  //         .filter(
+  //           ({ privacy }) =>
+  //             privacy === 'public' ||
+  //             (currentUserId && profile.userId === currentUserId)
+  //         )
+  //         .map(post => {
+  //           const date = new Date(post.createdAt);
+  //           return {
+  //             id: post.id,
+  //             title: post.title,
+  //             summary: post.summary,
+  //             stars: post.stars.length,
+  //             avatarUrl: post.avatarURL,
+  //             createdAt: `
+  //               ${date.getFullYear()}-
+  //               ${date.getMonth().toString().padStart(2, '0')}-
+  //               ${date.getDate().toString().padStart(2, '0')}
+  //             `,
+  //             canManage: post.profile?.userId === currentUserId,
+  //             privacy: post.privacy as TPostPrivacy,
+  //             profileId: post.profileId
+  //           };
+  //         })
+  //     };
+  //   });
 
-    if (!profile) return; //TODO: Redirect
+  //   if (!profile) return; //TODO: Redirect
 
-    const [user, userError] = await sq.query(q => {
-      const user = q.user({ id: profile.userId });
-      return {
-        username: user.username,
-        firstName: user.details.firstName,
-        lastName: user.details.lastName
-      };
-    });
+  //   const [user, userError] = await sq.query(q => {
+  //     const user = q.user({ id: profile.userId });
+  //     return {
+  //       username: user.username,
+  //       firstName: user.details.firstName,
+  //       lastName: user.details.lastName
+  //     };
+  //   });
 
-    if (!user) return; //TODO: Redirect
+  //   if (!user) return; //TODO: Redirect
 
-    const profileData = {
-      ...profile,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName
-    };
+  //   const profileData = {
+  //     ...profile,
+  //     username: user.username,
+  //     firstName: user.firstName,
+  //     lastName: user.lastName
+  //   };
 
-    // setOverviewPosts({ state: 'success', posts: profile.posts });
+  //   // setOverviewPosts({ state: 'success', posts: profile.posts });
 
-    // const user = q.user({ id: profile.userId });
-    // return {
-    //   username: user.username,
-    //   firstName: user.details.firstName,
-    //   lastName: user.details.lastName,
-    //   bioo: profile.bio
-    // };
+  //   // const user = q.user({ id: profile.userId });
+  //   // return {
+  //   //   username: user.username,
+  //   //   firstName: user.details.firstName,
+  //   //   lastName: user.details.lastName,
+  //   //   bioo: profile.bio
+  //   // };
 
-    if (error) return undefined;
-    return profileData;
-  };
+  //   if (error) return undefined;
+  //   return profileData;
+  // };
 
   const tabNavButtons = useMemo(
     () =>
@@ -409,9 +250,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
     mainContent = (
       <ProfileOverview
         isOwnProfile={false}
-        posts={overviewPosts}
-        setPosts={setOverviewPosts}
-        activity={activity}
+        // posts={overviewPosts}
+        // setPosts={setOverviewPosts}
       />
     );
   } else {
@@ -440,7 +280,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
         {tabNavButtons}
       </HStack>
       <MainGrid mt={10}>
-        <Box>{/* <LeftNavProfile userData={user} /> */}</Box>
+        <Box>
+          <LeftNavProfile />
+        </Box>
         <Stack
           verticalAlign="top"
           spacing={{ base: 0, xl: 12 }}

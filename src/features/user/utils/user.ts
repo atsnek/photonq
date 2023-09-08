@@ -20,6 +20,7 @@ export const getUserDisplayname = (user: SnekUser) => {
         if (displayName) displayName += ` ${user.details.lastName}`;
         else displayName = user.details.lastName;
     }
+
     if (!displayName) {
         displayName = user.username;
     }

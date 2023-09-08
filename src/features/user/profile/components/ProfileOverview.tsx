@@ -7,23 +7,18 @@ import PostList from '../../../post/PostList';
 import { TActivitySection } from '../../activity/types/activity';
 import { sq } from '@snek-functions/origin';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import { useAppStore } from '../../../../shared/store/store';
 
 interface IProfileOverviewProps {
   isOwnProfile?: boolean;
-  posts: TPostListData;
-  setPosts: (data: TPostListData) => void;
-  activity?: TActivitySection[];
 }
 
 /**
  * Component for displaying a user's profile overview.
  */
-const ProfileOverview: FC<IProfileOverviewProps> = ({
-  isOwnProfile,
-  posts,
-  setPosts,
-  activity
-}) => {
+const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
+  const posts = useAppStore(state => state.overviewPosts);
+  const activity = useAppStore(state => state.activity);
   //TODO: implement toggleLike with API call
   const toggleLike = (id: TPostPreview['id']) => {
     if (isOwnProfile) return;

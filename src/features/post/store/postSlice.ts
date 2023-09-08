@@ -5,6 +5,7 @@ import { TUser } from "../../user/types/user";
 import { useAppStore } from "../../../shared/store/store";
 import { fetchProfile } from "../../user/utils/user";
 import { produce } from "immer";
+import { ProfileSlice } from "../../user/store/profileSlice";
 
 export interface PostSlice {
     post?: TPost;
@@ -17,7 +18,7 @@ export interface PostSlice {
     fetchPostAuthor: () => void;
 }
 
-export const createPostSlice: StateCreator<PostSlice, [["zustand/devtools", never]], [], PostSlice> = (set) => ({
+export const createPostSlice: StateCreator<PostSlice & ProfileSlice, [["zustand/devtools", never]], [], PostSlice> = (set) => ({
     editContent: (content) => {
         set(produce((state: PostSlice) => {
             if (!state.post) return;
@@ -52,7 +53,7 @@ export const createPostSlice: StateCreator<PostSlice, [["zustand/devtools", neve
     fetchPostAuthor: async () => {
         const authorId = useAppStore.getState().post?.authorProfileId;
         if (!authorId) {
-            console.log("No author id found");
+            console.log("postslice: author id found");
             return;
         }
 
