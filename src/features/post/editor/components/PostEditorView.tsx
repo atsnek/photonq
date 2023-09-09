@@ -47,7 +47,7 @@ const PostEditorView: FC = () => {
     onClose: () => console.log('closed')
   });
   const [post, setPost] = useState<Partial<TPost>>({ title: 'My Post' });
-  const isPublic = post.publicationDate !== undefined;
+  const isPublic = post.createdAt !== undefined;
   const [alertContent, setAlertContent] = useState(
     isPublic ? alertText.publish : alertText.publish
   );
@@ -93,7 +93,7 @@ const PostEditorView: FC = () => {
     await wait(1000); // Simulate publishing
     visibilityAlertDisclosure.onClose();
     setAlertContent(alertText.publish);
-    setPost({ ...post, publicationDate: undefined }); //TODO: Remove after connecting to Jaen
+    setPost({ ...post, createdAt: undefined }); //TODO: Remove after connecting to Jaen
     return;
   };
 
@@ -105,7 +105,7 @@ const PostEditorView: FC = () => {
   const setPostPreviewImage = (src: File) => {
     setPost({
       ...post,
-      previewImage: URL.createObjectURL(src)
+      avatarUrl: URL.createObjectURL(src)
     });
   };
   return (

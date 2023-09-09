@@ -45,7 +45,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({
   if (redirectToProfile) {
     avatar = (
       <LinkBox as={Avatar} src={imgSrc} {...avatarProps}>
-        <LinkOverlay href="/profile" />
+        <LinkOverlay href="/user" />
       </LinkBox>
     );
   } else {

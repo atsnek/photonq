@@ -119,38 +119,39 @@ const PostListControls: FC<IPostListControlsProps> = ({
         state: 'loading',
         posts: []
       });
-      const posts = await fetchPosts(query);
-      console.log('fetched posts: ', posts);
-      //@ts-expect-error - The state might be changed by another call
-      if (stateRef.current.state === 'inactive') return;
-      stateRef.current.state = 'success';
-      setPosts({
-        state: 'success',
-        posts: posts
-      });
+      //TODO: Implement this back in with the new API
+      // const posts = await fetchPosts(query);
+      // console.log('fetched posts: ', posts);
+      // //@ts-expect-error - The state might be changed by another call
+      // if (stateRef.current.state === 'inactive') return;
+      // stateRef.current.state = 'success';
+      // setPosts({
+      //   state: 'success',
+      //   posts: posts
+      // });
     }, 300);
   };
 
-  const fetchPosts = async (query: string): Promise<TPostPreview[]> => {
-    const [rawPosts, errors] = await sq.query(q =>
-      q.allSocialPost({ filters: { limit: 10, offset: 0 } })
-    );
+  // const fetchPosts = async (query: string): Promise<TPostPreview[]> => {
+  //   const [rawPosts, errors] = await sq.query(q =>
+  //     q.allSocialPost({ filters: { limit: 10, offset: 0 } })
+  //   );
 
-    if (errors?.length) return [];
+  //   if (errors?.length) return [];
 
-    const posts: TPostPreview[] = rawPosts.map(post => ({
-      id: post.id,
-      title: post.title,
-      summary: post.summary,
-      createdAt: formatPostDate(post.createdAt),
-      stars: post.stars?.length ?? 0,
-      avatarUrl: post.avatarURL,
-      profileId: post.profileId,
-      privacy: post.privacy ?? 'private'
-    }));
+  //   const posts: TPostPreview[] = rawPosts.map(post => ({
+  //     id: post.id,
+  //     title: post.title,
+  //     summary: post.summary,
+  //     createdAt: formatPostDate(post.createdAt),
+  //     stars: post.stars?.length ?? 0,
+  //     avatarUrl: post.avatarURL,
+  //     profileId: post.profileId,
+  //     privacy: post.privacy ?? 'private'
+  //   }));
 
-    return posts;
-  };
+  //   return posts;
+  // };
 
   return (
     <VStack w="full">
@@ -207,7 +208,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
               variant="outline"
               icon={<TbPlus />}
               aria-label="Create new post"
-              href="/docs/new-post"
+              href="/docs/community/new-post"
             />
           </Tooltip>
         )}

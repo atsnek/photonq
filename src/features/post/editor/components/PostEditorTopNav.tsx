@@ -36,7 +36,7 @@ const PostEditorTopNav: FC<IPostEditorTopNavProps> = ({
 }) => {
   const topNavDisclosure = useDisclosure();
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const isPublic = post.publicationDate !== undefined;
+  const isPublic = post.createdAt !== undefined;
 
   const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.currentTarget?.files || e.currentTarget.files?.length === 0) return;
@@ -74,7 +74,7 @@ const PostEditorTopNav: FC<IPostEditorTopNavProps> = ({
             <Spacer />
             <HStack spacing={3}>
               <Button colorScheme="gray" size="sm" leftIcon={<TbStar />}>
-                {post.likes || 0}
+                {post.stars || 0}
               </Button>
               <Input
                 ref={imageInputRef}
