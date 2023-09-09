@@ -4,7 +4,7 @@ import MainGrid from '../shared/containers/components/MainGrid';
 import LeftNavProfile from '../features/user/profile/components/LeftNavProfile';
 import PostList from '../features/post/PostList';
 import ProfileOverview from '../features/user/profile/components/ProfileOverview';
-import { useLocation } from '@reach/router';
+import { navigate, useLocation } from '@reach/router';
 import TbUser from '../shared/components/icons/tabler/TbUser';
 import TbBook from '../shared/components/icons/tabler/TbBook';
 import { TPostListData, TPostPrivacy } from '../features/post/types/post';
@@ -59,7 +59,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   useEffect(() => {
     console.log('fetching data for profile', username);
-    fetchProfile(username, user?.id);
+    fetchProfile(username, user?.id).then(succeed => {
+      if (!succeed) navigate('/docs/');
+    });
   }, [username]);
 
   const tabNavButtons = useMemo(

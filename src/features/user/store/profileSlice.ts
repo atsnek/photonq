@@ -13,7 +13,7 @@ export interface ProfileSlice {
     user?: TUser,
     overviewPosts: TPostListData,
     activity: TActivitySection[],
-    fetchProfile: (username: string, currentUserId?: string) => void,
+    fetchProfile: (username: string, currentUserId?: string) => Promise<boolean>,
 }
 
 export const createProfileSlice: StateCreator<ProfileSlice & PostSlice, [["zustand/devtools", never]], [], ProfileSlice> = (set) => ({
@@ -118,7 +118,7 @@ export const createProfileSlice: StateCreator<ProfileSlice & PostSlice, [["zusta
             }
         })
 
-        if (error || !profileData) return;
+        if (error || !profileData) return false;
 
         set(produce((state: ProfileSlice) => {
             state.activity = profileData.activity;
@@ -128,5 +128,6 @@ export const createProfileSlice: StateCreator<ProfileSlice & PostSlice, [["zusta
             };
             state.user = profileData.user;
         }))
+        return true;
     }
 })
