@@ -1,4 +1,4 @@
-import { Box, Heading, VStack, keyframes } from '@chakra-ui/react';
+import { Box, Heading, VStack, keyframes, Container } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import MainGrid from '../shared/containers/components/MainGrid';
 import { useMenuContext } from '../shared/contexts/menu';
@@ -7,7 +7,7 @@ import { TPostListData } from '../features/post/types/post';
 import PostListControls from '../features/post/PostListControls';
 import LeftNav from '../shared/containers/navigation/LeftNav';
 import PageDirectory from '../shared/containers/navigation/components/PageDirectory';
-import { posts } from '../shared/utils/features/post';
+import { mainComponentBaseStyle } from '../shared/containers/main/mainContent.vars';
 
 const gradientAnimation = keyframes`
   0%{background-position:0% 50%}
@@ -38,13 +38,13 @@ const PostsContent: FC = () => {
   useEffect(() => {
     // Simulate loading posts from an API
     setTimeout(() => {
-      setFeaturedPosts({ posts: posts.slice(0, 4), state: 'success' });
-      setLatestPosts({ posts: posts.slice(4), state: 'success' });
+      // setFeaturedPosts({ posts: posts.slice(0, 4), state: 'success' });
+      // setLatestPosts({ posts: posts.slice(4), state: 'success' });
     }, 3000);
   }, []);
 
   return (
-    <>
+    <Container maxW="7xl" mt={10}>
       {/* <Box display={{ base: 'none', md: 'block' }} position="sticky">
         <LeftNav isExpanded={isExpanded} setIsExpanded={setIsExpanded}>
           <Box w={isExpanded ? 'auto' : 0}>
@@ -119,7 +119,7 @@ const PostsContent: FC = () => {
           <PostList mt={10} postData={postResults} />
         )}
       </VStack>
-    </>
+    </Container>
   );
 };
 
