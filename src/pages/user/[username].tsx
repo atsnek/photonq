@@ -5,11 +5,11 @@ import { navigate } from '@reach/router';
 const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
   // everything after /user/ is the handle
   const handle = location.pathname.split('/user/')[1];
-  const profileId = params.profileId;
+  const username = params.username.trim();
 
-  if (!profileId) navigate('/docs');
+  if (!username) navigate('/docs');
 
-  return <UserProfileContent profileId={profileId} />;
+  return <UserProfileContent username={username} />;
 };
 
 export default Page;

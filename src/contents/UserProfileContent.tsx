@@ -36,13 +36,13 @@ const tabNavItems = [
 ] as const;
 
 interface IUserProfileContent {
-  profileId: string;
+  username: string;
 }
 
 /**
  * Component for displaying a certain user profile.
  */
-const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
+const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { hash } = useLocation();
   const topNavDisclosure = useDisclosure();
   const [posts, setPosts] = useState<TPostListData>({
@@ -54,161 +54,13 @@ const UserProfileContent: FC<IUserProfileContent> = ({ profileId }) => {
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [activeTab, setActiveTab] =
     useState<(typeof tabNavItems)[number]['value']>('posts');
-  const isAuthenticated = useAuth();
+  // const isAuthenticated = useAuth();
+  const { user } = useAuthenticationContext();
 
   useEffect(() => {
-    console.log('fetching data for profile', profileId);
-    // 'c2040ccf-e16b-498a-892e-9f1947644dc5'
-
-    // fetchProfileData(profileId).then(data => {
-    //   console.log('data: ', data);
-    //   if (!data) return;
-    //   setOverviewPosts({ state: 'success', posts: data.posts });
-    //   setActivity(data.activity);
-    // });
-    // sq.query(q => q.allSocialPostTrending().map(post => post.title)).then(
-    //   ([posts, errors]) => {
-    //     if (errors) {
-    //       console.error(errors);
-    //       return;
-    //     }
-    //     console.log(posts);
-    //   }
-    // );
-    fetchProfile('jan');
-  }, []);
-
-  /**
-   * Fetches a user from jaen by their id
-   * @param id The id of the user to fetch
-   * @returns The user with the given id or undefined if no user was found
-   */
-  // const fetchProfileData = async (
-  //   id: string
-  // ): Promise<TProfile | undefined> => {
-  //   const [profile, error] = await sq.query((q): TProfile => {
-  //     const profile = q.socialProfile({ profileId: id });
-  //     const { id: currentUserId } = isAuthenticated
-  //       ? q.userMe
-  //       : { id: undefined };
-
-  //     const activitySections: TActivitySection[] = [];
-
-  //     let currentActivitySection: TActivitySection | null = null;
-
-  //     profile.activity.forEach(({ createdAt, follow, post, type }) => {
-  //       if (!createdAt) return;
-
-  //       const date = new Date(createdAt);
-  //       const sectionDate = new Date(
-  //         date.getFullYear(),
-  //         date.getMonth(),
-  //         date.getDate()
-  //       );
-
-  //       if (
-  //         !currentActivitySection ||
-  //         currentActivitySection.timestamp !== sectionDate.toISOString()
-  //       ) {
-  //         currentActivitySection = {
-  //           timestamp: sectionDate.toISOString(),
-  //           activities: []
-  //         };
-  //         activitySections.push(currentActivitySection);
-  //       }
-
-  //       let title = '';
-  //       let href = '';
-
-  //       if (type === 'blog_create' && post) {
-  //         title = `Created a blog post \"${post.title.substring(0, 20)}${
-  //           post.title.length > 20 ? '...' : ''
-  //         }\"`;
-  //         href = '/docs/' + post.id;
-  //       } else if (type === 'profile_create') {
-  //         title = `Created a profile`;
-  //         href = '#';
-  //       } else if (type === 'follow_follow' && follow) {
-  //         title = `Followed ${
-  //           follow.followed ? follow.followed.userId : 'a user'
-  //         }`;
-  //         href = '/profile/' + follow.followed?.userId;
-  //       }
-
-  //       currentActivitySection.activities.push({
-  //         type: type as TActivityType,
-  //         timestamp: createdAt,
-  //         title: {
-  //           name: title,
-  //           href
-  //         }
-  //       });
-  //     });
-
-  //     return {
-  //       userId: profile.userId,
-  //       bio: profile.bio,
-  //       activity: activitySections,
-  //       posts: profile.posts
-  //         .filter(
-  //           ({ privacy }) =>
-  //             privacy === 'public' ||
-  //             (currentUserId && profile.userId === currentUserId)
-  //         )
-  //         .map(post => {
-  //           const date = new Date(post.createdAt);
-  //           return {
-  //             id: post.id,
-  //             title: post.title,
-  //             summary: post.summary,
-  //             stars: post.stars.length,
-  //             avatarUrl: post.avatarURL,
-  //             createdAt: `
-  //               ${date.getFullYear()}-
-  //               ${date.getMonth().toString().padStart(2, '0')}-
-  //               ${date.getDate().toString().padStart(2, '0')}
-  //             `,
-  //             canManage: post.profile?.userId === currentUserId,
-  //             privacy: post.privacy as TPostPrivacy,
-  //             profileId: post.profileId
-  //           };
-  //         })
-  //     };
-  //   });
-
-  //   if (!profile) return; //TODO: Redirect
-
-  //   const [user, userError] = await sq.query(q => {
-  //     const user = q.user({ id: profile.userId });
-  //     return {
-  //       username: user.username,
-  //       firstName: user.details.firstName,
-  //       lastName: user.details.lastName
-  //     };
-  //   });
-
-  //   if (!user) return; //TODO: Redirect
-
-  //   const profileData = {
-  //     ...profile,
-  //     username: user.username,
-  //     firstName: user.firstName,
-  //     lastName: user.lastName
-  //   };
-
-  //   // setOverviewPosts({ state: 'success', posts: profile.posts });
-
-  //   // const user = q.user({ id: profile.userId });
-  //   // return {
-  //   //   username: user.username,
-  //   //   firstName: user.details.firstName,
-  //   //   lastName: user.details.lastName,
-  //   //   bioo: profile.bio
-  //   // };
-
-  //   if (error) return undefined;
-  //   return profileData;
-  // };
+    console.log('fetching data for profile', username);
+    fetchProfile(username, user?.id);
+  }, [username]);
 
   const tabNavButtons = useMemo(
     () =>

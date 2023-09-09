@@ -26,15 +26,12 @@ export const createProfileSlice: StateCreator<ProfileSlice & PostSlice, [["zusta
         const [profileData, error] = await sq.query((q): TProfile | undefined => {
             //@ts-ignore TODO: Add this global var in the definition file
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: username })
-            // console.log("user: ", user.id)
 
             const profile = user.profile;
 
             const activitySections: TActivitySection[] = [];
 
             let currentActivitySection: TActivitySection | null = null;
-
-            // if (profile === null) return;
 
             profile?.activity.forEach(({ createdAt, follow, post, type }) => {
                 if (!createdAt) return;
@@ -70,7 +67,7 @@ export const createProfileSlice: StateCreator<ProfileSlice & PostSlice, [["zusta
                 } else if (type === 'follow_follow' && follow) {
                     title = `Followed ${follow.followed ? follow.followed.userId : 'a user'
                         }`;
-                    href = '/profile/' + follow.followed?.userId;
+                    href = (follow.followed?.userId) ? '/profile/' + follow.followed?.userId : '#';
                 }
 
                 currentActivitySection.activities.push({

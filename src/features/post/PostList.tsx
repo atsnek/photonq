@@ -29,6 +29,7 @@ interface IPostListProps extends StackProps {
   skeletonProps?: CardProps & LinkBoxProps;
   defaultFilterQuery?: string;
   setFilterQuery?: (query: string) => void;
+  showNoListResult?: boolean;
 }
 
 /**
@@ -44,6 +45,7 @@ const PostList: FC<IPostListProps> = ({
   skeletonProps,
   defaultFilterQuery,
   setFilterQuery,
+  showNoListResult = true,
   ...props
 }) => {
   const pagination = usePagination({
@@ -127,7 +129,11 @@ const PostList: FC<IPostListProps> = ({
         />
       )}
       {postData.state !== 'inactive' &&
-        (postPreviews ? postPreviews : <PostListNoResults mt={10} />)}
+        (postPreviews || showNoListResult ? (
+          postPreviews
+        ) : (
+          <PostListNoResults mt={10} />
+        ))}
       {pagination.totalPages > 1 && (
         <HStack alignContent="space-around">
           <Button

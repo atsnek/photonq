@@ -53,15 +53,13 @@ export const createPostSlice: StateCreator<PostSlice & ProfileSlice, [["zustand/
     fetchPostAuthor: async () => {
         const authorId = useAppStore.getState().post?.authorProfileId;
         if (!authorId) {
-            console.log("postslice: author id found");
+            console.log("postslice: no author id found");
             return;
         }
 
         const author = await fetchProfile(authorId);
-        console.log("fetched author: ", author);
         set(produce((state: PostSlice) => {
             state.postAuthor = author;
-            console.log("state after fetch: ", state)
         }))
     },
 })

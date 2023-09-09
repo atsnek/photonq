@@ -17,7 +17,7 @@ interface IProfileOverviewProps {
  * Component for displaying a user's profile overview.
  */
 const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
-  const posts = useAppStore(state => state.overviewPosts);
+  const postData = useAppStore(state => state.overviewPosts);
   const activity = useAppStore(state => state.activity);
   //TODO: implement toggleLike with API call
   const toggleLike = (id: TPostPreview['id']) => {
@@ -26,15 +26,17 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
     console.log('toggle like for post ', id);
   };
 
+  const hasOverviewPosts = useMemo(() => postData.posts.length > 0, [postData]);
+
   return (
-    <VStack gap={12}>
+    <VStack gap={hasOverviewPosts ? 12 : 0}>
       <PostList
-        postData={posts}
+        postData={postData}
         previewType="card"
         hidePostAuthor
         itemsPerPage={6}
       />
-      <Divider />
+      {hasOverviewPosts && <Divider />}
       <ActivityList activity={activity} mb={10} />
     </VStack>
   );
