@@ -33,6 +33,7 @@ import smtTooltipComponent from './components/tooltip';
 import smtPostEditorComponent from '../../../features/post/editor/styles/postEditor';
 import smtTextareaComponent from './components/textarea';
 import smtImageComponent from './components/image';
+import smtBadgeComponent from './components/badge';
 
 const themeSemanticTokens = {
   colors: {
@@ -58,6 +59,7 @@ const themeSemanticTokens = {
       actionToolbar: smtActionToolbarComponent,
       tooltip: smtTooltipComponent,
       image: smtImageComponent,
+      badge: smtBadgeComponent,
     },
     modals: {
       // Add styles for modals here

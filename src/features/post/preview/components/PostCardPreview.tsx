@@ -7,7 +7,7 @@ import {
   LinkBox,
   LinkBoxProps,
   LinkOverlay,
-  Spacer,
+  Badge,
   Text
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
@@ -52,6 +52,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   summary,
   toggleLike,
   canManage,
+  privacy,
   showPrivacy,
   wrapperProps
 }) => {
@@ -64,6 +65,9 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       isPostManagable={canManage}
     />
   );
+
+  const isPrivate = privacy === 'private';
+  const privacyColor = isPrivate ? 'yellow' : 'green';
   return (
     // Two possible ways to handle y overflow:
     // 1) Use overflow="hidden" and textOverflow="ellipsis" on the Card component
@@ -132,13 +136,23 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
         pointerEvents="none"
         justifyContent="space-between"
       >
-        <Text
-          fontSize={12}
-          color="components.postPreview.date.color"
-          opacity={0.8}
-        >
-          {createdAt}
-        </Text>
+        <HStack opacity={0.8}>
+          <Text fontSize={12} color="components.postPreview.date.color">
+            {createdAt}
+          </Text>
+          {showPrivacy && (
+            <Badge
+              variant="outline"
+              size="sm"
+              borderRadius="md"
+              color={`components.badge.subtle.${privacyColor}.color`}
+              bgColor={`components.badge.subtle.${privacyColor}.bgColor`}
+              boxShadow="none"
+            >
+              {isPrivate ? 'Private' : 'Public'}
+            </Badge>
+          )}
+        </HStack>
         <Box pointerEvents="all">
           {canManage ? <PostPreviewManageMenu /> : ratingComp}
         </Box>
