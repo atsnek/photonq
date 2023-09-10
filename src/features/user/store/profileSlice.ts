@@ -7,19 +7,20 @@ import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { sq } from "@snek-functions/origin";
 import { produce } from "immer";
 import { getUserDisplayname } from "../utils/user";
+import { TStoreSlices } from "../../../shared/store/store";
 
 
 export interface ProfileSlice {
-    user?: TUser,
+    profile?: TUser,
     overviewPosts: TPostListData,
     activity: TActivitySection[],
     fetchProfile: (username: string, currentUserId?: string) => Promise<boolean>,
 }
 
-export const createProfileSlice: StateCreator<ProfileSlice & PostSlice, [["zustand/devtools", never]], [], ProfileSlice> = (set) => ({
+export const createProfileSlice: StateCreator<TStoreSlices, [["zustand/devtools", never]], [], ProfileSlice> = (set) => ({
     activity: [],
     overviewPosts: { state: "loading", posts: [] },
-    user: undefined,
+    profile: undefined,
     fetchProfile: async (username, currentUserId) => {
         console.log("fetching profile for", username);
         set(produce(state => ({ overviewPosts: { state: "loading", posts: [] } })))
@@ -126,7 +127,7 @@ export const createProfileSlice: StateCreator<ProfileSlice & PostSlice, [["zusta
                 state: "success",
                 posts: profileData.posts
             };
-            state.user = profileData.user;
+            state.profile = profileData.user;
         }))
         return true;
     }

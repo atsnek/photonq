@@ -4,11 +4,14 @@ import { useLocation } from '@reach/router';
 import { useJaenFrameMenuContext } from 'gatsby-plugin-jaen';
 import { useEffect } from 'react';
 import { FaCogs } from 'react-icons/fa';
+import { useAppStore } from '../../shared/store/store';
+import { stat } from 'fs';
 
 const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   console.log('children: ', children);
   const path = useLocation().pathname;
   const hiddenTopNavPaths = ['/profile', '/blog-post'];
+  const fetchUser = useAppStore(state => state.fetchUser);
 
   const docsPaths = ['/docs', '/docs/community', '/docs/new-post/'];
 
@@ -22,6 +25,8 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
         path: '/docs/new-post/'
       }
     });
+
+    fetchUser(); // Fetches the currently logged in user
   }, []);
 
   if (path.startsWith('/admin') || path === '/') {

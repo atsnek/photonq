@@ -89,7 +89,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({}) => {
   const navTopOffset = useNavOffset();
 
   const hideControlsFallback = useBreakpointValue({ base: true, md: false });
-  const userData = useAppStore(state => state.user);
+  const userData = useAppStore(state => state.profile);
 
   // const memoizedSocialLink = useMemo(() => {
   //   return user.socials?.map((data: any, idx: number) => {

@@ -2,10 +2,11 @@ import { StateCreator } from "zustand";
 import { TPost } from "../types/post"
 import { fetchPost } from "../../../shared/utils/features/post";
 import { TUser } from "../../user/types/user";
-import { useAppStore } from "../../../shared/store/store";
+import { TStoreSlices, useAppStore } from "../../../shared/store/store";
 import { fetchProfile } from "../../user/utils/user";
 import { produce } from "immer";
 import { ProfileSlice } from "../../user/store/profileSlice";
+import { UserSlice } from "../../user/store/userSlice";
 
 export interface PostSlice {
     post?: TPost;
@@ -18,7 +19,7 @@ export interface PostSlice {
     fetchPostAuthor: () => void;
 }
 
-export const createPostSlice: StateCreator<PostSlice & ProfileSlice, [["zustand/devtools", never]], [], PostSlice> = (set) => ({
+export const createPostSlice: StateCreator<TStoreSlices, [["zustand/devtools", never]], [], PostSlice> = (set) => ({
     editContent: (content) => {
         set(produce((state: PostSlice) => {
             if (!state.post) return;
