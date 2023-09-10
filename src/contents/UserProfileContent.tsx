@@ -49,12 +49,13 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     state: 'inactive',
     posts: []
   });
-  // const [profile, setProfile] = useSta;
+  const profile = useAppStore(state => state.profile);
   const fetchProfile = useAppStore(state => state.fetchProfile);
+  const currentUser = useAppStore(state => state.userMe);
+
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [activeTab, setActiveTab] =
     useState<(typeof tabNavItems)[number]['value']>('posts');
-  // const isAuthenticated = useAuth();
   const { user } = useAuthenticationContext();
 
   useEffect(() => {
@@ -63,6 +64,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       if (!succeed) navigate('/docs/');
     });
   }, [username]);
+
+  const isOwnProfile = useMemo(
+    () => profile?.username === currentUser?.username,
+    [profile?.username, currentUser?.username]
+  );
 
   const tabNavButtons = useMemo(
     () =>
@@ -101,13 +107,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   let mainContent: ReactNode;
   if (activeTab === 'overview') {
-    mainContent = (
-      <ProfileOverview
-        isOwnProfile={false}
-        // posts={overviewPosts}
-        // setPosts={setOverviewPosts}
-      />
-    );
+    mainContent = <ProfileOverview isOwnProfile={isOwnProfile} />;
   } else {
     mainContent = (
       <PostList

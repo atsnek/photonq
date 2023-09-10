@@ -27,6 +27,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
   };
 
   const hasOverviewPosts = useMemo(() => postData.posts.length > 0, [postData]);
+  console.log('visiting own profile: ', isOwnProfile);
 
   return (
     <VStack gap={hasOverviewPosts ? 12 : 0}>
@@ -34,6 +35,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
         postData={postData}
         previewType="card"
         hidePostAuthor
+        showPostPrivacy={isOwnProfile}
         itemsPerPage={6}
       />
       {hasOverviewPosts && <Divider />}

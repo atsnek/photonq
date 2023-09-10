@@ -30,6 +30,7 @@ interface IPostListProps extends StackProps {
   defaultFilterQuery?: string;
   setFilterQuery?: (query: string) => void;
   showNoListResult?: boolean;
+  showPostPrivacy?: boolean;
 }
 
 /**
@@ -46,6 +47,7 @@ const PostList: FC<IPostListProps> = ({
   defaultFilterQuery,
   setFilterQuery,
   showNoListResult = true,
+  showPostPrivacy,
   ...props
 }) => {
   const pagination = usePagination({
@@ -95,6 +97,7 @@ const PostList: FC<IPostListProps> = ({
           {...postPreview}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}
+          showPrivacy={showPostPrivacy}
           wrapperProps={{ minW: '33%' }}
         />
       ));

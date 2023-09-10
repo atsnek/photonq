@@ -70,6 +70,7 @@ export interface IPostPreviewProps<T> extends TPostPreview {
   canManage?: boolean;
   wrapperProps?: T;
   hideAuthor?: boolean;
+  showPrivacy?: boolean;
 }
 
 export type TPostReviewStatus = 'pending' | 'approved' | 'rejected';

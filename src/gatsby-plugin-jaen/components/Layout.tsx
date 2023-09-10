@@ -8,7 +8,6 @@ import { useAppStore } from '../../shared/store/store';
 import { stat } from 'fs';
 
 const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
-  console.log('children: ', children);
   const path = useLocation().pathname;
   const hiddenTopNavPaths = ['/profile', '/blog-post'];
   const fetchUser = useAppStore(state => state.fetchUser);

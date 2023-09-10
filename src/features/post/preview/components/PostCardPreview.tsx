@@ -52,6 +52,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   summary,
   toggleLike,
   canManage,
+  showPrivacy,
   wrapperProps
 }) => {
   let ratingComp: ReactNode = (
