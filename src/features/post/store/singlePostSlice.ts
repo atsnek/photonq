@@ -32,11 +32,15 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set) => ({
             //TODO: Implement this once the backend is ready
         }))
     },
-    fetchPost: async (id) => {
-        const post = await fetchPost(id);
-        set(produce((state: TStoreState) => {
-            state.singlePost.post = post;
-        }))
+    fetchPost: async (slug) => {
+
+        const [currentUser] = await sq.query(q => q.userMe);
+
+        // const [post, postErro] = await sq.query(q => q.socialPost({ slug: slug }));
+
+        // set(produce((state: TStoreState) => {
+        //     state.singlePost.post = post;
+        // }))
     },
     fetchPostAuthor: async () => {
         const authorId = useAppStore.getState().singlePost.post?.authorProfileId;

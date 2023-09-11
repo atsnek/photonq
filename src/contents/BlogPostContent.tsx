@@ -4,6 +4,7 @@ import { FC, useState } from 'react';
 import PostEditorView from '../features/post/editor/components/PostEditorView';
 import PostReaderView from '../features/post/reader/components/PostReaderView';
 import { navigate } from '@reach/router';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 export interface IBlogPostContentProps {
   postId?: string;

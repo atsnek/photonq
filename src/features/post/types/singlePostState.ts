@@ -13,7 +13,7 @@ export interface ISinglePostStateActions {
     editTitle: (title: string) => void;
     editContent: (content: string) => void;
     editSummary: (summary: string) => void;
-    fetchPost: (id: TPost['id']) => void;
+    fetchPost: (slug: string) => void;
     fetchPostAuthor: () => void;
 }
 
