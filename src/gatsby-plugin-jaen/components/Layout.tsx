@@ -10,7 +10,7 @@ import { stat } from 'fs';
 const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   const path = useLocation().pathname;
   const hiddenTopNavPaths = ['/profile', '/blog-post'];
-  const fetchUser = useAppStore(state => state.fetchUser);
+  const fetchUser = useAppStore(state => state.currentUser.fetchUser);
 
   const docsPaths = ['/docs', '/docs/community', '/docs/new-post/'];
 

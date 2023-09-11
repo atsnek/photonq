@@ -1,20 +1,17 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { PostSlice, createPostSlice } from "../../features/post/store/postSlice";
-import { ProfileSlice, createProfileSlice } from "../../features/user/store/profileSlice";
-import { UserSlice, createUserSlice } from "../../features/user/store/userSlice";
+import { createProfileSlice } from "../../features/user/store/profileSlice";
+import { createUserSlice } from "../../features/user/store/userSlice";
+import { TStoreState } from "../types/store";
+import { createPostSlice } from "../../features/post/store/postSlice";
 
-export type TStoreSlices = PostSlice & ProfileSlice & UserSlice;
 /**
  * App store for global state management
  * @returns {Object} App store
  */
-// export const useAppStore = create<PostSlice>()((...a) => ({
-//     ...createPostSlice(...a)
-// }));
-export const useAppStore = create<TStoreSlices>()(
+export const useAppStore = create<TStoreState>()(
     devtools((...a) => ({
-        ...createPostSlice(...a),
-        ...createProfileSlice(...a),
-        ...createUserSlice(...a),
+        singlePost: createPostSlice(...a),
+        profile: createProfileSlice(...a),
+        currentUser: createUserSlice(...a),
     })));

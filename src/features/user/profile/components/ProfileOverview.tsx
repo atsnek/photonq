@@ -17,8 +17,8 @@ interface IProfileOverviewProps {
  * Component for displaying a user's profile overview.
  */
 const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
-  const postData = useAppStore(state => state.overviewPosts);
-  const activity = useAppStore(state => state.activity);
+  const postData = useAppStore(state => state.profile.overviewPosts);
+  const activity = useAppStore(state => state.profile.activity);
   //TODO: implement toggleLike with API call
   const toggleLike = (id: TPostPreview['id']) => {
     if (isOwnProfile) return;

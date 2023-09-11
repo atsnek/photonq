@@ -1,23 +1,13 @@
-import { Profile } from "@snek-functions/origin/dist/schema.generated";
 import { StateCreator } from "zustand";
-import { PostSlice } from "../../post/store/postSlice";
 import { TProfile, TUser } from "../types/user";
-import { TPostListData, TPostPrivacy } from "../../post/types/post";
+import { TPostPrivacy } from "../../post/types/post";
 import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { sq } from "@snek-functions/origin";
 import { produce } from "immer";
-import { getUserDisplayname } from "../utils/user";
-import { TStoreSlices } from "../../../shared/store/store";
+import { TStoreSlice, TStoreState } from "../../../shared/types/store";
+import { IProfileStateDefinition, TProfileSlice } from "../types/profileState";
 
-
-export interface ProfileSlice {
-    profile?: TUser,
-    overviewPosts: TPostListData,
-    activity: TActivitySection[],
-    fetchProfile: (username: string, currentUserId?: string) => Promise<boolean>,
-}
-
-export const createProfileSlice: StateCreator<TStoreSlices, [["zustand/devtools", never]], [], ProfileSlice> = (set) => ({
+export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
     activity: [],
     overviewPosts: { state: "loading", posts: [] },
     profile: undefined,
@@ -31,7 +21,6 @@ export const createProfileSlice: StateCreator<TStoreSlices, [["zustand/devtools"
             const profile = user.profile;
 
             const activitySections: TActivitySection[] = [];
-
             let currentActivitySection: TActivitySection | null = null;
 
             profile?.activity.forEach(({ createdAt, follow, post, type }) => {
@@ -66,9 +55,9 @@ export const createProfileSlice: StateCreator<TStoreSlices, [["zustand/devtools"
                     title = `Created a profile`;
                     href = '#';
                 } else if (type === 'follow_follow' && follow) {
-                    title = `Followed ${follow.followed ? follow.followed.userId : 'a user'
+                    title = `Followed ${follow.followed ? follow.followed.id : 'a user'
                         }`;
-                    href = (follow.followed?.userId) ? '/profile/' + follow.followed?.userId : '#';
+                    href = (follow.followed?.id) ? '/profile/' + follow.followed?.id : '#';
                 }
 
                 currentActivitySection.activities.push({
@@ -121,13 +110,13 @@ export const createProfileSlice: StateCreator<TStoreSlices, [["zustand/devtools"
 
         if (error || !profileData) return false;
 
-        set(produce((state: ProfileSlice) => {
-            state.activity = profileData.activity;
-            state.overviewPosts = {
+        set(produce((state: TStoreState): void => {
+            state.profile.activity = profileData.activity;
+            state.profile.overviewPosts = {
                 state: "success",
                 posts: profileData.posts
             };
-            state.profile = profileData.user;
+            state.profile.profile = profileData.user;
         }))
         return true;
     }

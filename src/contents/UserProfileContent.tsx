@@ -7,19 +7,8 @@ import ProfileOverview from '../features/user/profile/components/ProfileOverview
 import { navigate, useLocation } from '@reach/router';
 import TbUser from '../shared/components/icons/tabler/TbUser';
 import TbBook from '../shared/components/icons/tabler/TbBook';
-import { TPostListData, TPostPrivacy } from '../features/post/types/post';
-import TopNav from '../shared/containers/navigation/TopNav';
-import { SnekUser, useAuthenticationContext } from '@atsnek/jaen';
-import {
-  TActivitySection,
-  TActivityType
-} from '../features/user/activity/types/activity';
-import { sq } from '@snek-functions/origin';
-import { TProfile } from '../features/user/types/user';
-import { TLinkData } from '../shared/types/navigation';
-import { Post } from '@snek-functions/origin/dist/schema.generated';
-import useAuth from '../shared/hooks/use-auth';
-import { useAppSelector } from '@atsnek/jaen/dist/redux';
+import { TPostListData } from '../features/post/types/post';
+import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../shared/store/store';
 
 const tabNavItems = [
@@ -49,9 +38,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     state: 'inactive',
     posts: []
   });
-  const profile = useAppStore(state => state.profile);
-  const fetchProfile = useAppStore(state => state.fetchProfile);
-  const currentUser = useAppStore(state => state.userMe);
+  const profile = useAppStore(state => state.profile.profile);
+  const fetchProfile = useAppStore(state => state.profile.fetchProfile);
+  const currentUser = useAppStore(state => state.currentUser.userMe);
 
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [activeTab, setActiveTab] =
@@ -60,11 +49,13 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   useEffect(() => {
     console.log('fetching data for profile', username);
+    console.log(fetchProfile, '<-----');
     fetchProfile(username, user?.id).then(succeed => {
       if (!succeed) navigate('/docs/');
     });
   }, [username]);
 
+  console.log(profile, currentUser);
   const isOwnProfile = useMemo(
     () => profile?.username === currentUser?.username,
     [profile?.username, currentUser?.username]

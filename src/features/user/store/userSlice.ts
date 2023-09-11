@@ -1,25 +1,20 @@
-import { StateCreator } from "zustand";
-import { SnekUser } from "@atsnek/jaen";
 import { produce } from "immer";
 import { sq } from "@snek-functions/origin";
-import { TStoreSlices } from "../../../shared/store/store";
+import { TStoreSlice } from "../../../shared/types/store";
+import { TUserSlice } from "../types/userState";
 
 
-export interface UserSlice {
-    userMe: SnekUser | null;
-    fetchUser: () => void;
-}
-
-export const createUserSlice: StateCreator<TStoreSlices, [["zustand/devtools", never]], [], UserSlice> = (set) => ({
+export const createUserSlice: TStoreSlice<TUserSlice> = (set) => ({
     userMe: null,
     fetchUser: async () => {
         const [snekUser, error] = await sq.query(q => q.userMe);
 
         if (error || !snekUser) return;
 
-        set(produce(state => {
+        set(produce((state: any) => {
+            console.log("state:", state)
             console.log("logged in snek user: ", snekUser)
-            state.userMe = snekUser
+            state.currentUser.userMe = snekUser
         }));
     },
 })
