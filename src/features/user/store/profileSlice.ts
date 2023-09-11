@@ -35,9 +35,14 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                     date.getDate()
                 );
 
+                console.log("old section date: ", currentActivitySection?.timestamp, "new section date: ", sectionDate.toISOString());
+
+                const currentSectionDate = currentActivitySection ? new Date(currentActivitySection.timestamp) : undefined;
+
                 if (
-                    !currentActivitySection ||
-                    currentActivitySection.timestamp !== sectionDate.toISOString()
+                    !currentActivitySection || !currentSectionDate ||
+                    currentSectionDate.getFullYear() !== sectionDate.getFullYear() ||
+                    currentSectionDate.getMonth() !== sectionDate.getMonth()
                 ) {
                     currentActivitySection = {
                         timestamp: sectionDate.toISOString(),
