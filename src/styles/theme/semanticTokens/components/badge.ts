@@ -2,21 +2,21 @@ const smtBadgeComponent = {
     subtle: {
         green: {
             color: {
-                default: 'green.500',
+                default: 'green.800',
                 _dark: 'green.600'
             },
             bgColor: {
-                default: 'green.100',
+                default: 'green.300',
                 _dark: 'green.900'
             },
         },
         yellow: {
             color: {
-                default: 'yellow.500',
+                default: 'yellow.800',
                 _dark: 'yellow.300'
             },
             bgColor: {
-                default: 'yellow.100',
+                default: 'yellow.300',
                 _dark: 'yellow.900'
             },
         },
