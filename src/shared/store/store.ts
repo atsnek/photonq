@@ -3,7 +3,8 @@ import { devtools } from "zustand/middleware";
 import { createProfileSlice } from "../../features/user/store/profileSlice";
 import { createUserSlice } from "../../features/user/store/userSlice";
 import { TStoreState } from "../types/store";
-import { createPostSlice } from "../../features/post/store/postSlice";
+import { createSinglePostSlice } from "../../features/post/store/singlePostSlice";
+import { createCommunityPostsSlice } from "../../features/post/store/communityPostsSlice";
 
 /**
  * App store for global state management
@@ -11,7 +12,8 @@ import { createPostSlice } from "../../features/post/store/postSlice";
  */
 export const useAppStore = create<TStoreState>()(
     devtools((...a) => ({
-        singlePost: createPostSlice(...a),
+        singlePost: createSinglePostSlice(...a),
         profile: createProfileSlice(...a),
         currentUser: createUserSlice(...a),
+        communityPosts: createCommunityPostsSlice(...a),
     })));

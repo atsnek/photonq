@@ -128,7 +128,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
               fontSize="sm"
               variant="hover-theme"
             >
-              @emilybrooks
+              @{profileId}
             </Link>
           )}
           <PostPreviewRating

@@ -42,6 +42,7 @@ export type TPost = {
 //   Optional<TPost, 'hasLiked' | 'canManage'>,
 //   'content'
 // >;
+//TODO: Replace profile with user once the backend is ready
 export type TPostPreview = {
   id: string;
   title: string;

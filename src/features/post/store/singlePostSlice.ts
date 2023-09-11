@@ -2,10 +2,10 @@ import { fetchPost } from "../../../shared/utils/features/post";
 import { useAppStore } from "../../../shared/store/store";
 import { fetchProfile } from "../../user/utils/user";
 import { produce } from "immer";
-import { TPostSlice } from "../types/postState";
+import { TSinglePostSlice } from "../types/singlePostState";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 
-export const createPostSlice: TStoreSlice<TPostSlice> = (set) => ({
+export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set) => ({
     editContent: (content) => {
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;

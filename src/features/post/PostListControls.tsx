@@ -31,7 +31,7 @@ import { sq } from '@snek-functions/origin';
 import { formatPostDate } from '../../shared/utils/features/post';
 
 interface IPostListControlsProps extends StackProps {
-  setPosts: (data: TPostListData) => void;
+  // setPosts: (data: TPostListData) => void;
   enableAdvancedSearch?: boolean;
   showCreatePostButton?: boolean;
   defaultQuery?: string;
@@ -39,7 +39,7 @@ interface IPostListControlsProps extends StackProps {
 }
 
 const PostListControls: FC<IPostListControlsProps> = ({
-  setPosts,
+  // setPosts,
   enableAdvancedSearch = true,
   showCreatePostButton,
   defaultQuery,
@@ -109,16 +109,16 @@ const PostListControls: FC<IPostListControlsProps> = ({
     clearTimeout(stateRef.current.timeout);
     stateRef.current.timeout = setTimeout(async () => {
       if (!query.length) {
-        stateRef.current.state = 'inactive';
-        setPosts({ state: 'inactive', posts: [] });
+        // stateRef.current.state = 'inactive';
+        // setPosts({ state: 'inactive', posts: [] });
         return;
       }
-      console.log('dkjfklsfjkd');
-      stateRef.current.state = 'loading';
-      setPosts({
-        state: 'loading',
-        posts: []
-      });
+      // console.log('dkjfklsfjkd');
+      // stateRef.current.state = 'loading';
+      // setPosts({
+      //   state: 'loading',
+      //   posts: []
+      // });
       //TODO: Implement this back in with the new API
       // const posts = await fetchPosts(query);
       // console.log('fetched posts: ', posts);

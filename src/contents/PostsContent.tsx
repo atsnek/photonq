@@ -1,13 +1,9 @@
 import { Box, Heading, VStack, keyframes, Container } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
-import MainGrid from '../shared/containers/components/MainGrid';
-import { useMenuContext } from '../shared/contexts/menu';
 import PostList from '../features/post/PostList';
 import { TPostListData } from '../features/post/types/post';
 import PostListControls from '../features/post/PostListControls';
-import LeftNav from '../shared/containers/navigation/LeftNav';
-import PageDirectory from '../shared/containers/navigation/components/PageDirectory';
-import { mainComponentBaseStyle } from '../shared/containers/main/mainContent.vars';
+import { useAppStore } from '../shared/store/store';
 
 const gradientAnimation = keyframes`
   0%{background-position:0% 50%}
@@ -20,41 +16,40 @@ const gradientAnimation = keyframes`
  * This is the main page for discovering and searching posts.
  */
 const PostsContent: FC = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const { menuStructure } = useMenuContext();
-  const [featuredPosts, setFeaturedPosts] = useState<TPostListData>({
-    state: 'loading',
-    posts: []
-  });
-  const [latestPosts, setLatestPosts] = useState<TPostListData>({
-    state: 'loading',
-    posts: []
-  });
+  const featuredPosts = useAppStore(
+    state => state.communityPosts.featuredPosts
+  );
+
+  const fetchFeaturedPosts = useAppStore(
+    state => state.communityPosts.fetchFeaturedPosts
+  );
+  // const [featuredPosts, setFeaturedPosts] = useState<TPostListData>({
+  //   state: 'loading',
+  //   posts: []
+  // });
+  const latestPosts = useAppStore(state => state.communityPosts.latestPosts);
+  const fetchLatestPosts = useAppStore(
+    state => state.communityPosts.fetchLatestPosts
+  );
+  // const [latestPosts, setLatestPosts] = useState<TPostListData>({
+  //   state: 'loading',
+  //   posts: []
+  // });
   const [postResults, setPostResults] = useState<TPostListData>({
     state: 'inactive',
     posts: []
   });
 
   useEffect(() => {
-    // Simulate loading posts from an API
-    setTimeout(() => {
-      // setFeaturedPosts({ posts: posts.slice(0, 4), state: 'success' });
-      // setLatestPosts({ posts: posts.slice(4), state: 'success' });
-    }, 3000);
+    fetchFeaturedPosts();
+    fetchLatestPosts();
   }, []);
 
   return (
     <Container maxW="7xl" mt={10}>
-      {/* <Box display={{ base: 'none', md: 'block' }} position="sticky">
-        <LeftNav isExpanded={isExpanded} setIsExpanded={setIsExpanded}>
-          <Box w={isExpanded ? 'auto' : 0}>
-            <PageDirectory data={menuStructure} isExpanded={isExpanded} />
-          </Box>
-        </LeftNav>
-      </Box> */}
       <VStack>
         <PostListControls
-          setPosts={setPostResults}
+          // setPosts={setPostResults}
           w={{ base: 'full', md: '75%' }}
           showCreatePostButton
         />

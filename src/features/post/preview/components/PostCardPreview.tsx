@@ -10,11 +10,12 @@ import {
   Badge,
   Text
 } from '@chakra-ui/react';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect, useMemo } from 'react';
 import { IPostPreviewProps } from '../../types/post';
 import PostPreviewRating from './PostPreviewRating';
 import PostPreviewManageMenu from './PostPreviewManageMenu';
 import Link from '../../../../shared/components/Link';
+import { sq } from '@snek-functions/origin';
 
 const postCardPreviewStyling = {
   wrapper: {
@@ -56,6 +57,10 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   showPrivacy,
   wrapperProps
 }) => {
+  const username = useMemo(async () => {
+    if (!profileId) return '';
+  }, [profileId]);
+
   let ratingComp: ReactNode = (
     <PostPreviewRating
       id={id}

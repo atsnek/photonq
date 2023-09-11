@@ -2,12 +2,12 @@ import { TUser } from "../../user/types/user";
 import { TPost } from "./post";
 
 
-export interface IPostStateDefinition {
+export interface ISinglePostStateDefinition {
     post?: TPost;
     postAuthor?: TUser;
 }
 
-export interface IPostStateActions {
+export interface ISinglePostStateActions {
     toggleRating: () => void;
     editTitle: (title: string) => void;
     editContent: (content: string) => void;
@@ -16,4 +16,4 @@ export interface IPostStateActions {
     fetchPostAuthor: () => void;
 }
 
-export type TPostSlice = IPostStateDefinition & IPostStateActions;
+export type TSinglePostSlice = ISinglePostStateDefinition & ISinglePostStateActions;

@@ -163,7 +163,7 @@ import { TPost, TPostPreview } from '../../../features/post/types/post';
 // export { posts };
 
 export const formatPostDate = (date?: string) => {
-    if (!date) return undefined;
+    if (!date) return '';
     const dateObj = new Date(date);
     if (isNaN(dateObj.getTime())) return '';
 
