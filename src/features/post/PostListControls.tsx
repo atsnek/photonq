@@ -31,7 +31,7 @@ import { sq } from '@snek-functions/origin';
 import { formatPostDate } from '../../shared/utils/features/post';
 
 interface IPostListControlsProps extends StackProps {
-  // setPosts: (data: TPostListData) => void;
+  fetchPosts: (query: string) => void;
   enableAdvancedSearch?: boolean;
   showCreatePostButton?: boolean;
   defaultQuery?: string;
@@ -39,7 +39,7 @@ interface IPostListControlsProps extends StackProps {
 }
 
 const PostListControls: FC<IPostListControlsProps> = ({
-  // setPosts,
+  fetchPosts,
   enableAdvancedSearch = true,
   showCreatePostButton,
   defaultQuery,
@@ -108,27 +108,12 @@ const PostListControls: FC<IPostListControlsProps> = ({
 
     clearTimeout(stateRef.current.timeout);
     stateRef.current.timeout = setTimeout(async () => {
-      if (!query.length) {
-        // stateRef.current.state = 'inactive';
-        // setPosts({ state: 'inactive', posts: [] });
-        return;
-      }
-      // console.log('dkjfklsfjkd');
-      // stateRef.current.state = 'loading';
-      // setPosts({
-      //   state: 'loading',
-      //   posts: []
-      // });
-      //TODO: Implement this back in with the new API
-      // const posts = await fetchPosts(query);
-      // console.log('fetched posts: ', posts);
-      // //@ts-expect-error - The state might be changed by another call
-      // if (stateRef.current.state === 'inactive') return;
-      // stateRef.current.state = 'success';
-      // setPosts({
-      //   state: 'success',
-      //   posts: posts
-      // });
+      // if (!query.length) {
+      // stateRef.current.state = 'inactive';
+      // setPosts({ state: 'inactive', posts: [] });
+      //   return;
+      // }
+      fetchPosts(query);
     }, 300);
   };
 

@@ -58,7 +58,6 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         if (error) return;
         // fetch trending posts
 
-
         const latestPosts = await Promise.all(posts.filter(p => p !== null).map(async (p): Promise<TPostPreview> => {
             const post = p as Post;
             const [author] = await sq.query(q => q.user({ id: post.profileId }));

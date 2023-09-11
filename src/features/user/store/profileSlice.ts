@@ -1,6 +1,6 @@
 import { StateCreator } from "zustand";
 import { TProfile, TUser } from "../types/user";
-import { TPostPrivacy } from "../../post/types/post";
+import { TPostListData, TPostPreview, TPostPrivacy } from "../../post/types/post";
 import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { sq } from "@snek-functions/origin";
 import { produce } from "immer";
@@ -8,14 +8,18 @@ import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { IProfileStateDefinition, TProfileSlice } from "../types/profileState";
 import { getUserDisplayname } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
+import { Post, PrivacyInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
     activity: [],
     overviewPosts: { state: "loading", posts: [] },
+    searchPosts: { state: "inactive", posts: [] },
     profile: undefined,
     fetchProfile: async (username) => {
         console.log("fetching profile for", username);
         set(produce(state => ({ overviewPosts: { state: "loading", posts: [] } })))
+        const [currentUser] = await sq.query(q => q.userMe);
+
         const [profileData, error] = await sq.query((q): TProfile | undefined => {
             //@ts-ignore TODO: Add this global var in the definition file
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: username })
@@ -77,7 +81,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                 });
             });
 
-            const currentUser = useAppStore.getState().currentUser.userMe;
 
             return {
                 user: {
@@ -135,5 +138,77 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
             state.profile.profile = profileData.user;
         }))
         return true;
-    }
+    },
+    fetchSearchPosts: async (query, limit, offset) => {
+
+        if (!query.length) {
+            set(produce((state: TStoreState): void => {
+                state.profile.searchPosts = {
+                    state: "inactive",
+                    posts: []
+                };
+            }))
+            return;
+        }
+
+        set(produce(state => ({ overviewPosts: { state: "loading", posts: [] } })))
+
+        console.log("searching for posts with query: ", query, "limit: ", limit, "offset: ", offset)
+
+        const [currentUser] = await sq.query(q => q.userMe);
+        const currentProfile = useAppStore.getState().profile.profile;
+
+        if (!currentProfile) return;
+
+        const [publicPosts, publicPostsError] = await sq.query(q => q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: PrivacyInputInput.public } }));
+
+        const [privatePosts, privatePostsError] = (currentProfile.id === currentUser?.id) ? await sq.query(q => q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: PrivacyInputInput.private } })) : [[], null];
+
+        if ((publicPostsError && privatePostsError) || (!publicPosts && !privatePosts)) {
+            set(produce((state: TStoreState): void => {
+                state.profile.searchPosts = {
+                    state: "error",
+                    posts: []
+                };
+            }))
+            return;
+        }
+
+        const combinedPosts = [...publicPosts, ...privatePosts];
+
+
+        const searchPosts: TPostListData = {
+            state: "success",
+            posts: await Promise.all(combinedPosts.filter(post => post !== null).map(async (p): Promise<TPostPreview> => {
+                //@ts-expect-error
+                const [user] = await sq.query(q => q.user({ resourceId: __SNEK_RESOURCE_ID__, id: p?.profileId }));
+                const post = p as Post;
+                const date = new Date(post.createdAt);
+                return {
+                    id: post.id,
+                    title: post.title,
+                    summary: post.summary,
+                    stars: post.stars.length,
+                    avatarUrl: post.avatarURL,
+                    privacy: post.privacy as TPostPrivacy,
+                    profile: {
+                        displayName: getUserDisplayname(user),
+                        id: user.id,
+                        username: user.username,
+                        avatarUrl: user.details?.avatarURL,
+                    },
+                    createdAt: `
+                              ${date.getFullYear()}-
+                              ${date.getMonth().toString().padStart(2, '0')}-
+                              ${date.getDate().toString().padStart(2, '0')}
+                            `,
+                    canManage: false,
+                }
+            }))
+        }
+
+        set(produce((state: TStoreState): void => {
+            state.profile.searchPosts = searchPosts;
+        }));
+    },
 })

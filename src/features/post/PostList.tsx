@@ -20,7 +20,7 @@ import PostListItemPreviewSkeleton from './preview/components/PostListItemPrevie
 import PostListNoResults from './preview/components/PostListNoResults';
 
 interface IPostListProps extends StackProps {
-  // setPosts?: Dispatch<SetStateAction<TPostListData>>;
+  fetchPosts?: (query: string) => void;
   postData: TPostListData;
   itemsPerPage?: number;
   maxItems?: number;
@@ -38,7 +38,7 @@ interface IPostListProps extends StackProps {
  * Component for displaying a sort- and filterable list of posts.
  */
 const PostList: FC<IPostListProps> = ({
-  // setPosts,
+  fetchPosts,
   postData,
   itemsPerPage = 10,
   maxItems = itemsPerPage,
@@ -129,9 +129,9 @@ const PostList: FC<IPostListProps> = ({
 
   return (
     <VStack w="full" gap={5} {...props}>
-      {showControls && (
+      {showControls && fetchPosts && (
         <PostListControls
-          // setPosts={setPosts}
+          fetchPosts={fetchPosts}
           defaultQuery={defaultFilterQuery}
           setQuery={setFilterQuery}
         />

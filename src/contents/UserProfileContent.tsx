@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Stack, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, HStack, Stack } from '@chakra-ui/react';
 import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import MainGrid from '../shared/containers/components/MainGrid';
 import LeftNavProfile from '../features/user/profile/components/LeftNavProfile';
@@ -7,7 +7,6 @@ import ProfileOverview from '../features/user/profile/components/ProfileOverview
 import { navigate, useLocation } from '@reach/router';
 import TbUser from '../shared/components/icons/tabler/TbUser';
 import TbBook from '../shared/components/icons/tabler/TbBook';
-import { TPostListData } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../shared/store/store';
 
@@ -32,15 +31,14 @@ interface IUserProfileContent {
  * Component for displaying a certain user profile.
  */
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
+  const SEARCH_LIMIT = 10;
+
   const { hash } = useLocation();
-  const topNavDisclosure = useDisclosure();
-  // const [posts, setPosts] = useState<TPostListData>({
-  //   state: 'inactive',
-  //   posts: []
-  // });
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
   const currentUser = useAppStore(state => state.currentUser.userMe);
+  const searchPosts = useAppStore(state => state.profile.searchPosts);
+  const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
 
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [activeTab, setActiveTab] =
@@ -48,14 +46,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { user } = useAuthenticationContext();
 
   useEffect(() => {
-    console.log('fetching data for profile', username);
-    console.log(fetchProfile, '<-----');
     fetchProfile(username, user?.id).then(succeed => {
       if (!succeed) navigate('/docs/');
     });
   }, [username]);
 
-  console.log(profile, currentUser);
   const isOwnProfile = useMemo(
     () => profile?.username === currentUser?.username,
     [profile?.username, currentUser?.username]
@@ -102,8 +97,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   } else {
     mainContent = (
       <PostList
-        // setPosts={setPosts}
-        postData={{ posts: [], state: 'loading' }}
+        fetchPosts={(query: string) => fetchSearchPosts(query, SEARCH_LIMIT, 0)}
+        postData={searchPosts}
         previewType="list"
         defaultFilterQuery={postFilterQuery}
         setFilterQuery={setPostFilterQuery}
@@ -117,7 +112,6 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     setActiveTab(hash === '#posts' ? 'posts' : 'overview');
   }, []);
 
-  //! Sticky doesnt work
   //TODO: Fix hydration issue
   return (
     <>
