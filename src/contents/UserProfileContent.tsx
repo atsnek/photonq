@@ -34,10 +34,10 @@ interface IUserProfileContent {
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { hash } = useLocation();
   const topNavDisclosure = useDisclosure();
-  const [posts, setPosts] = useState<TPostListData>({
-    state: 'inactive',
-    posts: []
-  });
+  // const [posts, setPosts] = useState<TPostListData>({
+  //   state: 'inactive',
+  //   posts: []
+  // });
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
   const currentUser = useAppStore(state => state.currentUser.userMe);
@@ -102,8 +102,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   } else {
     mainContent = (
       <PostList
-        setPosts={setPosts}
-        postData={posts}
+        // setPosts={setPosts}
+        postData={{ posts: [], state: 'loading' }}
         previewType="list"
         defaultFilterQuery={postFilterQuery}
         setFilterQuery={setPostFilterQuery}

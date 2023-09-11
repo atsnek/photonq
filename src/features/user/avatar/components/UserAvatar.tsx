@@ -7,10 +7,10 @@ import {
   Tooltip
 } from '@chakra-ui/react';
 import UserPreview from './UserPreview';
-import { SnekUser } from '@atsnek/jaen';
+import { TUser } from '../../types/user';
 
 export interface IUserAvatarProps extends AvatarProps {
-  user: SnekUser;
+  user: TUser;
   showTooltip?: boolean;
   redirectToProfile?: boolean;
   scaleOnHover?: boolean;
@@ -23,8 +23,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({
   scaleOnHover,
   ...props
 }) => {
-  const imgSrc =
-    user.details?.avatarURL ?? 'https://api.dicebear.com/6.x/thumbs/svg';
+  const imgSrc = user.avatarUrl ?? 'https://api.dicebear.com/6.x/thumbs/svg';
   let avatarProps: AvatarProps = {};
 
   if (scaleOnHover) {

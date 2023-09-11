@@ -37,6 +37,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
         hidePostAuthor
         showPostPrivacy={isOwnProfile}
         itemsPerPage={6}
+        maxItems={6}
       />
       {hasOverviewPosts && <Divider />}
       <ActivityList activity={activity} mb={10} />

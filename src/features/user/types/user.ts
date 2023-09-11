@@ -5,8 +5,9 @@ import { TActivity, TActivitySection } from "../activity/types/activity";
  * This represents a single user.
  */
 export type TUser = {
+    id: string;
     username: string; // This identifies the user and needs to be unique
-    displayName: string; // This is the name that is displayed to other users
+    displayName: string; // This is the name visible to other users
     bio: string | null;
     avatarUrl?: string;
     socials: TUserSocials[];

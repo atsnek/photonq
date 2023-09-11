@@ -3,6 +3,7 @@ import { useState } from 'react';
 interface IUsePaginationProps {
   itemsPerPage: number;
   totalItems: number;
+  maxItems?: number;
 }
 
 interface IUsePaginationReturn {
@@ -19,7 +20,8 @@ interface IUsePaginationReturn {
  */
 const usePagination = ({
   itemsPerPage,
-  totalItems
+  totalItems,
+  maxItems = totalItems
 }: IUsePaginationProps): IUsePaginationReturn => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -28,7 +30,7 @@ const usePagination = ({
    * Increments the current page by 1 if the current page is less than the total pages
    */
   const nextPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages && currentPage < maxItems / itemsPerPage) {
       setCurrentPage(page => page + 1);
     }
   };

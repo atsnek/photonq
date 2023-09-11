@@ -10,12 +10,11 @@ import {
   Badge,
   Text
 } from '@chakra-ui/react';
-import { FC, ReactNode, useEffect, useMemo } from 'react';
+import { FC, ReactNode } from 'react';
 import { IPostPreviewProps } from '../../types/post';
 import PostPreviewRating from './PostPreviewRating';
 import PostPreviewManageMenu from './PostPreviewManageMenu';
 import Link from '../../../../shared/components/Link';
-import { sq } from '@snek-functions/origin';
 
 const postCardPreviewStyling = {
   wrapper: {
@@ -45,7 +44,7 @@ const postCardPreviewStyling = {
 const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   id,
   avatarUrl,
-  profileId,
+  profile,
   createdAt,
   stars,
   hideAuthor,
@@ -57,9 +56,9 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   showPrivacy,
   wrapperProps
 }) => {
-  const username = useMemo(async () => {
-    if (!profileId) return '';
-  }, [profileId]);
+  // const username = useMemo(async () => {
+  //   if (!profile) return '';
+  // }, [profile]);
 
   let ratingComp: ReactNode = (
     <PostPreviewRating
@@ -108,9 +107,9 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
               variant="hover-theme"
               fontSize="sm"
               color="components.postPreview.author.color"
-              href={`/profile/${profileId}`} //TODO: Change to author username
+              href={`/user/${profile.username}`}
             >
-              @{profileId}
+              @{profile.username}
             </Link>
           )}
           <Heading
@@ -120,7 +119,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             flex={1}
             w={{ base: 'full', md: 'auto' }}
           >
-            <LinkOverlay href={`/docs/${id}`}>{title}</LinkOverlay>
+            <LinkOverlay href={`/post/${id}`}>{title}</LinkOverlay>
           </Heading>
         </Box>
       </HStack>

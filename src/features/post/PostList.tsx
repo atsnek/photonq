@@ -23,6 +23,7 @@ interface IPostListProps extends StackProps {
   // setPosts?: Dispatch<SetStateAction<TPostListData>>;
   postData: TPostListData;
   itemsPerPage?: number;
+  maxItems?: number;
   showControls?: boolean;
   hidePostAuthor?: boolean;
   previewType?: 'card' | 'list';
@@ -40,6 +41,7 @@ const PostList: FC<IPostListProps> = ({
   // setPosts,
   postData,
   itemsPerPage = 10,
+  maxItems = itemsPerPage,
   showControls,
   hidePostAuthor,
   previewType = 'list',
@@ -53,7 +55,10 @@ const PostList: FC<IPostListProps> = ({
   const pagination = usePagination({
     itemsPerPage: itemsPerPage,
     totalItems:
-      postData.state != 'success' ? itemsPerPage / 2 : postData.posts.length
+      postData.state != 'success'
+        ? itemsPerPage / 2
+        : Math.min(postData.posts.length, maxItems),
+    maxItems: maxItems
   });
 
   const toggleLike = (id: TPostPreview['id']) => {
@@ -78,7 +83,7 @@ const PostList: FC<IPostListProps> = ({
       PreviewComp = PostListItemPreview;
       PreviewSkeletonComp = PostListItemPreviewSkeleton;
     }
-    console.log('post data: ', postData);
+
     if (postData.state === 'loading') {
       return Array.from({ length: pagination.itemsPerPage }).map((_, i) => (
         <PreviewSkeletonComp
@@ -89,7 +94,7 @@ const PostList: FC<IPostListProps> = ({
       ));
     }
     return postData.posts
-      .slice(offset, offset + pagination.itemsPerPage)
+      .slice(offset, Math.min(offset + pagination.itemsPerPage, maxItems))
       .map(postPreview => (
         <PreviewComp
           key={postPreview.id}
@@ -137,30 +142,31 @@ const PostList: FC<IPostListProps> = ({
         ) : (
           <PostListNoResults mt={10} />
         ))}
-      {pagination.totalPages > 1 && (
-        <HStack alignContent="space-around">
-          <Button
-            variant="ghost-hover-outline"
-            size="sm"
-            borderRadius="lg"
-            leftIcon={<ChevronLeftIcon />}
-            isDisabled={pagination.currentPage === 1}
-            onClick={pagination.previousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="ghost-hover-outline"
-            size="sm"
-            borderRadius="lg"
-            rightIcon={<ChevronRightIcon />}
-            isDisabled={pagination.currentPage === pagination.totalPages}
-            onClick={pagination.nextPage}
-          >
-            Next
-          </Button>
-        </HStack>
-      )}
+      {pagination.totalPages > 1 &&
+        (maxItems === undefined || itemsPerPage < maxItems) && (
+          <HStack alignContent="space-around">
+            <Button
+              variant="ghost-hover-outline"
+              size="sm"
+              borderRadius="lg"
+              leftIcon={<ChevronLeftIcon />}
+              isDisabled={pagination.currentPage === 1}
+              onClick={pagination.previousPage}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="ghost-hover-outline"
+              size="sm"
+              borderRadius="lg"
+              rightIcon={<ChevronRightIcon />}
+              isDisabled={pagination.currentPage === pagination.totalPages}
+              onClick={pagination.nextPage}
+            >
+              Next
+            </Button>
+          </HStack>
+        )}
     </VStack>
   );
 };

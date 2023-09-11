@@ -1,4 +1,4 @@
-import { SnekUser } from "@atsnek/jaen"
+import { ObjectAndUser } from "@snek-functions/origin/dist/schema.generated";
 import { TUser } from "../types/user";
 import { sq } from "@snek-functions/origin";
 
@@ -11,7 +11,7 @@ import { sq } from "@snek-functions/origin";
  * @example getDisplayname({ username: "test", details: { lastName: "User" } }) // "User"
  * @example getDisplayname({ username: "test" }) // "test"
  */
-export const getUserDisplayname = (user: SnekUser) => {
+export const getUserDisplayname = (user: ObjectAndUser) => {
     let displayName: string | undefined = undefined;
     if (user.details?.firstName) {
         displayName = user.details.firstName;
@@ -39,6 +39,7 @@ export const fetchProfile = async (profileId: string): Promise<TUser | undefined
 
         //TODO: Replace this with actual data as soon as it's available
         return {
+            id: '1',
             username: 'emilybrooks',
             bio: 'Adventurous spirit with a knack for words and a passion for knowledge. Exploring the world of academia, one document at a time. Forever curious, forever learning. Let\'s dive into the realm of information together uncover the wonders of education.',
             displayName: 'Emily Brooks',

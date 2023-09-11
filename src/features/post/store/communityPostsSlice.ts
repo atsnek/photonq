@@ -6,6 +6,7 @@ import { TPostPreview, TPostPrivacy } from "../types/post";
 import { Post } from "@snek-functions/origin/dist/schema.generated";
 import { formatPostDate } from "../../../shared/utils/features/post";
 import { useAppStore } from "../../../shared/store/store";
+import { getUserDisplayname } from "../../user/utils/user";
 
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set) => ({
@@ -20,9 +21,9 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         const currentUser = useAppStore.getState().currentUser.userMe;
 
         if (error) return;
-        const featuredPosts = posts.filter(p => p !== null).map((p): TPostPreview => {
-            // const profile = await sq.query(q => q.user({ id: p.profileId })
+        const featuredPosts = await Promise.all(posts.filter(p => p !== null).map(async (p): Promise<TPostPreview> => {
             const post = p as Post;
+            const [author] = await sq.query(q => q.user({ id: post.profileId }));
             return {
                 id: post.id,
                 title: post.title,
@@ -30,11 +31,16 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                 avatarUrl: post.avatarURL,
                 createdAt: formatPostDate(post.createdAt),
                 privacy: post.privacy as TPostPrivacy,
-                profileId: post.profileId,
+                profile: {
+                    id: post.profileId,
+                    username: author.username,
+                    displayName: getUserDisplayname(author),
+                    avatarUrl: author.details?.avatarURL,
+                },
                 stars: post.stars?.length ?? 0,
                 canManage: false, //TODO: Implement this
             }
-        });
+        }));
 
         console.log("trending posts: ", posts);
         set(produce((state: TStoreState) => {
@@ -52,8 +58,11 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         if (error) return;
         // fetch trending posts
 
-        const latestPosts = posts.filter(p => p !== null).map((p): TPostPreview => {
+
+        const latestPosts = await Promise.all(posts.filter(p => p !== null).map(async (p): Promise<TPostPreview> => {
             const post = p as Post;
+            const [author] = await sq.query(q => q.user({ id: post.profileId }));
+
             return {
                 id: post.id,
                 title: post.title,
@@ -61,11 +70,16 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                 avatarUrl: post.avatarURL,
                 createdAt: formatPostDate(post.createdAt),
                 privacy: post.privacy as TPostPrivacy,
-                profileId: post.profileId,
+                profile: {
+                    id: post.profileId,
+                    username: author.username,
+                    displayName: getUserDisplayname(author),
+                    avatarUrl: author.details?.avatarURL,
+                },
                 stars: post.stars?.length ?? 0,
                 canManage: false, //TODO: Implement this
             }
-        })
+        }));
 
         console.log("latest posts: ", posts);
         set(produce((state: TStoreState) => {

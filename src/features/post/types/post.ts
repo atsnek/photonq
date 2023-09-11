@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-import { Optional } from '../../../shared/types/utilityTypes';
 import { TUser } from '../../user/types/user';
 
 /**
@@ -52,8 +50,15 @@ export type TPostPreview = {
   createdAt: string;
   canManage?: boolean;
   privacy: TPostPrivacy;
-  profileId: string;
+  profile: TPostAuthor;
 };
+
+export type TPostAuthor = {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarUrl?: string | null;
+}
 
 /**TSearchMetaData
  * Metadata for fetching posts

@@ -1,10 +1,11 @@
-import { TUser } from "../../user/types/user";
+import { SnekUser } from "@atsnek/jaen";
 import { TPost } from "./post";
+import { TUser } from "../../user/types/user";
 
 
 export interface ISinglePostStateDefinition {
     post?: TPost;
-    postAuthor?: TUser;
+    postAuthor: TUser | null;
 }
 
 export interface ISinglePostStateActions {

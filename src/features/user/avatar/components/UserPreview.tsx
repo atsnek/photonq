@@ -12,9 +12,10 @@ import UserAvatar from './UserAvatar';
 import Link from '../../../../shared/components/Link';
 import { SnekUser } from '@atsnek/jaen';
 import { getUserDisplayname } from '../../utils/user';
+import { TUser } from '../../types/user';
 
 interface IUserPreviewProps extends TextProps {
-  user: SnekUser;
+  user: TUser;
   showTooltip?: boolean;
   showAvatar?: boolean;
   avatarOnly?: boolean;
@@ -39,7 +40,7 @@ const UserPreview: FC<IUserPreviewProps> = ({
   // const [viewState, setViewState] = useState<'minimized' | 'extended'>(
   //   'minimized'
   // );
-  const displayName = getUserDisplayname(user);
+  // const displayName = getUserDisplayname(user);
   const preview = (
     <HStack
       gridTemplateColumns="1fr auto"
@@ -51,7 +52,7 @@ const UserPreview: FC<IUserPreviewProps> = ({
 
       <Box>
         <Text fontSize="md" color="theme.500">
-          {displayName}
+          {user.displayName}
         </Text>
         <Text size="sm" color="gray.500">
           @{user.username}
@@ -104,7 +105,7 @@ const UserPreview: FC<IUserPreviewProps> = ({
   if (showTooltip) {
     wrapperProps = {
       label: preview,
-      ariaLabel: displayName,
+      ariaLabel: user.displayName,
       bgColor: 'shared.body.bgColor',
       boxShadow: 'lg',
       ...tooltipProps
@@ -131,7 +132,7 @@ const UserPreview: FC<IUserPreviewProps> = ({
             {...avatarProps}
           />
         )}
-        {showDisplayName ? displayName : `@${user.username}`}
+        {showDisplayName ? user.displayName : `@${user.username}`}
       </Text>
     </Wrapper>
   );

@@ -46,16 +46,8 @@ const MainBreadcrumb: FC<IMainBradcrumbProps> = ({ parts }) => {
             isTruncated
           >
             <BreadcrumbLink as={Link} href={item.href} isTruncated {...props}>
-              {item.isUser ? (
-                <UserPreview
-                  user={{
-                    bio: '',
-                    displayName: 'Emily Brooks',
-                    username: 'emilybrooks',
-                    socials: []
-                  }}
-                  {...props}
-                />
+              {item.isUser && item.user ? (
+                <UserPreview user={item.user} {...props} />
               ) : (
                 item.name
               )}

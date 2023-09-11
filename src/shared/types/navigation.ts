@@ -1,4 +1,6 @@
+import { SnekUser } from '@atsnek/jaen';
 import { ReactNode } from 'react';
+import { TUser } from '../../features/user/types/user';
 
 export type NavMenuItem = {
   name: string;
@@ -41,6 +43,7 @@ export type MainBreadcrumbPart = {
 } & (
     {
       isUser: true;
+      user: TUser | null;
       showUserImage?: boolean;
     } | {
       isUser?: false;

@@ -37,28 +37,13 @@ interface IPostReaderViewProps {
  */
 const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
   const topNavDisclosure = useDisclosure();
-  const breadcrumbParts: MainBreadcrumbPart[] = [
-    {
-      name: '@emilybrooks',
-      href: '/profile',
-      isUser: true,
-      showUserImage: true
-    },
-    {
-      name: 'Posts',
-      href: '/profile#posts'
-    },
-    {
-      name: 'Unlocking the Power of Quantum Computing',
-      href: '#'
-    }
-  ];
-
   // const [post, setPost] = useState<TPost>();
-  const post = useAppStore(state => state.post);
-  const fetchPost = useAppStore(state => state.fetchPost);
-  const fetchPostAuthor = useAppStore(state => state.fetchPostAuthor);
-  // const [author, setAuthor] = useState<TUser>();
+  const post = useAppStore(state => state.singlePost.post);
+  const fetchPost = useAppStore(state => state.singlePost.fetchPost);
+  const fetchPostAuthor = useAppStore(
+    state => state.singlePost.fetchPostAuthor
+  );
+  const author = useAppStore(state => state.singlePost.postAuthor);
   const isAuthenticated = useAuth();
 
   const publicationDate = useMemo(
@@ -81,6 +66,25 @@ const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
   };
 
   console.log('received post: ', post);
+
+  const authorProfilePath = `/user/${author?.username ?? ''}`;
+  const breadcrumbParts: MainBreadcrumbPart[] = [
+    {
+      name: author?.username ?? '',
+      href: authorProfilePath,
+      isUser: true,
+      user: author,
+      showUserImage: true
+    },
+    {
+      name: 'Posts',
+      href: `${authorProfilePath}#posts`
+    },
+    {
+      name: post?.title ?? '',
+      href: '#'
+    }
+  ];
 
   return (
     <>

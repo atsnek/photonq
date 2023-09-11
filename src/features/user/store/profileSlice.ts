@@ -6,12 +6,14 @@ import { sq } from "@snek-functions/origin";
 import { produce } from "immer";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { IProfileStateDefinition, TProfileSlice } from "../types/profileState";
+import { getUserDisplayname } from "../utils/user";
+import { useAppStore } from "../../../shared/store/store";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
     activity: [],
     overviewPosts: { state: "loading", posts: [] },
     profile: undefined,
-    fetchProfile: async (username, currentUserId) => {
+    fetchProfile: async (username) => {
         console.log("fetching profile for", username);
         set(produce(state => ({ overviewPosts: { state: "loading", posts: [] } })))
         const [profileData, error] = await sq.query((q): TProfile | undefined => {
@@ -70,8 +72,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                 });
             });
 
+            const currentUser = useAppStore.getState().currentUser.userMe;
+
             return {
                 user: {
+                    id: user.id,
                     avatarUrl: user.details?.avatarURL ?? '',
                     bio: profile?.bio ?? null,
                     displayName: `${user.details?.firstName ?? ''} ${user.details?.lastName ?? ''}`,
@@ -83,7 +88,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                     .filter(
                         ({ privacy }) =>
                             privacy === 'public' ||
-                            (currentUserId && user.id === currentUserId)
+                            (currentUser && user.id === currentUser.id)
                     )
                     .map(post => {
                         const date = new Date(post.createdAt);
@@ -93,6 +98,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                             summary: post.summary,
                             stars: post.stars.length,
                             avatarUrl: post.avatarURL,
+                            profile: {
+                                displayName: getUserDisplayname(user),
+                                id: user.id,
+                                username: user.username,
+                                avatarUrl: user.details?.avatarURL,
+                            },
                             createdAt: `
                               ${date.getFullYear()}-
                               ${date.getMonth().toString().padStart(2, '0')}-
