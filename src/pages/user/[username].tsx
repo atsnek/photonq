@@ -5,7 +5,7 @@ import { navigate } from '@reach/router';
 const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
   // everything after /user/ is the handle
   const handle = location.pathname.split('/user/')[1];
-  const username = params.username.trim();
+  const username = params.username?.trim();
 
   if (!username) navigate('/docs');
 
