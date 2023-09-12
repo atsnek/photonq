@@ -43,7 +43,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
 
         //TODO: Replace postId with slug once the backend is ready
         const [post, postError] = await sq.query((q): TPost | null => {
-            const post = q.socialPost({ postId: slug })
+            const post = q.socialPost({ slug: slug })
 
             if (!post) return null;
 
