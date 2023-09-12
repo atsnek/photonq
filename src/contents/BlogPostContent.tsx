@@ -1,10 +1,6 @@
 import { FC, useState } from 'react';
 
 // Insertable custom components (via Jaen)
-import PostEditorView from '../features/post/editor/components/PostEditorView';
-import PostReaderView from '../features/post/reader/components/PostReaderView';
-import { navigate } from '@reach/router';
-import { useAuthenticationContext } from '@atsnek/jaen';
 import PostTopNav from '../features/post/components/PostTopNav';
 import { useAppStore } from '../shared/store/store';
 import PostLeftNav from '../features/post/components/PostLeftNav';
@@ -23,6 +19,7 @@ export interface IBlogPostContentProps {
 const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
   const [isRating, setIsRating] = useState(false);
+  const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
 
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
@@ -30,13 +27,18 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   const togglePostRating = useAppStore(
     state => state.singlePost.togglePostRating
   );
+  const togglePostPrivacy = useAppStore(
+    state => state.singlePost.togglePrivacy
+  );
 
   const setPostPreviewImage = (src: File) => {
     //TODO
   };
 
-  const handlePublish = () => {
-    //TODO
+  const handleTogglePrivacy = async () => {
+    setIsUpdatingPrivacy(true);
+    await togglePostPrivacy();
+    setIsUpdatingPrivacy(false);
   };
 
   /**
@@ -49,7 +51,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     setIsRating(false);
   };
 
-  const canEditPost = currentUser?.id === author?.id && false;
+  const canEditPost = currentUser?.id === author?.id;
 
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
 
@@ -57,7 +59,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     <>
       <PostTopNav
         author={author}
-        handlePublish={handlePublish}
+        handleTogglePrivacy={handleTogglePrivacy}
+        isUpdatingPrivacy={isUpdatingPrivacy}
         post={post}
         setPostPreviewImage={setPostPreviewImage}
         canEdit={canEditPost}

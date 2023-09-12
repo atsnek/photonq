@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef, useState } from 'react';
+import { ChangeEvent, FC, useRef } from 'react';
 import { TPost } from '../types/post';
 import { TUser } from '../../user/types/user';
 import {
@@ -15,12 +15,12 @@ import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
-import { useAppStore } from '../../../shared/store/store';
 
 interface IPostTopNavProps {
   post?: TPost;
   author: TUser | null;
-  handlePublish: () => void;
+  handleTogglePrivacy: () => void;
+  isUpdatingPrivacy?: boolean;
   setPostPreviewImage: (src: File) => void;
   canEdit?: boolean;
   handleRatePost: () => void;
@@ -33,7 +33,8 @@ interface IPostTopNavProps {
 const PostTopNav: FC<IPostTopNavProps> = ({
   post,
   author,
-  handlePublish,
+  handleTogglePrivacy,
+  isUpdatingPrivacy,
   setPostPreviewImage,
   canEdit,
   handleRatePost,
@@ -123,7 +124,8 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                   colorScheme="gray"
                   size="sm"
                   leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
-                  onClick={isPublic ? handlePublish : handlePublish}
+                  onClick={handleTogglePrivacy}
+                  isDisabled={isUpdatingPrivacy}
                 >
                   {isPublic ? 'Unpublish' : 'Publish'}
                 </Button>

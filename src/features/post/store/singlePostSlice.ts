@@ -1,13 +1,12 @@
-import { fetchPost } from "../../../shared/utils/features/post";
-import { useAppStore } from "../../../shared/store/store";
-import { fetchProfile, getUserDisplayname } from "../../user/utils/user";
+import { getUserDisplayname } from "../../user/utils/user";
 import { produce } from "immer";
 import { TSinglePostSlice } from "../types/singlePostState";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { sq } from "@snek-functions/origin";
+import { asEnumKey } from "snek-query";
 import { TPost, TPostPrivacy } from "../types/post";
-import { ObjectAndUser } from "@snek-functions/origin/dist/schema.generated";
 import { TUser } from "../../user/types/user";
+import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
     postAuthor: null,
@@ -104,5 +103,19 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
     },
     updatePreviewImage: async (src) => {
 
+    },
+    togglePrivacy: async () => {
+        const isPublished = get().singlePost.post?.privacy === 'public';
+        const newPrivacy = isPublished ? 'private' : 'public';
+        set(produce((state: TStoreState) => {
+            if (!state.singlePost.post) return;
+            state.singlePost.post.privacy = isPublished ? 'private' : 'public';
+        }));
+
+        const postId = get().singlePost.post?.id ?? '';
+        const [, error] = await sq.mutate(m => m.socialPostUpdate({ postId, values: { privacy: asEnumKey(PrivacyInputInput, newPrivacy) } }));
+
+        const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
+        return !!error && updateSucceed;
     },
 })
