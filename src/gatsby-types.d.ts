@@ -1254,6 +1254,7 @@ type JaenData = Node & {
   readonly parent: Maybe<Node>;
   readonly patches: ReadonlyArray<JaenDataPatch>;
   readonly site: Maybe<Scalars['JSON']>;
+  readonly widgets: Maybe<Scalars['JSON']>;
 };
 
 type JaenDataConnection = {
@@ -1309,6 +1310,7 @@ type JaenDataFieldSelector = {
   readonly parent: InputMaybe<NodeFieldSelector>;
   readonly patches: InputMaybe<JaenDataPatchFieldSelector>;
   readonly site: InputMaybe<FieldSelectorEnum>;
+  readonly widgets: InputMaybe<FieldSelectorEnum>;
 };
 
 type JaenDataFilterInput = {
@@ -1319,6 +1321,7 @@ type JaenDataFilterInput = {
   readonly parent: InputMaybe<NodeFilterInput>;
   readonly patches: InputMaybe<JaenDataPatchFilterListInput>;
   readonly site: InputMaybe<JSONQueryOperatorInput>;
+  readonly widgets: InputMaybe<JSONQueryOperatorInput>;
 };
 
 type JaenDataGroupConnection = {
@@ -1398,6 +1401,7 @@ type JaenDataSortInput = {
   readonly parent: InputMaybe<NodeSortInput>;
   readonly patches: InputMaybe<JaenDataPatchSortInput>;
   readonly site: InputMaybe<SortOrderEnum>;
+  readonly widgets: InputMaybe<SortOrderEnum>;
 };
 
 type JaenPage = Node & {
@@ -2071,6 +2075,136 @@ type JaenTemplateSortInput = {
   readonly relativePath: InputMaybe<SortOrderEnum>;
 };
 
+type JaenWidget = Node & {
+  readonly children: ReadonlyArray<Node>;
+  readonly createdAt: Scalars['Date'];
+  readonly data: Maybe<Scalars['JSON']>;
+  readonly id: Scalars['ID'];
+  readonly internal: Internal;
+  readonly modifiedAt: Scalars['Date'];
+  readonly name: Scalars['String'];
+  readonly parent: Maybe<Node>;
+};
+
+type JaenWidgetConnection = {
+  readonly distinct: ReadonlyArray<Scalars['String']>;
+  readonly edges: ReadonlyArray<JaenWidgetEdge>;
+  readonly group: ReadonlyArray<JaenWidgetGroupConnection>;
+  readonly max: Maybe<Scalars['Float']>;
+  readonly min: Maybe<Scalars['Float']>;
+  readonly nodes: ReadonlyArray<JaenWidget>;
+  readonly pageInfo: PageInfo;
+  readonly sum: Maybe<Scalars['Float']>;
+  readonly totalCount: Scalars['Int'];
+};
+
+
+type JaenWidgetConnection_distinctArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+
+type JaenWidgetConnection_groupArgs = {
+  field: JaenWidgetFieldSelector;
+  limit: InputMaybe<Scalars['Int']>;
+  skip: InputMaybe<Scalars['Int']>;
+};
+
+
+type JaenWidgetConnection_maxArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+
+type JaenWidgetConnection_minArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+
+type JaenWidgetConnection_sumArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+type JaenWidgetEdge = {
+  readonly next: Maybe<JaenWidget>;
+  readonly node: JaenWidget;
+  readonly previous: Maybe<JaenWidget>;
+};
+
+type JaenWidgetFieldSelector = {
+  readonly children: InputMaybe<NodeFieldSelector>;
+  readonly createdAt: InputMaybe<FieldSelectorEnum>;
+  readonly data: InputMaybe<FieldSelectorEnum>;
+  readonly id: InputMaybe<FieldSelectorEnum>;
+  readonly internal: InputMaybe<InternalFieldSelector>;
+  readonly modifiedAt: InputMaybe<FieldSelectorEnum>;
+  readonly name: InputMaybe<FieldSelectorEnum>;
+  readonly parent: InputMaybe<NodeFieldSelector>;
+};
+
+type JaenWidgetFilterInput = {
+  readonly children: InputMaybe<NodeFilterListInput>;
+  readonly createdAt: InputMaybe<DateQueryOperatorInput>;
+  readonly data: InputMaybe<JSONQueryOperatorInput>;
+  readonly id: InputMaybe<StringQueryOperatorInput>;
+  readonly internal: InputMaybe<InternalFilterInput>;
+  readonly modifiedAt: InputMaybe<DateQueryOperatorInput>;
+  readonly name: InputMaybe<StringQueryOperatorInput>;
+  readonly parent: InputMaybe<NodeFilterInput>;
+};
+
+type JaenWidgetGroupConnection = {
+  readonly distinct: ReadonlyArray<Scalars['String']>;
+  readonly edges: ReadonlyArray<JaenWidgetEdge>;
+  readonly field: Scalars['String'];
+  readonly fieldValue: Maybe<Scalars['String']>;
+  readonly group: ReadonlyArray<JaenWidgetGroupConnection>;
+  readonly max: Maybe<Scalars['Float']>;
+  readonly min: Maybe<Scalars['Float']>;
+  readonly nodes: ReadonlyArray<JaenWidget>;
+  readonly pageInfo: PageInfo;
+  readonly sum: Maybe<Scalars['Float']>;
+  readonly totalCount: Scalars['Int'];
+};
+
+
+type JaenWidgetGroupConnection_distinctArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+
+type JaenWidgetGroupConnection_groupArgs = {
+  field: JaenWidgetFieldSelector;
+  limit: InputMaybe<Scalars['Int']>;
+  skip: InputMaybe<Scalars['Int']>;
+};
+
+
+type JaenWidgetGroupConnection_maxArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+
+type JaenWidgetGroupConnection_minArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+
+type JaenWidgetGroupConnection_sumArgs = {
+  field: JaenWidgetFieldSelector;
+};
+
+type JaenWidgetSortInput = {
+  readonly children: InputMaybe<NodeSortInput>;
+  readonly createdAt: InputMaybe<SortOrderEnum>;
+  readonly data: InputMaybe<SortOrderEnum>;
+  readonly id: InputMaybe<SortOrderEnum>;
+  readonly internal: InputMaybe<InternalSortInput>;
+  readonly modifiedAt: InputMaybe<SortOrderEnum>;
+  readonly name: InputMaybe<SortOrderEnum>;
+  readonly parent: InputMaybe<NodeSortInput>;
+};
+
 type MediaNode = Node & {
   readonly children: ReadonlyArray<Node>;
   readonly description: Scalars['String'];
@@ -2277,6 +2411,7 @@ type Query = {
   readonly allJaenPage: JaenPageConnection;
   readonly allJaenSite: JaenSiteConnection;
   readonly allJaenTemplate: JaenTemplateConnection;
+  readonly allJaenWidget: JaenWidgetConnection;
   readonly allMediaNode: MediaNodeConnection;
   readonly allSite: SiteConnection;
   readonly allSiteBuildMetadata: SiteBuildMetadataConnection;
@@ -2290,6 +2425,7 @@ type Query = {
   readonly jaenPage: Maybe<JaenPage>;
   readonly jaenSite: Maybe<JaenSite>;
   readonly jaenTemplate: Maybe<JaenTemplate>;
+  readonly jaenWidget: Maybe<JaenWidget>;
   readonly mediaNode: Maybe<MediaNode>;
   readonly site: Maybe<Site>;
   readonly siteBuildMetadata: Maybe<SiteBuildMetadata>;
@@ -2352,6 +2488,14 @@ type Query_allJaenTemplateArgs = {
   limit: InputMaybe<Scalars['Int']>;
   skip: InputMaybe<Scalars['Int']>;
   sort: InputMaybe<ReadonlyArray<InputMaybe<JaenTemplateSortInput>>>;
+};
+
+
+type Query_allJaenWidgetArgs = {
+  filter: InputMaybe<JaenWidgetFilterInput>;
+  limit: InputMaybe<Scalars['Int']>;
+  skip: InputMaybe<Scalars['Int']>;
+  sort: InputMaybe<ReadonlyArray<InputMaybe<JaenWidgetSortInput>>>;
 };
 
 
@@ -2508,6 +2652,7 @@ type Query_jaenDataArgs = {
   parent: InputMaybe<NodeFilterInput>;
   patches: InputMaybe<JaenDataPatchFilterListInput>;
   site: InputMaybe<JSONQueryOperatorInput>;
+  widgets: InputMaybe<JSONQueryOperatorInput>;
 };
 
 
@@ -2554,6 +2699,18 @@ type Query_jaenTemplateArgs = {
 };
 
 
+type Query_jaenWidgetArgs = {
+  children: InputMaybe<NodeFilterListInput>;
+  createdAt: InputMaybe<DateQueryOperatorInput>;
+  data: InputMaybe<JSONQueryOperatorInput>;
+  id: InputMaybe<StringQueryOperatorInput>;
+  internal: InputMaybe<InternalFilterInput>;
+  modifiedAt: InputMaybe<DateQueryOperatorInput>;
+  name: InputMaybe<StringQueryOperatorInput>;
+  parent: InputMaybe<NodeFilterInput>;
+};
+
+
 type Query_mediaNodeArgs = {
   children: InputMaybe<NodeFilterListInput>;
   description: InputMaybe<StringQueryOperatorInput>;
@@ -2568,7 +2725,6 @@ type Query_mediaNodeArgs = {
 type Query_siteArgs = {
   buildTime: InputMaybe<DateQueryOperatorInput>;
   children: InputMaybe<NodeFilterListInput>;
-  flags: InputMaybe<SiteFlagsFilterInput>;
   graphqlTypegen: InputMaybe<SiteGraphqlTypegenFilterInput>;
   host: InputMaybe<StringQueryOperatorInput>;
   id: InputMaybe<StringQueryOperatorInput>;
@@ -2642,7 +2798,6 @@ type Query_sitePluginArgs = {
 type Site = Node & {
   readonly buildTime: Maybe<Scalars['Date']>;
   readonly children: ReadonlyArray<Node>;
-  readonly flags: Maybe<SiteFlags>;
   readonly graphqlTypegen: Maybe<SiteGraphqlTypegen>;
   readonly host: Maybe<Scalars['String']>;
   readonly id: Scalars['ID'];
@@ -2839,7 +2994,6 @@ type SiteEdge = {
 type SiteFieldSelector = {
   readonly buildTime: InputMaybe<FieldSelectorEnum>;
   readonly children: InputMaybe<NodeFieldSelector>;
-  readonly flags: InputMaybe<SiteFlagsFieldSelector>;
   readonly graphqlTypegen: InputMaybe<SiteGraphqlTypegenFieldSelector>;
   readonly host: InputMaybe<FieldSelectorEnum>;
   readonly id: InputMaybe<FieldSelectorEnum>;
@@ -2857,7 +3011,6 @@ type SiteFieldSelector = {
 type SiteFilterInput = {
   readonly buildTime: InputMaybe<DateQueryOperatorInput>;
   readonly children: InputMaybe<NodeFilterListInput>;
-  readonly flags: InputMaybe<SiteFlagsFilterInput>;
   readonly graphqlTypegen: InputMaybe<SiteGraphqlTypegenFilterInput>;
   readonly host: InputMaybe<StringQueryOperatorInput>;
   readonly id: InputMaybe<StringQueryOperatorInput>;
@@ -2870,22 +3023,6 @@ type SiteFilterInput = {
   readonly port: InputMaybe<IntQueryOperatorInput>;
   readonly siteMetadata: InputMaybe<SiteSiteMetadataFilterInput>;
   readonly trailingSlash: InputMaybe<StringQueryOperatorInput>;
-};
-
-type SiteFlags = {
-  readonly DEV_SSR: Maybe<Scalars['Boolean']>;
-};
-
-type SiteFlagsFieldSelector = {
-  readonly DEV_SSR: InputMaybe<FieldSelectorEnum>;
-};
-
-type SiteFlagsFilterInput = {
-  readonly DEV_SSR: InputMaybe<BooleanQueryOperatorInput>;
-};
-
-type SiteFlagsSortInput = {
-  readonly DEV_SSR: InputMaybe<SortOrderEnum>;
 };
 
 type SiteFunction = Node & {
@@ -3414,7 +3551,6 @@ type SiteSiteMetadataSortInput = {
 type SiteSortInput = {
   readonly buildTime: InputMaybe<SortOrderEnum>;
   readonly children: InputMaybe<NodeSortInput>;
-  readonly flags: InputMaybe<SiteFlagsSortInput>;
   readonly graphqlTypegen: InputMaybe<SiteGraphqlTypegenSortInput>;
   readonly host: InputMaybe<SortOrderEnum>;
   readonly id: InputMaybe<SortOrderEnum>;

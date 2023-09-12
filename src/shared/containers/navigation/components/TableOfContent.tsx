@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import { VStack } from '@chakra-ui/react';
 import { useTocNavigation } from '../../../hooks/use-toc-navigation';
 import { TableOfContentItem } from '../../../types/navigation';

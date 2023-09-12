@@ -4,6 +4,7 @@ import MemoizedLinks from '../../../../shared/components/MemoizedLink';
 import RightNav from '../../../../shared/containers/navigation/RightNav';
 import TableOfContent from '../../../../shared/containers/navigation/components/TableOfContent';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 // Example links - these would probably be fetched from a CMS or other data source
 const links = [
@@ -13,21 +14,26 @@ const links = [
   },
   {
     name: 'Edit this page on Jaen',
-    href: '/admin/#/pages'
+    href: '/admin/#/pages',
+    unAuthOnly: true
   }
 ];
 
-interface IRightNavPostReaderProps {}
+interface IRightNavPostReaderProps {
+  canEdit?: boolean;
+}
 
 //! This causes an hydration error (TableOfContent is the polluter)
 //! probably goes away when we connect it's central hook it with the backend
 /**
  * Right navigation for reading a post.
  */
-const RightNavPostReader: FC<IRightNavPostReaderProps> = ({}) => {
+const RightNavPostReader: FC<IRightNavPostReaderProps> = ({ canEdit }) => {
   const navTopOffset = useNavOffset();
 
-  // const MemoizedToc = memo(TableOfContent, () => false);
+  const isAuthenticated = useAuthenticationContext().user !== null;
+
+  const MemoizedToc = memo(TableOfContent, () => false);
 
   return (
     <Box position="sticky" top={`calc(0px + ${navTopOffset})`}>
@@ -51,7 +57,9 @@ const RightNavPostReader: FC<IRightNavPostReaderProps> = ({}) => {
         >
           <VStack rowGap={1} textAlign="left">
             <MemoizedLinks
-              links={links}
+              links={links.filter(
+                link => !link.unAuthOnly || (!canEdit && !isAuthenticated)
+              )}
               props={{
                 variant: 'right-bottom-nav',
                 w: '100%',

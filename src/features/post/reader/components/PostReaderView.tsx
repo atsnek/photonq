@@ -29,17 +29,18 @@ import { formatPostDate } from '../../../../shared/utils/features/post';
 import { useAppStore } from '../../../../shared/store/store';
 
 interface IPostReaderViewProps {
-  postId: string;
+  slug: string;
 }
 
 /**
  * Component for reading a post.
  */
-const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
+const PostReaderView: FC<IPostReaderViewProps> = ({ slug }) => {
   const topNavDisclosure = useDisclosure();
   // const [post, setPost] = useState<TPost>();
   const post = useAppStore(state => state.singlePost.post);
-  const fetchPost = useAppStore(state => state.singlePost.fetchPost);
+  console.log('showing post for: ', post);
+  // const fetchPost = useAppStore(state => state.singlePost.fetchPost);
   const fetchPostAuthor = useAppStore(
     state => state.singlePost.fetchPostAuthor
   );
@@ -51,9 +52,9 @@ const PostReaderView: FC<IPostReaderViewProps> = ({ postId }) => {
     [post]
   );
 
-  useEffect(() => {
-    fetchPost(postId);
-  }, []);
+  // useEffect(() => {
+  //   fetchPost(slug);
+  // }, []);
 
   useEffect(() => {
     fetchPostAuthor();

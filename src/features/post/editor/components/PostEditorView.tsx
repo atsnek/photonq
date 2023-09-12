@@ -72,13 +72,8 @@ const PostEditorView: FC = () => {
 
   const publishPost = async () => {
     //TODO: Connect to Jaen
-    console.log('publishing...');
-    // await wait(1000); // Simulate publishing
-    console.log('::::');
-    // setPost({ ...post, publicationDate: '2023-09-11' }); // TODO: Remove after connecting to Jaen
     //!Bug: This toast get's called exponentially (hello, memory leak)
     customToast({
-      // duration: null,
       title: alertContent.header,
       description: alertContent.body,
       status: 'success'
@@ -89,7 +84,6 @@ const PostEditorView: FC = () => {
 
   const unpublishPost = async () => {
     //TODO: Connect to Jaen
-    console.log('unpublishing...');
     await wait(1000); // Simulate publishing
     visibilityAlertDisclosure.onClose();
     setAlertContent(alertText.publish);

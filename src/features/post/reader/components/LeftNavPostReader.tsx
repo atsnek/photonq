@@ -13,11 +13,9 @@ import {
   VStack,
   HeadingProps
 } from '@chakra-ui/react';
-import { TUser } from '../../../user/types/user';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import { formatNumber } from '../../../../shared/utils/utils';
 import Link from '../../../../shared/components/Link';
-import { SnekUser } from '@atsnek/jaen';
 import { leftNavProfileStyling } from '../../../user/profile/components/LeftNavProfile';
 import LeftNavPostReaderSkeleton from './LeftNavPostReaderSkeleton';
 import { useAppStore } from '../../../../shared/store/store';
@@ -69,7 +67,7 @@ export const leftNavPostReaderStyling = {
  */
 //TODO: Add LeftNavPostReader skeleton component
 const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post }) => {
-  const author = useAppStore(state => state.postAuthor);
+  const author = useAppStore(state => state.singlePost.postAuthor);
 
   console.log('left nav author: ', author);
 
@@ -94,7 +92,7 @@ const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post }) => {
           {...leftNavProfileStyling.avatar}
           aspectRatio={1}
           name={author.displayName}
-          src="https://onedrive.live.com/embed?resid=AE2DDC816CEF3E1E%21220972&authkey=%21AIUh8CadUcYw3cg&width=999999&height=1024"
+          src={author.avatarUrl}
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
             transform: 'scale(1.02)'

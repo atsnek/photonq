@@ -24,7 +24,7 @@ export type TPost = {
   id: string;
   title: string;
   summary: string | null;
-  content?: string;
+  content?: string | null;
   stars: number;
   avatarUrl: string | null;
   createdAt: string;

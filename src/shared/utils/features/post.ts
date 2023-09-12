@@ -1,5 +1,6 @@
 import { sq } from '@snek-functions/origin';
 import { TPost, TPostPreview } from '../../../features/post/types/post';
+// import { format } from 'date-fns';
 
 //TODO: This would come from an API
 // const posts: TPostPreview[] = [
@@ -162,12 +163,19 @@ import { TPost, TPostPreview } from '../../../features/post/types/post';
 
 // export { posts };
 
-export const formatPostDate = (date?: string) => {
+export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
     if (!date) return '';
     const dateObj = new Date(date);
     if (isNaN(dateObj.getTime())) return '';
 
-    return `${dateObj.getFullYear()}-${dateObj.getMonth().toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+    //TODO: Use date-fns once the bug is fixed
+    let dateSchema: Intl.DateTimeFormatOptions = {};
+
+    if (dateFormat === 's') dateSchema = { month: '2-digit', day: '2-digit', };
+    else dateSchema = 'd MMMM y';
+
+    // return format(dateObj, dateSchema);
+    return dateObj.toLocaleDateString('en-US', dateSchema);
 }
 
 /**

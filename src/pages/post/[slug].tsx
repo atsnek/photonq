@@ -11,23 +11,21 @@ import { navigate } from '@reach/router';
 
 const DocsPage: React.FC<PageProps> = ({ params }) => {
   const { user } = useAuthenticationContext();
-  const postId = params.postId?.trim();
+  const slug = params.slug?.trim();
 
   const post = useAppStore(state => state.singlePost.post);
   const fetchPost = useAppStore(state => state.singlePost.fetchPost);
 
   useEffect(() => {
-    if (postId) fetchPost(postId);
-  }, [postId]);
+    if (slug) fetchPost(slug);
+  }, [slug]);
 
-  if (!postId) {
+  if (!slug) {
     navigate('/docs/');
     return;
   }
 
-  const mode = user ? 'edit' : 'read';
-
-  return <BlogPostContent postId={postId} mode="read" />;
+  return <BlogPostContent slug={slug} />;
 };
 
 export default DocsPage;

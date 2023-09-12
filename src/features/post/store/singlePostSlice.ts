@@ -5,6 +5,9 @@ import { produce } from "immer";
 import { TSinglePostSlice } from "../types/singlePostState";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { sq } from "@snek-functions/origin";
+import { TPost, TPostPrivacy } from "../types/post";
+import { ObjectAndUser } from "@snek-functions/origin/dist/schema.generated";
+import { TUser } from "../../user/types/user";
 
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set) => ({
     postAuthor: null,
@@ -36,34 +39,73 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set) => ({
 
         const [currentUser] = await sq.query(q => q.userMe);
 
-        // const [post, postErro] = await sq.query(q => q.socialPost({ slug: slug }));
+        console.log("fetch post with slug: ", slug);
 
-        // set(produce((state: TStoreState) => {
-        //     state.singlePost.post = post;
-        // }))
+        //TODO: Replace postId with slug once the backend is ready
+        const [post, postError] = await sq.query((q): TPost | null => {
+            const post = q.socialPost({ postId: slug })
+
+            if (!post) return null;
+
+            return {
+                authorProfileId: post.profileId,
+                avatarUrl: post.avatarURL,
+                content: post.content,
+                createdAt: post.createdAt,
+                id: post.id,
+                privacy: post.privacy as TPostPrivacy,
+                stars: post.stars?.length ?? 0,
+                summary: post.summary,
+                title: post.title,
+                canManage: currentUser?.id === post.profileId,
+            };
+        });
+
+        if (postError) return false;
+
+        const [author, authorError] = await sq.query((q): TUser => {
+            const user = q.user({ id: post?.authorProfileId ?? '' })
+            return {
+                id: user.id,
+                username: user.username,
+                displayName: getUserDisplayname(user),
+                bio: user.profile?.bio ?? null,
+                socials: [],
+                avatarUrl: user.details?.avatarURL ?? undefined,
+                location: undefined,
+            }
+        });
+
+        set(produce((state: TStoreState): void => {
+            if (post === null) return;
+            state.singlePost.post = post;
+            state.singlePost.postAuthor = author;
+        }))
+
+        return true;
     },
     fetchPostAuthor: async () => {
-        const authorId = useAppStore.getState().singlePost.post?.authorProfileId;
-        if (!authorId) {
-            console.log("postslice: no author id found");
-            return;
-        }
+        // const authorId = useAppStore.getState().singlePost.post?.authorProfileId;
+        // if (!authorId) {
+        //     console.log("singlePostSlice: no author id found");
+        //     return;
+        // }
 
+        // const [author, error] = await sq.query(q => q.user({ id: authorId }));
 
-        const [author, error] = await sq.query(q => q.user({ id: authorId }));
+        // console.log("post author: ", author.details?.firstName);
+        // if (error) return;
 
-        if (error) return;
-
-        set(produce((state: TStoreState) => {
-            state.singlePost.postAuthor = {
-                id: author.id,
-                username: author.username,
-                displayName: getUserDisplayname(author),
-                bio: author.profile?.bio ?? null,
-                socials: [],
-                avatarUrl: author.details?.avatarURL ?? undefined,
-                location: undefined,
-            };
-        }))
+        // set(produce((state: TStoreState) => {
+        //     state.singlePost.postAuthor = {
+        //         id: author.id,
+        //         username: author.username,
+        //         displayName: getUserDisplayname(author),
+        //         bio: author.profile?.bio ?? null,
+        //         socials: [],
+        //         avatarUrl: author.details?.avatarURL ?? undefined,
+        //         location: undefined,
+        //     };
+        // }))
     },
 })
