@@ -22,6 +22,7 @@ export type TPostPrivacy = 'public' | 'private' | 'friends';
 //TODO: This type needs to be improved to better fit the needs of the current system
 export type TPost = {
   id: string;
+  slug: string;
   title: string;
   summary: string | null;
   content?: string | null;

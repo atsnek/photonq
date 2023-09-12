@@ -53,6 +53,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
                 content: post.content,
                 createdAt: post.createdAt,
                 id: post.id,
+                slug: post.slug,
                 privacy: post.privacy as TPostPrivacy,
                 stars: post.stars?.length ?? 0,
                 hasRated: post.stars?.some(star => star.profile.id === currentUser?.id) ?? false,
@@ -85,53 +86,20 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
 
         return true;
     },
-    // fetchPostAuthor: async () => {
-    // const authorId = useAppStore.getState().singlePost.post?.authorProfileId;
-    // if (!authorId) {
-    //     console.log("singlePostSlice: no author id found");
-    //     return;
-    // }
-
-    // const [author, error] = await sq.query(q => q.user({ id: authorId }));
-
-    // console.log("post author: ", author.details?.firstName);
-    // if (error) return;
-
-    // set(produce((state: TStoreState) => {
-    //     state.singlePost.postAuthor = {
-    //         id: author.id,
-    //         username: author.username,
-    //         displayName: getUserDisplayname(author),
-    //         bio: author.profile?.bio ?? null,
-    //         socials: [],
-    //         avatarUrl: author.details?.avatarURL ?? undefined,
-    //         location: undefined,
-    //     };
-    // }))
-    // },
-    ratePost: async () => {
-        console.log("rating post...");
+    togglePostRating: async () => {
+        const hasRated = get().singlePost.post?.hasRated ?? false;
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
-            state.singlePost.post.hasRated = true;
+            state.singlePost.post.hasRated = !state.singlePost.post.hasRated;
         }));
 
-        const [, error] = await sq.mutate(m => m.socialPostStar({ postId: get().singlePost.post?.id ?? '' }));
+        const postId = get().singlePost.post?.id ?? '';
+        const [, error] = await sq.mutate(m => {
+            if (hasRated) m.socialPostUnstar({ postId })
+            else m.socialPostStar({ postId })
+        });
 
-        const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.id ?? '');
-        return !!error && updateSucceed;
-
-    },
-    unratePost: async () => {
-        console.log("unrating post...");
-        set(produce((state: TStoreState) => {
-            if (!state.singlePost.post) return;
-            state.singlePost.post.hasRated = false;
-        }));
-
-        const [, error] = await sq.mutate(m => m.socialPostUnstar({ postId: get().singlePost.post?.id ?? '' }));
-
-        const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.id ?? '');
+        const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
         return !!error && updateSucceed;
     },
     updatePreviewImage: async (src) => {

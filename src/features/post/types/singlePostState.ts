@@ -14,9 +14,7 @@ export interface ISinglePostStateActions {
     editContent: (content: string) => void;
     editSummary: (summary: string) => void;
     fetchPost: (slug: string) => Promise<boolean>;
-    // fetchPostAuthor: () => void;
-    ratePost: () => Promise<boolean>;
-    unratePost: () => Promise<boolean>;
+    togglePostRating: () => Promise<boolean>;
     updatePreviewImage: (src: File) => void;
 }
 

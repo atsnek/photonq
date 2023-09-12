@@ -27,8 +27,9 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const post = useAppStore(state => state.singlePost.post);
-  const ratePost = useAppStore(state => state.singlePost.ratePost);
-  const unratePost = useAppStore(state => state.singlePost.unratePost);
+  const togglePostRating = useAppStore(
+    state => state.singlePost.togglePostRating
+  );
 
   const setPostPreviewImage = (src: File) => {
     //TODO
@@ -44,8 +45,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
    */
   const handleRatePost = async () => {
     setIsRating(true);
-    if (!post?.hasRated) await ratePost();
-    else await unratePost();
+    await togglePostRating();
     setIsRating(false);
   };
 
