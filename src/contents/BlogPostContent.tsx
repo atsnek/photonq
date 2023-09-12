@@ -73,7 +73,12 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         {canEditPost ? (
           <PostEditor post={post} />
         ) : (
-          <PostReader isAuthor={canEditPost} post={post} />
+          <PostReader
+            isAuthor={canEditPost}
+            post={post}
+            handleRatePost={handleRatePost}
+            isRating={isRating}
+          />
         )}
       </MainWrapper>
     </>

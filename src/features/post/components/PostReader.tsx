@@ -15,9 +15,16 @@ import { formatPostDate } from '../../../shared/utils/features/post';
 interface IPostReaderProps {
   post?: TPost;
   isAuthor?: boolean;
+  handleRatePost?: () => void;
+  isRating?: boolean;
 }
 
-const PostReader: FC<IPostReaderProps> = ({ post, isAuthor }) => {
+const PostReader: FC<IPostReaderProps> = ({
+  post,
+  isAuthor,
+  handleRatePost,
+  isRating
+}) => {
   const isAuthenticated = true;
 
   const postDate = useMemo(
@@ -35,7 +42,20 @@ const PostReader: FC<IPostReaderProps> = ({ post, isAuthor }) => {
           {post?.title}
           {isAuthenticated && !isAuthor && (
             <IconButton
-              icon={<TbStar />}
+              icon={
+                <TbStar
+                  fill={
+                    post?.hasRated
+                      ? 'features.rating.rated.color'
+                      : 'transparent'
+                  }
+                  stroke={
+                    post?.hasRated
+                      ? 'features.rating.rated.color'
+                      : 'currentColor'
+                  }
+                />
+              }
               aria-label="Rate post"
               variant="ghost-hover-opacity"
               _hover={{
@@ -43,6 +63,8 @@ const PostReader: FC<IPostReaderProps> = ({ post, isAuthor }) => {
                 transform: 'scale(1.3)',
                 color: 'features.rating._hover.color'
               }}
+              onClick={handleRatePost}
+              isDisabled={isRating}
             />
           )}
         </Heading>
