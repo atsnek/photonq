@@ -22,10 +22,13 @@ export interface IBlogPostContentProps {
  */
 const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
+  const [isRating, setIsRating] = useState(false);
 
   const author = useAppStore(state => state.singlePost.postAuthor);
-  const post = useAppStore(state => state.singlePost.post);
   const currentUser = useAppStore(state => state.currentUser.userMe);
+  const post = useAppStore(state => state.singlePost.post);
+  const ratePost = useAppStore(state => state.singlePost.ratePost);
+  const unratePost = useAppStore(state => state.singlePost.unratePost);
 
   const setPostPreviewImage = (src: File) => {
     //TODO
@@ -33,6 +36,17 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
 
   const handlePublish = () => {
     //TODO
+  };
+
+  /**
+   * Handles rating a post.
+   * If the user has already rated the post, it will unrate it.
+   */
+  const handleRatePost = async () => {
+    setIsRating(true);
+    if (!post?.hasRated) await ratePost();
+    else await unratePost();
+    setIsRating(false);
   };
 
   const canEditPost = currentUser?.id === author?.id && false;
@@ -47,6 +61,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         post={post}
         setPostPreviewImage={setPostPreviewImage}
         canEdit={canEditPost}
+        handleRatePost={handleRatePost}
+        isRating={isRating}
       />
       <MainWrapper>
         <PostLeftNav

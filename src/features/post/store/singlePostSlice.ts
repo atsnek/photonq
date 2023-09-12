@@ -9,7 +9,7 @@ import { TPost, TPostPrivacy } from "../types/post";
 import { ObjectAndUser } from "@snek-functions/origin/dist/schema.generated";
 import { TUser } from "../../user/types/user";
 
-export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set) => ({
+export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
     postAuthor: null,
     post: undefined,
     editContent: (content) => {
@@ -55,6 +55,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set) => ({
                 id: post.id,
                 privacy: post.privacy as TPostPrivacy,
                 stars: post.stars?.length ?? 0,
+                hasRated: post.stars?.some(star => star.profile.id === currentUser?.id) ?? false,
                 summary: post.summary,
                 title: post.title,
                 canManage: currentUser?.id === post.profileId,
@@ -84,28 +85,56 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set) => ({
 
         return true;
     },
-    fetchPostAuthor: async () => {
-        // const authorId = useAppStore.getState().singlePost.post?.authorProfileId;
-        // if (!authorId) {
-        //     console.log("singlePostSlice: no author id found");
-        //     return;
-        // }
+    // fetchPostAuthor: async () => {
+    // const authorId = useAppStore.getState().singlePost.post?.authorProfileId;
+    // if (!authorId) {
+    //     console.log("singlePostSlice: no author id found");
+    //     return;
+    // }
 
-        // const [author, error] = await sq.query(q => q.user({ id: authorId }));
+    // const [author, error] = await sq.query(q => q.user({ id: authorId }));
 
-        // console.log("post author: ", author.details?.firstName);
-        // if (error) return;
+    // console.log("post author: ", author.details?.firstName);
+    // if (error) return;
 
-        // set(produce((state: TStoreState) => {
-        //     state.singlePost.postAuthor = {
-        //         id: author.id,
-        //         username: author.username,
-        //         displayName: getUserDisplayname(author),
-        //         bio: author.profile?.bio ?? null,
-        //         socials: [],
-        //         avatarUrl: author.details?.avatarURL ?? undefined,
-        //         location: undefined,
-        //     };
-        // }))
+    // set(produce((state: TStoreState) => {
+    //     state.singlePost.postAuthor = {
+    //         id: author.id,
+    //         username: author.username,
+    //         displayName: getUserDisplayname(author),
+    //         bio: author.profile?.bio ?? null,
+    //         socials: [],
+    //         avatarUrl: author.details?.avatarURL ?? undefined,
+    //         location: undefined,
+    //     };
+    // }))
+    // },
+    ratePost: async () => {
+        console.log("rating post...");
+        set(produce((state: TStoreState) => {
+            if (!state.singlePost.post) return;
+            state.singlePost.post.hasRated = true;
+        }));
+
+        const [, error] = await sq.mutate(m => m.socialPostStar({ postId: get().singlePost.post?.id ?? '' }));
+
+        const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.id ?? '');
+        return !!error && updateSucceed;
+
+    },
+    unratePost: async () => {
+        console.log("unrating post...");
+        set(produce((state: TStoreState) => {
+            if (!state.singlePost.post) return;
+            state.singlePost.post.hasRated = false;
+        }));
+
+        const [, error] = await sq.mutate(m => m.socialPostUnstar({ postId: get().singlePost.post?.id ?? '' }));
+
+        const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.id ?? '');
+        return !!error && updateSucceed;
+    },
+    updatePreviewImage: async (src) => {
+
     },
 })

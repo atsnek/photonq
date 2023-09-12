@@ -14,7 +14,10 @@ export interface ISinglePostStateActions {
     editContent: (content: string) => void;
     editSummary: (summary: string) => void;
     fetchPost: (slug: string) => Promise<boolean>;
-    fetchPostAuthor: () => void;
+    // fetchPostAuthor: () => void;
+    ratePost: () => Promise<boolean>;
+    unratePost: () => Promise<boolean>;
+    updatePreviewImage: (src: File) => void;
 }
 
 export type TSinglePostSlice = ISinglePostStateDefinition & ISinglePostStateActions;

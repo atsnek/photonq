@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef } from 'react';
+import { ChangeEvent, FC, useRef, useState } from 'react';
 import { TPost } from '../types/post';
 import { TUser } from '../../user/types/user';
 import {
@@ -15,6 +15,7 @@ import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
+import { useAppStore } from '../../../shared/store/store';
 
 interface IPostTopNavProps {
   post?: TPost;
@@ -22,6 +23,8 @@ interface IPostTopNavProps {
   handlePublish: () => void;
   setPostPreviewImage: (src: File) => void;
   canEdit?: boolean;
+  handleRatePost: () => void;
+  isRating?: boolean;
 }
 
 /**
@@ -32,7 +35,9 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   author,
   handlePublish,
   setPostPreviewImage,
-  canEdit
+  canEdit,
+  handleRatePost,
+  isRating
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -71,9 +76,30 @@ const PostTopNav: FC<IPostTopNavProps> = ({
           )}
           <Spacer />
           <HStack spacing={3}>
-            <Button colorScheme="gray" size="sm" leftIcon={<TbStar />}>
-              {post?.stars || 0}
-            </Button>
+            {!canEdit && (
+              <Button
+                colorScheme="gray"
+                size="sm"
+                leftIcon={
+                  <TbStar
+                    fill={
+                      post?.hasRated
+                        ? 'features.rating.rated.color'
+                        : 'transparent'
+                    }
+                    stroke={
+                      post?.hasRated
+                        ? 'features.rating.rated.color'
+                        : 'currentColor'
+                    }
+                  />
+                }
+                onClick={handleRatePost}
+                isDisabled={isRating}
+              >
+                {post?.stars || 0}
+              </Button>
+            )}
             <Input
               ref={imageInputRef}
               type="file"
