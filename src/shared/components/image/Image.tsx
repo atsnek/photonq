@@ -4,19 +4,26 @@ import {
   Center,
   Input,
   Image as ChImage,
-  ImageProps as ChImageProps
+  ImageProps as ChImageProps,
+  Spinner
 } from '@chakra-ui/react';
 import TbPhotoEdit from '../icons/tabler/TbPhotoEdit';
 
 interface ImageProps extends ChImageProps {
   handleImageChange?: (src: File) => void;
   editable?: boolean;
+  isUploading?: boolean;
 }
 
 /**
  * (Static) Image component that can not be edited using Jaen but with the os-native file selector.
  */
-const Image: FC<ImageProps> = ({ editable, handleImageChange, ...props }) => {
+const Image: FC<ImageProps> = ({
+  editable,
+  handleImageChange,
+  isUploading,
+  ...props
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   // const [imageSrc, setImageSrc] = useState<ImageProps['src']>(props.src);
 
@@ -35,19 +42,23 @@ const Image: FC<ImageProps> = ({ editable, handleImageChange, ...props }) => {
   return (
     <Box
       position="relative"
-      __css={{
-        '&:hover': {
-          '.image-edit-icon-color-layer': {
-            opacity: 0.3
-          },
-          '.image-edit-icon-container': {
-            opacity: 1
-          },
-          img: {
-            transform: 'scale(1.05)'
-          }
-        }
-      }}
+      __css={
+        !isUploading
+          ? {
+              '&:hover': {
+                '.image-edit-icon-color-layer': {
+                  opacity: 0.3
+                },
+                '.image-edit-icon-container': {
+                  opacity: 1
+                },
+                img: {
+                  transform: 'scale(1.05)'
+                }
+              }
+            }
+          : {}
+      }
       cursor={editable ? 'pointer' : 'default'}
       onClick={() => inputRef.current?.click()}
     >
@@ -59,8 +70,20 @@ const Image: FC<ImageProps> = ({ editable, handleImageChange, ...props }) => {
         visibility="hidden"
         zIndex={-9999}
         onChange={handleChange}
+        disabled={isUploading}
       />
       {image}
+      {isUploading && (
+        <Center
+          position="absolute"
+          top={0}
+          w="100%"
+          h="100%"
+          backdropFilter="blur(5px)"
+        >
+          <Spinner color="brand.300" />
+        </Center>
+      )}
       <Box
         className="image-edit-icon-color-layer"
         position="absolute"

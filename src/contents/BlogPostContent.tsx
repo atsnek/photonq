@@ -12,6 +12,7 @@ import PostActionToolbar from '../features/post/components/PostActionToolbar';
 import Alert from '../shared/components/alert/Alert';
 import { useDisclosure } from '@chakra-ui/react';
 import { TPostViewMode } from '../features/post/types/post';
+import { osg } from '@atsnek/jaen';
 
 export interface IBlogPostContentProps {
   slug: string;
@@ -38,13 +39,19 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   );
   const editSummary = useAppStore(state => state.singlePost.editSummary);
   const editTitle = useAppStore(state => state.singlePost.editTitle);
+  const updatePreviewImage = useAppStore(
+    state => state.singlePost.updatePreviewImage
+  );
+  const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === 'read' ? 'edit' : 'read');
   };
 
-  const setPostPreviewImage = (src: File) => {
-    //TODO
+  const setPostPreviewImage = async (src: File) => {
+    setIsPreviewImageUploading(true);
+    await updatePreviewImage(src);
+    setIsPreviewImageUploading(false);
   };
 
   const handleTogglePrivacy = () => {
@@ -103,6 +110,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
           setPostPreviewImage={setPostPreviewImage}
           canEdit={canEditPost}
           post={post}
+          isPostPreviewImageUploading={isPreviewImageUploading}
         />
         {canEditPost ? (
           <PostEditor post={post} />

@@ -84,7 +84,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
 
   return (
     <ActionToolbar
-      active={isMobile || scrollPosition > 90}
+      active={isMobile || scrollPosition > 90 || true}
       actions={[...deviceSpecificActionToolbarItems, ...actionToolbarItems]}
     />
   );

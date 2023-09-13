@@ -15,7 +15,7 @@ export interface ISinglePostStateActions {
     editSummary: (summary: string) => Promise<boolean>;
     fetchPost: (slug: string) => Promise<boolean>;
     togglePostRating: () => Promise<boolean>;
-    updatePreviewImage: (src: File) => void;
+    updatePreviewImage: (src: File) => Promise<boolean>;
     togglePrivacy: () => Promise<boolean>;
 }
 

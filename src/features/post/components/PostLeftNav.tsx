@@ -23,6 +23,7 @@ interface IPostLeftNavProps {
   handleTitleChange: (title: string) => void;
   handleSummaryChange: (summary: string) => void;
   setPostPreviewImage: (src: File) => void;
+  isPostPreviewImageUploading: boolean;
 }
 
 /**
@@ -33,7 +34,8 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   canEdit,
   handleTitleChange,
   handleSummaryChange,
-  setPostPreviewImage
+  setPostPreviewImage,
+  isPostPreviewImageUploading
 }) => {
   const navOffset = useNavOffset();
 
@@ -76,6 +78,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             transition="transform 0.2s cubic-bezier(.17,.67,.83,.67)"
             handleImageChange={setPostPreviewImage}
             editable={canEdit}
+            isUploading={isPostPreviewImageUploading}
           />
         </Box>
         <Box

@@ -8,6 +8,7 @@ import { TPost, TPostPrivacy } from "../types/post";
 import { TUser } from "../../user/types/user";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { useAppStore } from "../../../shared/store/store";
+import { osg } from "@atsnek/jaen";
 
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
     postAuthor: null,
@@ -112,7 +113,17 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         return !!error && updateSucceed;
     },
     updatePreviewImage: async (src) => {
+        if (!get().singlePost.post) return;
+        const { fileUrl } = await osg.uploadFile(src);
 
+        set(produce((state: TStoreState) => {
+            if (!state.singlePost.post) return;
+            state.singlePost.post.avatarUrl = fileUrl;
+        }))
+
+        await sq.mutate(q => q.socialPostUpdate({ postId: get().singlePost.post?.id ?? '', values: { avatarURL: fileUrl } }));
+
+        get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
     },
     togglePrivacy: async () => {
         const isPublished = get().singlePost.post?.privacy === 'public';
