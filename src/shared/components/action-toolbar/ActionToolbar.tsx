@@ -8,6 +8,7 @@ interface IActionTOolbarProps {
 }
 
 const ActionToolbar: FC<IActionTOolbarProps> = ({ actions, active = true }) => {
+  if (actions.length === 0) return null;
   const items = actions
     .sort((a, b) => {
       if (a.order === undefined && b.order === undefined) return 0;
