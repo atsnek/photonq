@@ -8,34 +8,42 @@ interface IActionTOolbarProps {
 }
 
 const ActionToolbar: FC<IActionTOolbarProps> = ({ actions, active = true }) => {
-  const items = actions.map((action, index) => (
-    <Tooltip
-      key={index}
-      label={action.tooltip}
-      placement="top"
-      marginBottom={1}
-    >
-      <IconButton
-        icon={action.icon}
-        fontSize="xl"
-        size="md"
-        aria-label={action.ariaLabel}
-        variant="ghost"
-        borderRadius="full"
-        onClick={action.onClick}
-        color="components.actionToolbar.button.color"
-        {...action.buttonProps}
-        _hover={{
-          bgColor: 'components.actionToolbar.button._hover.bgColor',
-          color:
-            action.hoverColor ?? 'components.actionToolbar.button._hover.color',
-          ...action.buttonProps?._hover
-        }}
-        isDisabled={action.disabled}
-        transition="background-color 0.2s ease-in-out, color 0.2s ease-in-out"
-      />
-    </Tooltip>
-  ));
+  const items = actions
+    .sort((a, b) => {
+      if (a.order === undefined && b.order === undefined) return 0;
+      if (a.order === undefined) return 1;
+      if (b.order === undefined) return -1;
+      return a.order - b.order;
+    })
+    .map((action, index) => (
+      <Tooltip
+        key={index}
+        label={action.tooltip}
+        placement="top"
+        marginBottom={1}
+      >
+        <IconButton
+          icon={action.icon}
+          fontSize="xl"
+          size="md"
+          aria-label={action.ariaLabel}
+          variant="ghost"
+          borderRadius="full"
+          onClick={action.onClick}
+          color="components.actionToolbar.button.color"
+          {...action.buttonProps}
+          _hover={{
+            bgColor: 'components.actionToolbar.button._hover.bgColor',
+            color:
+              action.hoverColor ??
+              'components.actionToolbar.button._hover.color',
+            ...action.buttonProps?._hover
+          }}
+          isDisabled={action.disabled}
+          transition="background-color 0.2s ease-in-out, color 0.2s ease-in-out"
+        />
+      </Tooltip>
+    ));
 
   return (
     <HStack

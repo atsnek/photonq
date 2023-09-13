@@ -1,6 +1,7 @@
 import { IconButtonProps, TooltipProps } from "@chakra-ui/react";
 
 export type TActionToolbarItem = {
+    order?: number;
     icon: IconButtonProps['icon'];
     ariaLabel: string;
     onClick: () => void;
