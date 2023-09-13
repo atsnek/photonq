@@ -7,27 +7,37 @@ import { asEnumKey } from "snek-query";
 import { TPost, TPostPrivacy } from "../types/post";
 import { TUser } from "../../user/types/user";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { useAppStore } from "../../../shared/store/store";
 
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
     postAuthor: null,
     post: undefined,
-    editContent: (content) => {
+    editContent: async (content) => {
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
             state.singlePost.post.content = content;
         }))
+        return true;
     },
-    editSummary: (summary) => {
+    editSummary: async (summary) => {
+        const post = get().singlePost.post;
+        if (!post) return false;
+        sq.mutate(m => m.socialPostUpdate({ postId: post.id, values: { summary } }))
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
             state.singlePost.post.summary = summary;
         }))
+        return true;
     },
-    editTitle: (title) => {
+    editTitle: async (title) => {
+        const post = get().singlePost.post;
+        if (!post) return false;
+        sq.mutate(m => m.socialPostUpdate({ postId: post.id, values: { title } }))
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
             state.singlePost.post.title = title;
         }))
+        return true;
     },
     toggleRating: () => {
         set(produce((state: TStoreState) => {

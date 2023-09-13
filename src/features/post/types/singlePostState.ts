@@ -10,9 +10,9 @@ export interface ISinglePostStateDefinition {
 
 export interface ISinglePostStateActions {
     toggleRating: () => void;
-    editTitle: (title: string) => void;
-    editContent: (content: string) => void;
-    editSummary: (summary: string) => void;
+    editTitle: (title: string) => Promise<boolean>;
+    editContent: (content: string) => Promise<boolean>;
+    editSummary: (summary: string) => Promise<boolean>;
     fetchPost: (slug: string) => Promise<boolean>;
     togglePostRating: () => Promise<boolean>;
     updatePreviewImage: (src: File) => void;

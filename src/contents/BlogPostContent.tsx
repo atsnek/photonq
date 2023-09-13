@@ -36,6 +36,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   const togglePostPrivacy = useAppStore(
     state => state.singlePost.togglePrivacy
   );
+  const editSummary = useAppStore(state => state.singlePost.editSummary);
+  const editTitle = useAppStore(state => state.singlePost.editTitle);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === 'read' ? 'edit' : 'read');
@@ -55,6 +57,14 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     await togglePostPrivacy();
     setIsUpdatingPrivacy(false);
     ref.current.oldPrivacy = undefined;
+  };
+
+  const handleSummaryChange = (summary: string) => {
+    editSummary(summary);
+  };
+
+  const handelTitleChange = (title: string) => {
+    editTitle(title);
   };
 
   /**
@@ -86,6 +96,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
       />
       <MainWrapper>
         <PostLeftNav
+          handleTitleChange={handelTitleChange}
+          handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
           canEdit={canEditPost}
           post={post}

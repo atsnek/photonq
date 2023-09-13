@@ -20,6 +20,8 @@ import { useAuthenticationContext } from '@atsnek/jaen';
 interface IPostLeftNavProps {
   post?: TPost;
   canEdit?: boolean;
+  handleTitleChange: (title: string) => void;
+  handleSummaryChange: (summary: string) => void;
   setPostPreviewImage: (src: File) => void;
 }
 
@@ -29,6 +31,8 @@ interface IPostLeftNavProps {
 const PostLeftNav: FC<IPostLeftNavProps> = ({
   post,
   canEdit,
+  handleTitleChange,
+  handleSummaryChange,
   setPostPreviewImage
 }) => {
   const navOffset = useNavOffset();
@@ -95,6 +99,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 px={8}
                 fontWeight="semibold"
                 borderRadius="md"
+                onBlur={e => handleTitleChange(e.target.value)}
               />
               <TbEdit
                 id="editor-left-nav-edit-title-icon"
@@ -141,6 +146,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             textAlign="center"
             variant="ghost"
             maxH="300px"
+            onBlur={e => handleSummaryChange(e.target.value)}
           />
         ) : (
           <Text size="sm">{post.summary}</Text>
