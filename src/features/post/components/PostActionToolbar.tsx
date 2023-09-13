@@ -70,7 +70,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
     }
   }
 
-  if (toggleViewMode && (canEdit || viewMode === 'read')) {
+  if (toggleViewMode && canEdit) {
     const isEditing = viewMode === 'edit';
     actionToolbarItems.push({
       order: 0,

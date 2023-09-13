@@ -113,7 +113,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         return !!error && updateSucceed;
     },
     updatePreviewImage: async (src) => {
-        if (!get().singlePost.post) return;
+        if (!get().singlePost.post) return false;
         const { fileUrl } = await osg.uploadFile(src);
 
         set(produce((state: TStoreState) => {
@@ -124,6 +124,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         await sq.mutate(q => q.socialPostUpdate({ postId: get().singlePost.post?.id ?? '', values: { avatarURL: fileUrl } }));
 
         get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
+        return true;
     },
     togglePrivacy: async () => {
         const isPublished = get().singlePost.post?.privacy === 'public';
