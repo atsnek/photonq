@@ -29,7 +29,7 @@ const PostReader: FC<IPostReaderProps> = ({
   const isAuthenticated = useAuthenticationContext().user !== null;
 
   const postDate = useMemo(
-    () => formatPostDate(post?.createdAt),
+    () => formatPostDate(post?.createdAt, 'l'),
     [post?.createdAt]
   );
 
