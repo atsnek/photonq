@@ -11,6 +11,7 @@ import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import RightNavPostReader from '../reader/components/RightNavPostReader';
 import { TPost } from '../types/post';
 import { formatPostDate } from '../../../shared/utils/features/post';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostReaderProps {
   post?: TPost;
@@ -25,7 +26,7 @@ const PostReader: FC<IPostReaderProps> = ({
   handleRatePost,
   isRating
 }) => {
-  const isAuthenticated = true;
+  const isAuthenticated = useAuthenticationContext().user !== null;
 
   const postDate = useMemo(
     () => formatPostDate(post?.createdAt),

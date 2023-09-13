@@ -72,12 +72,14 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
    * If the user has already rated the post, it will unrate it.
    */
   const handleRatePost = async () => {
+    if (isPostAuthor) return;
     setIsRating(true);
     await togglePostRating();
     setIsRating(false);
   };
 
-  const canEditPost = currentUser?.id === author?.id && viewMode === 'edit';
+  const isPostAuthor = currentUser?.id === author?.id;
+  const canEditPost = isPostAuthor && viewMode === 'edit';
   const isPostPublic = post?.privacy === 'public';
 
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
@@ -106,7 +108,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
           <PostEditor post={post} />
         ) : (
           <PostReader
-            isAuthor={canEditPost}
+            isAuthor={isPostAuthor}
             post={post}
             handleRatePost={handleRatePost}
             isRating={isRating}

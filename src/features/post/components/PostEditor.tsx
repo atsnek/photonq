@@ -101,36 +101,7 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
       <Stack direction="row" position="relative" flex={1} overflow="hidden">
         <Box w="full">
           <MdxEditor hideHeadingHash />
-          {/* <ActionToolbar
-            active={isMobile || scrollPosition > 90}
-            actions={[
-              ...actionToolbarItems,
-              {
-                icon: <TbDeviceFloppy />,
-                ariaLabel: 'Save this post',
-                tooltip: 'Save this post',
-                onClick: () => console.log('Save'),
-                hoverColor: 'components.postEditor.save.hover.color'
-              },
-              isPublic
-                ? {
-                    icon: <TbBookDownload />,
-                    ariaLabel: 'Unublish this post',
-                    tooltip: 'Unpublish this post',
-                    onClick: visibilityAlertDisclosure.onOpen,
-                    hoverColor: 'components.postEditor.publish.hover.color'
-                  }
-                : {
-                    icon: <TbBookUpload />,
-                    ariaLabel: 'Publish this post',
-                    tooltip: 'Publish this post',
-                    onClick: visibilityAlertDisclosure.onOpen,
-                    hoverColor: 'components.postEditor.publish.hover.color'
-                  }
-            ]}
-          /> */}
         </Box>
-        <Box />
       </Stack>
       <Alert
         disclosure={visibilityAlertDisclosure}
