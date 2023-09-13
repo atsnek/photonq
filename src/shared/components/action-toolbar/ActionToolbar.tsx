@@ -31,6 +31,7 @@ const ActionToolbar: FC<IActionTOolbarProps> = ({ actions, active = true }) => {
             action.hoverColor ?? 'components.actionToolbar.button._hover.color',
           ...action.buttonProps?._hover
         }}
+        isDisabled={action.disabled}
         transition="background-color 0.2s ease-in-out, color 0.2s ease-in-out"
       />
     </Tooltip>

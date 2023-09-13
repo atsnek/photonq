@@ -101,7 +101,7 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
       <Stack direction="row" position="relative" flex={1} overflow="hidden">
         <Box w="full">
           <MdxEditor hideHeadingHash />
-          <ActionToolbar
+          {/* <ActionToolbar
             active={isMobile || scrollPosition > 90}
             actions={[
               ...actionToolbarItems,
@@ -128,7 +128,7 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
                     hoverColor: 'components.postEditor.publish.hover.color'
                   }
             ]}
-          />
+          /> */}
         </Box>
         <Box />
       </Stack>
