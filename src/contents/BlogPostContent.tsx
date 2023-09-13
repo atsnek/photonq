@@ -11,6 +11,7 @@ import PostEditor from '../features/post/components/PostEditor';
 import PostActionToolbar from '../features/post/components/PostActionToolbar';
 import Alert from '../shared/components/alert/Alert';
 import { useDisclosure } from '@chakra-ui/react';
+import { TPostViewMode } from '../features/post/types/post';
 
 export interface IBlogPostContentProps {
   slug: string;
@@ -20,7 +21,7 @@ export interface IBlogPostContentProps {
  * Content for the blog post page (reading and editing).
  */
 const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
-  const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
+  const [viewMode, setViewMode] = useState<TPostViewMode>('read');
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const privacyAlertDisclosure = useDisclosure();
@@ -66,7 +67,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     setIsRating(false);
   };
 
-  const canEditPost = currentUser?.id === author?.id && false;
+  const canEditPost = currentUser?.id === author?.id && viewMode === 'edit';
   const isPostPublic = post?.privacy === 'public';
 
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
@@ -101,6 +102,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         )}
       </MainWrapper>
       <PostActionToolbar
+        viewMode={viewMode}
+        toggleViewMode={toggleViewMode}
         isPublic={isPostPublic}
         canEdit={canEditPost}
         handleTogglePrivacy={handleTogglePrivacy}

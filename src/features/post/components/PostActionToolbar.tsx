@@ -7,9 +7,13 @@ import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import useScrollPosition from '../../../shared/hooks/use-scroll-position';
-import { TPost } from '../types/post';
+import { TPost, TPostViewMode } from '../types/post';
+import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
+import TbEye from '../../../shared/components/icons/tabler/TbEye';
 
 interface IPostActionToolbarProps {
+  viewMode?: TPostViewMode;
+  toggleViewMode?: () => void;
   isPublic?: boolean;
   canEdit?: boolean;
   handleTogglePrivacy?: () => void;
@@ -17,6 +21,8 @@ interface IPostActionToolbarProps {
 }
 
 const PostActionToolbar: FC<IPostActionToolbarProps> = ({
+  viewMode,
+  toggleViewMode,
   isPublic,
   canEdit,
   handleTogglePrivacy,
@@ -28,6 +34,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
     useBreakpointValue<TActionToolbarItem[]>({
       base: [
         {
+          order: 1,
           icon: <TbPhoto fontSize="xl" />,
           onClick: () => console.log('Upload new image'),
           tooltip: 'Upload new image',
@@ -37,27 +44,42 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
       md: []
     }) ?? [];
 
-  const actionToolbarItems: TActionToolbarItem[] = [
-    {
-      icon: <TbDeviceFloppy />,
-      ariaLabel: 'Save this post',
-      tooltip: 'Save this post',
-      onClick: () => console.log('Save'),
-      hoverColor: 'components.postEditor.save.hover.color'
-    }
-  ];
+  const actionToolbarItems: TActionToolbarItem[] = [];
 
   if (canEdit) {
     if (handleTogglePrivacy) {
-      actionToolbarItems.push({
-        icon: isPublic ? <TbBookDownload /> : <TbBookUpload />,
-        ariaLabel: isPublic ? 'Unpublish this post' : 'Publish this post',
-        tooltip: isPublic ? 'Unpublish this post' : 'Publish this post',
-        onClick: handleTogglePrivacy,
-        hoverColor: 'components.postEditor.publish.hover.color',
-        disabled: isTogglingPrivacy
-      });
+      actionToolbarItems.push(
+        {
+          order: 1,
+          icon: <TbDeviceFloppy />,
+          ariaLabel: 'Save this post',
+          tooltip: 'Save this post',
+          onClick: () => console.log('Save'),
+          hoverColor: 'components.postEditor.save.hover.color'
+        },
+        {
+          order: 2,
+          icon: isPublic ? <TbBookDownload /> : <TbBookUpload />,
+          ariaLabel: isPublic ? 'Unpublish this post' : 'Publish this post',
+          tooltip: isPublic ? 'Unpublish this post' : 'Publish this post',
+          onClick: handleTogglePrivacy,
+          hoverColor: 'components.postEditor.publish.hover.color',
+          disabled: isTogglingPrivacy
+        }
+      );
     }
+  }
+
+  if (toggleViewMode && (canEdit || viewMode === 'read')) {
+    const isEditing = viewMode === 'edit';
+    actionToolbarItems.push({
+      order: 0,
+      icon: isEditing ? <TbEye /> : <TbEdit />,
+      ariaLabel: isEditing ? 'Edit this post' : 'Edit this post',
+      tooltip: isEditing ? 'Edit this post' : 'Edit this post',
+      onClick: toggleViewMode,
+      hoverColor: 'components.postEditor.edit.hover.color'
+    });
   }
 
   return (

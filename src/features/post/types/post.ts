@@ -17,6 +17,7 @@ import { TUser } from '../../user/types/user';
 //   canManage: boolean;
 // };
 
+export type TPostViewMode = 'read' | 'edit';
 export type TPostPrivacy = 'public' | 'private' | 'friends';
 
 //TODO: This type needs to be improved to better fit the needs of the current system
