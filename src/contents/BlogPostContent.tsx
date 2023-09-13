@@ -12,7 +12,7 @@ import PostActionToolbar from '../features/post/components/PostActionToolbar';
 import Alert from '../shared/components/alert/Alert';
 import { useDisclosure } from '@chakra-ui/react';
 import { TPostViewMode } from '../features/post/types/post';
-import { osg } from '@atsnek/jaen';
+import { osg, useAuthenticationContext } from '@atsnek/jaen';
 
 export interface IBlogPostContentProps {
   slug: string;
@@ -26,6 +26,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const privacyAlertDisclosure = useDisclosure();
+  const isAuthenticated = useAuthenticationContext().user !== null;
   const ref = useRef<{ oldPrivacy?: string }>({ oldPrivacy: undefined }); // This allows us to retrieve the old privacy value to keep the same alert styling while optimistically updating the post's privacy
 
   const author = useAppStore(state => state.singlePost.postAuthor);
@@ -79,7 +80,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
    * If the user has already rated the post, it will unrate it.
    */
   const handleRatePost = async () => {
-    if (isPostAuthor) return;
+    if (isPostAuthor || !isAuthenticated) return;
     setIsRating(true);
     await togglePostRating();
     setIsRating(false);
