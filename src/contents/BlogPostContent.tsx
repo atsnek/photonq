@@ -100,6 +100,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         isUpdatingPrivacy={isUpdatingPrivacy}
         post={post}
         setPostPreviewImage={setPostPreviewImage}
+        isAuthor={isPostAuthor}
         canEdit={canEditPost}
         handleRatePost={handleRatePost}
         isRating={isRating}

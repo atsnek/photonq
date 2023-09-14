@@ -12,7 +12,7 @@ export interface IProfileStateDefinition {
 
 export interface IProfileStateActions {
     fetchProfile: (username: string, currentUserId?: string) => Promise<boolean>;
-    fetchSearchPosts: (query: string, limit: number, offset: number) => void;
+    fetchSearchPosts: (query: string, limit: number, offset: number) => Promise<void>;
 }
 
 export type TProfileSlice = IProfileStateDefinition & IProfileStateActions;

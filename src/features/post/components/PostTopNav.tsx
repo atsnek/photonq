@@ -22,6 +22,7 @@ interface IPostTopNavProps {
   handleTogglePrivacy: () => void;
   isUpdatingPrivacy?: boolean;
   setPostPreviewImage: (src: File) => void;
+  isAuthor?: boolean;
   canEdit?: boolean;
   handleRatePost: () => void;
   isRating?: boolean;
@@ -36,6 +37,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   handleTogglePrivacy,
   isUpdatingPrivacy,
   setPostPreviewImage,
+  isAuthor,
   canEdit,
   handleRatePost,
   isRating
@@ -79,6 +81,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
           <HStack spacing={3}>
             {!canEdit && (
               <Button
+                variant={isAuthor ? 'ghost' : 'solid'}
                 colorScheme="gray"
                 size="sm"
                 leftIcon={

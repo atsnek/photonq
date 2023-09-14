@@ -2,12 +2,13 @@ import { TProfile } from "../types/user";
 import { TPostListData, TPostPreview, TPostPrivacy } from "../../post/types/post";
 import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { sq } from "@snek-functions/origin";
+import { asEnumKey } from "snek-query";
 import { produce } from "immer";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { TProfileSlice } from "../types/profileState";
 import { getUserDisplayname } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
-import { Post, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { Post, Privacy, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
     activity: [],
@@ -168,7 +169,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
         return true;
     },
     fetchSearchPosts: async (query, limit, offset) => {
-
         if (!query.length) {
             set(produce((state: TStoreState): void => {
                 state.profile.searchPosts = {
@@ -179,18 +179,50 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
             return;
         }
 
-        set(produce(state => ({ overviewPosts: { state: "loading", posts: [] } })))
+        set(produce((state: TStoreState) => {
+            state.profile.searchPosts = { state: "loading", posts: [] };
+        }))
 
-        const [currentUser] = await sq.query(q => q.userMe);
         const currentProfile = useAppStore.getState().profile.profile;
-
         if (!currentProfile) return;
 
-        const [publicPosts, publicPostsError] = await sq.query(q => q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: PrivacyInputInput.public } }));
+        const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
+            const [posts, error] = await sq.query(q => {
+                const posts = q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: asEnumKey(PrivacyInputInput, privacy) } });
+                return posts.map((p): TPostPreview => {
+                    const author = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: p?.profileId });
+                    const post = p as Post;
+                    const date = new Date(post.createdAt);
+                    console.log("stars: ", post.stars?.[0].createdAt);
+                    return {
+                        id: post.id,
+                        slug: post.slug,
+                        title: post.title,
+                        summary: post.summary,
+                        stars: post.stars?.length ?? 0,
+                        avatarUrl: post.avatarURL,
+                        privacy: post.privacy as TPostPrivacy,
+                        profile: {
+                            displayName: getUserDisplayname(author),
+                            id: author.id,
+                            username: author.username,
+                            avatarUrl: author.details?.avatarURL,
+                        },
+                        createdAt: `
+                                  ${date.getFullYear()}-
+                                  ${date.getMonth().toString().padStart(2, '0')}-
+                                  ${date.getDate().toString().padStart(2, '0')}
+                                `,
+                        canManage: false,
+                    }
+                })
+            });
+            return (error) ? undefined : posts;
+        }
 
-        const [privatePosts, privatePostsError] = (currentProfile.id === currentUser?.id) ? await sq.query(q => q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: PrivacyInputInput.private } })) : [[], null];
+        const combinedPosts = [await fetchSocialPosts(PrivacyInputInput.private), await fetchSocialPosts(PrivacyInputInput.public)];
 
-        if ((publicPostsError && privatePostsError) || (!publicPosts && !privatePosts)) {
+        if (combinedPosts.every(p => p === undefined)) {
             set(produce((state: TStoreState): void => {
                 state.profile.searchPosts = {
                     state: "error",
@@ -200,41 +232,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
             return;
         }
 
-        const combinedPosts = [...publicPosts, ...privatePosts];
-
-
-        const searchPosts: TPostListData = {
-            state: "success",
-            posts: await Promise.all(combinedPosts.filter(post => post !== null).map(async (p): Promise<TPostPreview> => {
-                const [user] = await sq.query(q => q.user({ resourceId: __SNEK_RESOURCE_ID__, id: p?.profileId }));
-                const post = p as Post;
-                const date = new Date(post.createdAt);
-                return {
-                    id: post.id,
-                    slug: post.slug,
-                    title: post.title,
-                    summary: post.summary,
-                    stars: post.stars.length,
-                    avatarUrl: post.avatarURL,
-                    privacy: post.privacy as TPostPrivacy,
-                    profile: {
-                        displayName: getUserDisplayname(user),
-                        id: user.id,
-                        username: user.username,
-                        avatarUrl: user.details?.avatarURL,
-                    },
-                    createdAt: `
-                              ${date.getFullYear()}-
-                              ${date.getMonth().toString().padStart(2, '0')}-
-                              ${date.getDate().toString().padStart(2, '0')}
-                            `,
-                    canManage: false,
-                }
-            }))
-        }
-
-        set(produce((state: TStoreState): void => {
-            state.profile.searchPosts = searchPosts;
-        }));
+        set(
+            produce((state: TStoreState): void => {
+                state.profile.searchPosts = {
+                    state: "success",
+                    posts: combinedPosts.flat().filter(
+                        (post): post is TPostPreview => post !== undefined
+                    ),
+                };
+            })
+        );
     },
 })
