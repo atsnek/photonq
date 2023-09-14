@@ -51,6 +51,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
 
             profile?.activity.forEach(async ({ createdAt, follow, post, type }) => {
                 //! Because of snek-query, we need to access all post props we need here, otherwise it won't be fetched
+                post?.slug;
                 post?.title;
                 if (!createdAt || (type.startsWith("star_") && post && activityRatingPostIds.findIndex(({ createdAt: existingCreatedAt, id }) => id === post.id && existingCreatedAt === createdAt)) === -1) return;
 
@@ -81,11 +82,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                 if (type === 'blog_create' && post) {
                     title = `Created a blog post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
                         }\"`;
-                    href = '/docs/' + post.slug;
+                    href = '/post/' + post.slug;
                 } else if (type === 'profile_create') {
                     title = `Created a profile`;
                     href = '#';
                 } else if (type === 'follow_follow' && follow) {
+                    if (!follow.followed) return;
                     const [followedUser, followedUserError] = await sq.query(q => q.user({ id: follow.followed.id }));
                     if (!followedUser || followedUserError) return;
                     title = `Followed ${getUserDisplayname(followedUser)}`;
@@ -93,7 +95,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                 } else if (type === 'star_star' && post) {
                     title = `Starred a post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
                         }\"`;
-                    href = '/docs/' + post.slug;
+                    href = '/post/' + post.slug;
                 }
 
                 currentActivitySection.activities.push({
