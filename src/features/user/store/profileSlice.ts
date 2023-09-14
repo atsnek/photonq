@@ -54,6 +54,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                 //! Because of snek-query, we need to access all post props we need here, otherwise it won't be fetched
                 post?.slug;
                 post?.title;
+                post?.privacy;
+                post?.profileId;
                 if (!createdAt || (type.startsWith("star_") && post && activityRatingPostIds.findIndex(({ createdAt: existingCreatedAt, id }) => id === post.id && existingCreatedAt === createdAt)) === -1) return;
 
                 const date = new Date(createdAt);
@@ -81,9 +83,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                 let href = '';
 
                 if (type === 'blog_create' && post) {
-                    title = `Created a blog post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
-                        }\"`;
-                    href = '/post/' + post.slug;
+                    console.log(post.privacy);
+                    if (post.privacy === Privacy.private && post.profileId !== currentUser?.id) {
+                        title = "Created a private blog post";
+                        href = "#";
+                    } else {
+                        title = `Created a blog post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+                            }\"`;
+                        href = '/post/' + post.slug;
+                    }
                 } else if (type === 'profile_create') {
                     title = `Created a profile`;
                     href = '#';
@@ -193,7 +201,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                     const author = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: p?.profileId });
                     const post = p as Post;
                     const date = new Date(post.createdAt);
-                    console.log("stars: ", post.stars?.[0].createdAt);
                     return {
                         id: post.id,
                         slug: post.slug,
