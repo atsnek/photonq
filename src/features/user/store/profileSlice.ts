@@ -189,7 +189,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
         const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
             const [posts, error] = await sq.query(q => {
                 const posts = q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: asEnumKey(PrivacyInputInput, privacy) } });
-                return posts.map((p): TPostPreview => {
+                return posts?.map((p): TPostPreview => {
                     const author = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: p?.profileId });
                     const post = p as Post;
                     const date = new Date(post.createdAt);
