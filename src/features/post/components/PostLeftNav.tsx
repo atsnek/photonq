@@ -129,7 +129,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             <Divider mt={8} mb={3} />
           </>
         )}
-        {(post.summary || canEdit) && (
+        {post.summary && canEdit && (
           <Heading
             as="h6"
             fontSize="sm"
@@ -152,7 +152,9 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             onBlur={e => handleSummaryChange(e.target.value)}
           />
         ) : (
-          <Text size="sm">{post.summary}</Text>
+          <Text size="sm" color="pages.singlePost.leftNav.summary.color">
+            {post.summary}
+          </Text>
         )}
       </VStack>
     </LeftNav>

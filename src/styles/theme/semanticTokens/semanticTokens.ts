@@ -34,6 +34,7 @@ import smtPostEditorComponent from '../../../features/post/editor/styles/postEdi
 import smtTextareaComponent from './components/textarea';
 import smtImageComponent from './components/image';
 import smtBadgeComponent from './components/badge';
+import smtSinglePostPage from '../../../features/post/styles/singlePost';
 
 const themeSemanticTokens = {
   colors: {
@@ -66,7 +67,8 @@ const themeSemanticTokens = {
     },
     pages: {
       userProfile: smtUserProfilePage,
-      posts: smtPostsPage
+      posts: smtPostsPage,
+      singlePost: smtSinglePostPage,
     },
     views: {
       postReader: smtPostReaderView,

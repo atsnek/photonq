@@ -48,6 +48,7 @@ const postListItemPreviewStyling = {
  */
 const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   id,
+  slug,
   wrapperProps,
   avatarUrl,
   privacy,
@@ -57,8 +58,8 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   summary,
   canManage,
   hideAuthor,
-  stars,
-  profileId
+  profile,
+  stars
 }) => {
   return (
     <LinkBox
@@ -86,7 +87,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
           )}
           <VStack alignItems="flex-start">
             <LinkOverlay
-              href={`/docs/${id}`}
+              href={`/post/${slug}`}
               _hover={{
                 h5: {
                   color: 'components.postPreview.listItem._hover.title.color'
@@ -123,12 +124,12 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
         <HStack {...postListItemPreviewStyling.bottomHStack}>
           {!hideAuthor && (
             <Link
-              href={`/profile/${profileId}`}
+              href={`/user/${profile.username}`}
               color="components.postPreview.author.color"
               fontSize="sm"
               variant="hover-theme"
             >
-              @{profileId}
+              @{profile.username}
             </Link>
           )}
           <PostPreviewRating
