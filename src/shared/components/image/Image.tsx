@@ -27,7 +27,7 @@ const Image: FC<ImageProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   // const [imageSrc, setImageSrc] = useState<ImageProps['src']>(props.src);
 
-  const image = <ChImage {...props} />;
+  const image = <ChImage objectFit="cover" {...props} />;
   if (!editable) {
     return image;
   }

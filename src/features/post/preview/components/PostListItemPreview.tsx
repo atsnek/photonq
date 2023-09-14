@@ -53,6 +53,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   avatarUrl,
   privacy,
   toggleLike,
+  hasRated,
   title,
   createdAt,
   summary,
@@ -136,7 +137,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             id={id}
             likes={stars}
             toggleLike={() => {}}
-            hasLiked={false}
+            hasRated={hasRated}
             isPostManagable={canManage}
             useHighContrast
           />

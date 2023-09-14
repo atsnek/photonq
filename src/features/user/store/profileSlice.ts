@@ -3,12 +3,13 @@ import { TPostPreview, TPostPrivacy } from "../../post/types/post";
 import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { sq } from "@snek-functions/origin";
 import { asEnumKey } from "snek-query";
-import { produce } from "immer";
+import { current, produce } from "immer";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { TProfileSlice } from "../types/profileState";
 import { getUserDisplayname } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
-import { Post, Privacy, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { Post, Privacy, PrivacyInputInput, User } from "@snek-functions/origin/dist/schema.generated";
+import { buildPostPreview } from "../../../shared/utils/features/post";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
     activity: [],
@@ -135,34 +136,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                             privacy === 'public' ||
                             (currentUser && user.id === currentUser.id)
                     )
-                    .map(post => {
-                        const date = new Date(post.createdAt);
-                        return {
-                            id: post.id,
-                            slug: post.slug,
-                            title: post.title,
-                            summary: post.summary,
-                            stars: post.stars.length,
-                            hasRated: post.stars.findIndex(s => s.profile.id === currentUser?.id) !== -1,
-                            avatarUrl: post.avatarURL,
-                            profile: {
-                                displayName: getUserDisplayname(user),
-                                id: user.id,
-                                username: user.username,
-                                avatarUrl: user.details?.avatarURL,
-                            },
-                            createdAt: `
-                              ${date.getFullYear()}-
-                              ${date.getMonth().toString().padStart(2, '0')}-
-                              ${date.getDate().toString().padStart(2, '0')}
-                            `,
-                            // canManage: false,
-                            //TODO: Re-enable this once the backend error is fixed
-                            canManage: post.profile?.id === currentUser?.id,
-                            privacy: post.privacy as TPostPrivacy,
-                            profileId: post.profileId
-                        };
-                    }) ?? []
+                    .map(p => buildPostPreview(q, p, currentUser)) ?? []
             }
         })
 
@@ -197,35 +171,9 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
         if (!currentProfile) return;
 
         const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
-            const [posts, error] = await sq.query(q => {
+            const [posts, error] = await sq.query((q): TPostPreview[] | undefined => {
                 const posts = q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: asEnumKey(PrivacyInputInput, privacy) } });
-                return posts?.map((p): TPostPreview => {
-                    const author = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: p?.profileId });
-                    const post = p as Post;
-                    const date = new Date(post.createdAt);
-                    return {
-                        id: post.id,
-                        slug: post.slug,
-                        title: post.title,
-                        summary: post.summary,
-                        stars: post.stars?.length ?? 0,
-                        hasRated: post.stars?.findIndex(s => s.profile.id === currentProfile?.id) !== -1,
-                        avatarUrl: post.avatarURL,
-                        privacy: post.privacy as TPostPrivacy,
-                        profile: {
-                            displayName: getUserDisplayname(author),
-                            id: author.id,
-                            username: author.username,
-                            avatarUrl: author.details?.avatarURL,
-                        },
-                        createdAt: `
-                                  ${date.getFullYear()}-
-                                  ${date.getMonth().toString().padStart(2, '0')}-
-                                  ${date.getDate().toString().padStart(2, '0')}
-                                `,
-                        canManage: false,
-                    }
-                })
+                return posts?.filter(p => p !== null).map((p) => buildPostPreview(q, p as Post, q.userMe));
             });
             return (error) ? undefined : posts;
         }

@@ -22,7 +22,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
     },
     editSummary: async (summary) => {
         const post = get().singlePost.post;
-        if (!post) return false;
+        if (!post || post.summary === summary) return false;
         sq.mutate(m => m.socialPostUpdate({ postId: post.id, values: { summary } }))
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
@@ -32,7 +32,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
     },
     editTitle: async (title) => {
         const post = get().singlePost.post;
-        if (!post) return false;
+        if (!post || post.title === title) return false;
         sq.mutate(m => m.socialPostUpdate({ postId: post.id, values: { title } }))
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;

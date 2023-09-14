@@ -4,7 +4,7 @@ import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
 import { TPostPreview, TPostPrivacy } from "../types/post";
 import { Post } from "@snek-functions/origin/dist/schema.generated";
-import { formatPostDate } from "../../../shared/utils/features/post";
+import { buildPostPreview, formatPostDate } from "../../../shared/utils/features/post";
 import { useAppStore } from "../../../shared/store/store";
 import { getUserDisplayname } from "../../user/utils/user";
 
@@ -55,39 +55,43 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             state.communityPosts.latestPosts.state = 'loading';
         }));
 
-        const [posts, error] = await sq.query(q => q.allSocialPost({ filters: { limit: 4, offset: 0 } }));
+        const [posts, error] = await sq.query(q => {
+            const posts = q.allSocialPost({ filters: { limit: 4, offset: 0 } })
+
+            return posts?.filter(p => p !== null).map((p) => buildPostPreview(q, p, q.userMe));
+        });
 
         if (error) return;
         // fetch trending posts
 
-        const latestPosts = await Promise.all(posts.filter(p => p !== null).map(async (p): Promise<TPostPreview> => {
-            const post = p as Post;
-            const [author] = await sq.query(q => q.user({ id: post.profileId }));
+        // const latestPosts = await Promise.all(posts.filter(p => p !== null).map(async (p): Promise<TPostPreview> => {
+        //     const post = p as Post;
+        //     const [author] = await sq.query(q => q.user({ id: post.profileId }));
 
-            return {
-                id: post.id,
-                slug: post.slug,
-                title: post.title,
-                summary: post.summary,
-                avatarUrl: post.avatarURL,
-                createdAt: formatPostDate(post.createdAt),
-                privacy: post.privacy as TPostPrivacy,
-                profile: {
-                    id: post.profileId,
-                    username: author.username,
-                    displayName: getUserDisplayname(author),
-                    avatarUrl: author.details?.avatarURL,
-                },
-                stars: post.stars?.length ?? 0,
-                hasRated: post.stars?.findIndex(s => s.profile.id === author.id) !== -1,
-                canManage: true, //TODO: Implement this
-            }
-        }));
+        //     return {
+        //         id: post.id,
+        //         slug: post.slug,
+        //         title: post.title,
+        //         summary: post.summary,
+        //         avatarUrl: post.avatarURL,
+        //         createdAt: formatPostDate(post.createdAt),
+        //         privacy: post.privacy as TPostPrivacy,
+        //         profile: {
+        //             id: post.profileId,
+        //             username: author.username,
+        //             displayName: getUserDisplayname(author),
+        //             avatarUrl: author.details?.avatarURL,
+        //         },
+        //         stars: post.stars?.length ?? 0,
+        //         hasRated: post.stars?.findIndex(s => s.profile.id === author.id) !== -1,
+        //         canManage: true, //TODO: Implement this
+        //     }
+        // }));
 
         console.log("latest posts: ", posts);
         set(produce((state: TStoreState) => {
             state.communityPosts.latestPosts.state = 'success';
-            state.communityPosts.latestPosts.posts = latestPosts;
+            state.communityPosts.latestPosts.posts = posts;
         }));
     },
     fetchSearchPosts: async (query: string) => {
