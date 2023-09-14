@@ -1,4 +1,10 @@
-import { Box, BoxProps, Tooltip, TooltipProps } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Tooltip,
+  TooltipProps,
+  useColorModeValue
+} from '@chakra-ui/react';
 import React, { FC, useState } from 'react';
 import BsFileEarmark from '../../../../shared/components/icons/bootstrap/BsFileEarmark';
 import BsFolder2Open from '../../../../shared/components/icons/bootstrap/BsFolder2Open';
@@ -25,7 +31,10 @@ const FilesystemItem: FC<IFilesystemItemProps> = ({
     isFolder && (item.defaultOpen ?? true)
   );
   const toggleShowChildren = () => setShowChildren(!showChildren);
+  //!Bug: Chakra doesnt set the bg color via the background-color css prop but via the bg prop, which allows our default tooltip props to take precedence. This is a temporary workaround
+  const tooltipBgColor = useColorModeValue('theme.700', 'theme.800');
 
+  console.log(item.tooltip);
   // Tooltip sttings
   const tooltipText =
     typeof item.tooltip === 'string' ? item.tooltip : item.tooltip?.text;
@@ -133,6 +142,7 @@ const FilesystemItem: FC<IFilesystemItemProps> = ({
           <Tooltip
             {...tooltipProps}
             label={tooltipText}
+            bgColor={`${tooltipBgColor} !important`}
             borderRadius="md"
             openDelay={500}
           >
