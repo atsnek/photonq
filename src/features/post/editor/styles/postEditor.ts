@@ -13,6 +13,11 @@ const smtPostEditorComponent = {
         hover: {
             color: 'blue.600'
         }
+    },
+    viewMode: {
+        hover: {
+            color: 'blue.500'
+        }
     }
 }
 

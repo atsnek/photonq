@@ -128,7 +128,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         viewMode={viewMode}
         toggleViewMode={toggleViewMode}
         isPublic={isPostPublic}
-        canEdit={canEditPost}
+        canEdit={isPostAuthor}
         handleTogglePrivacy={handleTogglePrivacy}
         isTogglingPrivacy={isUpdatingPrivacy}
       />
