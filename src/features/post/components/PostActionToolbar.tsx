@@ -11,6 +11,7 @@ import { TPost, TPostViewMode } from '../types/post';
 import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
 import TbEye from '../../../shared/components/icons/tabler/TbEye';
 import TbStar from '../../../shared/components/icons/tabler/TbStar';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostActionToolbarProps {
   viewMode?: TPostViewMode;
@@ -29,6 +30,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   handleTogglePrivacy,
   isTogglingPrivacy
 }) => {
+  const isAuthenticated = useAuthenticationContext().user !== null;
   const scrollPosition = useScrollPosition();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const deviceSpecificActionToolbarItems =
@@ -70,14 +72,16 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
       );
     }
   } else {
-    actionToolbarItems.push({
-      order: 1,
-      icon: <TbStar fontSize="xl" />,
-      onClick: () => console.log('Upload new image'),
-      tooltip: 'Rate this post',
-      ariaLabel: 'Rate this post',
-      hoverColor: 'components.postEditor.rate.hover.color'
-    });
+    if (isAuthenticated) {
+      actionToolbarItems.push({
+        order: 1,
+        icon: <TbStar fontSize="xl" />,
+        onClick: () => console.log('Upload new image'),
+        tooltip: 'Rate this post',
+        ariaLabel: 'Rate this post',
+        hoverColor: 'components.postEditor.rate.hover.color'
+      });
+    }
   }
 
   if (toggleViewMode && canEdit) {

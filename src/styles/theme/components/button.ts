@@ -2,6 +2,21 @@ import { ComponentStyleConfig } from "@chakra-ui/react";
 
 const themeButtonComponent: ComponentStyleConfig = {
   variants: {
+    'invisible': {
+      bgColor: 'transparent',
+      border: 'none',
+      _hover: {
+        bgColor: 'transparent',
+        border: 'none'
+      },
+      _focus: {
+        bgColor: 'transparent',
+        border: 'none',
+        outline: 'none',
+      },
+      cursor: 'default',
+      paddingInline: 3,
+    },
     'ghost-hover': {
       bgColor: 'transparent',
       opacity: 0.7,

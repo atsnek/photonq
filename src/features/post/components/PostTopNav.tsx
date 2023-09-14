@@ -15,6 +15,7 @@ import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostTopNavProps {
   post?: TPost;
@@ -43,6 +44,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   isRating
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const isAuthenticated = useAuthenticationContext().user !== null;
 
   const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.currentTarget?.files || e.currentTarget.files?.length === 0) return;
@@ -81,7 +83,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
           <HStack spacing={3}>
             {!canEdit && (
               <Button
-                variant={isAuthor ? 'ghost' : 'solid'}
+                variant={isAuthor || !isAuthenticated ? 'invisible' : 'solid'}
                 colorScheme="gray"
                 size="sm"
                 leftIcon={
