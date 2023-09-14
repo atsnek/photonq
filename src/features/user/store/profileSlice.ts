@@ -1,5 +1,5 @@
 import { TProfile } from "../types/user";
-import { TPostListData, TPostPreview, TPostPrivacy } from "../../post/types/post";
+import { TPostPreview, TPostPrivacy } from "../../post/types/post";
 import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { sq } from "@snek-functions/origin";
 import { asEnumKey } from "snek-query";
@@ -16,8 +16,9 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
     searchPosts: { state: "inactive", posts: [] },
     profile: undefined,
     fetchProfile: async (username) => {
-        console.log("fetching profile for", username);
-        set(produce(state => ({ overviewPosts: { state: "loading", posts: [] } })))
+        set(produce((state: TStoreState) => {
+            state.profile.overviewPosts = { state: "loading", posts: [] };
+        }))
         const [currentUser] = await sq.query(q => q.userMe);
 
         const [profileData, error] = await sq.query((q): TProfile | undefined => {
@@ -142,6 +143,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                             title: post.title,
                             summary: post.summary,
                             stars: post.stars.length,
+                            hasRated: post.stars.findIndex(s => s.profile.id === currentUser?.id) !== -1,
                             avatarUrl: post.avatarURL,
                             profile: {
                                 displayName: getUserDisplayname(user),
@@ -207,6 +209,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                         title: post.title,
                         summary: post.summary,
                         stars: post.stars?.length ?? 0,
+                        hasRated: post.stars?.findIndex(s => s.profile.id === currentProfile?.id) !== -1,
                         avatarUrl: post.avatarURL,
                         privacy: post.privacy as TPostPrivacy,
                         profile: {

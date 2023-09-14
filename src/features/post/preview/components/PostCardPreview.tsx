@@ -48,6 +48,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   profile,
   createdAt,
   stars,
+  hasRated,
   hideAuthor,
   title,
   summary,
@@ -61,12 +62,13 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   //   if (!profile) return '';
   // }, [profile]);
 
+  console.log('hasRated: ', hasRated);
   let ratingComp: ReactNode = (
     <PostPreviewRating
       id={id}
       likes={stars}
       toggleLike={toggleLike}
-      // hasLiked={hasLiked}
+      hasRated={hasRated}
       isPostManagable={canManage && false}
     />
   );

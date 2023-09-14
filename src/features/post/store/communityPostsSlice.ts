@@ -39,6 +39,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                     avatarUrl: author.details?.avatarURL,
                 },
                 stars: post.stars?.length ?? 0,
+                hasRated: post.stars?.findIndex(s => s.profile.id === currentUser?.id) !== -1,
                 canManage: false, //TODO: Implement this
             }
         }));
@@ -78,7 +79,8 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                     avatarUrl: author.details?.avatarURL,
                 },
                 stars: post.stars?.length ?? 0,
-                canManage: false, //TODO: Implement this
+                hasRated: post.stars?.findIndex(s => s.profile.id === author.id) !== -1,
+                canManage: true, //TODO: Implement this
             }
         }));
 

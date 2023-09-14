@@ -7,7 +7,7 @@ import { TPostPreview } from '../../types/post';
 interface IPostPreviewRatingProps {
   id: TPostPreview['id'];
   likes: number;
-  hasLiked?: boolean;
+  hasRated?: boolean;
   toggleLike: (id: TPostPreview['id']) => void;
   isPostManagable?: boolean;
   useHighContrast?: boolean;
@@ -19,7 +19,7 @@ interface IPostPreviewRatingProps {
 const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
   id,
   likes,
-  hasLiked,
+  hasRated,
   toggleLike,
   isPostManagable,
   useHighContrast
@@ -30,7 +30,7 @@ const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
         display="flex"
         variant="unstyled"
         size="sm"
-        color={`features.rating.${hasLiked ? 'rated' : 'unrated'}.color`}
+        color={`features.rating.${hasRated ? 'rated' : 'unrated'}.color`}
         _hover={{
           color: `features.rating._hover.color`,
           bgColor: `features.rating._hover${
@@ -45,8 +45,8 @@ const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
         <TbStar
           boxSize={3}
           mr={1}
-          fill={hasLiked ? 'currentColor' : 'none'}
-          stroke={hasLiked ? 'none' : 'currentColor'}
+          fill={hasRated ? 'currentColor' : 'none'}
+          stroke={hasRated ? 'none' : 'currentColor'}
           transition="fill 0.2s ease-in-out, stroke 0.2s ease-in-out"
         />
         <Text fontSize={12}>{formatNumber(likes)}</Text>

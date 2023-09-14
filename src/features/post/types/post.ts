@@ -50,6 +50,7 @@ export type TPostPreview = {
   title: string;
   summary: string | null;
   stars: number;
+  hasRated: boolean;
   avatarUrl: string | null;
   createdAt: string;
   canManage?: boolean;
