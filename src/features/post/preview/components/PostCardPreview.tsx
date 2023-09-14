@@ -67,7 +67,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       likes={stars}
       toggleLike={toggleLike}
       // hasLiked={hasLiked}
-      isPostManagable={canManage}
+      isPostManagable={canManage && false}
     />
   );
 
@@ -159,7 +159,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
           )}
         </HStack>
         <Box pointerEvents="all">
-          {canManage ? <PostPreviewManageMenu /> : ratingComp}
+          {canManage && false ? <PostPreviewManageMenu /> : ratingComp}
         </Box>
       </HStack>
     </LinkBox>

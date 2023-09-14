@@ -10,6 +10,7 @@ import useScrollPosition from '../../../shared/hooks/use-scroll-position';
 import { TPost, TPostViewMode } from '../types/post';
 import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
 import TbEye from '../../../shared/components/icons/tabler/TbEye';
+import TbStar from '../../../shared/components/icons/tabler/TbStar';
 
 interface IPostActionToolbarProps {
   viewMode?: TPostViewMode;
@@ -68,6 +69,15 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
         }
       );
     }
+  } else {
+    actionToolbarItems.push({
+      order: 1,
+      icon: <TbStar fontSize="xl" />,
+      onClick: () => console.log('Upload new image'),
+      tooltip: 'Rate this post',
+      ariaLabel: 'Rate this post',
+      hoverColor: 'components.postEditor.rate.hover.color'
+    });
   }
 
   if (toggleViewMode && canEdit) {

@@ -18,7 +18,12 @@ const smtPostEditorComponent = {
         hover: {
             color: 'blue.500'
         }
-    }
+    },
+    rate: {
+        hover: {
+            color: 'features.rating.rated.color'
+        },
+    },
 }
 
 export default smtPostEditorComponent
