@@ -26,6 +26,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             const [author] = await sq.query(q => q.user({ id: post.profileId }));
             return {
                 id: post.id,
+                slug: post.slug,
                 title: post.title,
                 summary: post.summary,
                 avatarUrl: post.avatarURL,
@@ -64,6 +65,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
             return {
                 id: post.id,
+                slug: post.slug,
                 title: post.title,
                 summary: post.summary,
                 avatarUrl: post.avatarURL,

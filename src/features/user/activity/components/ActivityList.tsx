@@ -20,6 +20,7 @@ import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import Link from '../../../../shared/components/Link';
 import usePagination from '../../../../shared/hooks/use-pagination';
 import ActivityListSkeleton from './ActivityListSkeleton';
+import TbConfetti from '../../../../shared/components/icons/tabler/TbConfetti';
 
 export const activityListStyling = {
   title: {
@@ -31,7 +32,9 @@ export const activityListStyling = {
 const activityIcons: Record<TActivityType, ReactNode> = {
   follow_follow: <TbMessagesCircle2 />,
   blog_create: <TbPencil />,
-  profile_create: <TbStar />
+  profile_create: <TbConfetti />,
+  star_star: <TbStar />,
+  star_unstar: undefined
 };
 
 interface IActivityListProps extends BoxProps {

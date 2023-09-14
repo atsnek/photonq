@@ -1,14 +1,13 @@
-import { StateCreator } from "zustand";
-import { TProfile, TUser } from "../types/user";
+import { TProfile } from "../types/user";
 import { TPostListData, TPostPreview, TPostPrivacy } from "../../post/types/post";
 import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { sq } from "@snek-functions/origin";
 import { produce } from "immer";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
-import { IProfileStateDefinition, TProfileSlice } from "../types/profileState";
+import { TProfileSlice } from "../types/profileState";
 import { getUserDisplayname } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
-import { Post, PrivacyInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { Post, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
     activity: [],
@@ -29,8 +28,31 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
             const activitySections: TActivitySection[] = [];
             let currentActivitySection: TActivitySection | null = null;
 
-            profile?.activity.forEach(({ createdAt, follow, post, type }) => {
-                if (!createdAt) return;
+            // Only show the most recent rating for a post
+            const activityRatingPostIds: Array<{ createdAt: string, id: string }> = [];
+            profile?.activity.filter(({ type }) => type.startsWith("star")).sort((a, b) => {
+                if (!a.createdAt || !b.createdAt) return 0;
+                return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            }).forEach(({ createdAt, post, type }) => {
+                if (!post) return;
+                const pos = activityRatingPostIds.findIndex(({ id }) => id === post.id);
+                const isUnstar = type === "star_unstar";
+                if (pos !== -1) {
+                    if (new Date(activityRatingPostIds[pos].createdAt) > new Date(createdAt)) return;
+                    if (type === "star_unstar") {
+                        activityRatingPostIds.splice(pos, 1);
+                        return;
+                    }
+                    activityRatingPostIds[pos].createdAt = createdAt;
+                }
+                else if (!isUnstar) activityRatingPostIds.push({ createdAt, id: post.id });
+
+            })
+
+            profile?.activity.forEach(async ({ createdAt, follow, post, type }) => {
+                //! Because of snek-query, we need to access all post props we need here, otherwise it won't be fetched
+                post?.title;
+                if (!createdAt || (type.startsWith("star_") && post && activityRatingPostIds.findIndex(({ createdAt: existingCreatedAt, id }) => id === post.id && existingCreatedAt === createdAt)) === -1) return;
 
                 const date = new Date(createdAt);
                 const sectionDate = new Date(
@@ -38,8 +60,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                     date.getMonth(),
                     date.getDate()
                 );
-
-                console.log("old section date: ", currentActivitySection?.timestamp, "new section date: ", sectionDate.toISOString());
 
                 const currentSectionDate = currentActivitySection ? new Date(currentActivitySection.timestamp) : undefined;
 
@@ -59,16 +79,21 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                 let href = '';
 
                 if (type === 'blog_create' && post) {
-                    title = `Created a blog post \"${post.title.substring(0, 20)}${post.title.length > 20 ? '...' : ''
+                    title = `Created a blog post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
                         }\"`;
-                    href = '/docs/' + post.id;
+                    href = '/docs/' + post.slug;
                 } else if (type === 'profile_create') {
                     title = `Created a profile`;
                     href = '#';
                 } else if (type === 'follow_follow' && follow) {
-                    title = `Followed ${follow.followed ? follow.followed.id : 'a user'
-                        }`;
-                    href = (follow.followed?.id) ? '/profile/' + follow.followed?.id : '#';
+                    const [followedUser, followedUserError] = await sq.query(q => q.user({ id: follow.followed.id }));
+                    if (!followedUser || followedUserError) return;
+                    title = `Followed ${getUserDisplayname(followedUser)}`;
+                    href = (follow.followed?.id) ? '/user/' + follow.followed?.id : '#';
+                } else if (type === 'star_star' && post) {
+                    title = `Starred a post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+                        }\"`;
+                    href = '/docs/' + post.slug;
                 }
 
                 currentActivitySection.activities.push({
@@ -102,6 +127,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                         const date = new Date(post.createdAt);
                         return {
                             id: post.id,
+                            slug: post.slug,
                             title: post.title,
                             summary: post.summary,
                             stars: post.stars.length,
@@ -117,9 +143,9 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
                               ${date.getMonth().toString().padStart(2, '0')}-
                               ${date.getDate().toString().padStart(2, '0')}
                             `,
-                            canManage: false,
+                            // canManage: false,
                             //TODO: Re-enable this once the backend error is fixed
-                            // canManage: post.profile?.userId === currentUserId,
+                            canManage: post.profile?.id === currentUser?.id,
                             privacy: post.privacy as TPostPrivacy,
                             profileId: post.profileId
                         };
@@ -153,8 +179,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
 
         set(produce(state => ({ overviewPosts: { state: "loading", posts: [] } })))
 
-        console.log("searching for posts with query: ", query, "limit: ", limit, "offset: ", offset)
-
         const [currentUser] = await sq.query(q => q.userMe);
         const currentProfile = useAppStore.getState().profile.profile;
 
@@ -180,12 +204,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
         const searchPosts: TPostListData = {
             state: "success",
             posts: await Promise.all(combinedPosts.filter(post => post !== null).map(async (p): Promise<TPostPreview> => {
-                //@ts-expect-error
                 const [user] = await sq.query(q => q.user({ resourceId: __SNEK_RESOURCE_ID__, id: p?.profileId }));
                 const post = p as Post;
                 const date = new Date(post.createdAt);
                 return {
                     id: post.id,
+                    slug: post.slug,
                     title: post.title,
                     summary: post.summary,
                     stars: post.stars.length,

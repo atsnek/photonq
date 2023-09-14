@@ -43,6 +43,7 @@ const postCardPreviewStyling = {
  */
 const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   id,
+  slug,
   avatarUrl,
   profile,
   createdAt,
@@ -119,7 +120,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             flex={1}
             w={{ base: 'full', md: 'auto' }}
           >
-            <LinkOverlay href={`/post/${id}`}>{title}</LinkOverlay>
+            <LinkOverlay href={`/post/${slug}`}>{title}</LinkOverlay>
           </Heading>
         </Box>
       </HStack>

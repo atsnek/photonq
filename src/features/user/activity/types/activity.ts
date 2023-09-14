@@ -20,4 +20,4 @@ export type TActivity = {
   title: Omit<TLinkData, 'isActive'>;
 }
 
-export type TActivityType = 'blog_create' | 'follow_follow' | 'profile_create';
+export type TActivityType = 'blog_create' | 'follow_follow' | 'profile_create' | 'star_unstar' | 'star_star';

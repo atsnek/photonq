@@ -46,6 +46,7 @@ export type TPost = {
 //TODO: Replace profile with user once the backend is ready
 export type TPostPreview = {
   id: string;
+  slug: string;
   title: string;
   summary: string | null;
   stars: number;
