@@ -12,7 +12,7 @@ import PostActionToolbar from '../features/post/components/PostActionToolbar';
 import Alert from '../shared/components/alert/Alert';
 import { useDisclosure } from '@chakra-ui/react';
 import { TPostViewMode } from '../features/post/types/post';
-import { osg, useAuthenticationContext } from '@atsnek/jaen';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 export interface IBlogPostContentProps {
   slug: string;

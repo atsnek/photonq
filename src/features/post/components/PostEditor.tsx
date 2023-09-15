@@ -8,13 +8,6 @@ import {
   useToast
 } from '@chakra-ui/react';
 import MdxEditor from '../../../shared/components/MdxEditor';
-import ActionToolbar from '../../../shared/components/action-toolbar/ActionToolbar';
-import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
-import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
-import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
-import { TActionToolbarItem } from '../../../shared/components/action-toolbar/types/actionToolbar';
-import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
-import useScrollPosition from '../../../shared/hooks/use-scroll-position';
 import { wait } from '../../../shared/utils/utils';
 import Alert from '../../../shared/components/alert/Alert';
 
@@ -47,22 +40,7 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
   const [alertContent, setAlertContent] = useState(
     isPublic ? alertText.publish : alertText.publish
   );
-  const scrollPosition = useScrollPosition();
-  const isMobile = useBreakpointValue({ base: true, md: false });
   const customToast = useToast();
-  const actionToolbarItems =
-    useBreakpointValue<TActionToolbarItem[]>({
-      base: [
-        {
-          icon: <TbPhoto fontSize="xl" />,
-          onClick: () => console.log('Upload new image'),
-          tooltip: 'Upload new image',
-          ariaLabel: 'Upload new image'
-        }
-      ],
-      md: []
-    }) ?? [];
-
   const publishPost = async () => {
     //TODO: Connect to Jaen
     //!Bug: This toast get's called exponentially (hello, memory leak)
@@ -87,13 +65,6 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
   const togglePostVisibility = () => {
     if (isPublic) unpublishPost();
     else publishPost();
-  };
-
-  const setPostPreviewImage = (src: File) => {
-    // setPost({
-    //   ...post,
-    //   avatarUrl: URL.createObjectURL(src)
-    // });
   };
 
   return (

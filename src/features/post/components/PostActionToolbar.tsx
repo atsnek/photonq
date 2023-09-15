@@ -25,6 +25,9 @@ interface IPostActionToolbarProps {
   isTogglingPrivacy?: boolean;
 }
 
+/**
+ * Action toolbar for reading/editing a post.
+ */
 const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   viewMode,
   toggleViewMode,
