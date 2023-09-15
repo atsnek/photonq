@@ -21,7 +21,8 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
 }
 
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
-    const author = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: post?.profileId });
+    console.log("username: ", post?.profileId);
+    const author = q.user({ id: post?.profileId ?? '' });
     return {
         id: post?.id ?? '',
         slug: post?.slug ?? '',

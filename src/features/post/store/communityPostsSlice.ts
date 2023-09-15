@@ -16,11 +16,10 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                 state.communityPosts.featuredPosts.state = 'loading';
             }))
         }
-        const [posts, error] = await sq.query(q => {
-            const posts = q.allSocialPostTrending({ filters: { limit: 4, offset: 0 } })
-            return posts?.filter(p => p !== null).map((p) => buildPostPreview(q, p, q.userMe));
-        });
-        if (error) return;
+        const [rawPosts, rawError] = await sq.query(q => q.allSocialPostTrending({ filters: { limit: 4, offset: 0 } }));
+        const [posts, buildError] = await sq.query(q => rawPosts.map((p) => buildPostPreview(q, p, q.userMe)));
+
+        if (rawError || buildError) return;
         set(produce((state: TStoreState) => {
             state.communityPosts.featuredPosts.state = 'success';
             state.communityPosts.featuredPosts.posts = posts;
@@ -33,14 +32,10 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             }));
         }
 
-        const [posts, error] = await sq.query(q => {
-            const posts = q.allSocialPost({ filters: { limit: 4, offset: 0 } })
+        const [rawPosts, rawError] = await sq.query(q => q.allSocialPost({ filters: { limit: 4, offset: 0 } }));
+        const [posts, buildError] = await sq.query(q => rawPosts.map((p) => buildPostPreview(q, p, q.userMe)));
 
-            return posts?.filter(p => p !== null).map((p) => buildPostPreview(q, p, q.userMe));
-        });
-
-        if (error) return;
-
+        if (rawError || buildError) return;
         set(produce((state: TStoreState) => {
             state.communityPosts.latestPosts.state = 'success';
             state.communityPosts.latestPosts.posts = posts;
