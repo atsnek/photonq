@@ -24,7 +24,6 @@ import TopNav from '../../../../shared/containers/navigation/TopNav';
 import { TPost } from '../../types/post';
 import { sq } from '@snek-functions/origin';
 import useAuth from '../../../../shared/hooks/use-auth';
-import { fetchProfile } from '../../../user/utils/user';
 import { formatPostDate } from '../../../../shared/utils/features/post';
 import { useAppStore } from '../../../../shared/store/store';
 

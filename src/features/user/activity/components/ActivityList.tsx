@@ -41,6 +41,7 @@ const activityIcons: Record<TActivityType, ReactNode> = {
 
 interface IActivityListProps extends BoxProps {
   activity?: TActivitySection[];
+  fetchMoreActivities?: (offset: number, limit: number) => void;
 }
 
 /**

@@ -1,6 +1,6 @@
-import { ObjectAndUser } from "@snek-functions/origin/dist/schema.generated";
-import { TUser } from "../types/user";
-import { sq } from "@snek-functions/origin";
+import { Activity, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
+import { TActivitySection, TActivityType } from "../activity/types/activity";
+import { t } from "snek-query";
 
 /**
  * Returns the display name of a user
@@ -28,25 +28,98 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
 }
 
 /**
- * Fetches a user profile from the database
- * @param profileId The id of the profile to fetch
- * @returns The profile data of the user
+ * Builds the activity section for a user (profile)
+ * @param q  The query object 
+ * @param activities  The activities to build the section from
+ * @returns One or more activity sections
  */
-export const fetchProfile = async (profileId: string): Promise<TUser | undefined> => {
-    const [user, error] = await sq.query((q): TUser => {
-        //TODO: Re-enable this once the backend is ready again
-        // const user = q.socialProfile({ profileId });
-
-        //TODO: Replace this with actual data as soon as it's available
-        return {
-            id: '1',
-            username: 'emilybrooks',
-            bio: 'Adventurous spirit with a knack for words and a passion for knowledge. Exploring the world of academia, one document at a time. Forever curious, forever learning. Let\'s dive into the realm of information together uncover the wonders of education.',
-            displayName: 'Emily Brooks',
-            avatarUrl: 'https://onedrive.live.com/embed?resid=AE2DDC816CEF3E1E%21220972&authkey=%21AIUh8CadUcYw3cg&width=999999&height=1024',
-            socials: []
+export const buildUserActivities = (q: Query, activities: Activity[], currentUser: t.Nullable<User>): TActivitySection[] => {
+    const activitySections: TActivitySection[] = [];
+    let currentActivitySection: TActivitySection | null = null;
+    // Only show the most recent rating for a post
+    const activityRatingPostIds: Array<{ createdAt: string, id: string }> = [];
+    activities.filter(({ type }) => type.startsWith("star")).sort((a, b) => {
+        if (!a.createdAt || !b.createdAt) return 0;
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    }).forEach(({ createdAt, post, type }) => {
+        if (!post) return;
+        const pos = activityRatingPostIds.findIndex(({ id }) => id === post.id);
+        const isUnstar = type === "star_unstar";
+        if (pos !== -1) {
+            if (new Date(activityRatingPostIds[pos].createdAt) > new Date(createdAt)) return;
+            if (type === "star_unstar") {
+                activityRatingPostIds.splice(pos, 1);
+                return;
+            }
+            activityRatingPostIds[pos].createdAt = createdAt;
         }
+        else if (!isUnstar) activityRatingPostIds.push({ createdAt, id: post.id });
     })
 
-    return (error) ? undefined : user;
+    activities.forEach(async ({ createdAt, follow, post, type }) => {
+        //! Because of snek-query, we must access all post props we need here, otherwise it won't be fetched
+        post?.slug;
+        post?.title;
+        post?.privacy;
+        post?.profileId;
+        if (!createdAt || (type.startsWith("star_") && post && activityRatingPostIds.findIndex(({ createdAt: existingCreatedAt, id }) => id === post.id && existingCreatedAt === createdAt)) === -1) return;
+
+        const date = new Date(createdAt);
+        const sectionDate = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+        );
+
+        const currentSectionDate = currentActivitySection ? new Date(currentActivitySection.timestamp) : undefined;
+
+        if (
+            !currentActivitySection || !currentSectionDate ||
+            currentSectionDate.getFullYear() !== sectionDate.getFullYear() ||
+            currentSectionDate.getMonth() !== sectionDate.getMonth()
+        ) {
+            currentActivitySection = {
+                timestamp: sectionDate.toISOString(),
+                activities: []
+            };
+            activitySections.push(currentActivitySection);
+        }
+
+        let title = '';
+        let href = '';
+
+        if (type === 'blog_create' && post) {
+            if (post.privacy === Privacy.private && post.profileId !== currentUser?.id) {
+                title = "Created a private blog post";
+                href = "#";
+            } else {
+                title = `Created a blog post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+                    }\"`;
+                href = '/post/' + post.slug;
+            }
+        } else if (type === 'profile_create') {
+            title = `Created a profile`;
+            href = '#';
+        } else if (type === 'follow_follow' && follow) {
+            if (!follow.followed) return;
+            const followedUser = q.user({ id: follow.followed.id });
+            if (!followedUser) return;
+            title = `Followed ${getUserDisplayname(followedUser)}`;
+            href = (follow.followed?.id) ? '/user/' + follow.followed?.id : '#';
+        } else if (type === 'star_star' && post) {
+            title = `Starred a post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+                }\"`;
+            href = '/post/' + post.slug;
+        }
+
+        currentActivitySection.activities.push({
+            type: type as TActivityType,
+            timestamp: createdAt,
+            title: {
+                name: title,
+                href
+            }
+        });
+    });
+    return activitySections;
 }
