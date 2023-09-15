@@ -54,8 +54,10 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         const hasRated = get().communityPosts.featuredPosts.posts.some(post => post.id === postId && post.hasRated) || get().communityPosts.latestPosts.posts.some(post => post.id === postId && post.hasRated);
 
         set(produce((state: TStoreState) => {
-            state.communityPosts.featuredPosts.posts.find(post => post.id === postId)!.hasRated = !hasRated;
-            state.communityPosts.latestPosts.posts.find(post => post.id === postId)!.hasRated = !hasRated;
+            const featuredPost = state.communityPosts.featuredPosts.posts.find(post => post.id === postId);
+            if (featuredPost) featuredPost.hasRated = !hasRated;
+            const latestPost = state.communityPosts.latestPosts.posts.find(post => post.id === postId);
+            if (latestPost) latestPost.hasRated = !hasRated;
         }))
 
         const [, error] = await sq.mutate(m => {

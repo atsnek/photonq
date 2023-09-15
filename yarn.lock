@@ -70,10 +70,10 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.15":
-  version "1.0.0-rc.15"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.15.tgz#42e750b6716fdbcc29ff1c89d83d2bd5400a8ea8"
-  integrity sha512-KlNcPG6fuxDHzMho2qKysrQsfTzjjZw+dbMsIpqwIMtzyFwzlEoKtJlWj60dYLcC82xq3+X0DySVo8VJt3oxIQ==
+"@atsnek/jaen@^1.0.0-rc.18":
+  version "1.0.0-rc.18"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.18.tgz#1184dffb94523ecf5551860384d5db640447f1d2"
+  integrity sha512-CkyeKM+cCr+xKkCBNRO2RfQFSq7/dfghlQt7C69mQaETLqo/c4wYibvmfIMylsT7KKwnirfBZJUKi9dgGrO1jg==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@reduxjs/toolkit" "^1.9.5"
@@ -7604,6 +7604,14 @@ gatsby-jaen-lens@^0.0.12:
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
 
+gatsby-jaen-resource@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-resource/-/gatsby-jaen-resource-0.0.2.tgz#121f3a756c1343b68fca9542a40aaaaa9d578d46"
+  integrity sha512-vZPcZG+6oJ+cBIXLfgLVcqb37SbSI1wYYQ/qtrpx/ocU6DtMBMzU0kNIZSRoqsWrhVLtH2CqcyCsgQrJLUcvng==
+  dependencies:
+    react-hook-form "^7.46.1"
+    snek-query "^0.0.83"
+
 gatsby-legacy-polyfills@^3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/gatsby-legacy-polyfills/-/gatsby-legacy-polyfills-3.12.0.tgz#f9333ee90457e4c1549a62ce81abb7198c433293"
@@ -7681,21 +7689,22 @@ gatsby-plugin-image@^3.11.0:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.8:
-  version "1.0.0-rc.16"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.16.tgz#576b24f308f1ba342d75ce87f4b631df0b03cc1f"
-  integrity sha512-So7XnJnmUAVyd3oQ2u+qr8N2ItintCYVH3CvTfchrPxNWkM/5bHGHGIN8tnQEjaDa3FmxU1WQIzKtaHx1QyTXg==
+gatsby-plugin-jaen@^1.0.0-rc.22:
+  version "1.0.0-rc.23"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.23.tgz#e6e882849d443b76c6e673e03efd72777f086166"
+  integrity sha512-xa8BYwIqC0jmcm0F0pvUUG1D6DreH53McJP6Yk5DalncAbpJ+iHlH9cHdvuyOjdsmOXYloQmqvjRGqER/VWPXQ==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
     "@emotion/styled" "^11.11.0"
     framer-motion "^10.13.0"
+    gatsby-jaen-resource "^0.0.2"
     gatsby-plugin-manifest "^5.12.0"
     gatsby-plugin-sharp "^5.11.0"
     gatsby-plugin-sitemap "^6.12.0"
     gatsby-plugin-ts-config "^2.1.3"
     gatsby-source-filesystem "^5.11.0"
-    gatsby-source-jaen "^1.0.0-rc.5"
+    gatsby-source-jaen "^1.0.0-rc.7"
     gatsby-transformer-sharp "^5.11.0"
     isomorphic-dompurify "^1.8.0"
     react-complex-tree "^2.2.0"
@@ -7859,10 +7868,10 @@ gatsby-source-filesystem@^5.11.0:
     valid-url "^1.0.9"
     xstate "^4.38.0"
 
-gatsby-source-jaen@^1.0.0-rc.5:
-  version "1.0.0-rc.5"
-  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.5.tgz#1292f3ace7b9af52e8ab74bfb4457db8b09141cf"
-  integrity sha512-nWzxf9UAqIPxypBDVxCusqpQKkkpBhCFq+dYxuPZsGkf6R/Tp97VCFlvOjzyTsMi/Ikkgr0r2Y3qJT1qx53N7Q==
+gatsby-source-jaen@^1.0.0-rc.7:
+  version "1.0.0-rc.7"
+  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.7.tgz#fb9c5dac0e786aeb74baa1cc1cbe0abd4ea9c666"
+  integrity sha512-PM8JuZMkw5uaL3NcIW/vlLIu7yHUCJKfTkz9Ysa1Q/Krhfu5y8hlPMQZHZN42pHTQ2U1CnjLNghWZlDg0yjuzA==
   dependencies:
     "@babel/parser" "^7.22.11"
     "@babel/traverse" "^7.22.11"

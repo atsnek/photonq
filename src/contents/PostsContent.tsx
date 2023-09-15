@@ -1,7 +1,7 @@
 import { Box, Heading, VStack, keyframes, Container } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import PostList from '../features/post/PostList';
-import { TPostListData } from '../features/post/types/post';
+import { TPostListData, TPostPreview } from '../features/post/types/post';
 import PostListControls from '../features/post/PostListControls';
 import { useAppStore } from '../shared/store/store';
 
@@ -39,6 +39,10 @@ const PostsContent: FC = () => {
     fetchFeaturedPosts();
     fetchLatestPosts();
   }, []);
+
+  const toggleRating = async (id: TPostPreview['id']) => {
+    return await togglePostRating(id);
+  };
 
   return (
     <Container maxW="7xl" mt={10}>
@@ -88,7 +92,7 @@ const PostsContent: FC = () => {
                   skeletonProps={{
                     minW: '100%'
                   }}
-                  toggleRating={togglePostRating}
+                  toggleRating={toggleRating}
                 />
               </Box>
             </Box>
@@ -104,7 +108,7 @@ const PostsContent: FC = () => {
                 skeletonProps={{
                   w: 'full'
                 }}
-                toggleRating={togglePostRating}
+                toggleRating={toggleRating}
               />
             </Box>
           </>
@@ -112,7 +116,7 @@ const PostsContent: FC = () => {
           <PostList
             mt={10}
             postData={featuredPosts}
-            toggleRating={togglePostRating}
+            toggleRating={toggleRating}
           />
         )}
       </VStack>

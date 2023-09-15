@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import {
   HStack,
   Heading,
@@ -15,6 +15,7 @@ import PostPreviewRating from './PostPreviewRating';
 import Link from '../../../../shared/components/Link';
 import { IPostPreviewProps } from '../../types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import PostPreviewPrivacy from './PostPreviewPrivacy';
 
 const postListItemPreviewStyling = {
   wrapper: {
@@ -52,8 +53,9 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   slug,
   wrapperProps,
   avatarUrl,
+  showPrivacy,
   privacy,
-  toggleLike,
+  toggleRating,
   hasRated,
   title,
   createdAt,
@@ -63,7 +65,17 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   profile,
   stars
 }) => {
+  const [isRating, setIsRating] = useState(false);
+
   const isAuthor = useAuthenticationContext().user?.id === profile.id;
+
+  const handleRating = async () => {
+    if (isRating || isAuthor) return;
+    setIsRating(true);
+    await toggleRating(id);
+    setIsRating(false);
+  };
+
   return (
     <LinkBox
       key={id}
@@ -106,15 +118,20 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
                 {title}
               </Heading>
             </LinkOverlay>
-            <Text
-              color="components.postPreview.listItem.initial.date.color"
-              fontSize="sm"
-            >
-              {createdAt}
-            </Text>
+            <HStack>
+              <Text
+                color="components.postPreview.listItem.initial.date.color"
+                fontSize="sm"
+              >
+                {createdAt}
+              </Text>
+              {showPrivacy && (
+                <PostPreviewPrivacy privacy={privacy} opacity={0.8} />
+              )}
+            </HStack>
           </VStack>
           <Spacer />
-          {canManage && (
+          {canManage && false && (
             <PostPreviewManageMenu alignSelf="flex-start" minW="fit-content" />
           )}
         </HStack>
@@ -138,7 +155,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
           <PostPreviewRating
             id={id}
             likes={stars}
-            toggleLike={() => {}}
+            toggleRating={handleRating}
             hasRated={hasRated}
             isPostManagable={canManage}
             isAuthor={isAuthor}

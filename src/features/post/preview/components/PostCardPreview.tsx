@@ -7,15 +7,15 @@ import {
   LinkBox,
   LinkBoxProps,
   LinkOverlay,
-  Badge,
   Text
 } from '@chakra-ui/react';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useState } from 'react';
 import { IPostPreviewProps } from '../../types/post';
 import PostPreviewRating from './PostPreviewRating';
 import PostPreviewManageMenu from './PostPreviewManageMenu';
 import Link from '../../../../shared/components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import PostPreviewPrivacy from './PostPreviewPrivacy';
 
 const postCardPreviewStyling = {
   wrapper: {
@@ -53,31 +53,34 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   hideAuthor,
   title,
   summary,
-  toggleLike,
+  toggleRating,
   canManage,
   privacy,
   showPrivacy,
   wrapperProps
 }) => {
   const isAuthor = useAuthenticationContext().user?.id === profile.id;
-  // const username = useMemo(async () => {
-  //   if (!profile) return '';
-  // }, [profile]);
+  const [isRating, setIsRating] = useState(false);
 
-  console.log('hasRated: ', hasRated);
+  const handleRating = async () => {
+    if (isRating || isAuthor) return;
+    setIsRating(true);
+    await toggleRating(id);
+    setIsRating(false);
+  };
+
   let ratingComp: ReactNode = (
     <PostPreviewRating
       id={id}
       likes={stars}
-      toggleLike={toggleLike}
+      toggleRating={handleRating}
+      isRating={isRating}
       hasRated={hasRated}
       isPostManagable={canManage && false}
       isAuthor={isAuthor}
     />
   );
 
-  const isPrivate = privacy === 'private';
-  const privacyColor = isPrivate ? 'yellow' : 'green';
   return (
     // Two possible ways to handle y overflow:
     // 1) Use overflow="hidden" and textOverflow="ellipsis" on the Card component
@@ -152,18 +155,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
           <Text fontSize={12} color="components.postPreview.date.color">
             {createdAt}
           </Text>
-          {showPrivacy && (
-            <Badge
-              variant="outline"
-              size="sm"
-              borderRadius="md"
-              color={`components.badge.subtle.${privacyColor}.color`}
-              bgColor={`components.badge.subtle.${privacyColor}.bgColor`}
-              boxShadow="none"
-            >
-              {isPrivate ? 'Private' : 'Public'}
-            </Badge>
-          )}
+          {showPrivacy && <PostPreviewPrivacy privacy={privacy} />}
         </HStack>
         <Box pointerEvents="all">
           {canManage && false ? <PostPreviewManageMenu /> : ratingComp}

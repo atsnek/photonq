@@ -96,7 +96,7 @@ const PostList: FC<IPostListProps> = ({
       .map(postPreview => (
         <PreviewComp
           key={postPreview.id}
-          toggleLike={toggleRating}
+          toggleRating={toggleRating}
           {...postPreview}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}

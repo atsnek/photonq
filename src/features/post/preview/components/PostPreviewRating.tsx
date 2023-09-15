@@ -8,8 +8,9 @@ interface IPostPreviewRatingProps {
   id: TPostPreview['id'];
   likes: number;
   hasRated?: boolean;
+  isRating?: boolean;
   isAuthor?: boolean;
-  toggleLike: (id: TPostPreview['id']) => void;
+  toggleRating: (id: TPostPreview['id']) => void;
   isPostManagable?: boolean;
   useHighContrast?: boolean;
 }
@@ -21,8 +22,9 @@ const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
   id,
   likes,
   hasRated,
+  isRating,
   isAuthor,
-  toggleLike,
+  toggleRating,
   isPostManagable,
   useHighContrast
 }) => {
@@ -44,8 +46,9 @@ const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
             : {}
         }
         cursor={isAuthor ? 'default' : 'pointer'}
-        onClick={!isAuthor && toggleLike ? () => toggleLike(id) : undefined}
+        onClick={!isAuthor && toggleRating ? () => toggleRating(id) : undefined}
         px={2}
+        isDisabled={isRating}
         zIndex={1} // prevents the button to to be placed underneath the link overlay
         transition="color 0.2s ease-in-out, background-color 0.2s ease-in-out"
       >

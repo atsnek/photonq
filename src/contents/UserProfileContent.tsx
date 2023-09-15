@@ -105,6 +105,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         toggleRating={() => {}} //TODO: implement toggleLike with API call
         hidePostAuthor
         showControls
+        showPostPrivacy={isOwnProfile}
       />
     );
   }

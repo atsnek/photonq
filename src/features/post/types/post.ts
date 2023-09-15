@@ -77,7 +77,7 @@ export type TPostListData = {
  * Props for a single post preview components (for all variants)
  */
 export interface IPostPreviewProps<T> extends TPostPreview {
-  toggleLike: (id: TPostPreview['id']) => void;
+  toggleRating: (id: TPostPreview['id']) => void;
   canManage?: boolean;
   wrapperProps?: T;
   hideAuthor?: boolean;
