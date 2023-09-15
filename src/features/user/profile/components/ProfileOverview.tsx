@@ -30,7 +30,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
   console.log('visiting own profile: ', isOwnProfile);
 
   return (
-    <VStack gap={hasOverviewPosts ? 12 : 0}>
+    <VStack gap={hasOverviewPosts || postData.state === 'loading' ? 12 : 0}>
       <PostList
         postData={postData}
         previewType="card"
@@ -40,7 +40,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
         itemsPerPage={6}
         maxItems={6}
       />
-      {hasOverviewPosts && <Divider />}
+      {(hasOverviewPosts || postData.state === 'loading') && <Divider />}
       <ActivityList activity={activity} mb={10} />
     </VStack>
   );
