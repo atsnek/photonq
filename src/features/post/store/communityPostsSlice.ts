@@ -4,6 +4,8 @@ import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
 import { buildPostPreview } from "../../../shared/utils/features/post";
 import { useAppStore } from "../../../shared/store/store";
+import { asEnumKey } from "snek-query";
+import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set, get) => ({
@@ -16,8 +18,11 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                 state.communityPosts.featuredPosts.state = 'loading';
             }))
         }
+
+        const [currentUser,] = await sq.query(q => q.userMe);
+
         const [rawPosts, rawError] = await sq.query(q => q.allSocialPostTrending({ filters: { limit: 4, offset: 0 } }));
-        const [posts, buildError] = await sq.query(q => rawPosts.map((p) => buildPostPreview(q, p, q.userMe)));
+        const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
 
         if (rawError || buildError) return;
         set(produce((state: TStoreState) => {
@@ -32,8 +37,10 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             }));
         }
 
-        const [rawPosts, rawError] = await sq.query(q => q.allSocialPost({ filters: { limit: 4, offset: 0 } }));
-        const [posts, buildError] = await sq.query(q => rawPosts.map((p) => buildPostPreview(q, p, q.userMe)));
+        const [currentUser,] = await sq.query(q => q.userMe);
+
+        const [rawPosts, rawError] = await sq.query(q => q.allSocialPost({ filters: { limit: 4, offset: 0, privacy: asEnumKey(PrivacyInputInput, "public") } }));
+        const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
 
         if (rawError || buildError) return;
         set(produce((state: TStoreState) => {

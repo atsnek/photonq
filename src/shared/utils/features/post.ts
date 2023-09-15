@@ -21,7 +21,6 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
 }
 
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
-    console.log("username: ", post?.profileId);
     const author = q.user({ id: post?.profileId ?? '' });
     return {
         id: post?.id ?? '',
@@ -38,7 +37,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
             avatarUrl: author.details?.avatarURL,
         },
         stars: post?.stars?.length ?? 0,
-        hasRated: post?.stars?.findIndex(s => s.profile.id === currentUser?.id) !== -1,
+        hasRated: !!currentUser && post?.stars?.findIndex(s => s.profile.id === currentUser?.id) !== -1,
         canManage: post?.profileId === currentUser?.id,
     }
 };

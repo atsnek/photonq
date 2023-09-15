@@ -20,8 +20,9 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
             state.profile.overviewPosts = { state: "loading", posts: [] };
         }))
 
+        const [currentUser,] = await sq.query(q => q.userMe);
+
         const [profileData, error] = await sq.query((q): TProfile | undefined => {
-            const currentUser = q.userMe;
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: username })
             const profile = user.profile;
 
@@ -75,12 +76,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
+        const [currentUser,] = await sq.query(q => q.userMe);
+
         const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
-            const [posts, error] = await sq.query((q): TPostPreview[] | undefined => {
-                const posts = q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: asEnumKey(PrivacyInputInput, privacy) } });
-                return posts?.filter(p => p !== null).map((p) => buildPostPreview(q, p as Post, q.userMe));
-            });
-            return (error) ? undefined : posts;
+            const [rawPosts, rawError] = await sq.query(q => q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: asEnumKey(PrivacyInputInput, privacy) } }));
+            const [posts, buildError] = await sq.query((q): TPostPreview[] | undefined => rawPosts?.filter(p => p !== null).map((p) => buildPostPreview(q, p as Post, currentUser)));
+            return (rawError || buildError) ? undefined : posts;
         }
 
         const combinedPosts = [await fetchSocialPosts(PrivacyInputInput.private), await fetchSocialPosts(PrivacyInputInput.public)];

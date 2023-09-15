@@ -14,7 +14,6 @@ import UserAvatar from '../../user/avatar/components/UserAvatar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
-import { useAuthenticationContext } from '@atsnek/jaen';
 import PostRatingButton from './PostRatingButton';
 
 interface IPostTopNavProps {
