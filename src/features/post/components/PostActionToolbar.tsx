@@ -1,5 +1,5 @@
-import { useBreakpointValue, useDisclosure } from '@chakra-ui/react';
-import { FC, useState } from 'react';
+import { useBreakpointValue } from '@chakra-ui/react';
+import { FC } from 'react';
 import ActionToolbar from '../../../shared/components/action-toolbar/ActionToolbar';
 import { TActionToolbarItem } from '../../../shared/components/action-toolbar/types/actionToolbar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
@@ -7,7 +7,7 @@ import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import useScrollPosition from '../../../shared/hooks/use-scroll-position';
-import { TPost, TPostViewMode } from '../types/post';
+import { TPostViewMode } from '../types/post';
 import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
 import TbEye from '../../../shared/components/icons/tabler/TbEye';
 import TbStar from '../../../shared/components/icons/tabler/TbStar';
@@ -16,6 +16,9 @@ import { useAuthenticationContext } from '@atsnek/jaen';
 interface IPostActionToolbarProps {
   viewMode?: TPostViewMode;
   toggleViewMode?: () => void;
+  toggleRating: () => void;
+  hasRated: boolean;
+  isRating: boolean;
   isPublic?: boolean;
   canEdit?: boolean;
   handleTogglePrivacy?: () => void;
@@ -27,6 +30,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   toggleViewMode,
   isPublic,
   canEdit,
+  hasRated,
+  toggleRating,
   handleTogglePrivacy,
   isTogglingPrivacy
 }) => {
@@ -75,10 +80,16 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
     if (isAuthenticated) {
       actionToolbarItems.push({
         order: 1,
-        icon: <TbStar fontSize="xl" />,
-        onClick: () => console.log('Upload new image'),
-        tooltip: 'Rate this post',
-        ariaLabel: 'Rate this post',
+        icon: (
+          <TbStar
+            fill={hasRated ? 'features.rating.rated.color' : 'transparent'}
+            stroke={hasRated ? 'features.rating.rated.color' : 'currentColor'}
+          />
+        ),
+        onClick: toggleRating,
+        disabled: isTogglingPrivacy,
+        tooltip: hasRated ? 'Unrate this post' : 'Rate this post',
+        ariaLabel: hasRated ? 'Unrated this post' : 'Rate this post',
         hoverColor: 'components.postEditor.rate.hover.color'
       });
     }

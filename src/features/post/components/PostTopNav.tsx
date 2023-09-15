@@ -11,11 +11,11 @@ import {
   Button
 } from '@chakra-ui/react';
 import UserAvatar from '../../user/avatar/components/UserAvatar';
-import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import PostRatingButton from './PostRatingButton';
 
 interface IPostTopNavProps {
   post?: TPost;
@@ -44,7 +44,6 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   isRating
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const isAuthenticated = useAuthenticationContext().user !== null;
 
   const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.currentTarget?.files || e.currentTarget.files?.length === 0) return;
@@ -82,29 +81,12 @@ const PostTopNav: FC<IPostTopNavProps> = ({
           <Spacer />
           <HStack spacing={3}>
             {!canEdit && (
-              <Button
-                variant={isAuthor || !isAuthenticated ? 'invisible' : 'solid'}
-                colorScheme="gray"
-                size="sm"
-                leftIcon={
-                  <TbStar
-                    fill={
-                      post?.hasRated
-                        ? 'features.rating.rated.color'
-                        : 'transparent'
-                    }
-                    stroke={
-                      post?.hasRated
-                        ? 'features.rating.rated.color'
-                        : 'currentColor'
-                    }
-                  />
-                }
-                onClick={handleRatePost}
-                isDisabled={isRating}
-              >
-                {post?.stars || 0}
-              </Button>
+              <PostRatingButton
+                hasRated={post?.hasRated ?? false}
+                isRating={isRating ?? false}
+                toggleRating={handleRatePost}
+                stars={post?.stars ?? 0}
+              />
             )}
             <Input
               ref={imageInputRef}

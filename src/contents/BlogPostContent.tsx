@@ -132,6 +132,9 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         canEdit={isPostAuthor}
         handleTogglePrivacy={handleTogglePrivacy}
         isTogglingPrivacy={isUpdatingPrivacy}
+        toggleRating={handleRatePost}
+        hasRated={post?.hasRated ?? false}
+        isRating={isRating}
       />
       <Alert
         disclosure={privacyAlertDisclosure}
