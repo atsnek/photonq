@@ -1,8 +1,9 @@
-import { ObjectAndUser, Post, Query, User } from '@snek-functions/origin/dist/schema.generated';
+import { ObjectAndUser, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
-import { TPostPreview } from '../../../features/post/types/post';
+import { TPostListData, TPostPreview } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
-import { t } from "snek-query";
+import { t, asEnumKey } from "snek-query";
+import { sq } from '@snek-functions/origin';
 /**
  * Format post date to a nicely readable format
  * @param date The date to format
@@ -49,3 +50,36 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
     }
 };
 
+/**
+ * Search posts by a query
+ * @param searchQuery The search query
+ * @param limit  The limit of posts to fetch
+ * @param offset  The offset of posts to fetch
+ * @param userId  The user id to fetch posts from (optional). If identical to the current user, private posts will be fetched as well
+ * @returns The post list data
+ */
+export const searchPosts = async (searchQuery: string, limit: number, offset: number, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
+
+    const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
+        const [posts,] = await sq.query(q => {
+            let rawPosts: t.Nullable<Post>[] = [];
+            if (userId) {
+                rawPosts = q.allSocialPost({ filters: { query: searchQuery, limit, offset, userId, privacy: asEnumKey(PrivacyInputInput, privacy) } });
+            } else {
+                rawPosts = q.allSocialPost({ filters: { query: searchQuery, limit, offset, privacy: asEnumKey(PrivacyInputInput, privacy) } });
+            }
+            const posts = rawPosts?.filter(p => p !== null).map((p) => buildPostPreview(q, p as Post, currentUser));
+            return posts;
+        })
+        return posts;
+    }
+
+    const combinedPosts = [...(await fetchSocialPosts(PrivacyInputInput.public))];
+
+    if (currentUser && currentUser.id === userId) {
+        combinedPosts.push(...(await fetchSocialPosts(PrivacyInputInput.private)));
+    }
+    console.log("search result: ", combinedPosts)
+    // if (rawError || buildError) return { state: 'error', posts: [] };
+    return { state: 'success', posts: combinedPosts ?? [] };
+}

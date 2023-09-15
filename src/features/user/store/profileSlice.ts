@@ -8,7 +8,7 @@ import { TProfileSlice } from "../types/profileState";
 import { buildUserActivities } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
 import { Post, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
-import { buildPostPreview } from "../../../shared/utils/features/post";
+import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     activity: [],
@@ -91,10 +91,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             state.profile.searchPosts = { state: "loading", posts: [] };
         }))
 
+        const [currentUser,] = await sq.query(q => q.userMe);
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
+        // const combinedPosts = await searchPosts(query, limit, offset, currentUser, currentProfile?.id);
 
-        const [currentUser,] = await sq.query(q => q.userMe);
 
         const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
             const [rawPosts, rawError] = await sq.query(q => q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: asEnumKey(PrivacyInputInput, privacy) } }));
@@ -116,7 +117,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         set(
             produce((state: TStoreState): void => {
-                state.profile.searchPosts = {
+                state.profile.searchPosts =
+                {
                     state: "success",
                     posts: combinedPosts.flat().filter(
                         (post): post is TPostPreview => post !== undefined
