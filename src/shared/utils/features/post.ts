@@ -20,6 +20,13 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
     return format(dateObj, dateSchema);
 }
 
+/**
+ * Build a post preview from a post object
+ * @param q  The query object (snek-query)
+ * @param post The post object to build the preview from
+ * @param currentUser The current user (if exists)
+ * @returns The post preview object
+ */
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
     const author = q.user({ id: post?.profileId ?? '' });
     return {
@@ -41,3 +48,4 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
         canManage: post?.profileId === currentUser?.id,
     }
 };
+
