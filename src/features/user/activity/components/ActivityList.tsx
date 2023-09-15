@@ -10,7 +10,7 @@ import {
   Spacer,
   Text
 } from '@chakra-ui/react';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { TActivitySection, TActivityType } from '../types/activity';
 import { TStepperSection } from '../../../../shared/components/stepper/types/stepper';
 import Stepper from '../../../../shared/components/stepper/Stepper';
@@ -48,28 +48,39 @@ interface IActivityListProps extends BoxProps {
  * Component for displaying a list of activities.
  */
 const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
+  const nofActivities = useMemo(() => {
+    return (
+      activity?.reduce((acc, section) => {
+        return acc + section.activities.length;
+      }, 0) ?? 0
+    );
+  }, [activity]);
+
   const pagination = usePagination({
     itemsPerPage: 3,
-    totalItems: activity?.length ?? 0
+    totalItems: nofActivities
   });
+  const currentLimit = pagination.currentPage * pagination.itemsPerPage;
 
-  const stepperData: TStepperSection[] | undefined = activity?.map(section => {
-    const sectionDate = new Date(section.timestamp);
-    const sectionTitle = (
-      <HStack spacing={1}>
-        <Text>{sectionDate.toLocaleString('default', { month: 'long' })}</Text>
-        <Text opacity={0.5}>{sectionDate.getFullYear()}</Text>
-      </HStack>
-    );
-    let lastDay = -1; // Used to cache the latest activity's day of the month
-    return {
-      title: sectionTitle,
-      titleProps: {
-        fontSize: 'xs',
-        fontWeight: 'bold'
-      },
-      items: section.activities.map(({ title, type, timestamp }) => {
-        const itemDate = new Date(timestamp);
+  const stepperData = useMemo(() => {
+    let visibileActivities = 0;
+    let stepperData: TStepperSection[] = [];
+    for (const section of activity ?? []) {
+      const sectionDate = new Date(section.timestamp);
+      const sectionTitle = (
+        <HStack spacing={1}>
+          <Text>
+            {sectionDate.toLocaleString('default', { month: 'long' })}
+          </Text>
+          <Text opacity={0.5}>{sectionDate.getFullYear()}</Text>
+        </HStack>
+      );
+      let lastDay = -1; // Used to cache the latest activity's day of the month
+      for (const activity of section.activities) {
+        if (visibileActivities >= currentLimit) {
+          break;
+        }
+        const itemDate = new Date(activity.timestamp);
         // Only show the date if it differs from the previous activity
         const showDate = lastDay !== itemDate.getDate();
         lastDay = itemDate.getDate();
@@ -82,8 +93,8 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
               }
             }}
           >
-            <LinkOverlay as={Link} href={title.href}>
-              {title.name}
+            <LinkOverlay as={Link} href={activity.title.href}>
+              {activity.title.name}
             </LinkOverlay>
             {showDate && (
               <>
@@ -104,13 +115,27 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
           </LinkBox>
         );
 
-        return {
+        if (visibileActivities === 0) {
+          stepperData.push({
+            title: sectionTitle,
+            titleProps: {
+              fontSize: 'xs',
+              fontWeight: 'bold'
+            },
+            items: []
+          });
+        }
+
+        stepperData[stepperData.length - 1].items.push({
           title: activityTitle,
-          icon: activityIcons[type]
-        };
-      })
-    };
-  });
+          icon: activityIcons[activity.type]
+        });
+
+        visibileActivities++;
+      }
+    }
+    return stepperData;
+  }, [activity, currentLimit]);
 
   if (!activity || !stepperData) {
     return (
