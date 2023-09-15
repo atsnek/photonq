@@ -47,7 +47,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   useEffect(() => {
     fetchProfile(username, user?.id).then(succeed => {
-      // if (!succeed) navigate('/docs/');
+      if (!succeed) navigate('/docs/');
     });
   }, [username]);
 
