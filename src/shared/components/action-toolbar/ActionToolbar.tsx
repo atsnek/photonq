@@ -1,13 +1,18 @@
 import { FC } from 'react';
 import { TActionToolbarItem } from './types/actionToolbar';
-import { HStack, Tooltip, IconButton } from '@chakra-ui/react';
+import { HStack, Tooltip, IconButton, Box } from '@chakra-ui/react';
 
 interface IActionTOolbarProps {
   actions: TActionToolbarItem[];
   active?: boolean;
+  compactMode?: boolean;
 }
 
-const ActionToolbar: FC<IActionTOolbarProps> = ({ actions, active = true }) => {
+const ActionToolbar: FC<IActionTOolbarProps> = ({
+  actions,
+  active = true,
+  compactMode
+}) => {
   if (actions.length === 0) return null;
   const items = actions
     .sort((a, b) => {
@@ -41,7 +46,10 @@ const ActionToolbar: FC<IActionTOolbarProps> = ({ actions, active = true }) => {
             ...action.buttonProps?._hover
           }}
           isDisabled={action.disabled}
-          transition="background-color 0.2s ease-in-out, color 0.2s ease-in-out"
+          transition={`background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out ${
+            index * 0.05
+          }s`}
+          transform={compactMode ? 'translateY(50px)' : undefined}
         />
       </Tooltip>
     ));
@@ -58,10 +66,25 @@ const ActionToolbar: FC<IActionTOolbarProps> = ({ actions, active = true }) => {
       px={10}
       py={2}
       borderRadius="full"
-      spacing={3}
       opacity={active ? 1 : 0}
       transform={'translateX(-50%)' + (active ? '' : ' translateY(20px)')}
-      transition="opacity 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000), transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
+      spacing={3}
+      width={compactMode ? '58px' : undefined}
+      transition="opacity 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000), transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000), width 0.5s 0.2s"
+      __css={
+        compactMode
+          ? {
+              '&:hover': {
+                width: '',
+                button: {
+                  position: 'relative',
+                  transform: 'translateY(0)'
+                }
+              }
+            }
+          : undefined
+      }
+      overflow="hidden"
     >
       {items}
     </HStack>
