@@ -3,7 +3,6 @@ import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
 import { buildPostPreview } from "../../../shared/utils/features/post";
-import { useAppStore } from "../../../shared/store/store";
 import { asEnumKey } from "snek-query";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 

@@ -12,6 +12,8 @@ export interface IProfileStateDefinition {
 
 export interface IProfileStateActions {
     fetchProfile: (username: string, currentUserId?: string) => Promise<boolean>;
+    fetchOverviewPosts: () => Promise<boolean>;
+    fetchActivity: () => Promise<boolean>;
     fetchSearchPosts: (query: string, limit: number, offset: number) => Promise<void>;
 }
 

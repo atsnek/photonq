@@ -36,6 +36,10 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { hash } = useLocation();
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
+  const fetchOverviewPosts = useAppStore(
+    state => state.profile.fetchOverviewPosts
+  );
+  const fetchActivitiy = useAppStore(state => state.profile.fetchActivity);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const searchPosts = useAppStore(state => state.profile.searchPosts);
   const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
@@ -46,8 +50,10 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { user } = useAuthenticationContext();
 
   useEffect(() => {
-    fetchProfile(username, user?.id).then(succeed => {
+    fetchProfile(username, user?.id).then(async succeed => {
       if (!succeed) navigate('/docs/');
+      fetchOverviewPosts();
+      fetchActivitiy();
     });
   }, [username]);
 

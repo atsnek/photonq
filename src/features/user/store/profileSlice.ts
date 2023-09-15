@@ -10,53 +10,71 @@ import { useAppStore } from "../../../shared/store/store";
 import { Post, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { buildPostPreview } from "../../../shared/utils/features/post";
 
-export const createProfileSlice: TStoreSlice<TProfileSlice> = (set) => ({
+export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     activity: [],
     overviewPosts: { state: "loading", posts: [] },
     searchPosts: { state: "inactive", posts: [] },
     profile: undefined,
     fetchProfile: async (username) => {
-        set(produce((state: TStoreState) => {
-            state.profile.overviewPosts = { state: "loading", posts: [] };
-        }))
-
-        const [currentUser,] = await sq.query(q => q.userMe);
-
-        const [profileData, error] = await sq.query((q): TProfile | undefined => {
+        const [userData, error] = await sq.query((q): TProfile['user'] | undefined => {
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: username })
             const profile = user.profile;
-
             return {
-                user: {
-                    id: user.id,
-                    avatarUrl: user.details?.avatarURL ?? '',
-                    bio: profile?.bio ?? null,
-                    displayName: `${user.details?.firstName ?? ''} ${user.details?.lastName ?? ''}`,
-                    socials: [],
-                    username: username,
-                },
-                activity: buildUserActivities(q, profile?.activity ?? [], currentUser),
-                posts: profile?.posts
-                    .filter(
-                        ({ privacy }) =>
-                            privacy === 'public' ||
-                            (currentUser && user.id === currentUser.id)
-                    )
-                    .map(p => buildPostPreview(q, p, currentUser)) ?? []
+                id: user.id,
+                avatarUrl: user.details?.avatarURL ?? '',
+                bio: profile?.bio ?? null,
+                displayName: `${user.details?.firstName ?? ''} ${user.details?.lastName ?? ''}`,
+                socials: [],
+                username: username,
             }
         })
 
-        if (error || !profileData) return false;
+        if (error || !userData) return false;
 
         set(produce((state: TStoreState): void => {
-            state.profile.activity = profileData.activity;
-            state.profile.overviewPosts = {
-                state: "success",
-                posts: profileData.posts
-            };
-            state.profile.profile = profileData.user;
+            state.profile.profile = userData;
         }))
         return true;
+    },
+    fetchOverviewPosts: async () => {
+        if (!get().profile.profile) return false;
+
+        const [currentUser,] = await sq.query(q => q.userMe);
+
+        const [, error] = await sq.query(q => {
+            const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username })
+            const profile = user.profile;
+
+            set(produce((state: TStoreState): void => {
+                state.profile.overviewPosts = {
+                    state: "success",
+                    posts: profile?.posts
+                        .filter(
+                            ({ privacy }) =>
+                                privacy === 'public' ||
+                                (currentUser && user.id === currentUser.id)
+                        )
+                        .map(p => buildPostPreview(q, p, currentUser)) ?? []
+                };
+            }))
+        })
+        return !!error;
+    },
+    fetchActivity: async () => {
+        if (!get().profile.profile) return false;
+
+        const [currentUser,] = await sq.query(q => q.userMe);
+
+        const [, error] = await sq.query(q => {
+            const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username })
+            const profile = user.profile;
+
+            set(produce((state: TStoreState): void => {
+                state.profile.activity = buildUserActivities(q, profile?.activity ?? [], currentUser);
+            }))
+        })
+
+        return !!error;
     },
     fetchSearchPosts: async (query, limit, offset) => {
         if (!query.length) {
