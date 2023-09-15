@@ -110,6 +110,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             {...postCardPreviewStyling.previewImage}
             src={avatarUrl ?? 'https://picsum.photos/200'}
             borderRadius="md"
+            objectFit="cover"
           />
         )}
         <Box>
