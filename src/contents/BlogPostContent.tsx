@@ -1,6 +1,4 @@
 import { FC, useRef, useState } from 'react';
-
-// Insertable custom components (via Jaen)
 import PostTopNav from '../features/post/components/PostTopNav';
 import { useAppStore } from '../shared/store/store';
 import PostLeftNav from '../features/post/components/PostLeftNav';
@@ -75,10 +73,6 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     editTitle(title);
   };
 
-  /**
-   * Handles rating a post.
-   * If the user has already rated the post, it will unrate it.
-   */
   const handleRatePost = async () => {
     if (isPostAuthor || !isAuthenticated) return;
     setIsRating(true);
@@ -130,6 +124,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         toggleViewMode={toggleViewMode}
         isPublic={isPostPublic}
         canEdit={isPostAuthor}
+        setPostPreviewImage={setPostPreviewImage}
         handleTogglePrivacy={handleTogglePrivacy}
         isTogglingPrivacy={isUpdatingPrivacy}
         toggleRating={handleRatePost}

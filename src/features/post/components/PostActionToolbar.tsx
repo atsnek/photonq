@@ -1,5 +1,5 @@
-import { useBreakpointValue } from '@chakra-ui/react';
-import { FC } from 'react';
+import { Input, useBreakpointValue } from '@chakra-ui/react';
+import { ChangeEvent, FC, useRef } from 'react';
 import ActionToolbar from '../../../shared/components/action-toolbar/ActionToolbar';
 import { TActionToolbarItem } from '../../../shared/components/action-toolbar/types/actionToolbar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
@@ -21,6 +21,7 @@ interface IPostActionToolbarProps {
   isRating: boolean;
   isPublic?: boolean;
   canEdit?: boolean;
+  setPostPreviewImage?: (src: File) => void;
   handleTogglePrivacy?: () => void;
   isTogglingPrivacy?: boolean;
 }
@@ -35,31 +36,43 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   canEdit,
   hasRated,
   toggleRating,
+  setPostPreviewImage,
   handleTogglePrivacy,
   isTogglingPrivacy
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
   const scrollPosition = useScrollPosition();
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const deviceSpecificActionToolbarItems =
-    useBreakpointValue<TActionToolbarItem[]>({
-      base: [
-        {
-          order: 1,
-          icon: <TbPhoto fontSize="xl" />,
-          onClick: () => console.log('Upload new image'),
-          tooltip: 'Upload new image',
-          ariaLabel: 'Upload new image'
-        }
-      ],
-      md: []
-    }) ?? [];
+  const previewImageInputRef = useRef<HTMLInputElement>(null);
+  // const deviceSpecificActionToolbarItems =
+  //   useBreakpointValue<TActionToolbarItem[]>({
+  //     base: [],
+  //     md: []
+  //   }) ?? [];
+
+  const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (
+      !e.currentTarget?.files ||
+      e.currentTarget.files?.length === 0 ||
+      !setPostPreviewImage
+    )
+      return;
+    const file = e.currentTarget.files[0];
+    setPostPreviewImage(file);
+  };
 
   const actionToolbarItems: TActionToolbarItem[] = [];
 
   if (canEdit) {
     if (handleTogglePrivacy) {
       actionToolbarItems.push(
+        {
+          order: 1,
+          icon: <TbPhoto fontSize="xl" />,
+          onClick: () => previewImageInputRef.current?.click(),
+          tooltip: 'Upload new image',
+          ariaLabel: 'Upload new image'
+        },
         {
           order: 1,
           icon: <TbDeviceFloppy />,
@@ -110,11 +123,24 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
     });
   }
 
+  //TODO: Outsource the image input to a separate component
   return (
-    <ActionToolbar
-      active={isMobile || scrollPosition > 90 || true}
-      actions={[...deviceSpecificActionToolbarItems, ...actionToolbarItems]}
-    />
+    <>
+      <Input
+        type="file"
+        ref={previewImageInputRef}
+        accept="image/*"
+        visibility="hidden"
+        display="none"
+        zIndex={-999}
+        opacity={0}
+        onChange={handleImageInputChange}
+      />
+      <ActionToolbar
+        active={isMobile || scrollPosition > 90 || true}
+        actions={[...actionToolbarItems]}
+      />
+    </>
   );
 };
 
