@@ -6,14 +6,16 @@ import { buildPostPreview } from "../../../shared/utils/features/post";
 import { useAppStore } from "../../../shared/store/store";
 
 
-export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set) => ({
+export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set, get) => ({
     featuredPosts: { state: 'loading', posts: [] },
     latestPosts: { state: 'loading', posts: [] },
     searchPosts: { state: 'inactive', posts: [] },
-    fetchFeaturedPosts: async () => {
-        set(produce((state: TStoreState) => {
-            state.communityPosts.featuredPosts.state = 'loading';
-        }))
+    fetchFeaturedPosts: async (silent) => {
+        if (!silent) {
+            set(produce((state: TStoreState) => {
+                state.communityPosts.featuredPosts.state = 'loading';
+            }))
+        }
         const [posts, error] = await sq.query(q => {
             const posts = q.allSocialPostTrending({ filters: { limit: 4, offset: 0 } })
             return posts?.filter(p => p !== null).map((p) => buildPostPreview(q, p, q.userMe));
@@ -24,10 +26,12 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             state.communityPosts.featuredPosts.posts = posts;
         }))
     },
-    fetchLatestPosts: async () => {
-        set(produce((state: TStoreState) => {
-            state.communityPosts.latestPosts.state = 'loading';
-        }));
+    fetchLatestPosts: async (silent) => {
+        if (!silent) {
+            set(produce((state: TStoreState) => {
+                state.communityPosts.latestPosts.state = 'loading';
+            }));
+        }
 
         const [posts, error] = await sq.query(q => {
             const posts = q.allSocialPost({ filters: { limit: 4, offset: 0 } })
@@ -44,5 +48,23 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
     },
     fetchSearchPosts: async (query: string) => {
         // fetch search posts
+    },
+    togglePostRating: async (postId) => {
+
+        const hasRated = get().communityPosts.featuredPosts.posts.some(post => post.id === postId && post.hasRated) || get().communityPosts.latestPosts.posts.some(post => post.id === postId && post.hasRated);
+
+        set(produce((state: TStoreState) => {
+            state.communityPosts.featuredPosts.posts.find(post => post.id === postId)!.hasRated = !hasRated;
+            state.communityPosts.latestPosts.posts.find(post => post.id === postId)!.hasRated = !hasRated;
+        }))
+
+        const [, error] = await sq.mutate(m => {
+            if (hasRated) m.socialPostUnstar({ postId: postId });
+            else m.socialPostStar({ postId: postId });
+        });
+        if (error) return false;
+
+        await Promise.all([get().communityPosts.fetchFeaturedPosts(true), get().communityPosts.fetchLatestPosts(true)]);
+        return true;
     },
 });

@@ -32,6 +32,7 @@ interface IPostListProps extends StackProps {
   setFilterQuery?: (query: string) => void;
   showNoListResult?: boolean;
   showPostPrivacy?: boolean;
+  toggleRating: (id: TPostPreview['id']) => void;
 }
 
 /**
@@ -50,6 +51,7 @@ const PostList: FC<IPostListProps> = ({
   setFilterQuery,
   showNoListResult = true,
   showPostPrivacy,
+  toggleRating,
   ...props
 }) => {
   const pagination = usePagination({
@@ -60,10 +62,6 @@ const PostList: FC<IPostListProps> = ({
         : Math.min(postData.posts.length, maxItems),
     maxItems: maxItems
   });
-
-  const toggleLike = (id: TPostPreview['id']) => {
-    console.log('toggle like for post ', id);
-  };
 
   const memoizedPostPreviews = useMemo(() => {
     const offset = (pagination.currentPage - 1) * pagination.itemsPerPage;
@@ -98,7 +96,7 @@ const PostList: FC<IPostListProps> = ({
       .map(postPreview => (
         <PreviewComp
           key={postPreview.id}
-          toggleLike={toggleLike}
+          toggleLike={toggleRating}
           {...postPreview}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}

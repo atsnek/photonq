@@ -40,18 +40,9 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         }))
         return true;
     },
-    toggleRating: () => {
-        set(produce((state: TStoreState) => {
-            //TODO: Implement this once the backend is ready
-        }))
-    },
     fetchPost: async (slug) => {
 
         const [currentUser] = await sq.query(q => q.userMe);
-
-        console.log("fetch post with slug: ", slug);
-
-        //TODO: Replace postId with slug once the backend is ready
         const [post, postError] = await sq.query((q): TPost | null => {
             const post = q.socialPost({ slug: slug })
 

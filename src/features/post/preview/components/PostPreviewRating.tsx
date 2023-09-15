@@ -8,6 +8,7 @@ interface IPostPreviewRatingProps {
   id: TPostPreview['id'];
   likes: number;
   hasRated?: boolean;
+  isAuthor?: boolean;
   toggleLike: (id: TPostPreview['id']) => void;
   isPostManagable?: boolean;
   useHighContrast?: boolean;
@@ -20,6 +21,7 @@ const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
   id,
   likes,
   hasRated,
+  isAuthor,
   toggleLike,
   isPostManagable,
   useHighContrast
@@ -31,13 +33,18 @@ const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
         variant="unstyled"
         size="sm"
         color={`features.rating.${hasRated ? 'rated' : 'unrated'}.color`}
-        _hover={{
-          color: `features.rating._hover.color`,
-          bgColor: `features.rating._hover${
-            useHighContrast ? '.highContrast' : ''
-          }.bgColor`
-        }}
-        onClick={() => toggleLike(id)}
+        _hover={
+          !isAuthor
+            ? {
+                color: `features.rating._hover.color`,
+                bgColor: `features.rating._hover${
+                  useHighContrast ? '.highContrast' : ''
+                }.bgColor`
+              }
+            : {}
+        }
+        cursor={isAuthor ? 'default' : 'pointer'}
+        onClick={!isAuthor && toggleLike ? () => toggleLike(id) : undefined}
         px={2}
         zIndex={1} // prevents the button to to be placed underneath the link overlay
         transition="color 0.2s ease-in-out, background-color 0.2s ease-in-out"

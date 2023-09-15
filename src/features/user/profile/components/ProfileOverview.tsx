@@ -20,7 +20,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
   const postData = useAppStore(state => state.profile.overviewPosts);
   const activity = useAppStore(state => state.profile.activity);
   //TODO: implement toggleLike with API call
-  const toggleLike = (id: TPostPreview['id']) => {
+  const toggleRating = (id: TPostPreview['id']) => {
     if (isOwnProfile) return;
     // sq.mutate;
     console.log('toggle like for post ', id);
@@ -36,6 +36,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
         previewType="card"
         hidePostAuthor
         showPostPrivacy={isOwnProfile}
+        toggleRating={toggleRating}
         itemsPerPage={6}
         maxItems={6}
       />

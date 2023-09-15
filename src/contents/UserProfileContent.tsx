@@ -102,6 +102,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         previewType="list"
         defaultFilterQuery={postFilterQuery}
         setFilterQuery={setPostFilterQuery}
+        toggleRating={() => {}} //TODO: implement toggleLike with API call
         hidePostAuthor
         showControls
       />

@@ -15,6 +15,7 @@ import { IPostPreviewProps } from '../../types/post';
 import PostPreviewRating from './PostPreviewRating';
 import PostPreviewManageMenu from './PostPreviewManageMenu';
 import Link from '../../../../shared/components/Link';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 const postCardPreviewStyling = {
   wrapper: {
@@ -58,6 +59,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   showPrivacy,
   wrapperProps
 }) => {
+  const isAuthor = useAuthenticationContext().user?.id === profile.id;
   // const username = useMemo(async () => {
   //   if (!profile) return '';
   // }, [profile]);
@@ -70,6 +72,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       toggleLike={toggleLike}
       hasRated={hasRated}
       isPostManagable={canManage && false}
+      isAuthor={isAuthor}
     />
   );
 

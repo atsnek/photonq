@@ -14,6 +14,7 @@ import PostPreviewManageMenu from './PostPreviewManageMenu';
 import PostPreviewRating from './PostPreviewRating';
 import Link from '../../../../shared/components/Link';
 import { IPostPreviewProps } from '../../types/post';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 const postListItemPreviewStyling = {
   wrapper: {
@@ -62,6 +63,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   profile,
   stars
 }) => {
+  const isAuthor = useAuthenticationContext().user?.id === profile.id;
   return (
     <LinkBox
       key={id}
@@ -139,6 +141,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             toggleLike={() => {}}
             hasRated={hasRated}
             isPostManagable={canManage}
+            isAuthor={isAuthor}
             useHighContrast
           />
         </HStack>

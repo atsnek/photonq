@@ -8,9 +8,10 @@ export interface ICommunityPostsStateDefinitions {
 }
 
 export interface ICommunityPostsStateActions {
-    fetchFeaturedPosts: () => void;
-    fetchLatestPosts: () => void;
+    fetchFeaturedPosts: (silent?: boolean) => void;
+    fetchLatestPosts: (silent?: boolean) => void;
     fetchSearchPosts: (query: string) => void;
+    togglePostRating: (id: TPostPreview['id']) => Promise<boolean>;
 }
 
 export type TCommunityPostsSlice = ICommunityPostsStateDefinitions & ICommunityPostsStateActions;

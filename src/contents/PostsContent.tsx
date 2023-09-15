@@ -19,26 +19,21 @@ const PostsContent: FC = () => {
   const featuredPosts = useAppStore(
     state => state.communityPosts.featuredPosts
   );
-
   const fetchFeaturedPosts = useAppStore(
     state => state.communityPosts.fetchFeaturedPosts
   );
-  // const [featuredPosts, setFeaturedPosts] = useState<TPostListData>({
-  //   state: 'loading',
-  //   posts: []
-  // });
   const latestPosts = useAppStore(state => state.communityPosts.latestPosts);
   const fetchLatestPosts = useAppStore(
     state => state.communityPosts.fetchLatestPosts
   );
-  // const [latestPosts, setLatestPosts] = useState<TPostListData>({
-  //   state: 'loading',
-  //   posts: []
-  // });
-  const [postResults, setPostResults] = useState<TPostListData>({
-    state: 'inactive',
-    posts: []
-  });
+  const togglePostRating = useAppStore(
+    state => state.communityPosts.togglePostRating
+  );
+
+  const searchPosts = useAppStore(state => state.communityPosts.searchPosts);
+  const fetchSearchPosts = useAppStore(
+    state => state.communityPosts.searchPosts
+  );
 
   useEffect(() => {
     fetchFeaturedPosts();
@@ -51,9 +46,10 @@ const PostsContent: FC = () => {
         <PostListControls
           // setPosts={setPostResults}
           w={{ base: 'full', md: '75%' }}
+          fetchPosts={() => {}}
           showCreatePostButton
         />
-        {postResults.state === 'inactive' ? (
+        {searchPosts.state === 'inactive' ? (
           <>
             <Box
               borderRadius="xl"
@@ -92,6 +88,7 @@ const PostsContent: FC = () => {
                   skeletonProps={{
                     minW: '100%'
                   }}
+                  toggleRating={togglePostRating}
                 />
               </Box>
             </Box>
@@ -107,11 +104,16 @@ const PostsContent: FC = () => {
                 skeletonProps={{
                   w: 'full'
                 }}
+                toggleRating={togglePostRating}
               />
             </Box>
           </>
         ) : (
-          <PostList mt={10} postData={postResults} />
+          <PostList
+            mt={10}
+            postData={featuredPosts}
+            toggleRating={togglePostRating}
+          />
         )}
       </VStack>
     </Container>
