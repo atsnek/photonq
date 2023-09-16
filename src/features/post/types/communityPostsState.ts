@@ -10,7 +10,7 @@ export interface ICommunityPostsStateDefinitions {
 export interface ICommunityPostsStateActions {
     fetchFeaturedPosts: (silent?: boolean) => void;
     fetchLatestPosts: (silent?: boolean) => void;
-    fetchSearchPosts: (query: string) => void;
+    fetchSearchPosts: (query: string, limit: number, offset: number) => void;
     togglePostRating: (id: TPostPreview['id']) => Promise<boolean>;
 }
 

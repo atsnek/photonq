@@ -2,7 +2,7 @@ import { sq } from "@snek-functions/origin";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
-import { buildPostPreview } from "../../../shared/utils/features/post";
+import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { asEnumKey } from "snek-query";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 
@@ -47,8 +47,26 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             state.communityPosts.latestPosts.posts = posts;
         }));
     },
-    fetchSearchPosts: async (query: string) => {
-        // fetch search posts
+    fetchSearchPosts: async (query, limit, offset) => {
+        if (!query.length) {
+            set(produce((state: TStoreState) => {
+                state.communityPosts.searchPosts.state = 'inactive';
+            }));
+            return;
+        }
+
+        set(produce((state: TStoreState) => {
+            state.communityPosts.searchPosts.state = 'loading';
+        }));
+
+        const [currentUser,] = await sq.query(q => q.userMe);
+
+        const posts = await searchPosts(query, limit, offset, currentUser);
+
+        set(produce((state: TStoreState) => {
+            state.communityPosts.searchPosts = posts;
+        }));
+
     },
     togglePostRating: async (postId) => {
 

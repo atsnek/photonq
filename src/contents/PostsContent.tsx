@@ -32,7 +32,7 @@ const PostsContent: FC = () => {
 
   const searchPosts = useAppStore(state => state.communityPosts.searchPosts);
   const fetchSearchPosts = useAppStore(
-    state => state.communityPosts.searchPosts
+    state => state.communityPosts.fetchSearchPosts
   );
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const PostsContent: FC = () => {
         <PostListControls
           // setPosts={setPostResults}
           w={{ base: 'full', md: '75%' }}
-          fetchPosts={() => {}}
+          fetchPosts={query => fetchSearchPosts(query, 10, 0)}
           showCreatePostButton
         />
         {searchPosts.state === 'inactive' ? (
@@ -115,7 +115,7 @@ const PostsContent: FC = () => {
         ) : (
           <PostList
             mt={10}
-            postData={featuredPosts}
+            postData={searchPosts}
             toggleRating={toggleRating}
           />
         )}
