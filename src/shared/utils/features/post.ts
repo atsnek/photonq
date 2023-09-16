@@ -40,9 +40,9 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
         privacy: post?.privacy as any,
         profile: {
             id: post?.profileId ?? '',
-            username: author.username,
-            displayName: getUserDisplayname(author),
-            avatarUrl: author.details?.avatarURL,
+            username: author?.username ?? '',
+            displayName: author ? getUserDisplayname(author) : '',
+            avatarUrl: author?.details?.avatarURL,
         },
         stars: post?.stars?.length ?? 0,
         hasRated: !!currentUser && post?.stars?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
@@ -67,6 +67,10 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
                 filters.userId = userId;
             }
             const posts = q.allSocialPost({ filters });
+            //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
+            for (const key in posts[0]) {
+                posts[0][key as keyof typeof posts[0]];
+            }
             return posts;
         })
 
