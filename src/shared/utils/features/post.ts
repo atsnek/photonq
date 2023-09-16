@@ -1,4 +1,4 @@
-import { ObjectAndUser, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
+import { FiltersInputInput, ObjectAndUser, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
 import { TPostListData, TPostPreview } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
@@ -45,7 +45,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
             avatarUrl: author.details?.avatarURL,
         },
         stars: post?.stars?.length ?? 0,
-        hasRated: !!currentUser && post?.stars?.findIndex(s => s.profile.id === currentUser?.id) !== -1,
+        hasRated: !!currentUser && post?.stars?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
         canManage: post?.profileId === currentUser?.id,
     }
 };
@@ -61,16 +61,16 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
 export const searchPosts = async (searchQuery: string, limit: number, offset: number, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
 
     const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
-        const [posts,] = await sq.query(q => {
-            let rawPosts: t.Nullable<Post>[] = [];
+        const [rawPosts,] = await sq.query(q => {
+            const filters: FiltersInputInput = { query: searchQuery, limit, offset, privacy: asEnumKey(PrivacyInputInput, privacy) };
             if (userId) {
-                rawPosts = q.allSocialPost({ filters: { query: searchQuery, limit, offset, userId, privacy: asEnumKey(PrivacyInputInput, privacy) } });
-            } else {
-                rawPosts = q.allSocialPost({ filters: { query: searchQuery, limit, offset, privacy: asEnumKey(PrivacyInputInput, privacy) } });
+                filters.userId = userId;
             }
-            const posts = rawPosts?.filter(p => p !== null).map((p) => buildPostPreview(q, p as Post, currentUser));
+            const posts = q.allSocialPost({ filters });
             return posts;
         })
+
+        const [posts,] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p as Post, currentUser)));
         return posts;
     }
 
@@ -79,7 +79,5 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
     if (currentUser && currentUser.id === userId) {
         combinedPosts.push(...(await fetchSocialPosts(PrivacyInputInput.private)));
     }
-    console.log("search result: ", combinedPosts)
-    // if (rawError || buildError) return { state: 'error', posts: [] };
     return { state: 'success', posts: combinedPosts ?? [] };
 }

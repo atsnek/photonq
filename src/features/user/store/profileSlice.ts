@@ -1,13 +1,10 @@
 import { TProfile } from "../types/user";
-import { TPostPreview } from "../../post/types/post";
 import { sq } from "@snek-functions/origin";
-import { asEnumKey } from "snek-query";
 import { produce } from "immer";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { TProfileSlice } from "../types/profileState";
 import { buildUserActivities } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
-import { Post, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
@@ -94,36 +91,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const [currentUser,] = await sq.query(q => q.userMe);
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
-        // const combinedPosts = await searchPosts(query, limit, offset, currentUser, currentProfile?.id);
 
-
-        const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
-            const [rawPosts, rawError] = await sq.query(q => q.allSocialPost({ filters: { query, limit, offset, userId: currentProfile.id, privacy: asEnumKey(PrivacyInputInput, privacy) } }));
-            const [posts, buildError] = await sq.query((q): TPostPreview[] | undefined => rawPosts?.filter(p => p !== null).map((p) => buildPostPreview(q, p as Post, currentUser)));
-            return (rawError || buildError) ? undefined : posts;
-        }
-
-        const combinedPosts = [await fetchSocialPosts(PrivacyInputInput.private), await fetchSocialPosts(PrivacyInputInput.public)];
-
-        if (combinedPosts.every(p => p === undefined)) {
-            set(produce((state: TStoreState): void => {
-                state.profile.searchPosts = {
-                    state: "error",
-                    posts: []
-                };
-            }))
-            return;
-        }
+        const posts = await searchPosts(query, limit, offset, currentUser, currentProfile?.id);
 
         set(
             produce((state: TStoreState): void => {
-                state.profile.searchPosts =
-                {
-                    state: "success",
-                    posts: combinedPosts.flat().filter(
-                        (post): post is TPostPreview => post !== undefined
-                    ),
-                };
+                state.profile.searchPosts = posts
             })
         );
     },
