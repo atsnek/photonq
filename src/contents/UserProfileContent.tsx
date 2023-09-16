@@ -128,7 +128,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       </HStack>
       <MainGrid mt={10}>
         <Box>
-          <LeftNavProfile />
+          <LeftNavProfile isOwnProfile={isOwnProfile} />
         </Box>
         <Stack
           verticalAlign="top"

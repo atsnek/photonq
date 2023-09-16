@@ -30,6 +30,7 @@ import {
   SnekUser
 } from '@atsnek/jaen/dist/contexts/authentication';
 import { useAppStore } from '../../../../shared/store/store';
+import ProfileFollowButton from './ProfileFollowButton';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -47,6 +48,7 @@ export const leftNavProfileStyling = {
   },
   userData: {
     stack: {
+      w: 'full',
       alignItems: { base: 'center', md: 'start' },
       spacing: 0
     } as StackProps,
@@ -73,12 +75,14 @@ export const leftNavProfileStyling = {
   }
 };
 
-interface LeftNavProfileProps {}
+interface LeftNavProfileProps {
+  isOwnProfile: boolean;
+}
 
 /**
  * Sub-component of the profile page that displays the key information about the user.
  */
-const LeftNavProfile: FC<LeftNavProfileProps> = ({}) => {
+const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   const socialLinkIcons: { [key in TSocialLink]: FC<IconProps> } = {
     email: FeatherInbox,
     linkedin: TbLinkedIn,
@@ -192,6 +196,13 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({}) => {
           >
             @{userData.username}
           </Text>
+          {!isOwnProfile && (
+            <ProfileFollowButton
+              isFollowing={false}
+              isLoading={false}
+              toggleFollowState={() => {}}
+            />
+          )}
           {
             //* Maybe this would be a neat place to put the total amount of favs/likes, etc (some kind of stats)
           }
