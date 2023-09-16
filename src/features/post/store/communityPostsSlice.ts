@@ -20,7 +20,14 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const [rawPosts, rawError] = await sq.query(q => q.allSocialPostTrending({ filters: { limit: 4, offset: 0 } }));
+        const [rawPosts, rawError] = await sq.query(q => {
+            const posts = q.allSocialPostTrending({ filters: { limit: 4, offset: 0 } });
+            //! Existing issue: see post utils -> buildPostPreview
+            for (const key in posts[0]) {
+                posts[0][key as keyof typeof posts[0]];
+            }
+            return posts;
+        });
         const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
 
         if (rawError || buildError) return;
@@ -38,7 +45,14 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const [rawPosts, rawError] = await sq.query(q => q.allSocialPost({ filters: { limit: 4, offset: 0, privacy: asEnumKey(PrivacyInputInput, "public") } }));
+        const [rawPosts, rawError] = await sq.query(q => {
+            const posts = q.allSocialPost({ filters: { limit: 4, offset: 0, privacy: asEnumKey(PrivacyInputInput, "public") } })
+            //! Existing issue: see post utils -> buildPostPreview
+            for (const key in posts[0]) {
+                posts[0][key as keyof typeof posts[0]];
+            }
+            return posts;
+        });
         const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
 
         if (rawError || buildError) return;
