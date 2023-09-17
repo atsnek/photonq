@@ -143,8 +143,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         }}
         body={
           isPostPublic
-            ? 'Are you sure you want to unpublish this post? This post will be visible to everyone'
-            : 'Are you sure you want to publish this post? This post will no longer be visible to everyone'
+            ? 'Are you sure you want to unpublish this post? This post will no longer be visible to everyone.'
+            : 'Are you sure you want to publish this post? This post will be visible to everyone.'
         }
         header={isPostPublic ? 'Unpublish this post?' : 'Publish this post?'}
       />
