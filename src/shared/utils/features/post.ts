@@ -59,17 +59,21 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
  * @returns The post list data
  */
 export const searchPosts = async (searchQuery: string, limit: number, offset: number, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
+    const canSeePrivate = currentUser && currentUser.id === userId;
+    const requestLimit = canSeePrivate ? limit / 2 : limit;
 
     const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
         const [rawPosts,] = await sq.query(q => {
-            const filters: FiltersInputInput = { query: searchQuery, limit, offset, privacy: asEnumKey(PrivacyInputInput, privacy) };
+            const filters: FiltersInputInput = { query: searchQuery, limit: requestLimit + 1, offset, privacy: asEnumKey(PrivacyInputInput, privacy) };
             if (userId) {
                 filters.userId = userId;
             }
             const posts = q.allSocialPost({ filters });
             //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
-            for (const key in posts[0]) {
-                posts[0][key as keyof typeof posts[0]];
+            if (posts.length > 0) {
+                for (const key in posts[0]) {
+                    posts[0][key as keyof typeof posts[0]];
+                }
             }
             return posts;
         })
@@ -78,10 +82,18 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
         return posts;
     }
 
-    const combinedPosts = [...(await fetchSocialPosts(PrivacyInputInput.public))];
+    const publicPosts = await fetchSocialPosts(PrivacyInputInput.public);
+    console.log(publicPosts, publicPosts.length, publicPosts.length - 2)
+    const combinedPosts = [...publicPosts.slice(0, Math.max(publicPosts.length, publicPosts.length - 2))];
 
-    if (currentUser && currentUser.id === userId) {
-        combinedPosts.push(...(await fetchSocialPosts(PrivacyInputInput.private)));
+    let privatePosts: TPostPreview[] = [];
+    if (canSeePrivate) {
+        privatePosts = await fetchSocialPosts(PrivacyInputInput.private);
+        combinedPosts.push(...privatePosts.slice(0, Math.max(privatePosts.length, privatePosts.length - 2)));
     }
-    return { state: 'success', posts: combinedPosts ?? [] };
+    return {
+        state: 'success',
+        posts: combinedPosts ?? [],
+        hasMore: publicPosts.length === requestLimit + 1 || privatePosts.length === requestLimit + 1
+    };
 }

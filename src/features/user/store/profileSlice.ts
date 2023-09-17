@@ -96,7 +96,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         set(
             produce((state: TStoreState): void => {
-                state.profile.searchPosts = posts
+                console.log("result: ", posts);
+                state.profile.searchPosts = offset === 0 ? posts : { state: posts.state, posts: [...state.profile.searchPosts.posts, ...posts.posts], hasMore: posts.hasMore }
             })
         );
     },

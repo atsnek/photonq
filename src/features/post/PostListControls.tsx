@@ -108,36 +108,9 @@ const PostListControls: FC<IPostListControlsProps> = ({
 
     clearTimeout(stateRef.current.timeout);
     stateRef.current.timeout = setTimeout(async () => {
-      // if (!query.length) {
-      // stateRef.current.state = 'inactive';
-      // setPosts({ state: 'inactive', posts: [] });
-      //   return;
-      // }
       fetchPosts(query);
     }, 300);
   };
-
-  // const fetchPosts = async (query: string): Promise<TPostPreview[]> => {
-  //   const [rawPosts, errors] = await sq.query(q =>
-  //     q.allSocialPost({ filters: { limit: 10, offset: 0 } })
-  //   );
-
-  //   if (errors?.length) return [];
-
-  //   const posts: TPostPreview[] = rawPosts.map(post => ({
-  //     id: post.id,
-  //     title: post.title,
-  //     summary: post.summary,
-  //     createdAt: formatPostDate(post.createdAt),
-  //     stars: post.stars?.length ?? 0,
-  //     avatarUrl: post.avatarURL,
-  //     profileId: post.profileId,
-  //     privacy: post.privacy ?? 'private'
-  //   }));
-
-  //   return posts;
-  // };
-
   return (
     <VStack w="full">
       <HStack spacing={3} w="75%" {...props}>

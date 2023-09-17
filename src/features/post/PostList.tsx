@@ -12,23 +12,28 @@ import {
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import PostCardPreview from './preview/components/PostCardPreview';
-import usePagination from '../../shared/hooks/use-pagination';
+import usePagination, {
+  TPaginationType
+} from '../../shared/hooks/use-pagination';
 import PostListControls from './PostListControls';
 import PostCardPreviewSkeleton from './preview/components/PostCardPreviewSkeleton';
 import PostListItemPreview from './preview/components/PostListItemPreview';
 import PostListItemPreviewSkeleton from './preview/components/PostListItemPreviewSkeleton';
 import PostListNoResults from './preview/components/PostListNoResults';
+import { query } from '../../pages';
 
 interface IPostListProps extends StackProps {
-  fetchPosts?: (query: string) => void;
+  fetchPosts?: (query: string, offset: number) => void;
   postData: TPostListData;
   itemsPerPage?: number;
   maxItems?: number;
+  paginationType?: TPaginationType;
   showControls?: boolean;
   hidePostAuthor?: boolean;
   previewType?: 'card' | 'list';
   skeletonProps?: CardProps & LinkBoxProps;
   defaultFilterQuery?: string;
+  currentQuery?: string;
   setFilterQuery?: (query: string) => void;
   showNoListResult?: boolean;
   showPostPrivacy?: boolean;
@@ -41,30 +46,33 @@ interface IPostListProps extends StackProps {
 const PostList: FC<IPostListProps> = ({
   fetchPosts,
   postData,
-  itemsPerPage = 10,
+  itemsPerPage = 1, //TODO: Change this to 10
   maxItems = itemsPerPage,
+  paginationType = 'pages',
   showControls,
   hidePostAuthor,
   previewType = 'list',
   skeletonProps,
   defaultFilterQuery,
+  currentQuery,
   setFilterQuery,
   showNoListResult = true,
   showPostPrivacy,
   toggleRating,
   ...props
 }) => {
+  const usePages = paginationType === 'pages';
   const pagination = usePagination({
+    items: postData.posts,
     itemsPerPage: itemsPerPage,
-    totalItems:
-      postData.state != 'success'
-        ? itemsPerPage / 2
-        : Math.min(postData.posts.length, maxItems),
-    maxItems: maxItems
+    maxItems: usePages ? maxItems : undefined,
+    type: paginationType
   });
 
   const memoizedPostPreviews = useMemo(() => {
-    const offset = (pagination.currentPage - 1) * pagination.itemsPerPage;
+    const offset = usePages
+      ? (pagination.currentPage - 1) * pagination.itemsPerPage
+      : 0;
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
     let PreviewSkeletonComp:
       | typeof PostCardPreviewSkeleton
@@ -91,19 +99,17 @@ const PostList: FC<IPostListProps> = ({
         />
       ));
     }
-    return postData.posts
-      .slice(offset, Math.min(offset + pagination.itemsPerPage, maxItems))
-      .map(postPreview => (
-        <PreviewComp
-          key={postPreview.id}
-          toggleRating={toggleRating}
-          {...postPreview}
-          {...previewCompProps}
-          hideAuthor={hidePostAuthor}
-          showPrivacy={showPostPrivacy}
-          wrapperProps={{ minW: '33%' }}
-        />
-      ));
+    return pagination.currentItems.map(postPreview => (
+      <PreviewComp
+        key={postPreview.id}
+        toggleRating={toggleRating}
+        {...postPreview}
+        {...previewCompProps}
+        hideAuthor={hidePostAuthor}
+        showPrivacy={showPostPrivacy}
+        wrapperProps={{ minW: '33%' }}
+      />
+    ));
   }, [postData, pagination]);
 
   let postPreviews: ReactNode;
@@ -125,11 +131,16 @@ const PostList: FC<IPostListProps> = ({
     }
   }
 
+  const handleFetchPosts = (query: string) => {
+    if (query.length === 0) pagination.setCurrentPage(1);
+    if (fetchPosts) fetchPosts(query, 0);
+  };
+
   return (
     <VStack w="full" gap={5} {...props}>
       {showControls && fetchPosts && (
         <PostListControls
-          fetchPosts={fetchPosts}
+          fetchPosts={handleFetchPosts}
           defaultQuery={defaultFilterQuery}
           setQuery={setFilterQuery}
         />
@@ -140,7 +151,8 @@ const PostList: FC<IPostListProps> = ({
         ) : (
           <PostListNoResults mt={10} />
         ))}
-      {pagination.totalPages > 1 &&
+      {usePages &&
+        pagination.totalPages > 1 &&
         (maxItems === undefined || itemsPerPage < maxItems) && (
           <HStack alignContent="space-around">
             <Button
@@ -165,6 +177,31 @@ const PostList: FC<IPostListProps> = ({
             </Button>
           </HStack>
         )}
+      {!usePages && (
+        <Button
+          variant="ghost-hover-outline"
+          size="sm"
+          borderRadius="lg"
+          rightIcon={<ChevronRightIcon />}
+          isDisabled={postData.state === 'loading'}
+          onClick={() => {
+            if (fetchPosts) {
+              console.log(
+                'currentPage: ',
+                pagination.currentPage,
+                pagination.currentItems.length / pagination.itemsPerPage
+              );
+              fetchPosts(
+                currentQuery ?? defaultFilterQuery ?? '',
+                pagination.currentItems.length / pagination.itemsPerPage
+              );
+              // pagination.setCurrentPage(pagination.currentPage + 1);
+            }
+          }}
+        >
+          Load more
+        </Button>
+      )}
     </VStack>
   );
 };

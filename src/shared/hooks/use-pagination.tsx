@@ -1,12 +1,17 @@
 import { useState } from 'react';
 
-interface IUsePaginationProps {
+export type TPaginationType = 'pages' | 'load-more';
+
+interface IUsePaginationProps<T> {
+  items: T[];
+  hasMoreItems?: boolean;
   itemsPerPage: number;
-  totalItems: number;
   maxItems?: number;
+  type: TPaginationType;
 }
 
-interface IUsePaginationReturn {
+interface IUsePaginationReturn<T> {
+  currentItems: T[];
   itemsPerPage: number;
   currentPage: number;
   setCurrentPage: (page: number) => void;
@@ -17,20 +22,39 @@ interface IUsePaginationReturn {
 
 /**
  * Hook to handle pagination
+ * @param items The items to paginate
+ * @param itemsPerPage The amount of items per page
+ * @param maxItems The maximum amount of items to paginate
+ * @param type The type of pagination to use
  */
-const usePagination = ({
+const usePagination = <T,>({
+  items,
+  hasMoreItems,
   itemsPerPage,
-  totalItems,
-  maxItems = totalItems
-}: IUsePaginationProps): IUsePaginationReturn => {
+  maxItems,
+  type = 'pages'
+}: IUsePaginationProps<T>): IUsePaginationReturn<T> => {
+  const usePages = type === 'pages';
+
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalPages = Math.ceil(items?.length / itemsPerPage);
+  const currentItems = usePages
+    ? items?.slice(
+        currentPage * itemsPerPage - itemsPerPage,
+        currentPage * itemsPerPage
+      )
+    : items?.slice(0, currentPage * itemsPerPage);
 
   /**
    * Increments the current page by 1 if the current page is less than the total pages
    */
   const nextPage = () => {
-    if (currentPage < totalPages && currentPage < maxItems / itemsPerPage) {
+    if (
+      (usePages &&
+        currentPage < totalPages &&
+        (!maxItems || currentPage < maxItems / itemsPerPage)) ||
+      hasMoreItems
+    ) {
       setCurrentPage(page => page + 1);
     }
   };
@@ -39,12 +63,13 @@ const usePagination = ({
    * Decrements the current page by 1 if the current page is greater than 1
    */
   const previousPage = () => {
-    if (currentPage > 1) {
+    if (currentPage > 1 && usePages) {
       setCurrentPage(page => page - 1);
     }
   };
 
   return {
+    currentItems,
     itemsPerPage,
     currentPage,
     setCurrentPage,

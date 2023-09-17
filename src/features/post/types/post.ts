@@ -71,6 +71,7 @@ export type TPostAuthor = {
 export type TPostListData = {
   posts: TPostPreview[];
   state: 'inactive' | 'loading' | 'error' | 'success';
+  hasMore?: boolean;
 };
 
 /**

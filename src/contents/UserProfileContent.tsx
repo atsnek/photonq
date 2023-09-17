@@ -104,11 +104,15 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   } else {
     mainContent = (
       <PostList
-        fetchPosts={(query: string) => fetchSearchPosts(query, SEARCH_LIMIT, 0)}
+        fetchPosts={(query: string, offset: number) =>
+          fetchSearchPosts(query, SEARCH_LIMIT, offset)
+        }
         postData={searchPosts}
         previewType="list"
+        paginationType="load-more"
         defaultFilterQuery={postFilterQuery}
         setFilterQuery={setPostFilterQuery}
+        currentQuery={postFilterQuery}
         toggleRating={() => {}} //TODO: implement toggleLike with API call
         hidePostAuthor
         showControls
