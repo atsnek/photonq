@@ -12,7 +12,7 @@ import {
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { FC, Fragment, useMemo } from 'react';
+import { FC, Fragment, useMemo, useState } from 'react';
 import FeatherInbox from '../../../../shared/components/icons/feather/FeatherInbox';
 import TbBuilding from '../../../../shared/components/icons/tabler/TbBuilding';
 import TbLinkedIn from '../../../../shared/components/icons/tabler/TbLinkedIn';
@@ -92,8 +92,18 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
 
   const navTopOffset = useNavOffset();
 
+  const [isFollowUpdating, setIsFollowUpdating] = useState<boolean>(false);
   const hideControlsFallback = useBreakpointValue({ base: true, md: false });
+
   const userData = useAppStore(state => state.profile.profile);
+
+  const handleToggleFollow = () => {
+    setIsFollowUpdating(true);
+    //TODO: Implement toggleFollowState with API call
+    setTimeout(() => {
+      setIsFollowUpdating(false);
+    }, 1000);
+  };
 
   // const memoizedSocialLink = useMemo(() => {
   //   return user.socials?.map((data: any, idx: number) => {
@@ -196,13 +206,14 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           >
             @{userData.username}
           </Text>
-          {!isOwnProfile && (
-            <ProfileFollowButton
-              isFollowing={false}
-              isLoading={false}
-              toggleFollowState={() => {}}
-            />
-          )}
+          {!isOwnProfile ||
+            (true && (
+              <ProfileFollowButton
+                isFollowing={false}
+                isLoading={isFollowUpdating}
+                toggleFollowState={handleToggleFollow}
+              />
+            ))}
           {
             //* Maybe this would be a neat place to put the total amount of favs/likes, etc (some kind of stats)
           }

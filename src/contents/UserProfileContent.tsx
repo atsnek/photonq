@@ -34,6 +34,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const SEARCH_LIMIT = 10;
 
   const { hash } = useLocation();
+
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
   const fetchOverviewPosts = useAppStore(
