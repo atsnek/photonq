@@ -206,14 +206,13 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           >
             @{userData.username}
           </Text>
-          {!isOwnProfile ||
-            (true && (
-              <ProfileFollowButton
-                isFollowing={false}
-                isLoading={isFollowUpdating}
-                toggleFollowState={handleToggleFollow}
-              />
-            ))}
+          {!isOwnProfile && (
+            <ProfileFollowButton
+              isFollowing={false}
+              isLoading={isFollowUpdating}
+              toggleFollowState={handleToggleFollow}
+            />
+          )}
           {
             //* Maybe this would be a neat place to put the total amount of favs/likes, etc (some kind of stats)
           }
