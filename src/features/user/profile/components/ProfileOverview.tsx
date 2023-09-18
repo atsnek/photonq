@@ -40,7 +40,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
         itemsPerPage={6}
         maxItems={6}
       />
-      {(hasOverviewPosts || postData.state === 'loading') && <Divider />}
+      {/* {(hasOverviewPosts || postData.state === 'loading') && <Divider />} */}
       <ActivityList activity={activity} mb={10} />
     </VStack>
   );
