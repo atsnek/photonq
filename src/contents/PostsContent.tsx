@@ -117,6 +117,7 @@ const PostsContent: FC = () => {
             mt={10}
             postData={searchPosts}
             toggleRating={toggleRating}
+            paginationType="load-more"
           />
         )}
       </VStack>

@@ -4,7 +4,8 @@ import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { asEnumKey } from "snek-query";
-import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { ObjectAndUser, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { TPostPreview } from "../types/post";
 
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set, get) => ({
@@ -53,18 +54,22 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             }
             return posts;
         });
-        const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
+        const posts = await Promise.all(rawPosts.map(async (p) => {
+            if (!p) return;
+            return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
+        }));
+        // const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
 
-        if (rawError || buildError) return;
+        if (rawError) return;
         set(produce((state: TStoreState) => {
             state.communityPosts.latestPosts.state = 'success';
-            state.communityPosts.latestPosts.posts = posts;
+            state.communityPosts.latestPosts.posts = posts.filter(p => !!p) as TPostPreview[];
         }));
     },
     fetchSearchPosts: async (query, limit, offset) => {
         if (!query.length) {
             set(produce((state: TStoreState) => {
-                state.communityPosts.searchPosts.state = 'inactive';
+                state.communityPosts.searchPosts = { state: "inactive", posts: [] };
             }));
             return;
         }
@@ -75,10 +80,16 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const posts = await searchPosts(query, limit, offset, currentUser);
+        const posts = await searchPosts(query, limit, offset, 'public', currentUser);
 
         set(produce((state: TStoreState) => {
-            state.communityPosts.searchPosts = posts;
+            state.communityPosts.searchPosts = {
+                state: 'success',
+                posts: offset === 0
+                    ? posts.posts
+                    : [...state.communityPosts.searchPosts.posts, ...posts.posts],
+                hasMore: posts.hasMore
+            };
         }));
 
     },

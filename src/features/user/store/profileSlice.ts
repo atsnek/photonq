@@ -86,7 +86,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         }
 
         set(produce((state: TStoreState) => {
-            state.profile.searchPosts = { state: "loading", posts: offset === 0 ? [] : state.profile.searchPosts.posts };
+            state.profile.searchPosts.state = "loading";
         }))
 
         const [currentUser,] = await sq.query(q => q.userMe);
@@ -95,8 +95,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         const publicOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "public").length;
         const publicPosts = await searchPosts(query, limit, publicOffset, "public", currentUser, currentProfile?.id);
-        console.log("publicPosts:", publicPosts)
-
 
         const privateOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "private").length;
         let privatePosts: TPostListData = { state: "inactive", posts: [] }

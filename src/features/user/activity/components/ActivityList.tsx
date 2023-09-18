@@ -48,14 +48,6 @@ interface IActivityListProps extends BoxProps {
  * Component for displaying a list of activities.
  */
 const ActivityList: FC<IActivityListProps> = ({ activity = [], ...props }) => {
-  // const nofActivities = useMemo(() => {
-  //   return (
-  //     activity?.reduce((acc, section) => {
-  //       return acc + section.activities.length;
-  //     }, 0) ?? 0
-  //   );
-  // }, [activity]);
-
   const pagination = usePagination({
     items: activity,
     itemsPerPage: 3,
