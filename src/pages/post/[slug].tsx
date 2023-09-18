@@ -31,17 +31,6 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
 
 export default DocsPage;
 
-export const pageConfig: PageConfig = {
-  label: 'Documentation',
-  icon: 'FaBook',
-  childTemplates: ['DocPage'],
-  menu: {
-    type: 'app',
-    order: 100,
-    group: 'photonq'
-  }
-};
-
 export const query = graphql`
   query ($jaenPageId: String!) {
     ...JaenPageQuery
