@@ -1,4 +1,4 @@
-import { Dispatch, FC, ReactNode, SetStateAction, useMemo } from 'react';
+import { FC, ReactElement, ReactNode, useMemo } from 'react';
 import { IPostPreviewProps, TPostListData, TPostPreview } from './types/post';
 import {
   Button,
@@ -6,7 +6,6 @@ import {
   HStack,
   LinkBoxProps,
   SimpleGrid,
-  Spacer,
   StackProps,
   VStack
 } from '@chakra-ui/react';
@@ -46,7 +45,7 @@ interface IPostListProps extends StackProps {
 const PostList: FC<IPostListProps> = ({
   fetchPosts,
   postData,
-  itemsPerPage = 1, //TODO: Change this to 10
+  itemsPerPage = 10,
   maxItems = itemsPerPage,
   paginationType = 'pages',
   showControls,
@@ -70,9 +69,6 @@ const PostList: FC<IPostListProps> = ({
   });
 
   const memoizedPostPreviews = useMemo(() => {
-    const offset = usePages
-      ? (pagination.currentPage - 1) * pagination.itemsPerPage
-      : 0;
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
     let PreviewSkeletonComp:
       | typeof PostCardPreviewSkeleton
@@ -90,16 +86,20 @@ const PostList: FC<IPostListProps> = ({
       PreviewSkeletonComp = PostListItemPreviewSkeleton;
     }
 
+    let previewSkeletons: ReactElement[] = [];
     if (postData.state === 'loading') {
-      return Array.from({ length: pagination.itemsPerPage }).map((_, i) => (
-        <PreviewSkeletonComp
-          key={i}
-          {...skeletonProps}
-          hideAuthor={hidePostAuthor}
-        />
-      ));
+      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map(
+        (_, i) => (
+          <PreviewSkeletonComp
+            key={i}
+            {...skeletonProps}
+            hideAuthor={hidePostAuthor}
+          />
+        )
+      );
     }
-    return pagination.currentItems.map(postPreview => (
+
+    const postPreviews = pagination.currentItems.map(postPreview => (
       <PreviewComp
         key={postPreview.id}
         toggleRating={toggleRating}
@@ -110,6 +110,7 @@ const PostList: FC<IPostListProps> = ({
         wrapperProps={{ minW: '33%' }}
       />
     ));
+    return [...postPreviews, ...previewSkeletons];
   }, [postData, pagination]);
 
   let postPreviews: ReactNode;
@@ -177,27 +178,23 @@ const PostList: FC<IPostListProps> = ({
             </Button>
           </HStack>
         )}
-      {!usePages && (
+      {!usePages && postData.state !== 'inactive' && postData.hasMore && (
         <Button
           variant="ghost-hover-outline"
           size="sm"
           borderRadius="lg"
           rightIcon={<ChevronRightIcon />}
           isDisabled={postData.state === 'loading'}
-          onClick={() => {
-            if (fetchPosts) {
-              console.log(
-                'currentPage: ',
-                pagination.currentPage,
-                pagination.currentItems.length / pagination.itemsPerPage
-              );
-              fetchPosts(
-                currentQuery ?? defaultFilterQuery ?? '',
-                pagination.currentItems.length / pagination.itemsPerPage
-              );
-              // pagination.setCurrentPage(pagination.currentPage + 1);
-            }
-          }}
+          onClick={
+            !!fetchPosts
+              ? () => {
+                  fetchPosts(
+                    currentQuery ?? defaultFilterQuery ?? '',
+                    pagination.currentItems.length
+                  );
+                }
+              : undefined
+          }
         >
           Load more
         </Button>

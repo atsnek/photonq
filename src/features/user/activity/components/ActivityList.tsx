@@ -57,8 +57,9 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
   }, [activity]);
 
   const pagination = usePagination({
+    items: activity ?? [],
     itemsPerPage: 3,
-    totalItems: nofActivities
+    type: 'pages'
   });
   const currentLimit = pagination.currentPage * pagination.itemsPerPage;
 
@@ -156,19 +157,18 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
           pagination.currentPage * pagination.itemsPerPage
         )}
       />
-      <Center mt={5}>
-        <Button
-          variant="ghost-hover-outline"
-          size="sm"
-          borderRadius="lg"
-          display={
-            pagination.currentPage === pagination.totalPages ? 'none' : ''
-          }
-          onClick={pagination.nextPage}
-        >
-          Show more
-        </Button>
-      </Center>
+      {pagination.currentPage < pagination.totalPages && (
+        <Center mt={5}>
+          <Button
+            variant="ghost-hover-outline"
+            size="sm"
+            borderRadius="lg"
+            onClick={pagination.nextPage}
+          >
+            Show more
+          </Button>
+        </Center>
+      )}
     </Box>
   );
 };

@@ -6,6 +6,7 @@ import { TProfileSlice } from "../types/profileState";
 import { buildUserActivities } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
+import { TPostListData } from "../../post/types/post";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     activity: [],
@@ -85,19 +86,36 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         }
 
         set(produce((state: TStoreState) => {
-            state.profile.searchPosts = { state: "loading", posts: [] };
+            state.profile.searchPosts = { state: "loading", posts: offset === 0 ? [] : state.profile.searchPosts.posts };
         }))
 
         const [currentUser,] = await sq.query(q => q.userMe);
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
-        const posts = await searchPosts(query, limit, offset, currentUser, currentProfile?.id);
+        const publicOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "public").length;
+        const publicPosts = await searchPosts(query, limit, publicOffset, "public", currentUser, currentProfile?.id);
+        console.log("publicPosts:", publicPosts)
+
+
+        const privateOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "private").length;
+        let privatePosts: TPostListData = { state: "inactive", posts: [] }
+        if (currentUser && currentUser?.id === currentProfile.id) {
+            privatePosts = await searchPosts(query, limit, privateOffset, "private", currentUser, currentProfile?.id);
+            console.log("privatePosts:", privatePosts);
+        }
+
+        const combinedPosts = [...publicPosts.posts, ...privatePosts.posts];
 
         set(
             produce((state: TStoreState): void => {
-                console.log("result: ", posts);
-                state.profile.searchPosts = offset === 0 ? posts : { state: posts.state, posts: [...state.profile.searchPosts.posts, ...posts.posts], hasMore: posts.hasMore }
+                state.profile.searchPosts = {
+                    state: "success",
+                    posts: offset === 0
+                        ? combinedPosts
+                        : [...state.profile.searchPosts.posts, ...combinedPosts],
+                    hasMore: publicPosts.hasMore || privatePosts.hasMore
+                }
             })
         );
     },

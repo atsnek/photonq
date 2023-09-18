@@ -1,6 +1,6 @@
-import { FiltersInputInput, ObjectAndUser, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
+import { FiltersInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
-import { TPostListData, TPostPreview } from '../../../features/post/types/post';
+import { TPostListData, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from "snek-query";
 import { sq } from '@snek-functions/origin';
@@ -55,45 +55,34 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
  * @param searchQuery The search query
  * @param limit  The limit of posts to fetch
  * @param offset  The offset of posts to fetch
+ * @param privacy  The privacy of posts to fetch
  * @param userId  The user id to fetch posts from (optional). If identical to the current user, private posts will be fetched as well
  * @returns The post list data
  */
-export const searchPosts = async (searchQuery: string, limit: number, offset: number, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
-    const canSeePrivate = currentUser && currentUser.id === userId;
-    const requestLimit = canSeePrivate ? limit / 2 : limit;
-
-    const fetchSocialPosts = async (privacy: PrivacyInputInput) => {
-        const [rawPosts,] = await sq.query(q => {
-            const filters: FiltersInputInput = { query: searchQuery, limit: requestLimit + 1, offset, privacy: asEnumKey(PrivacyInputInput, privacy) };
-            if (userId) {
-                filters.userId = userId;
+export const searchPosts = async (searchQuery: string, limit: number, offset: number, privacy: TPostPrivacy, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
+    const [rawPosts,] = await sq.query(q => {
+        const filters: FiltersInputInput = { query: searchQuery, limit: limit + 1, offset, privacy: asEnumKey(PrivacyInputInput, privacy) };
+        if (userId) {
+            filters.userId = userId;
+        }
+        const posts = q.allSocialPost({ filters });
+        //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
+        if (posts.length > 0) {
+            for (const key in posts[0]) {
+                posts[0][key as keyof typeof posts[0]];
             }
-            const posts = q.allSocialPost({ filters });
-            //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
-            if (posts.length > 0) {
-                for (const key in posts[0]) {
-                    posts[0][key as keyof typeof posts[0]];
-                }
-            }
-            return posts;
-        })
-
-        const [posts,] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p as Post, currentUser)));
+        }
         return posts;
-    }
+    })
 
-    const publicPosts = await fetchSocialPosts(PrivacyInputInput.public);
-    console.log(publicPosts, publicPosts.length, publicPosts.length - 2)
-    const combinedPosts = [...publicPosts.slice(0, Math.max(publicPosts.length, publicPosts.length - 2))];
+    const hasMorePosts = rawPosts.length === limit + 1;
 
-    let privatePosts: TPostPreview[] = [];
-    if (canSeePrivate) {
-        privatePosts = await fetchSocialPosts(PrivacyInputInput.private);
-        combinedPosts.push(...privatePosts.slice(0, Math.max(privatePosts.length, privatePosts.length - 2)));
-    }
+    const slicedPosts = rawPosts.length < limit || rawPosts.length < 2 ? rawPosts : rawPosts.slice(0, rawPosts.length - 1);
+
+    const [posts,] = await sq.query(q => slicedPosts.map((p) => buildPostPreview(q, p as Post, currentUser)));
     return {
         state: 'success',
-        posts: combinedPosts ?? [],
-        hasMore: publicPosts.length === requestLimit + 1 || privatePosts.length === requestLimit + 1
+        posts: posts ?? [],
+        hasMore: hasMorePosts
     };
 }

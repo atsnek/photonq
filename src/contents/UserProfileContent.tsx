@@ -31,7 +31,7 @@ interface IUserProfileContent {
  * Component for displaying a certain user profile.
  */
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
-  const SEARCH_LIMIT = 10;
+  const SEARCH_LIMIT = 1; //TODO: Change to 10
 
   const { hash } = useLocation();
 
@@ -116,6 +116,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         toggleRating={() => {}} //TODO: implement toggleLike with API call
         hidePostAuthor
         showControls
+        maxItems={SEARCH_LIMIT}
         showPostPrivacy={isOwnProfile}
       />
     );
