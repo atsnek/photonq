@@ -1,5 +1,5 @@
 import { Activity, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
-import { TActivitySection, TActivityType } from "../activity/types/activity";
+import { TActivity, TActivityType } from "../activity/types/activity";
 import { t } from "snek-query";
 import { sq } from "@snek-functions/origin";
 
@@ -34,12 +34,12 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
  * @param activities  The activities to build the section from
  * @returns One or more activity sections
  */
-export const buildUserActivities = (q: Query, activities: Activity[], currentUser: t.Nullable<User>): TActivitySection[] => {
-    const activitySections: TActivitySection[] = [];
-    let currentActivitySection: TActivitySection | null = null;
+export const buildUserActivities = (q: Query, rawActivities: Activity[], currentUser: t.Nullable<User>): TActivity[] => {
+    // const activitySections: TActivitySection[] = [];8ull = null;
+
     // Only show the most recent rating for a post
     const activityRatingPostIds: Array<{ createdAt: string, id: string }> = [];
-    activities.filter(({ type }) => type.startsWith("star")).sort((a, b) => {
+    rawActivities.filter(({ type }) => type.startsWith("star")).sort((a, b) => {
         if (!a.createdAt || !b.createdAt) return 0;
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     }).forEach(({ createdAt, post, type }) => {
@@ -57,7 +57,9 @@ export const buildUserActivities = (q: Query, activities: Activity[], currentUse
         else if (!isUnstar) activityRatingPostIds.push({ createdAt, id: post.id });
     })
 
-    activities.forEach(async ({ createdAt, follow, post, type }) => {
+    const activities: TActivity[] = [];
+
+    rawActivities.forEach(async ({ createdAt, follow, post, type }) => {
         //! Because of snek-query, we must access all post props we need here, otherwise it won't be fetched
         post?.slug;
         post?.title;
@@ -65,30 +67,8 @@ export const buildUserActivities = (q: Query, activities: Activity[], currentUse
         post?.profileId;
         if (!createdAt || (type.startsWith("star_") && post && activityRatingPostIds.findIndex(({ createdAt: existingCreatedAt, id }) => id === post.id && existingCreatedAt === createdAt)) === -1) return;
 
-        const date = new Date(createdAt);
-        const sectionDate = new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate()
-        );
-
-        const currentSectionDate = currentActivitySection ? new Date(currentActivitySection.timestamp) : undefined;
-
-        if (
-            !currentActivitySection || !currentSectionDate ||
-            currentSectionDate.getFullYear() !== sectionDate.getFullYear() ||
-            currentSectionDate.getMonth() !== sectionDate.getMonth()
-        ) {
-            currentActivitySection = {
-                timestamp: sectionDate.toISOString(),
-                activities: []
-            };
-            activitySections.push(currentActivitySection);
-        }
-
         let title = '';
         let href = '';
-
         if (type === 'blog_create' && post) {
             if (post.privacy === Privacy.private && post.profileId !== currentUser?.id) {
                 title = "Created a private blog post";
@@ -113,16 +93,16 @@ export const buildUserActivities = (q: Query, activities: Activity[], currentUse
             href = '/post/' + post.slug;
         }
 
-        currentActivitySection.activities.push({
+        activities.push({
             type: type as TActivityType,
             timestamp: createdAt,
             title: {
                 name: title,
                 href
             }
-        });
+        })
     });
-    return activitySections;
+    return activities;
 }
 
 /**

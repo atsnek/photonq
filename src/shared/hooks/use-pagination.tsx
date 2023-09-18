@@ -45,7 +45,6 @@ const usePagination = <T,>({
       )
     : items?.slice(0, currentPage * itemsPerPage);
 
-  console.log(currentItems, totalPages, currentPage, itemsPerPage);
   /**
    * Increments the current page by 1 if the current page is less than the total pages
    */

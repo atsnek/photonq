@@ -11,7 +11,7 @@ import {
   Text
 } from '@chakra-ui/react';
 import { FC, ReactNode, useMemo } from 'react';
-import { TActivitySection, TActivityType } from '../types/activity';
+import { TActivity, TActivitySection, TActivityType } from '../types/activity';
 import { TStepperSection } from '../../../../shared/components/stepper/types/stepper';
 import Stepper from '../../../../shared/components/stepper/Stepper';
 import TbMessagesCircle2 from '../../../../shared/components/icons/tabler/TbMessagesCircle2';
@@ -40,24 +40,24 @@ const activityIcons: Record<TActivityType, ReactNode> = {
 };
 
 interface IActivityListProps extends BoxProps {
-  activity?: TActivitySection[];
+  activity?: TActivity[];
   fetchMoreActivities?: (offset: number, limit: number) => void;
 }
 
 /**
  * Component for displaying a list of activities.
  */
-const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
-  const nofActivities = useMemo(() => {
-    return (
-      activity?.reduce((acc, section) => {
-        return acc + section.activities.length;
-      }, 0) ?? 0
-    );
-  }, [activity]);
+const ActivityList: FC<IActivityListProps> = ({ activity = [], ...props }) => {
+  // const nofActivities = useMemo(() => {
+  //   return (
+  //     activity?.reduce((acc, section) => {
+  //       return acc + section.activities.length;
+  //     }, 0) ?? 0
+  //   );
+  // }, [activity]);
 
   const pagination = usePagination({
-    items: activity ?? [],
+    items: activity,
     itemsPerPage: 3,
     type: 'pages'
   });
@@ -66,7 +66,30 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
   const stepperData = useMemo(() => {
     let visibileActivities = 0;
     let stepperData: TStepperSection[] = [];
-    for (const section of activity ?? []) {
+
+    const sections: TActivitySection[] = [];
+
+    for (let i = 0; i < Math.min(currentLimit, activity.length); i++) {
+      const item = activity[i];
+      const itemDate = new Date(item.timestamp);
+      const sectionDate = new Date(
+        itemDate.getFullYear(),
+        itemDate.getMonth()
+      ).toISOString();
+      const sectionIndex = sections.findIndex(
+        section => section.timestamp === sectionDate
+      );
+      if (sectionIndex === -1) {
+        sections.push({
+          timestamp: sectionDate,
+          activities: [item]
+        });
+      } else {
+        sections[sectionIndex].activities.push(item);
+      }
+    }
+
+    for (const section of sections) {
       const sectionDate = new Date(section.timestamp);
       const sectionTitle = (
         <HStack spacing={1}>
