@@ -27,7 +27,27 @@ const smtUserProfilePage = {
           }
         }
       }
-    }
+    },
+    bio: {
+      color: {
+        default: 'gray.700',
+        _dark: 'gray.400'
+      }
+    },
+    followers: {
+      count: {
+        color: {
+          default: 'gray.700',
+          _dark: 'gray.300'
+        }
+      },
+      text: {
+        color: {
+          default: 'gray.600',
+          _dark: 'gray.500'
+        }
+      }
+    },
   },
   topNav: {
     tabs: {

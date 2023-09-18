@@ -1,9 +1,11 @@
 import {
   Avatar,
+  Box,
   Button,
   Divider,
   Flex,
   GridProps,
+  HStack,
   Heading,
   IconButton,
   IconProps,
@@ -29,6 +31,7 @@ import ProfileFollowButton from './ProfileFollowButton';
 import TbUserEdit from '../../../../shared/components/icons/tabler/TbUserEdit';
 import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck';
 import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
+import TbUsers from '../../../../shared/components/icons/tabler/TbUsers';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -59,7 +62,7 @@ export const leftNavProfileStyling = {
   },
   bio: {
     mt: 2,
-    color: 'gray.400',
+    color: 'pages.userProfile.leftNav.bio.color',
     fontSize: '16px'
   },
   socialInfo: {
@@ -294,6 +297,21 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
         {userData.socials.length > 0 && (
           <Divider {...leftNavProfileStyling.bioDividers} />
         )}
+        {
+          <HStack spacing={1} mt={2}>
+            <TbUsers />
+            <Text color="pages.userProfile.leftNav.followers.text.color">
+              <Text
+                as="span"
+                color="pages.userProfile.leftNav.followers.count.color"
+                mx={1}
+              >
+                5
+              </Text>
+              followers
+            </Text>
+          </HStack>
+        }
         {/* <Grid {...leftNavProfileStyling.socialInfo.grid}>
           {memoizedSocialLink}
         </Grid> */}
