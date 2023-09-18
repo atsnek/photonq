@@ -146,4 +146,19 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         return succeed;
     },
+    changeBio: async (bio) => {
+        if (!get().profile.profile) return false;
+        if (bio === get().profile.profile?.bio) return true;
+        const [, err] = await sq.mutate(m => m.socialProfileUpdate({ values: { bio } }));
+
+        const succeed = !err || err.length === 0;
+
+        if (succeed) {
+            set(produce((state: TStoreState): void => {
+                state.profile.profile!.bio = bio;
+            }))
+        }
+
+        return succeed;
+    },
 })

@@ -1,15 +1,20 @@
 import {
   Avatar,
+  Button,
   Divider,
+  Flex,
   GridProps,
   Heading,
+  IconButton,
   IconProps,
   StackProps,
   Text,
+  Textarea,
+  Tooltip,
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import FeatherInbox from '../../../../shared/components/icons/feather/FeatherInbox';
 import TbBuilding from '../../../../shared/components/icons/tabler/TbBuilding';
 import TbLinkedIn from '../../../../shared/components/icons/tabler/TbLinkedIn';
@@ -21,6 +26,9 @@ import LeftNav, {
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
 import { useAppStore } from '../../../../shared/store/store';
 import ProfileFollowButton from './ProfileFollowButton';
+import TbUserEdit from '../../../../shared/components/icons/tabler/TbUserEdit';
+import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck';
+import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -81,17 +89,43 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   };
 
   const navTopOffset = useNavOffset();
-  const [isFollowUpdating, setIsFollowUpdating] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
+  const [isFollowUpdating, setIsFollowUpdating] = useState(false);
+  // const [isUpdatingBio, setIsUpdatingBio] = useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const hideControlsFallback = useBreakpointValue({ base: true, md: false });
+  const bioInputRef = useRef<HTMLTextAreaElement>(null);
 
   const userData = useAppStore(state => state.profile.profile);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const isFollowing = useAppStore(state => state.profile.isFollowing);
+  const changeBio = useAppStore(state => state.profile.changeBio);
 
   const handleToggleFollow = async () => {
     setIsFollowUpdating(true);
     await toggleFollow();
     setIsFollowUpdating(false);
+  };
+
+  const saveProfileChanges = async () => {
+    if (!bioInputRef.current) return false;
+    await changeBio(bioInputRef.current?.value ?? '');
+    return true;
+  };
+
+  const handleToggleViewMode = async () => {
+    setIsUpdatingProfile(true);
+    if (isEditing) {
+      await saveProfileChanges();
+    }
+    setViewMode(isEditing ? 'read' : 'edit');
+    setIsUpdatingProfile(false);
+  };
+
+  const cancelProfileUpdate = () => {
+    setViewMode('read');
+    if (!bioInputRef.current) return;
+    bioInputRef.current.value = userData?.bio ?? '';
   };
 
   // const memoizedSocialLink = useMemo(() => {
@@ -152,6 +186,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
     );
   }
 
+  const isEditing = viewMode === 'edit';
   return (
     <LeftNav {...leftNavProps}>
       <VStack
@@ -195,6 +230,29 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           >
             @{userData.username}
           </Text>
+          {
+            //* Maybe this would be a neat place to put the total amount of favs/likes, etc (some kind of stats)
+          }
+          {userData.bio && (
+            <>
+              <Divider {...leftNavProfileStyling.bioDividers} />
+              {!isEditing && (
+                <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>
+              )}
+            </>
+          )}
+          {isEditing && (
+            <Textarea
+              {...leftNavProfileStyling.bio}
+              ref={bioInputRef}
+              defaultValue={userData.bio ?? ''}
+              placeholder="Write a short bio about yourself"
+              size="sm"
+              borderRadius="lg"
+              maxLength={200}
+              autoFocus
+            />
+          )}
           {!isOwnProfile && (
             <ProfileFollowButton
               isFollowing={isFollowing ?? false}
@@ -202,14 +260,32 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
               toggleFollowState={handleToggleFollow}
             />
           )}
-          {
-            //* Maybe this would be a neat place to put the total amount of favs/likes, etc (some kind of stats)
-          }
-          {userData.bio && (
-            <>
-              <Divider {...leftNavProfileStyling.bioDividers} />
-              <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>
-            </>
+          {isOwnProfile && (
+            <Flex mt={3} w="full">
+              <Button
+                flex={1}
+                w="full"
+                colorScheme="gray"
+                size="sm"
+                leftIcon={isEditing ? <TbUserCheck /> : <TbUserEdit />}
+                onClick={handleToggleViewMode}
+                isLoading={isUpdatingProfile}
+              >
+                {isEditing ? 'Finish editing' : 'Edit profile'}
+              </Button>
+              {isEditing && (
+                <Tooltip label="Cancel editing" openDelay={500}>
+                  <IconButton
+                    icon={<TbUserCancel />}
+                    aria-label="Cancel editing"
+                    colorScheme="gray"
+                    ml={2}
+                    size="sm"
+                    onClick={cancelProfileUpdate}
+                  />
+                </Tooltip>
+              )}
+            </Flex>
           )}
         </VStack>
         {userData.socials.length > 0 && (

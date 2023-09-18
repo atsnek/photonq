@@ -17,6 +17,7 @@ export interface IProfileStateActions {
     fetchActivity: () => Promise<boolean>;
     fetchSearchPosts: (query: string, limit: number, offset: number) => Promise<void>;
     toggleFollow: () => Promise<boolean>;
+    changeBio: (bio: string) => Promise<boolean>;
 }
 
 export type TProfileSlice = IProfileStateDefinition & IProfileStateActions;
