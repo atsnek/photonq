@@ -4,7 +4,7 @@ const smtUserProfilePage = {
       color: {
         inactive: {
           default: 'gray.500',
-          _dark: 'gray.400'
+          _dark: 'gray.500'
         },
         hover: {
           default: 'theme.700',

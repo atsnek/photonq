@@ -58,7 +58,9 @@ export const leftNavProfileStyling = {
     mt: 2
   },
   bio: {
-    mt: 2
+    mt: 2,
+    color: 'gray.400',
+    fontSize: '16px'
   },
   socialInfo: {
     grid: {
@@ -220,7 +222,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
             {userData.displayName}
           </Heading>
           <Text
-            fontSize="14px"
+            fontSize="16px"
             color="pages.userProfile.leftNav.username.color.inactive"
             _hover={{
               color: 'pages.userProfile.leftNav.username.color.hover'
@@ -250,6 +252,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
               size="sm"
               borderRadius="lg"
               maxLength={200}
+              maxH="500px"
               autoFocus
             />
           )}
