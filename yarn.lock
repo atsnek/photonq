@@ -3623,10 +3623,10 @@
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
 
-"@snek-functions/origin@0.8.4":
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.4.tgz#65320105d22aed0364dbac3566c48edbf4961165"
-  integrity sha512-/ILB30IIdSpyNqmiwav3gIwqN3TBFM4AL3YXxeihq+69TrzKJJXj7jDU0YwW3zzcPQhre4OBokJ2aGatG4gCEw==
+"@snek-functions/origin@0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.5.tgz#7f236b70f66cfecd7373268ab96252b82243ebee"
+  integrity sha512-MsP4EzDPMsdASGDouF///gYwrXcn6trqY7eP8UHnlud6hAFu1hYL+RsP3rmW8C68YUT9jfbLFQL21Jnu8wXrYg==
   dependencies:
     snek-query "*"
 
