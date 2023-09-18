@@ -1,10 +1,7 @@
 import {
   Avatar,
   Divider,
-  Grid,
-  GridItem,
   GridProps,
-  HStack,
   Heading,
   IconProps,
   StackProps,
@@ -12,23 +9,16 @@ import {
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { FC, Fragment, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import FeatherInbox from '../../../../shared/components/icons/feather/FeatherInbox';
 import TbBuilding from '../../../../shared/components/icons/tabler/TbBuilding';
 import TbLinkedIn from '../../../../shared/components/icons/tabler/TbLinkedIn';
 import TbMapPin from '../../../../shared/components/icons/tabler/TbMapPin';
-import Link from '../../../../shared/components/Link';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
 import LeftNav, {
   ILeftNavProps
 } from '../../../../shared/containers/navigation/LeftNav';
-import { TUser } from '../../types/user';
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
-import { useAuthenticationContext } from '@atsnek/jaen';
-import {
-  AuthenticationContext,
-  SnekUser
-} from '@atsnek/jaen/dist/contexts/authentication';
 import { useAppStore } from '../../../../shared/store/store';
 import ProfileFollowButton from './ProfileFollowButton';
 
@@ -91,18 +81,16 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   };
 
   const navTopOffset = useNavOffset();
-
   const [isFollowUpdating, setIsFollowUpdating] = useState<boolean>(false);
   const hideControlsFallback = useBreakpointValue({ base: true, md: false });
 
   const userData = useAppStore(state => state.profile.profile);
+  const toggleFollow = useAppStore(state => state.profile.toggleFollow);
 
   const handleToggleFollow = () => {
     setIsFollowUpdating(true);
-    //TODO: Implement toggleFollowState with API call
-    setTimeout(() => {
-      setIsFollowUpdating(false);
-    }, 1000);
+    toggleFollow();
+    setIsFollowUpdating(false);
   };
 
   // const memoizedSocialLink = useMemo(() => {

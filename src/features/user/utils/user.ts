@@ -1,6 +1,7 @@
 import { Activity, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
 import { TActivitySection, TActivityType } from "../activity/types/activity";
 import { t } from "snek-query";
+import { sq } from "@snek-functions/origin";
 
 /**
  * Returns the display name of a user
@@ -122,4 +123,18 @@ export const buildUserActivities = (q: Query, activities: Activity[], currentUse
         });
     });
     return activitySections;
+}
+
+/**
+ * Follow or unfollow a user
+ * @param userId The user id to follow or unfollow
+ * @param isFollowing Whether the user is currently following the user or not. (f.e. if the user is following the user right now, this should be true)
+ * @returns Whether the request was successful or not
+ */
+export const changeUserFollowingState = async (userId: string, isFollowing: boolean): Promise<boolean> => {
+    const [, error] = await sq.mutate(q => {
+        if (isFollowing) return q.socialProfileUnfollow({ followProfileId: userId });
+        return q.socialProfileFollow({ followProfileId: userId });
+    })
+    return !!error;
 }

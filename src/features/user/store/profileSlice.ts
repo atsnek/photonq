@@ -3,7 +3,7 @@ import { sq } from "@snek-functions/origin";
 import { produce } from "immer";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { TProfileSlice } from "../types/profileState";
-import { buildUserActivities } from "../utils/user";
+import { buildUserActivities, changeUserFollowingState } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { TPostListData } from "../../post/types/post";
@@ -118,5 +118,17 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
                 }
             })
         );
+    },
+    toggleFollow: async () => {
+        const [currentUser,] = await sq.query(q => q.userMe);
+        const [currentProfile, profileError] = await sq.query(q => q.user({ resourceId: __SNEK_RESOURCE_ID__, id: get().profile.profile?.id }))
+
+        if (profileError || !currentUser || !currentProfile.id || (currentUser && currentUser.id === currentProfile.id)) return false;
+
+        const isFollowing = currentProfile.profile?.followers?.findIndex(f => f.id === currentUser.id) !== -1;
+        const succeed = changeUserFollowingState(currentProfile.id, isFollowing);
+        console.log("follow succeed:", succeed);
+
+        return succeed;
     },
 })
