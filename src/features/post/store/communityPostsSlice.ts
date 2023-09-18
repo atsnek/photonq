@@ -4,7 +4,7 @@ import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { asEnumKey } from "snek-query";
-import { ObjectAndUser, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { TPostPreview } from "../types/post";
 
 
@@ -49,8 +49,21 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         const [rawPosts, rawError] = await sq.query(q => {
             const posts = q.allSocialPost({ filters: { limit: 4, offset: 0, privacy: asEnumKey(PrivacyInputInput, "public") } })
             //! Existing issue: see post utils -> buildPostPreview
-            for (const key in posts[0]) {
-                posts[0][key as keyof typeof posts[0]];
+            const checkedKeys: string[] = [];
+            posts?.map(p => {
+                p?.id
+            })
+            for (const post of posts) {
+                for (const key in post) {
+                    if (checkedKeys.includes(key)) continue;
+                    post[key as keyof typeof posts[0]];
+                    checkedKeys.push(key);
+                }
+                for (const star of post?.stars ?? []) {
+                    for (const key in star) {
+                        star[key as keyof typeof star];
+                    }
+                }
             }
             return posts;
         });

@@ -35,8 +35,6 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
  * @returns One or more activity sections
  */
 export const buildUserActivities = (q: Query, rawActivities: Activity[], currentUser: t.Nullable<User>): TActivity[] => {
-    // const activitySections: TActivitySection[] = [];8ull = null;
-
     // Only show the most recent rating for a post
     const activityRatingPostIds: Array<{ createdAt: string, id: string }> = [];
     rawActivities.filter(({ type }) => type.startsWith("star")).sort((a, b) => {
@@ -81,8 +79,8 @@ export const buildUserActivities = (q: Query, rawActivities: Activity[], current
         } else if (type === 'profile_create') {
             title = `Created a profile`;
             href = '#';
-        } else if (type === 'follow_follow' && follow) {
-            if (!follow.followed) return;
+        } else if (type === 'follow_follow') {
+            if (!follow || !follow.followed) return;
             const followedUser = q.user({ id: follow.followed.id });
             if (!followedUser) return;
             title = `Followed ${getUserDisplayname(followedUser)}`;
@@ -113,8 +111,8 @@ export const buildUserActivities = (q: Query, rawActivities: Activity[], current
  */
 export const changeUserFollowingState = async (userId: string, isFollowing: boolean): Promise<boolean> => {
     const [, error] = await sq.mutate(q => {
-        if (isFollowing) return q.socialProfileUnfollow({ followProfileId: userId });
-        return q.socialProfileFollow({ followProfileId: userId });
+        if (isFollowing) return q.socialProfileUnfollow({ userId });
+        return q.socialProfileFollow({ userId });
     })
-    return !!error;
+    return !error || error?.length === 0;
 }

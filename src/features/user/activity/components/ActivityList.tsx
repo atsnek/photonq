@@ -14,7 +14,6 @@ import { FC, ReactNode, useMemo } from 'react';
 import { TActivity, TActivitySection, TActivityType } from '../types/activity';
 import { TStepperSection } from '../../../../shared/components/stepper/types/stepper';
 import Stepper from '../../../../shared/components/stepper/Stepper';
-import TbMessagesCircle2 from '../../../../shared/components/icons/tabler/TbMessagesCircle2';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import Link from '../../../../shared/components/Link';
 import usePagination from '../../../../shared/hooks/use-pagination';
@@ -22,6 +21,7 @@ import ActivityListSkeleton from './ActivityListSkeleton';
 import TbConfetti from '../../../../shared/components/icons/tabler/TbConfetti';
 import TbPencilPlus from '../../../../shared/components/icons/tabler/TbPencilPlus';
 import TbPencilShare from '../../../../shared/components/icons/tabler/TbPencilShare';
+import TbUserPlus from '../../../../shared/components/icons/tabler/TbUserPlus';
 
 export const activityListStyling = {
   title: {
@@ -31,7 +31,7 @@ export const activityListStyling = {
 
 //TODO: Adapt icons for the new activity types
 const activityIcons: Record<TActivityType, ReactNode> = {
-  follow_follow: <TbMessagesCircle2 />,
+  follow_follow: <TbUserPlus />,
   blog_create: <TbPencilPlus />,
   blog_publish: <TbPencilShare />,
   profile_create: <TbConfetti />,

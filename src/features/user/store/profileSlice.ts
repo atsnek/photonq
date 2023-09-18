@@ -12,11 +12,21 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     activity: [],
     overviewPosts: { state: "loading", posts: [] },
     searchPosts: { state: "inactive", posts: [] },
+    isFollowing: undefined,
     profile: undefined,
     fetchProfile: async (username) => {
+        let isFollowing: boolean | undefined = undefined;
+
+        const [currentUser, currentUserError] = await sq.query(q => q.userMe);
+
         const [userData, error] = await sq.query((q): TProfile['user'] | undefined => {
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: username })
             const profile = user.profile;
+
+            if (!currentUserError && currentUser && currentUser.id !== user.id) {
+                isFollowing = !!profile?.followers && profile?.followers?.findIndex(f => f.id === currentUser.id) !== -1;
+            }
+
             return {
                 id: user.id,
                 avatarUrl: user.details?.avatarURL ?? '',
@@ -31,6 +41,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         set(produce((state: TStoreState): void => {
             state.profile.profile = userData;
+            state.profile.isFollowing = isFollowing;
         }))
         return true;
     },
@@ -123,9 +134,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         if (profileError || !currentUser || !currentProfile.id || (currentUser && currentUser.id === currentProfile.id)) return false;
 
-        const isFollowing = currentProfile.profile?.followers?.findIndex(f => f.id === currentUser.id) !== -1;
-        const succeed = changeUserFollowingState(currentProfile.id, isFollowing);
-        console.log("follow succeed:", succeed);
+        // const isFollowing = !!currentProfile.profile?.followers && currentProfile.profile?.followers?.findIndex(f => f.id === currentUser.id) !== -1;
+        // console.log("isFollowing: ", isFollowing, currentProfile.profile?.followers?.findIndex(f => f.id === currentUser.id));
+        const succeed = await changeUserFollowingState(currentProfile.id, get().profile.isFollowing ?? false);
+
+        if (succeed) {
+            set(produce((state: TStoreState): void => {
+                state.profile.isFollowing = !get().profile.isFollowing;
+            }))
+        }
 
         return succeed;
     },

@@ -1,4 +1,4 @@
-import { PageConfig, PageProps, useAuthenticationContext } from '@atsnek/jaen';
+import { PageProps } from '@atsnek/jaen';
 
 import { graphql } from 'gatsby';
 import * as React from 'react';

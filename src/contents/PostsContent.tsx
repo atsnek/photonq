@@ -1,7 +1,7 @@
 import { Box, Heading, VStack, keyframes, Container } from '@chakra-ui/react';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import PostList from '../features/post/PostList';
-import { TPostListData, TPostPreview } from '../features/post/types/post';
+import { TPostPreview } from '../features/post/types/post';
 import PostListControls from '../features/post/PostListControls';
 import { useAppStore } from '../shared/store/store';
 

@@ -86,10 +86,11 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
 
   const userData = useAppStore(state => state.profile.profile);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
+  const isFollowing = useAppStore(state => state.profile.isFollowing);
 
-  const handleToggleFollow = () => {
+  const handleToggleFollow = async () => {
     setIsFollowUpdating(true);
-    toggleFollow();
+    await toggleFollow();
     setIsFollowUpdating(false);
   };
 
@@ -196,7 +197,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           </Text>
           {!isOwnProfile && (
             <ProfileFollowButton
-              isFollowing={false}
+              isFollowing={isFollowing ?? false}
               isLoading={isFollowUpdating}
               toggleFollowState={handleToggleFollow}
             />
