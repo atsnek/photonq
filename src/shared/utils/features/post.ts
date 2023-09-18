@@ -79,7 +79,11 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
 
     const slicedPosts = rawPosts.length < limit || rawPosts.length < 2 ? rawPosts : rawPosts.slice(0, rawPosts.length - 1);
 
-    const [posts,] = await sq.query(q => slicedPosts.map((p) => buildPostPreview(q, p as Post, currentUser)));
+    //* We need to query each post in a separate query until snek-query offers us a better way to do this
+    const posts = await Promise.all(slicedPosts.map(async (p) => {
+        return (await sq.query(q => buildPostPreview(q, p as Post, currentUser)))[0];
+    }));
+
     return {
         state: 'success',
         posts: posts ?? [],
