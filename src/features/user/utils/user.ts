@@ -77,7 +77,7 @@ export const buildUserActivities = (q: Query, rawActivities: Activity[], current
                 href = '/post/' + post.slug;
             }
         } else if (type === 'profile_create') {
-            title = `Created a profile`;
+            title = `Joined the community`;
             href = '#';
         } else if (type === 'follow_follow') {
             if (!follow || !follow.followed) return;
