@@ -70,6 +70,17 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
         for (const key in posts[0]) {
             posts[0][key as keyof typeof posts[0]];
         }
+        for (const post of posts) {
+            if (post === null) {
+                console.log("posts is null", posts);
+                continue;
+            }
+            for (const star of post.stars) {
+                star.profile?.followers;
+                star.profile?.id;
+            }
+        }
+
         return posts;
     })
 
