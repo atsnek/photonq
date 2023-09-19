@@ -1,5 +1,5 @@
 import { SnekUser } from "@atsnek/jaen";
-import { TPost } from "./post";
+import { TPost, EnPostLanguage } from "./post";
 import { TUser } from "../../user/types/user";
 
 
@@ -16,6 +16,7 @@ export interface ISinglePostStateActions {
     togglePostRating: () => Promise<boolean>;
     updatePreviewImage: (src: File) => Promise<boolean>;
     togglePrivacy: () => Promise<boolean>;
+    changeLanguage: (language: EnPostLanguage) => Promise<boolean>;
 }
 
 export type TSinglePostSlice = ISinglePostStateDefinition & ISinglePostStateActions;

@@ -15,6 +15,7 @@ import Image from '../../../../shared/components/image/Image';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
 import useScrollPosition from '../../../../shared/hooks/use-scroll-position';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import PostLanguagePopover from '../../components/PostLanguageMenuList';
 
 interface ILeftNavPostEditorProps {
   post: Partial<TPost>;
@@ -28,7 +29,7 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({
   post,
   setPostPreviewImage
 }) => {
-  const hasPublished = post.publicationDate !== undefined;
+  const hasPublished = post.privacy !== 'private';
   const isAuthenticated = useAuthenticationContext().user !== null;
   const navOffset = useNavOffset();
 
@@ -54,7 +55,7 @@ const LeftNavPostEditor: FC<ILeftNavPostEditorProps> = ({
       >
         <Box overflow="hidden" borderRadius="full">
           <Image
-            src={post.previewImage ?? 'https://api.dicebear.com/7.x/shapes/svg'}
+            src={post.avatarUrl ?? 'https://api.dicebear.com/7.x/shapes/svg'}
             w={{ base: '50%', md: 'full' }}
             maxW="120px"
             h="max-content"

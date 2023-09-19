@@ -1,10 +1,13 @@
 import { FC } from 'react';
-import { TPost } from '../types/post';
+import { EnPostLanguage, TPost } from '../types/post';
 import {
   Box,
   Divider,
+  HStack,
   Heading,
   Input,
+  Menu,
+  MenuButton,
   Tag,
   Text,
   Textarea,
@@ -16,14 +19,17 @@ import { useNavOffset } from '../../../shared/hooks/use-nav-offset';
 import Image from '../../../shared/components/image/Image';
 import LeftNavPostReaderSkeleton from '../reader/components/LeftNavPostReaderSkeleton';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import PostLanguageMenuList from './PostLanguageMenuList';
 
 interface IPostLeftNavProps {
   post?: TPost;
+  isPostAuthor: boolean;
   canEdit?: boolean;
   handleTitleChange: (title: string) => void;
   handleSummaryChange: (summary: string) => void;
   setPostPreviewImage: (src: File) => void;
   isPostPreviewImageUploading: boolean;
+  handleLanguageChange: (language: EnPostLanguage) => void;
 }
 
 /**
@@ -31,11 +37,13 @@ interface IPostLeftNavProps {
  */
 const PostLeftNav: FC<IPostLeftNavProps> = ({
   post,
+  isPostAuthor,
   canEdit,
   handleTitleChange,
   handleSummaryChange,
   setPostPreviewImage,
-  isPostPreviewImageUploading
+  isPostPreviewImageUploading,
+  handleLanguageChange
 }) => {
   const navOffset = useNavOffset();
 
@@ -121,11 +129,37 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             </Text>
           )}
         </Box>
+        {isPostAuthor && !canEdit && post.privacy === 'private' && (
+          <Tag size="sm" colorScheme="yellow">
+            private
+          </Tag>
+        )}
         {canEdit && (
           <>
-            <Tag size="sm" colorScheme={isPublic ? 'green' : 'yellow'}>
-              {isPublic ? 'public' : 'private'}
-            </Tag>
+            <HStack>
+              <Tag size="sm" colorScheme={isPublic ? 'green' : 'yellow'}>
+                {isPublic ? 'public' : 'private'}
+              </Tag>
+              <Menu>
+                <MenuButton
+                  as={Tag}
+                  size="sm"
+                  h="fit-content"
+                  colorScheme="gray"
+                  _hover={{
+                    bg: 'gray.200'
+                  }}
+                  cursor="pointer"
+                >
+                  {post.language === 'english' ? '🇺🇸' : '🇦🇹'}
+                </MenuButton>
+                <PostLanguageMenuList
+                  changeLanguage={handleLanguageChange}
+                  currentLanguage={post.language}
+                  compactMode
+                />
+              </Menu>
+            </HStack>
             <Divider mt={8} mb={3} />
           </>
         )}

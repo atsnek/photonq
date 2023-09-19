@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useRef } from 'react';
-import { TPost } from '../types/post';
+import { TPost, EnPostLanguage } from '../types/post';
 import { TUser } from '../../user/types/user';
 import {
   Box,
@@ -8,13 +8,18 @@ import {
   Spacer,
   Text,
   Input,
-  Button
+  Button,
+  Menu,
+  MenuButton
 } from '@chakra-ui/react';
 import UserAvatar from '../../user/avatar/components/UserAvatar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import PostRatingButton from './PostRatingButton';
+import TbLanguage from '../../../shared/components/icons/tabler/TbLanguage';
+import PostLanguageMenuList from './PostLanguageMenuList';
+import { useAppStore } from '../../../shared/store/store';
 
 interface IPostTopNavProps {
   post?: TPost;
@@ -26,6 +31,7 @@ interface IPostTopNavProps {
   canEdit?: boolean;
   handleRatePost: () => void;
   isRating?: boolean;
+  handleLanguageChange: (language: EnPostLanguage) => void;
 }
 
 /**
@@ -40,7 +46,8 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   isAuthor,
   canEdit,
   handleRatePost,
-  isRating
+  isRating,
+  handleLanguageChange
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -106,6 +113,20 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                 >
                   Image
                 </Button>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    colorScheme="gray"
+                    size="sm"
+                    leftIcon={<TbLanguage />}
+                  >
+                    Language
+                  </MenuButton>
+                  <PostLanguageMenuList
+                    currentLanguage={EnPostLanguage.ENGLISH}
+                    changeLanguage={handleLanguageChange}
+                  />
+                </Menu>
                 <Button
                   colorScheme="gray"
                   size="sm"

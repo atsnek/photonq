@@ -4,10 +4,9 @@ import { TSinglePostSlice } from "../types/singlePostState";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { sq } from "@snek-functions/origin";
 import { asEnumKey } from "snek-query";
-import { TPost, TPostPrivacy } from "../types/post";
+import { EnPostLanguage, TPost, TPostPrivacy } from "../types/post";
 import { TUser } from "../../user/types/user";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
-import { useAppStore } from "../../../shared/store/store";
 import { osg } from "@atsnek/jaen";
 
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
@@ -61,6 +60,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
                 summary: post.summary,
                 title: post.title,
                 canManage: currentUser?.id === post.profileId,
+                language: EnPostLanguage.ENGLISH, //TODO: Implement this
             };
         });
 
@@ -130,5 +130,14 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
 
         const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
         return !!error && updateSucceed;
+    },
+    changeLanguage: async (language) => {
+        //TODO: Implement this
+        console.log("new language: ", language);
+        set(produce((state: TStoreState) => {
+            if (!state.singlePost.post) return;
+            state.singlePost.post.language = language;
+        }))
+        return true;
     },
 })

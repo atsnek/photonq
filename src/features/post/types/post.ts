@@ -20,6 +20,11 @@ import { TUser } from '../../user/types/user';
 export type TPostViewMode = 'read' | 'edit';
 export type TPostPrivacy = 'public' | 'private' | 'friends';
 
+export enum EnPostLanguage {
+  ENGLISH = 'english',
+  GERMAN = 'german',
+}
+
 //TODO: This type needs to be improved to better fit the needs of the current system
 export type TPost = {
   id: string;
@@ -34,6 +39,7 @@ export type TPost = {
   canManage?: boolean;
   privacy: TPostPrivacy,
   authorProfileId: string | null;
+  language: EnPostLanguage;
 }
 
 /**

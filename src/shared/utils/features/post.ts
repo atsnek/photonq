@@ -30,6 +30,7 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
  */
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
     const author = q.user({ id: post?.profileId ?? '' });
+    console.log(post?.stars?.map(p => p.profile?.id));
     return {
         id: post?.id ?? '',
         slug: post?.slug ?? '',

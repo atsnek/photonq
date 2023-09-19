@@ -40,11 +40,10 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
   const [alertContent, setAlertContent] = useState(
     isPublic ? alertText.publish : alertText.publish
   );
-  const customToast = useToast();
+  const showToast = useToast();
   const publishPost = async () => {
     //TODO: Connect to Jaen
-    //!Bug: This toast get's called exponentially (hello, memory leak)
-    customToast({
+    showToast({
       title: alertContent.header,
       description: alertContent.body,
       status: 'success'

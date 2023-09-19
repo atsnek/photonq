@@ -9,7 +9,7 @@ import PostEditor from '../features/post/components/PostEditor';
 import PostActionToolbar from '../features/post/components/PostActionToolbar';
 import Alert from '../shared/components/alert/Alert';
 import { useDisclosure } from '@chakra-ui/react';
-import { TPostViewMode } from '../features/post/types/post';
+import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 export interface IBlogPostContentProps {
@@ -41,6 +41,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
   const updatePreviewImage = useAppStore(
     state => state.singlePost.updatePreviewImage
   );
+  const changeLanguage = useAppStore(state => state.singlePost.changeLanguage);
   const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
 
   const toggleViewMode = () => {
@@ -80,8 +81,12 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     setIsRating(false);
   };
 
-  const isPostAuthor = currentUser?.id === author?.id;
-  const canEditPost = isPostAuthor && viewMode === 'edit';
+  const handleLanguageChange = async (language: EnPostLanguage) => {
+    changeLanguage(language);
+  };
+
+  const isPostAuthor = !!currentUser && currentUser?.id === author?.id;
+  const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
   const isPostPublic = post?.privacy === 'public';
 
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
@@ -98,15 +103,18 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         canEdit={canEditPost}
         handleRatePost={handleRatePost}
         isRating={isRating}
+        handleLanguageChange={handleLanguageChange}
       />
       <MainWrapper>
         <PostLeftNav
           handleTitleChange={handelTitleChange}
           handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
+          isPostAuthor={isPostAuthor}
           canEdit={canEditPost}
           post={post}
           isPostPreviewImageUploading={isPreviewImageUploading}
+          handleLanguageChange={handleLanguageChange}
         />
         {canEditPost ? (
           <PostEditor post={post} />

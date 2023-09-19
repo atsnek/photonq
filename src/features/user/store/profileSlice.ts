@@ -134,8 +134,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         if (profileError || !currentUser || !currentProfile.id || (currentUser && currentUser.id === currentProfile.id)) return false;
 
-        // const isFollowing = !!currentProfile.profile?.followers && currentProfile.profile?.followers?.findIndex(f => f.id === currentUser.id) !== -1;
-        // console.log("isFollowing: ", isFollowing, currentProfile.profile?.followers?.findIndex(f => f.id === currentUser.id));
         const succeed = await changeUserFollowingState(currentProfile.id, get().profile.isFollowing ?? false);
 
         if (succeed) {
