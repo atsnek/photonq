@@ -257,6 +257,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
               borderRadius="lg"
               maxLength={200}
               maxH="500px"
+              focusBorderColor="theme.500"
               autoFocus
             />
           )}
