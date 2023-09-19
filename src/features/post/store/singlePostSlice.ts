@@ -55,8 +55,8 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
                 id: post.id,
                 slug: post.slug,
                 privacy: post.privacy as TPostPrivacy,
-                stars: post.stars?.length ?? 0,
-                hasRated: post.stars?.some(star => star.profile.id === currentUser?.id) ?? false,
+                stars: post.stars()?.length ?? 0,
+                hasRated: post.stars()?.some(star => star.profile.id === currentUser?.id) ?? false,
                 summary: post.summary,
                 title: post.title,
                 canManage: currentUser?.id === post.profileId,
@@ -118,11 +118,11 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         return true;
     },
     togglePrivacy: async () => {
-        const isPublished = get().singlePost.post?.privacy === 'public';
-        const newPrivacy = isPublished ? 'private' : 'public';
+        const isPublished = get().singlePost.post?.privacy === 'PUBLIC';
+        const newPrivacy = isPublished ? 'PRIVATE' : 'PUBLIC';
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
-            state.singlePost.post.privacy = isPublished ? 'private' : 'public';
+            state.singlePost.post.privacy = isPublished ? 'PRIVATE' : 'PUBLIC';
         }));
 
         const postId = get().singlePost.post?.id ?? '';

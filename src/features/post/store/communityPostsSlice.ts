@@ -24,8 +24,10 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         const [rawPosts, rawError] = await sq.query(q => {
             const posts = q.allSocialPostTrending({ filters: { limit: 4, offset: 0 } });
             //! Existing issue: see post utils -> buildPostPreview
-            for (const key in posts[0]) {
-                posts[0][key as keyof typeof posts[0]];
+            if (posts?.length > 0 && posts[0] !== null) {
+                for (const key in posts[0]) {
+                    posts[0][key as keyof typeof posts[0]];
+                }
             }
             return posts;
         });
@@ -47,19 +49,19 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         const [currentUser,] = await sq.query(q => q.userMe);
 
         const [rawPosts, rawError] = await sq.query(q => {
-            const posts = q.allSocialPost({ filters: { limit: 4, offset: 0, privacy: asEnumKey(PrivacyInputInput, "public") } })
+            const posts = q.allSocialPost({ filters: { limit: 4, offset: 0, privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
             //! Existing issue: see post utils -> buildPostPreview
             const checkedKeys: string[] = [];
             posts?.map(p => {
                 p?.id
             })
-            for (const post of posts) {
+            for (const post of posts ?? []) {
                 for (const key in post) {
                     if (checkedKeys.includes(key)) continue;
                     post[key as keyof typeof posts[0]];
                     checkedKeys.push(key);
                 }
-                for (const star of post?.stars ?? []) {
+                for (const star of post?.stars() ?? []) {
                     for (const key in star) {
                         star[key as keyof typeof star];
                     }
@@ -67,7 +69,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             }
             return posts;
         });
-        const posts = await Promise.all(rawPosts.map(async (p) => {
+        const posts = await Promise.all(rawPosts?.map(async (p) => {
             if (!p) return;
             return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
         }));
@@ -93,7 +95,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const posts = await searchPosts(query, limit, offset, 'public', currentUser);
+        const posts = await searchPosts(query, limit, offset, 'PUBLIC', currentUser);
 
         set(produce((state: TStoreState) => {
             state.communityPosts.searchPosts = {

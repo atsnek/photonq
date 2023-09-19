@@ -30,7 +30,6 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
  */
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
     const author = q.user({ id: post?.profileId ?? '' });
-    console.log(post?.stars?.map(p => p.profile?.id));
     return {
         id: post?.id ?? '',
         slug: post?.slug ?? '',
@@ -45,8 +44,10 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
             displayName: author ? getUserDisplayname(author) : '',
             avatarUrl: author?.details?.avatarURL,
         },
-        stars: post?.stars?.length ?? 0,
-        hasRated: !!currentUser && post?.stars?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
+        // stars: post?.stars()?.length ?? 0,
+        stars: 0,
+        // hasRated: !!currentUser && !!post?.stars && post?.stars()?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
+        hasRated: false,
         canManage: post?.profileId === currentUser?.id,
     }
 };
@@ -68,19 +69,21 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
         }
         const posts = q.allSocialPost({ filters });
         //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
-        for (const key in posts[0]) {
-            posts[0][key as keyof typeof posts[0]];
-        }
-        for (const post of posts) {
-            if (post === null) {
-                console.log("posts is null", posts);
-                continue;
-            }
-            for (const star of post.stars) {
-                star.profile?.followers;
-                star.profile?.id;
+        if (posts.length > 0 && posts[0] !== null) {
+            for (const key in posts[0]) {
+                posts[0][key as keyof typeof posts[0]];
             }
         }
+        // for (const post of posts) {
+        //     // if (post === null) {
+        //     //     console.log("posts is null", posts);
+        //     //     continue;
+        //     // }
+        //     // for (const star of post.stars) {
+        //     //     star.profile?.followers;
+        //     //     star.profile?.id;
+        //     // }
+        // }
 
         return posts;
     })

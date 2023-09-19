@@ -24,7 +24,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const profile = user.profile;
 
             if (!currentUserError && currentUser && currentUser.id !== user.id) {
-                isFollowing = !!profile?.followers && profile?.followers?.findIndex(f => f.id === currentUser.id) !== -1;
+                isFollowing = !!profile?.followers && profile?.followers()?.findIndex(f => f.id === currentUser.id) !== -1;
             }
 
             return {
@@ -60,7 +60,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
                     posts: profile?.posts
                         .filter(
                             ({ privacy }) =>
-                                privacy === 'public' ||
+                                privacy === 'PUBLIC' ||
                                 (currentUser && user.id === currentUser.id)
                         )
                         .map(p => buildPostPreview(q, p, currentUser)) ?? []
@@ -104,13 +104,13 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
-        const publicOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "public").length;
-        const publicPosts = await searchPosts(query, limit, publicOffset, "public", currentUser, currentProfile?.id);
+        const publicOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "PUBLIC").length;
+        const publicPosts = await searchPosts(query, limit, publicOffset, "PUBLIC", currentUser, currentProfile?.id);
 
-        const privateOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "private").length;
+        const privateOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "PRIVATE").length;
         let privatePosts: TPostListData = { state: "inactive", posts: [] }
         if (currentUser && currentUser?.id === currentProfile.id) {
-            privatePosts = await searchPosts(query, limit, privateOffset, "private", currentUser, currentProfile?.id);
+            privatePosts = await searchPosts(query, limit, privateOffset, "PRIVATE", currentUser, currentProfile?.id);
             console.log("privatePosts:", privatePosts);
         }
 

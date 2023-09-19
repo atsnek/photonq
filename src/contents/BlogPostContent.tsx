@@ -87,7 +87,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
 
   const isPostAuthor = !!currentUser && currentUser?.id === author?.id;
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
-  const isPostPublic = post?.privacy === 'public';
+  const isPostPublic = post?.privacy === 'PUBLIC';
 
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
 
@@ -145,7 +145,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         confirmationLabel={isPostPublic ? 'Unpublish' : 'Publish'}
         confirmationProps={{
           variant:
-            (ref.current.oldPrivacy ?? post?.privacy) === 'public'
+            (ref.current.oldPrivacy ?? post?.privacy) === 'PUBLIC'
               ? 'filledYellow'
               : 'filledGreen'
         }}

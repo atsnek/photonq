@@ -32,6 +32,12 @@ const smtUserProfilePage = {
       color: {
         default: 'gray.700',
         _dark: 'gray.400'
+      },
+      editor: {
+        borderColor: {
+          default: 'theme.500',
+          _dark: 'theme.500'
+        },
       }
     },
     followers: {

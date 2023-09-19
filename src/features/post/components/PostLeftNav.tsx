@@ -51,7 +51,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
 
   if (!post) return <LeftNavPostReaderSkeleton />;
 
-  const isPublic = post?.privacy === 'public';
+  const isPublic = post?.privacy === 'PUBLIC';
 
   return (
     <LeftNav
@@ -129,7 +129,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             </Text>
           )}
         </Box>
-        {isPostAuthor && !canEdit && post.privacy === 'private' && (
+        {isPostAuthor && !canEdit && post.privacy === 'PRIVATE' && (
           <Tag size="sm" colorScheme="yellow">
             private
           </Tag>

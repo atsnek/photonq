@@ -18,7 +18,7 @@ import { TUser } from '../../user/types/user';
 // };
 
 export type TPostViewMode = 'read' | 'edit';
-export type TPostPrivacy = 'public' | 'private' | 'friends';
+export type TPostPrivacy = 'PUBLIC' | 'PRIVATE' | 'FRIENDS';
 
 export enum EnPostLanguage {
   ENGLISH = 'english',
