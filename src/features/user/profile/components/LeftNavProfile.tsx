@@ -32,6 +32,7 @@ import TbUserEdit from '../../../../shared/components/icons/tabler/TbUserEdit';
 import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck';
 import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
 import TbUsers from '../../../../shared/components/icons/tabler/TbUsers';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -94,9 +95,9 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   };
 
   const navTopOffset = useNavOffset();
+  const isAuthenticated = useAuthenticationContext().user !== null;
   const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
   const [isFollowUpdating, setIsFollowUpdating] = useState(false);
-  // const [isUpdatingBio, setIsUpdatingBio] = useState(false);
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const hideControlsFallback = useBreakpointValue({ base: true, md: false });
   const bioInputRef = useRef<HTMLTextAreaElement>(null);
@@ -259,7 +260,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
               autoFocus
             />
           )}
-          {!isOwnProfile && (
+          {!isOwnProfile && isAuthenticated && (
             <ProfileFollowButton
               isFollowing={isFollowing ?? false}
               isLoading={isFollowUpdating}
