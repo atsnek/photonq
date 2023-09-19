@@ -116,8 +116,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
     actionToolbarItems.push({
       order: 0,
       icon: isEditing ? <TbEye /> : <TbEdit />,
-      ariaLabel: isEditing ? 'Edit this post' : 'Preview this post',
-      tooltip: isEditing ? 'Edit this post' : 'Preview this post',
+      ariaLabel: isEditing ? 'Preview this post' : 'Edit this post',
+      tooltip: isEditing ? 'Preview this post' : 'Edit this post',
       onClick: toggleViewMode,
       hoverColor: 'components.postEditor.viewMode.hover.color'
     });
