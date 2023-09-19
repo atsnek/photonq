@@ -8,6 +8,7 @@ export interface IProfileStateDefinition {
     overviewPosts: TPostListData;
     searchPosts: TPostListData;
     activity: TActivity[];
+    followers: number;
     isFollowing?: boolean;
 }
 

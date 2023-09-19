@@ -12,10 +12,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     activity: [],
     overviewPosts: { state: "loading", posts: [] },
     searchPosts: { state: "inactive", posts: [] },
+    followers: 0,
     isFollowing: undefined,
     profile: undefined,
     fetchProfile: async (username) => {
         let isFollowing: boolean | undefined = undefined;
+        let followers: number = 0;
 
         const [currentUser, currentUserError] = await sq.query(q => q.userMe);
 
@@ -25,6 +27,10 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
             if (!currentUserError && currentUser && currentUser.id !== user.id) {
                 isFollowing = !!profile?.followers && profile?.followers()?.findIndex(f => f.id === currentUser.id) !== -1;
+            }
+
+            if (profile?.followers) {
+                followers = profile?.followers()?.length ?? 0;
             }
 
             return {
@@ -42,6 +48,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         set(produce((state: TStoreState): void => {
             state.profile.profile = userData;
             state.profile.isFollowing = isFollowing;
+            state.profile.followers = followers;
         }))
         return true;
     },

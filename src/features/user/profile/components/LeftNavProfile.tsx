@@ -103,6 +103,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   const bioInputRef = useRef<HTMLTextAreaElement>(null);
 
   const userData = useAppStore(state => state.profile.profile);
+  const followers = useAppStore(state => state.profile.followers);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const isFollowing = useAppStore(state => state.profile.isFollowing);
   const changeBio = useAppStore(state => state.profile.changeBio);
@@ -299,8 +300,8 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
         {userData.socials.length > 0 && (
           <Divider {...leftNavProfileStyling.bioDividers} />
         )}
-        {
-          <HStack spacing={1} mt={2}>
+        {followers > 0 && (
+          <HStack spacing={1} mt={2} cursor="default">
             <TbUsers />
             <Text color="pages.userProfile.leftNav.followers.text.color">
               <Text
@@ -308,12 +309,12 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
                 color="pages.userProfile.leftNav.followers.count.color"
                 mx={1}
               >
-                5
+                {followers}
               </Text>
-              followers
+              follower{followers > 1 && 's'}
             </Text>
           </HStack>
-        }
+        )}
         {/* <Grid {...leftNavProfileStyling.socialInfo.grid}>
           {memoizedSocialLink}
         </Grid> */}
