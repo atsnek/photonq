@@ -68,7 +68,7 @@ export const buildUserActivities = (q: Query, rawActivities: Activity[], current
         let title = '';
         let href = '';
         if (type === 'blog_create' && post) {
-            if (post.privacy === Privacy.private && post.profileId !== currentUser?.id) {
+            if (post.privacy === Privacy.PRIVATE && post.profileId !== currentUser?.id) {
                 title = "Created a private blog post";
                 href = "#";
             } else {
