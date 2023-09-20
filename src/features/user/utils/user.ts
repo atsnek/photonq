@@ -1,4 +1,4 @@
-import { Activity, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
+import { Nodes_1_2_3_4, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
 import { TActivity, TActivityType } from "../activity/types/activity";
 import { t } from "snek-query";
 import { sq } from "@snek-functions/origin";
@@ -34,7 +34,7 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
  * @param activities  The activities to build the section from
  * @returns One or more activity sections
  */
-export const buildUserActivities = (q: Query, rawActivities: Activity[], currentUser: t.Nullable<User>): TActivity[] => {
+export const buildUserActivities = (q: Query, rawActivities: Nodes_1_2_3_4[], currentUser: t.Nullable<User>): TActivity[] => {
     // Only show the most recent rating for a post
     const activityRatingPostIds: Array<{ createdAt: string, id: string }> = [];
     rawActivities.filter(({ type }) => type.startsWith("star")).sort((a, b) => {

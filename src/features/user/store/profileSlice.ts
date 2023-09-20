@@ -26,11 +26,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const profile = user.profile;
 
             if (!currentUserError && currentUser && currentUser.id !== user.id) {
-                isFollowing = !!profile?.followers && profile?.followers()?.findIndex(f => f.id === currentUser.id) !== -1;
+                isFollowing = !!profile?.followers && profile?.followers()?.nodes.findIndex(f => f.follower.id === currentUser.id) !== -1;
             }
 
             if (profile?.followers) {
-                followers = profile?.followers()?.length ?? 0;
+                followers = profile.followers().totalCount;
             }
 
             return {
@@ -86,7 +86,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const profile = user.profile;
 
             set(produce((state: TStoreState): void => {
-                state.profile.activity = buildUserActivities(q, profile?.activity ?? [], currentUser);
+                state.profile.activity = buildUserActivities(q, profile?.activity().nodes ?? [], currentUser);
             }))
         })
 

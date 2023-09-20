@@ -44,10 +44,10 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
             displayName: author ? getUserDisplayname(author) : '',
             avatarUrl: author?.details?.avatarURL,
         },
-        // stars: post?.stars()?.length ?? 0,
-        stars: 0,
+        stars: post?.stars()?.totalCount ?? 0,
         // hasRated: !!currentUser && !!post?.stars && post?.stars()?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
-        hasRated: false,
+        hasRated: post?.stars().edges?.findIndex(s => s.node.profile?.id === currentUser?.id) !== -1,
+        // hasRated: false,
         canManage: post?.profileId === currentUser?.id,
     }
 };
@@ -62,18 +62,37 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
  * @returns The post list data
  */
 export const searchPosts = async (searchQuery: string, limit: number, offset: number, privacy: TPostPrivacy, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
-    const [rawPosts,] = await sq.query(q => {
-        const filters: FiltersInputInput = { query: searchQuery, limit: limit + 1, offset, privacy: asEnumKey(PrivacyInputInput, privacy) };
+    const [postConnection,] = await sq.query(q => {
+        const filters: FiltersInputInput = { query: searchQuery, privacy: asEnumKey(PrivacyInputInput, privacy) };
         if (userId) {
             filters.userId = userId;
         }
         const posts = q.allSocialPost({ filters });
         //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
-        if (posts.length > 0 && posts[0] !== null) {
-            for (const key in posts[0]) {
-                posts[0][key as keyof typeof posts[0]];
+        if (posts?.nodes && posts.nodes.length > 0) {
+            for (const key in posts.nodes[0]) {
+                posts.nodes[0][key as keyof typeof posts.nodes[0]];
+            }
+            if (posts.nodes[0].stars && posts.nodes[0].stars().nodes.length > 0) {
+                const stars = posts.nodes[0].stars().nodes;
+                for (const key in posts.nodes[0].stars().nodes[0]) {
+                    posts.nodes[0].stars().nodes[0][key as keyof typeof stars[0]];
+                }
             }
         }
+        posts?.nodes.map(p => {
+            for (const key in p) {
+                p[key as keyof typeof p];
+            }
+            p.stars().nodes.map(s => {
+                s.profile?.id;
+            })
+        })
+        // if (posts.length > 0 && posts[0] !== null) {
+        //     for (const key in posts[0]) {
+        //         posts[0][key as keyof typeof posts[0]];
+        //     }
+        // }
         // for (const post of posts) {
         //     // if (post === null) {
         //     //     console.log("posts is null", posts);
@@ -88,18 +107,17 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
         return posts;
     })
 
-    const hasMorePosts = rawPosts.length === limit + 1;
+    const totalCount = postConnection?.totalCount ?? 0;
 
-    const slicedPosts = rawPosts.length < limit || rawPosts.length < 2 ? rawPosts : rawPosts.slice(0, rawPosts.length - 1);
-
+    const postNodes = postConnection?.nodes ?? [];
     //* We need to query each post in a separate query until snek-query offers us a better way to do this
-    const posts = await Promise.all(slicedPosts.map(async (p) => {
+    const posts = await Promise.all(postNodes.map(async (p) => {
         return (await sq.query(q => buildPostPreview(q, p as Post, currentUser)))[0];
     }));
 
     return {
         state: 'success',
         posts: posts ?? [],
-        hasMore: hasMorePosts
+        hasMore: totalCount > posts.length
     };
 }
