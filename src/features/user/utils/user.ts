@@ -1,7 +1,8 @@
-import { Nodes_1_2_3_4, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
+import { Edge_1_2_3_4, Nodes_1_2_3_4, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
 import { TActivity, TActivityType } from "../activity/types/activity";
 import { t } from "snek-query";
 import { sq } from "@snek-functions/origin";
+import { TPaginationData } from "../../../shared/types/pagination";
 
 /**
  * Returns the display name of a user
@@ -34,13 +35,14 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
  * @param activities  The activities to build the section from
  * @returns One or more activity sections
  */
-export const buildUserActivities = (q: Query, rawActivities: Nodes_1_2_3_4[], currentUser: t.Nullable<User>): TActivity[] => {
+export const buildUserActivities = (q: Query, activityEdges: Edge_1_2_3_4[], currentUser: t.Nullable<User>): TPaginationData<TActivity[]> => {
     // Only show the most recent rating for a post
     const activityRatingPostIds: Array<{ createdAt: string, id: string }> = [];
-    rawActivities.filter(({ type }) => type.startsWith("star")).sort((a, b) => {
-        if (!a.createdAt || !b.createdAt) return 0;
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    }).forEach(({ createdAt, post, type }) => {
+    activityEdges.filter(ae => ae.node.type.startsWith("star")).sort((a, b) => {
+        if (!a.node.createdAt || !b.node.createdAt) return 0;
+        return new Date(a.node.createdAt).getTime() - new Date(b.node.createdAt).getTime();
+    }).forEach(ae => {
+        const { createdAt, post, type } = ae.node;
         if (!post) return;
         const pos = activityRatingPostIds.findIndex(({ id }) => id === post.id);
         const isUnstar = type === "star_unstar";
@@ -55,9 +57,13 @@ export const buildUserActivities = (q: Query, rawActivities: Nodes_1_2_3_4[], cu
         else if (!isUnstar) activityRatingPostIds.push({ createdAt, id: post.id });
     })
 
-    const activities: TActivity[] = [];
+    const activityList: TPaginationData<TActivity[]> = {
+        items: [],
+        totalCount: activityEdges.length,
+    };
 
-    rawActivities.forEach(async ({ createdAt, follow, post, type }) => {
+    activityEdges.forEach(async (ae) => {
+        const { createdAt, post, type, follow } = ae.node;
         //! Because of snek-query, we must access all post props we need here, otherwise it won't be fetched
         post?.slug;
         post?.title;
@@ -91,7 +97,7 @@ export const buildUserActivities = (q: Query, rawActivities: Nodes_1_2_3_4[], cu
             href = '/post/' + post.slug;
         }
 
-        activities.push({
+        activityList.items.push({
             type: type as TActivityType,
             timestamp: createdAt,
             title: {
@@ -100,7 +106,7 @@ export const buildUserActivities = (q: Query, rawActivities: Nodes_1_2_3_4[], cu
             }
         })
     });
-    return activities;
+    return activityList;
 }
 
 /**

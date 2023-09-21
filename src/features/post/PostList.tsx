@@ -1,5 +1,10 @@
 import { FC, ReactElement, ReactNode, useMemo } from 'react';
-import { IPostPreviewProps, TPostListData, TPostPreview } from './types/post';
+import {
+  IPostPreviewProps,
+  TPaginatedPostListData,
+  TPostListData,
+  TPostPreview
+} from './types/post';
 import {
   Button,
   CardProps,
@@ -23,7 +28,7 @@ import { query } from '../../pages';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (query: string, offset: number) => void;
-  postData: TPostListData;
+  postData: TPaginatedPostListData;
   itemsPerPage?: number;
   maxItems?: number;
   paginationType?: TPaginationType;
@@ -62,7 +67,7 @@ const PostList: FC<IPostListProps> = ({
 }) => {
   const usePages = paginationType === 'pages';
   const pagination = usePagination({
-    items: postData.posts,
+    items: postData.items,
     itemsPerPage: itemsPerPage,
     maxItems: usePages ? maxItems : undefined,
     type: paginationType

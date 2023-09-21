@@ -6,12 +6,12 @@ import { TProfileSlice } from "../types/profileState";
 import { buildUserActivities, changeUserFollowingState } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
 import { buildPostPreview, searchPosts, togglePostRating } from "../../../shared/utils/features/post";
-import { TPostListData } from "../../post/types/post";
+import { TPaginatedPostListData, TPostListData } from "../../post/types/post";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
-    activity: [],
-    overviewPosts: { state: "loading", posts: [] },
-    searchPosts: { state: "inactive", posts: [] },
+    activity: { items: [], totalCount: 0 },
+    overviewPosts: { state: "loading", items: [], totalCount: 0 },
+    searchPosts: { query: '', state: "inactive", items: [], totalCount: 0 },
     followers: 0,
     isFollowing: undefined,
     profile: undefined,
@@ -59,15 +59,17 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         const userId = get().profile.profile?.id;
         const [rawPosts, error] = await sq.query(q => {
-            const posts = q.allSocialPostTrending({ filters: { limit: 6, offset: 0, profileId: userId } });
-            posts?.nodes.map(p => {
-                for (const key in p) {
-                    p[key as keyof typeof p];
-                }
-                p.stars().nodes.map(s => {
-                    s.profile?.id;
-                })
-                p.stars().totalCount;
+            const posts = q.allSocialPostTrending({ filters: { profileId: userId }, first: 6 });
+            posts?.pageInfo.hasNextPage;
+            posts?.pageInfo.endCursor;
+            posts?.nodes.forEach(pn => {
+                try {
+                    pn.stars().edges.map(se => se.node.profile.id);
+                    pn.stars().totalCount;
+                    for (const key in pn) {
+                        pn[key as keyof typeof pn];
+                    }
+                } catch { }
             })
             return posts;
         })
@@ -85,7 +87,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         set(produce((state: TStoreState): void => {
             state.profile.overviewPosts = {
                 state: "success",
-                posts
+                items: posts,
+                totalCount: 0,
             };
         }))
         return !!error;
@@ -99,8 +102,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username })
             const profile = user.profile;
 
+            const activityList = buildUserActivities(q, profile?.activity().edges ?? [], currentUser);
+            activityList.cursor = profile?.activity().pageInfo.endCursor ?? undefined;
+            activityList.hasMore = profile?.activity().pageInfo.hasNextPage ?? false;
             set(produce((state: TStoreState): void => {
-                state.profile.activity = buildUserActivities(q, profile?.activity().nodes ?? [], currentUser);
+                state.profile.activity = activityList;
             }))
         })
 
@@ -110,15 +116,29 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         if (!query.length) {
             set(produce((state: TStoreState): void => {
                 state.profile.searchPosts = {
+                    query: '',
                     state: "inactive",
-                    posts: [],
+                    items: [],
+                    hasMore: false,
+                    totalCount: 0,
                 };
             }))
             return;
         }
 
         set(produce((state: TStoreState) => {
-            state.profile.searchPosts.state = "loading";
+            if (query !== state.profile.searchPosts.query) {
+                // Reset the state if the query changed
+                state.profile.searchPosts = {
+                    query,
+                    state: "loading",
+                    items: [],
+                    hasMore: false,
+                    totalCount: 0,
+                };
+            } else {
+                state.profile.searchPosts.state = "loading";
+            }
         }))
 
         const [currentUser,] = await sq.query(q => q.userMe);
@@ -127,20 +147,21 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", get().profile.searchPosts.publicPageInfo?.cursor, currentUser, currentProfile?.id);
 
-        let privatePosts: TPostListData = { state: "inactive", posts: [] }
+        let privatePosts: TPaginatedPostListData = { state: "inactive", items: [], totalCount: 0 };
         if (currentUser && currentUser?.id === currentProfile.id) {
-            privatePosts = await searchPosts(query, Math.ceil(limit / 2), "PRIVATE", get().profile.searchPosts.privatePageInfo?.cursor, currentUser, currentProfile?.id);
+            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", get().profile.searchPosts.privatePageInfo?.cursor, currentUser, currentProfile?.id);
         }
 
-        const combinedPosts = [...publicPosts.posts, ...privatePosts.posts];
+        const combinedPosts = [...publicPosts.items, ...privatePosts.items];
 
         set(
             produce((state: TStoreState): void => {
                 state.profile.searchPosts = {
+                    query,
                     state: "success",
-                    posts: offset === 0
+                    items: offset === 0
                         ? combinedPosts
-                        : [...state.profile.searchPosts.posts, ...combinedPosts],
+                        : [...state.profile.searchPosts.items, ...combinedPosts],
                     hasMore: publicPosts.hasMore || privatePosts.hasMore,
                     privatePageInfo: {
                         cursor: privatePosts.cursor,
@@ -188,7 +209,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         return succeed;
     },
     togglePostRating: async (id, source) => {
-        const hasRated = source === 'overview' ? get().profile.overviewPosts.posts.find(p => p.id === id)?.hasRated : get().profile.searchPosts.posts.find(p => p.id === id)?.hasRated;
+        const hasRated = source === 'overview' ? get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated : get().profile.searchPosts.items.find(p => p.id === id)?.hasRated;
 
         if (hasRated === undefined) return false;
 
@@ -197,13 +218,13 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         if (succeed) {
             set(produce((state: TStoreState) => {
                 if (source === 'overview') {
-                    const post = state.profile.overviewPosts.posts.find(p => p.id === id);
+                    const post = state.profile.overviewPosts.items.find(p => p.id === id);
                     if (post) {
                         post.hasRated = !post.hasRated;
                         post.stars += post.hasRated ? 1 : -1;
                     }
                 } else {
-                    const post = state.profile.searchPosts.posts.find(p => p.id === id);
+                    const post = state.profile.searchPosts.items.find(p => p.id === id);
                     if (post) {
                         post.hasRated = !post.hasRated;
                         post.stars += post.hasRated ? 1 : -1;

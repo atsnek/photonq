@@ -1,3 +1,4 @@
+import { TPaginationData, TPaginationPageInfo } from '../../../shared/types/pagination';
 import { TUser } from '../../user/types/user';
 
 /**
@@ -75,19 +76,19 @@ export type TPostAuthor = {
  * Metadata for fetching posts
  */
 export type TPostListData = {
-  posts: TPostPreview[];
+  items: TPostPreview[];
   state: 'inactive' | 'loading' | 'error' | 'success';
-  hasMore?: boolean;
-  cursor?: string;
-  totalCount?: number;
 };
+
+export type TPaginatedPostListData = TPaginationData<TPostPreview[], TPostListData>;
 
 /**
  * Extended post list data for search results
  */
-export type TSearchPostListData<PI = { cursor?: string; hasNextPage?: boolean }> = Omit<TPostListData, "cursor"> & {
-  publicPageInfo?: PI;
-  privatePageInfo?: PI;
+export type TSearchPostListData = TPaginatedPostListData & {
+  query: string;
+  publicPageInfo?: Partial<TPaginationPageInfo>;
+  privatePageInfo?: Partial<TPaginationPageInfo>;
 };
 
 /**

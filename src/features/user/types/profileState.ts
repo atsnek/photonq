@@ -1,13 +1,14 @@
-import { TPostListData, TPostPreview, TSearchPostListData } from "../../post/types/post";
+import { TPaginationData } from "../../../shared/types/pagination";
+import { TPaginatedPostListData, TPostListData, TPostPreview, TSearchPostListData } from "../../post/types/post";
 import { TActivity } from "../activity/types/activity";
 import { TUser } from "./user";
 
 
 export interface IProfileStateDefinition {
     profile?: TUser;
-    overviewPosts: TPostListData;
+    overviewPosts: TPaginatedPostListData;
     searchPosts: TSearchPostListData;
-    activity: TActivity[];
+    activity: TPaginationData<TActivity[]>;
     followers: number;
     isFollowing?: boolean;
 }

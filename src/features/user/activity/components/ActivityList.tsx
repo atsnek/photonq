@@ -22,6 +22,7 @@ import TbConfetti from '../../../../shared/components/icons/tabler/TbConfetti';
 import TbPencilPlus from '../../../../shared/components/icons/tabler/TbPencilPlus';
 import TbPencilShare from '../../../../shared/components/icons/tabler/TbPencilShare';
 import TbUserPlus from '../../../../shared/components/icons/tabler/TbUserPlus';
+import { TPaginationData } from '../../../../shared/types/pagination';
 
 export const activityListStyling = {
   title: {
@@ -40,16 +41,16 @@ const activityIcons: Record<TActivityType, ReactNode> = {
 };
 
 interface IActivityListProps extends BoxProps {
-  activity?: TActivity[];
+  activity: TPaginationData<TActivity[]>;
   fetchMoreActivities?: (offset: number, limit: number) => void;
 }
 
 /**
  * Component for displaying a list of activities.
  */
-const ActivityList: FC<IActivityListProps> = ({ activity = [], ...props }) => {
+const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
   const pagination = usePagination({
-    items: activity,
+    items: activity.items,
     itemsPerPage: 3,
     type: 'pages'
   });
@@ -61,8 +62,8 @@ const ActivityList: FC<IActivityListProps> = ({ activity = [], ...props }) => {
 
     const sections: TActivitySection[] = [];
 
-    for (let i = 0; i < Math.min(currentLimit, activity.length); i++) {
-      const item = activity[i];
+    for (let i = 0; i < Math.min(currentLimit, activity.items.length); i++) {
+      const item = activity.items[i];
       const itemDate = new Date(item.timestamp);
       const sectionDate = new Date(
         itemDate.getFullYear(),

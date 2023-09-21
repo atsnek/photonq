@@ -22,7 +22,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
     togglePostRating(id, 'overview');
   };
 
-  const hasOverviewPosts = useMemo(() => postData.posts.length > 0, [postData]);
+  const hasOverviewPosts = useMemo(() => postData.items.length > 0, [postData]);
   return (
     <VStack gap={hasOverviewPosts || postData.state === 'loading' ? 12 : 0}>
       <PostList

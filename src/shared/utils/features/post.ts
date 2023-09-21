@@ -1,6 +1,6 @@
 import { FiltersInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
-import { TPost, TPostListData, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
+import { TPaginatedPostListData, TPost, TPostListData, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from "snek-query";
 import { sq } from '@snek-functions/origin';
@@ -30,6 +30,7 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
  */
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
     const author = q.user({ id: post?.profileId ?? '' });
+    console.log(post?.stars().edges)
     return {
         id: post?.id ?? '',
         slug: post?.slug ?? '',
@@ -59,7 +60,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
  * @param userId  The user id to fetch posts from (optional). If identical to the current user, private posts will be fetched as well
  * @returns The post list data
  */
-export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
+export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string): Promise<TPaginatedPostListData> => {
     const [postConnection,] = await sq.query(q => {
         const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
             filters: { query: searchQuery, privacy: asEnumKey(PrivacyInputInput, privacy) },
@@ -95,7 +96,7 @@ export const searchPosts = async (searchQuery: string, limit: number, privacy: T
 
     return {
         state: 'success',
-        posts: postPreviews ?? [],
+        items: postPreviews ?? [],
         hasMore: postConnection?.pageInfo?.hasNextPage ?? false,
         totalCount: postConnection?.totalCount,
         cursor: postConnection?.pageInfo?.endCursor ?? '',
