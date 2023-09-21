@@ -1,10 +1,10 @@
-import { TPostListData, TPostPreview } from "./post";
+import { TPaginatedPostListData, TPostPreview, TSearchPostListData } from "./post";
 
 
 export interface ICommunityPostsStateDefinitions {
-    featuredPosts: TPostListData;
-    latestPosts: TPostListData;
-    searchPosts: TPostListData;
+    featuredPosts: TPaginatedPostListData;
+    latestPosts: TPaginatedPostListData;
+    searchPosts: TSearchPostListData;
 }
 
 export interface ICommunityPostsStateActions {
