@@ -5,7 +5,7 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react';
 import { FC, useState } from 'react';
-import MdxEditor from '../../../../shared/components/MdxEditor';
+import MdxEditor from '../../../../shared/components/mdx-editor/MdxEditor';
 import LeftNavPostEditor from './LeftNavPostEditor';
 import TbBookUpload from '../../../../shared/components/icons/tabler/TbBookUpload';
 import TbDeviceFloppy from '../../../../shared/components/icons/tabler/TbDeviceFloppy';

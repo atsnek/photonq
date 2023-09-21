@@ -1,3 +1,4 @@
+import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
 import { TPaginationData, TPaginationPageInfo } from '../../../shared/types/pagination';
 import { TUser } from '../../user/types/user';
 
@@ -32,7 +33,7 @@ export type TPost = {
   slug: string;
   title: string;
   summary: string | null;
-  content?: string | null;
+  content?: MdastRoot;
   stars: number;
   hasRated?: boolean;
   avatarUrl: string | null;

@@ -8,11 +8,19 @@ import { EnPostLanguage, TPost, TPostPrivacy } from "../types/post";
 import { TUser } from "../../user/types/user";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { osg } from "@atsnek/jaen";
+import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/types";
 
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
     postAuthor: null,
     post: undefined,
     editContent: async (content) => {
+        const post = get().singlePost.post;
+
+        if (!post || post.content === content) return false;
+        const [, error] = await sq.mutate(m => m.socialPostUpdate({ postId: post.id, values: { content: JSON.stringify(content) } }))
+
+        if (error?.length > 0) return false;
+
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
             state.singlePost.post.content = content;
@@ -47,10 +55,17 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
 
             if (!post) return null;
 
+            let jsonContent: TPost['content'] = undefined;
+            try {
+                if (post.content) {
+                    jsonContent = JSON.parse(post.content) as MdastRoot;
+                }
+            } catch { }
+
             return {
                 authorProfileId: post.profileId,
                 avatarUrl: post.avatarURL,
-                content: post.content,
+                content: jsonContent as MdastRoot,
                 createdAt: post.createdAt,
                 id: post.id,
                 slug: post.slug,
@@ -133,7 +148,6 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
     },
     changeLanguage: async (language) => {
         //TODO: Implement this
-        console.log("new language: ", language);
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
             state.singlePost.post.language = language;

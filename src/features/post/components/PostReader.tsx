@@ -12,6 +12,7 @@ import RightNavPostReader from '../reader/components/RightNavPostReader';
 import { TPost } from '../types/post';
 import { formatPostDate } from '../../../shared/utils/features/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import UncontrolledMdxEditor from '../../../shared/components/mdx-editor/UncontrolledMdxEditor';
 
 interface IPostReaderProps {
   post?: TPost;
@@ -70,8 +71,11 @@ const PostReader: FC<IPostReaderProps> = ({
           )}
         </Heading>
         <VStack spacing={3} alignItems="start">
-          {post?.content ??
-            'This is a temporary client-only dev placeholder while the post has no content'}
+          <UncontrolledMdxEditor
+            value={post?.content}
+            isEditing={false}
+            onUpdateValue={() => {}}
+          />
         </VStack>
       </Box>
       <RightNavPostReader />

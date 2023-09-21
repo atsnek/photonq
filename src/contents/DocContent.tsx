@@ -6,7 +6,7 @@ import TableOfContent from '../shared/containers/navigation/components/TableOfCo
 import MainBottomNav from '../shared/containers/navigation/MainBottomNav';
 import RightNav from '../shared/containers/navigation/RightNav';
 import Link from '../shared/components/Link';
-import MdxEditor from '../shared/components/MdxEditor';
+import MdxEditor from '../shared/components/mdx-editor/MdxEditor';
 
 // Example links - these would probably be fetched from a CMS or other data source
 const links = [

@@ -1,6 +1,7 @@
 import { SnekUser } from "@atsnek/jaen";
 import { TPost, EnPostLanguage } from "./post";
 import { TUser } from "../../user/types/user";
+import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/types";
 
 
 export interface ISinglePostStateDefinition {
@@ -10,7 +11,7 @@ export interface ISinglePostStateDefinition {
 
 export interface ISinglePostStateActions {
     editTitle: (title: string) => Promise<boolean>;
-    editContent: (content: string) => Promise<boolean>;
+    editContent: (content: MdastRoot) => Promise<boolean>;
     editSummary: (summary: string) => Promise<boolean>;
     fetchPost: (slug: string) => Promise<boolean>;
     togglePostRating: () => Promise<boolean>;

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { TPost } from '../types/post';
 import {
   Stack,
@@ -7,9 +7,13 @@ import {
   useDisclosure,
   useToast
 } from '@chakra-ui/react';
-import MdxEditor from '../../../shared/components/MdxEditor';
+import MdxEditor from '../../../shared/components/mdx-editor/MdxEditor';
 import { wait } from '../../../shared/utils/utils';
 import Alert from '../../../shared/components/alert/Alert';
+import UncontrolledMdxEditor from '../../../shared/components/mdx-editor/UncontrolledMdxEditor';
+import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
+import { TDebounceData } from '../../../shared/types/comm';
+import { useAppStore } from '../../../shared/store/store';
 
 const alertText = {
   publish: {
@@ -31,11 +35,17 @@ interface IPostEditorProps {
 }
 
 const PostEditor: FC<IPostEditorProps> = ({ post }) => {
-  const isPublic = post?.privacy === 'public';
+  const isPublic = post?.privacy === 'PUBLIC';
 
   const visibilityAlertDisclosure = useDisclosure({
     onClose: () => console.log('closed')
   });
+
+  const stateRef = useRef<TDebounceData>({
+    state: 'inactive',
+    timeout: undefined
+  });
+  const updatePostContent = useAppStore(state => state.singlePost.editContent);
 
   const [alertContent, setAlertContent] = useState(
     isPublic ? alertText.publish : alertText.publish
@@ -66,11 +76,22 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
     else publishPost();
   };
 
+  const handleEditorChange = (value: MdastRoot) => {
+    clearTimeout(stateRef.current.timeout);
+    stateRef.current.timeout = setTimeout(() => {
+      updatePostContent(value);
+    }, 300);
+  };
+
   return (
     <>
       <Stack direction="row" position="relative" flex={1} overflow="hidden">
         <Box w="full">
-          <MdxEditor hideHeadingHash />
+          <UncontrolledMdxEditor
+            onUpdateValue={handleEditorChange}
+            isEditing
+            value={post?.content}
+          />
         </Box>
       </Stack>
       <Alert
