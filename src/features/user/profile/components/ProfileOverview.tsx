@@ -1,12 +1,8 @@
-import { VStack, SimpleGrid, Divider } from '@chakra-ui/react';
-import { FC, useEffect, useMemo, useState } from 'react';
-import { TPostListData, TPostPreview } from '../../../post/types/post';
-import PostPreview from '../../../post/preview/components/PostCardPreview';
+import { VStack } from '@chakra-ui/react';
+import { FC, useMemo } from 'react';
+import { TPostPreview } from '../../../post/types/post';
 import ActivityList from '../../activity/components/ActivityList';
 import PostList from '../../../post/PostList';
-import { TActivitySection } from '../../activity/types/activity';
-import { sq } from '@snek-functions/origin';
-import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../../../../shared/store/store';
 
 interface IProfileOverviewProps {
@@ -19,16 +15,14 @@ interface IProfileOverviewProps {
 const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
   const postData = useAppStore(state => state.profile.overviewPosts);
   const activity = useAppStore(state => state.profile.activity);
+  const togglePostRating = useAppStore(state => state.profile.togglePostRating);
   //TODO: implement toggleLike with API call
   const toggleRating = (id: TPostPreview['id']) => {
     if (isOwnProfile) return;
-    // sq.mutate;
-    console.log('toggle like for post ', id);
+    togglePostRating(id, 'overview');
   };
 
   const hasOverviewPosts = useMemo(() => postData.posts.length > 0, [postData]);
-  console.log('visiting own profile: ', isOwnProfile);
-
   return (
     <VStack gap={hasOverviewPosts || postData.state === 'loading' ? 12 : 0}>
       <PostList

@@ -1,6 +1,6 @@
 import { FiltersInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
-import { TPostListData, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
+import { TPost, TPostListData, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from "snek-query";
 import { sq } from '@snek-functions/origin';
@@ -45,9 +45,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
             avatarUrl: author?.details?.avatarURL,
         },
         stars: post?.stars()?.totalCount ?? 0,
-        // hasRated: !!currentUser && !!post?.stars && post?.stars()?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
-        hasRated: post?.stars().edges?.findIndex(s => s.node.profile?.id === currentUser?.id) !== -1,
-        // hasRated: false,
+        hasRated: post?.stars().nodes?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
         canManage: post?.profileId === currentUser?.id,
     }
 };
@@ -88,22 +86,6 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
                 s.profile?.id;
             })
         })
-        // if (posts.length > 0 && posts[0] !== null) {
-        //     for (const key in posts[0]) {
-        //         posts[0][key as keyof typeof posts[0]];
-        //     }
-        // }
-        // for (const post of posts) {
-        //     // if (post === null) {
-        //     //     console.log("posts is null", posts);
-        //     //     continue;
-        //     // }
-        //     // for (const star of post.stars) {
-        //     //     star.profile?.followers;
-        //     //     star.profile?.id;
-        //     // }
-        // }
-
         return posts;
     })
 
@@ -120,4 +102,18 @@ export const searchPosts = async (searchQuery: string, limit: number, offset: nu
         posts: posts ?? [],
         hasMore: totalCount > posts.length
     };
+}
+
+/**
+ * Fetch a post by its id
+ * @param postId The post id
+ * @param hasRated Whether the current user has rated the post
+ * @returns Whether the post was fetched successfully
+ */
+export const togglePostRating = async (postId: TPost['id'], hasRated: boolean): Promise<boolean> => {
+    const [, error] = await sq.mutate(m => {
+        if (hasRated) m.socialPostUnstar({ postId: postId });
+        else m.socialPostStar({ postId: postId });
+    });
+    return !error || error?.length === 0;
 }
