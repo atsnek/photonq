@@ -45,7 +45,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
             avatarUrl: author?.details?.avatarURL,
         },
         stars: post?.stars()?.totalCount ?? 0,
-        hasRated: post?.stars().edges?.findIndex(s => s.node.profile?.id === currentUser?.id) !== -1,
+        hasRated: !!post && !!post.stars().edges && post?.stars().edges?.findIndex(s => s.node.profile?.id === currentUser?.id) !== -1,
         canManage: post?.profileId === currentUser?.id,
     }
 };
