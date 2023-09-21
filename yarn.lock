@@ -38,10 +38,10 @@
     signedsource "^1.0.0"
     yargs "^15.3.1"
 
-"@atsnek/jaen-fields-mdx@^1.0.0-rc.2":
-  version "1.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.2.tgz#62c406f8c5641e65fbe01098c0ad5b93e831a292"
-  integrity sha512-dRMrg4ydaTJpAW+YCuzGNsboGIl0qt+fVMaEzpXwYUSBLT+XZBo9ArGfj6tucnm2QL1JSXCXSYwIxGFQ7YD1IQ==
+"@atsnek/jaen-fields-mdx@^1.0.0-rc.3":
+  version "1.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.3.tgz#80146c0e42a886cbdf5a055e610772685ee2aec4"
+  integrity sha512-mCUWOJjZCWuP5TvctAvxxrbcb6u4YnzSlF4+gFrZJu8o4PR4pe44ywHzk2K2CncA2H2efn9YgnZ3fZWfw/6nyA==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
@@ -70,12 +70,13 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.18":
-  version "1.0.0-rc.18"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.18.tgz#1184dffb94523ecf5551860384d5db640447f1d2"
-  integrity sha512-CkyeKM+cCr+xKkCBNRO2RfQFSq7/dfghlQt7C69mQaETLqo/c4wYibvmfIMylsT7KKwnirfBZJUKi9dgGrO1jg==
+"@atsnek/jaen@^1.0.0-rc.22":
+  version "1.0.0-rc.22"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.22.tgz#9f1419cae557f2f65f846ac3bcb6f32a40ec7dbd"
+  integrity sha512-a7giU7kN1OeuSoiR4MNOthrVj4JyIDpi8BNnmy6vXv6ARavhbaV/SDa6CeeKUOk9m5EHUdVl30ZDGBYCweTXSQ==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
+    "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
     "@reduxjs/toolkit" "^1.9.5"
     "@snek-functions/origin" "^0.6.2"
     deepmerge "^4.3.1"
@@ -83,7 +84,6 @@
     gatsby-plugin-image "^3.11.0"
     imtool "^1.2.1"
     isomorphic-dompurify "^1.8.0"
-    react-icons "^4.10.1"
     react-photo-view "^1.2.3"
     react-redux "^8.1.1"
     redux "^4.2.1"
@@ -3458,6 +3458,10 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
+"@react-icons/all-files@https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz":
+  version "4.11.0"
+  resolved "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz#b35b5cee9f19e62d4e1551d63fe91375d04feb9f"
+
 "@react-spring/animated@~9.6.1":
   version "9.6.1"
   resolved "https://registry.yarnpkg.com/@react-spring/animated/-/animated-9.6.1.tgz#ccc626d847cbe346f5f8815d0928183c647eb425"
@@ -3623,10 +3627,10 @@
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
 
-"@snek-functions/origin@0.8.8":
-  version "0.8.8"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.8.tgz#331d64cf37fa03e0c1165ee65b449c9aabd33443"
-  integrity sha512-SAQs3gKSZV6cu6Fllb1Fn5Q9ruhOLF4j2JVKryZAQ0InyLgz8NSBDaYxAcHty+F05YxG5Nbk0G3vuIUHhpluFw==
+"@snek-functions/origin@0.8.9":
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.9.tgz#db2557171c743c2e76704c7e62041a7879f31926"
+  integrity sha512-YiBH7Rwt8gCUgHFPSzqgDefw7rdy/6QnLHNSf0cJTmNcRIVm4ZSKl68cedobgBZzq641X/VMUTkAWquhOYgDeg==
   dependencies:
     snek-query "*"
 
