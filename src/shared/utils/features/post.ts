@@ -45,7 +45,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
             avatarUrl: author?.details?.avatarURL,
         },
         stars: post?.stars()?.totalCount ?? 0,
-        hasRated: post?.stars().nodes?.findIndex(s => s.profile?.id === currentUser?.id) !== -1,
+        hasRated: post?.stars().edges?.findIndex(s => s.node.profile?.id === currentUser?.id) !== -1,
         canManage: post?.profileId === currentUser?.id,
     }
 };
@@ -53,54 +53,52 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
 /**
  * Search posts by a query
  * @param searchQuery The search query
- * @param limit  The limit of posts to fetch
- * @param offset  The offset of posts to fetch
+ * @param limit The amount of posts to fetch
  * @param privacy  The privacy of posts to fetch
+ * @param cursor The cursor to fetch posts from (optional). If not provided, the first posts will be fetched
  * @param userId  The user id to fetch posts from (optional). If identical to the current user, private posts will be fetched as well
  * @returns The post list data
  */
-export const searchPosts = async (searchQuery: string, limit: number, offset: number, privacy: TPostPrivacy, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
+export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string): Promise<TPostListData> => {
     const [postConnection,] = await sq.query(q => {
-        const filters: FiltersInputInput = { query: searchQuery, privacy: asEnumKey(PrivacyInputInput, privacy) };
-        if (userId) {
-            filters.userId = userId;
+        const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
+            filters: { query: searchQuery, privacy: asEnumKey(PrivacyInputInput, privacy) },
+            first: limit,
+        };
+        if (userId && requestArgs.filters) {
+            requestArgs.filters.userId = userId;
         }
-        const posts = q.allSocialPost({ filters });
+        if (cursor) {
+            requestArgs.after = cursor;
+        }
+        const posts = q.allSocialPost(requestArgs);
         //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
-        if (posts?.nodes && posts.nodes.length > 0) {
-            for (const key in posts.nodes[0]) {
-                posts.nodes[0][key as keyof typeof posts.nodes[0]];
-            }
-            if (posts.nodes[0].stars && posts.nodes[0].stars().nodes.length > 0) {
-                const stars = posts.nodes[0].stars().nodes;
-                for (const key in posts.nodes[0].stars().nodes[0]) {
-                    posts.nodes[0].stars().nodes[0][key as keyof typeof stars[0]];
+        posts?.pageInfo.hasNextPage;
+        posts?.pageInfo.endCursor;
+        posts?.edges.forEach(pe => {
+            try {
+                pe.node.stars().edges.map(se => se.node.profile.id);
+                pe.node.stars().totalCount;
+                for (const key in pe.node) {
+                    pe.node[key as keyof typeof pe.node];
                 }
-            }
-        }
-        posts?.nodes.map(p => {
-            for (const key in p) {
-                p[key as keyof typeof p];
-            }
-            p.stars().nodes.map(s => {
-                s.profile?.id;
-            })
+            } catch { }
         })
         return posts;
     })
 
-    const totalCount = postConnection?.totalCount ?? 0;
-
-    const postNodes = postConnection?.nodes ?? [];
+    const postEdges = postConnection?.edges ?? [];
     //* We need to query each post in a separate query until snek-query offers us a better way to do this
-    const posts = await Promise.all(postNodes.map(async (p) => {
-        return (await sq.query(q => buildPostPreview(q, p as Post, currentUser)))[0];
+    const postPreviews = await Promise.all(postEdges.map(async (p) => {
+        return (await sq.query(q => buildPostPreview(q, p.node as Post, currentUser)))[0];
     }));
 
     return {
         state: 'success',
-        posts: posts ?? [],
-        hasMore: totalCount > posts.length
+        posts: postPreviews ?? [],
+        hasMore: postConnection?.pageInfo?.hasNextPage ?? false,
+        totalCount: postConnection?.totalCount,
+        cursor: postConnection?.pageInfo?.endCursor ?? '',
     };
 }
 

@@ -111,7 +111,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             set(produce((state: TStoreState): void => {
                 state.profile.searchPosts = {
                     state: "inactive",
-                    posts: []
+                    posts: [],
                 };
             }))
             return;
@@ -125,14 +125,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
-        const publicOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "PUBLIC").length;
-        const publicPosts = await searchPosts(query, limit, publicOffset, "PUBLIC", currentUser, currentProfile?.id);
+        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", get().profile.searchPosts.publicPageInfo?.cursor, currentUser, currentProfile?.id);
 
-        const privateOffset = get().profile.searchPosts.posts.filter(p => p.privacy === "PRIVATE").length;
         let privatePosts: TPostListData = { state: "inactive", posts: [] }
         if (currentUser && currentUser?.id === currentProfile.id) {
-            privatePosts = await searchPosts(query, limit, privateOffset, "PRIVATE", currentUser, currentProfile?.id);
-            console.log("privatePosts:", privatePosts);
+            privatePosts = await searchPosts(query, Math.ceil(limit / 2), "PRIVATE", get().profile.searchPosts.privatePageInfo?.cursor, currentUser, currentProfile?.id);
         }
 
         const combinedPosts = [...publicPosts.posts, ...privatePosts.posts];
@@ -144,7 +141,16 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
                     posts: offset === 0
                         ? combinedPosts
                         : [...state.profile.searchPosts.posts, ...combinedPosts],
-                    hasMore: publicPosts.hasMore || privatePosts.hasMore
+                    hasMore: publicPosts.hasMore || privatePosts.hasMore,
+                    privatePageInfo: {
+                        cursor: privatePosts.cursor,
+                        hasNextPage: privatePosts.hasMore,
+                    },
+                    publicPageInfo: {
+                        cursor: publicPosts.cursor,
+                        hasNextPage: publicPosts.hasMore,
+                    },
+                    totalCount: (publicPosts.totalCount ?? 0) + (privatePosts.totalCount ?? 0),
                 }
             })
         );

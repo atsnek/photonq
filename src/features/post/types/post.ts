@@ -71,13 +71,23 @@ export type TPostAuthor = {
   avatarUrl?: string | null;
 }
 
-/**TSearchMetaData
+/**
  * Metadata for fetching posts
  */
 export type TPostListData = {
   posts: TPostPreview[];
   state: 'inactive' | 'loading' | 'error' | 'success';
   hasMore?: boolean;
+  cursor?: string;
+  totalCount?: number;
+};
+
+/**
+ * Extended post list data for search results
+ */
+export type TSearchPostListData<PI = { cursor?: string; hasNextPage?: boolean }> = Omit<TPostListData, "cursor"> & {
+  publicPageInfo?: PI;
+  privatePageInfo?: PI;
 };
 
 /**

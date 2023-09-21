@@ -95,7 +95,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const posts = await searchPosts(query, limit, offset, 'PUBLIC', currentUser);
+        const posts = await searchPosts(query, offset, 'PUBLIC', currentUser);
 
         set(produce((state: TStoreState) => {
             state.communityPosts.searchPosts = {

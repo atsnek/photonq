@@ -10,7 +10,7 @@ const PostPreviewPrivacy: FC<IPostPreviewPrivacyProps> = ({
   privacy,
   ...props
 }) => {
-  const isPrivate = privacy === 'private';
+  const isPrivate = privacy === 'PRIVATE';
   const privacyColor = isPrivate ? 'yellow' : 'green';
   return (
     <Badge

@@ -1,4 +1,4 @@
-import { TPostListData, TPostPreview } from "../../post/types/post";
+import { TPostListData, TPostPreview, TSearchPostListData } from "../../post/types/post";
 import { TActivity } from "../activity/types/activity";
 import { TUser } from "./user";
 
@@ -6,7 +6,7 @@ import { TUser } from "./user";
 export interface IProfileStateDefinition {
     profile?: TUser;
     overviewPosts: TPostListData;
-    searchPosts: TPostListData;
+    searchPosts: TSearchPostListData;
     activity: TActivity[];
     followers: number;
     isFollowing?: boolean;
