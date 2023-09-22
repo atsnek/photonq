@@ -101,10 +101,16 @@ const PostsContent: FC = () => {
                 Latest Posts
               </Heading>
               <PostList
+                fetchNextPagePosts={fetchLatestPosts}
                 postData={latestPosts}
                 pt={5}
                 previewType="list"
-                itemsPerPage={10}
+                itemsPerPage={latestPosts.totalCount}
+                maxItems={
+                  latestPosts.hasMore ?? false
+                    ? undefined
+                    : latestPosts.totalCount
+                }
                 skeletonProps={{
                   w: 'full'
                 }}

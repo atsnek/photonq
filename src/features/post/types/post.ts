@@ -23,8 +23,8 @@ export type TPostViewMode = 'read' | 'edit';
 export type TPostPrivacy = 'PUBLIC' | 'PRIVATE' | 'FRIENDS';
 
 export enum EnPostLanguage {
-  ENGLISH = 'english',
-  GERMAN = 'german',
+  ENGLISH = 'EN',
+  GERMAN = 'DE',
 }
 
 //TODO: This type needs to be improved to better fit the needs of the current system

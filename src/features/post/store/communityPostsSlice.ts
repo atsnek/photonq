@@ -5,7 +5,7 @@ import { produce } from "immer";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { asEnumKey } from "snek-query";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
-import { TPostPreview } from "../types/post";
+import { TPost, TPostPreview } from "../types/post";
 
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set, get) => ({
@@ -55,9 +55,13 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const [rawPosts, rawError] = await sq.query(q => {
-            const postComm = q.allSocialPost({ first: 10, filters: { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
+        const [postConnection, rawError] = await sq.query(q => {
+            const postComm = q.allSocialPost({ first: 2, after: get().communityPosts.latestPosts.nextCursor, filters: { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
             //! Existing issue: see post utils -> buildPostPreview
+            postComm?.pageInfo.endCursor;
+            postComm?.pageInfo.hasNextPage;
+            postComm?.pageInfo.hasPreviousPage;
+            postComm?.pageInfo.startCursor;
             postComm?.nodes.forEach(pn => {
                 try {
                     pn.stars().edges.map(se => se.node.profile.id);
@@ -67,20 +71,22 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                     }
                 } catch { }
             })
-            return postComm?.nodes ?? [];
+            return postComm;
         });
-        const posts = await Promise.all(rawPosts?.map(async (p) => {
+        const posts = await Promise.all((postConnection?.nodes?.map(async (p) => {
             if (!p) return;
             return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
-        }));
-        // const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
+        }) ?? []).filter(p => !!p)) as TPostPreview[];
 
         if (rawError) return;
         set(produce((state: TStoreState) => {
             state.communityPosts.latestPosts = {
                 state: 'success',
-                items: posts.filter(p => !!p) as TPostPreview[],
-                totalCount: posts.length
+                items: postConnection?.pageInfo.hasPreviousPage ? [...state.communityPosts.latestPosts.items, ...posts] : posts,
+                totalCount: posts.length,
+                nextCursor: postConnection?.pageInfo?.hasNextPage && postConnection.pageInfo.endCursor ? postConnection?.pageInfo.endCursor : undefined,
+                prevCursor: postConnection?.pageInfo?.hasPreviousPage && postConnection.pageInfo.startCursor ? postConnection?.pageInfo.startCursor : undefined,
+                hasMore: postConnection?.pageInfo?.hasNextPage ?? false
             };
         }));
     },
@@ -109,7 +115,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.cursor, currentUser);
+        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.nextCursor, currentUser);
 
         set(produce((state: TStoreState) => {
             state.communityPosts.searchPosts = {

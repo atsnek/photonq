@@ -3,8 +3,10 @@
  * Page info for pagination
  */
 export type TPaginationPageInfo = {
-    cursor: string;
-    hasNextPage: boolean;
+    prevCursor?: string;
+    hasPreviousPage?: boolean;
+    nextCursor?: string;
+    hasNextPage?: boolean;
 }
 
 /**
@@ -13,6 +15,7 @@ export type TPaginationPageInfo = {
 export type TPaginationData<I, T = {}> = T & {
     items: I;
     hasMore?: boolean;
-    cursor?: string;
+    prevCursor?: string;
+    nextCursor?: string;
     totalCount: number;
 }

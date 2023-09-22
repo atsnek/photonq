@@ -4,6 +4,7 @@ import { TPaginatedPostListData, TPost, TPostListData, TPostPreview, TPostPrivac
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from "snek-query";
 import { sq } from '@snek-functions/origin';
+
 /**
  * Format post date to a nicely readable format
  * @param date The date to format
@@ -98,7 +99,8 @@ export const searchPosts = async (searchQuery: string, limit: number, privacy: T
         items: postPreviews ?? [],
         hasMore: postConnection?.pageInfo?.hasNextPage ?? false,
         totalCount: postConnection?.totalCount,
-        cursor: postConnection?.pageInfo?.endCursor ?? '',
+        nextCursor: postConnection?.pageInfo.hasNextPage ? postConnection?.pageInfo?.endCursor ?? '' : undefined,
+        prevCursor: postConnection?.pageInfo.hasPreviousPage ? postConnection?.pageInfo.startCursor ?? '' : undefined,
     };
 }
 

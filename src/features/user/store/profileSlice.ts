@@ -102,8 +102,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username })
             const profile = user.profile;
 
-            const activityList = buildUserActivities(q, profile?.activity({ first: 10, after: get().profile.activity.cursor }).edges ?? [], currentUser);
-            activityList.cursor = profile?.activity().pageInfo.endCursor ?? undefined;
+            const activityList = buildUserActivities(q, profile?.activity({ first: 10, after: get().profile.activity.nextCursor }).edges ?? [], currentUser);
+            activityList.nextCursor = profile?.activity().pageInfo.endCursor ?? undefined;
             activityList.hasMore = profile?.activity().pageInfo.hasNextPage ?? false;
             set(produce((state: TStoreState): void => {
                 state.profile.activity = state.profile.activity.totalCount === 0
@@ -111,7 +111,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
                     : {
                         items: [...state.profile.activity.items, ...activityList.items],
                         totalCount: state.profile.activity.totalCount,
-                        cursor: activityList.cursor,
+                        nextCursor: activityList.nextCursor,
                         hasMore: activityList.hasMore
                     };
             }))
@@ -152,11 +152,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
-        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", get().profile.searchPosts.publicPageInfo?.cursor, currentUser, currentProfile?.id);
+        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id);
 
         let privatePosts: TPaginatedPostListData = { state: "inactive", items: [], totalCount: 0 };
         if (currentUser && currentUser?.id === currentProfile.id) {
-            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", get().profile.searchPosts.privatePageInfo?.cursor, currentUser, currentProfile?.id);
+            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id);
         }
 
         const combinedPosts = [...publicPosts.items, ...privatePosts.items];
@@ -171,11 +171,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
                         : [...state.profile.searchPosts.items, ...combinedPosts],
                     hasMore: publicPosts.hasMore || privatePosts.hasMore,
                     privatePageInfo: {
-                        cursor: privatePosts.cursor,
+                        nextCursor: privatePosts.nextCursor,
                         hasNextPage: privatePosts.hasMore,
                     },
                     publicPageInfo: {
-                        cursor: publicPosts.cursor,
+                        nextCursor: publicPosts.nextCursor,
                         hasNextPage: publicPosts.hasMore,
                     },
                     totalCount: (publicPosts.totalCount ?? 0) + (privatePosts.totalCount ?? 0),

@@ -28,6 +28,7 @@ import { query } from '../../pages';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (query: string, offset: number) => void;
+  fetchNextPagePosts?: () => void;
   postData: TPaginatedPostListData;
   itemsPerPage?: number;
   maxItems?: number;
@@ -49,9 +50,10 @@ interface IPostListProps extends StackProps {
  */
 const PostList: FC<IPostListProps> = ({
   fetchPosts,
+  fetchNextPagePosts,
   postData,
   itemsPerPage = 10,
-  maxItems = itemsPerPage,
+  maxItems,
   paginationType = 'pages',
   showControls,
   hidePostAuthor,
@@ -142,6 +144,11 @@ const PostList: FC<IPostListProps> = ({
     if (fetchPosts) fetchPosts(query, 0);
   };
 
+  const handleNextPage = async () => {
+    if (fetchNextPagePosts) await fetchNextPagePosts();
+    pagination.setCurrentPage(pagination.currentPage + 1);
+  };
+
   return (
     <VStack w="full" gap={5} {...props}>
       {showControls && fetchPosts && (
@@ -157,32 +164,30 @@ const PostList: FC<IPostListProps> = ({
         ) : (
           <PostListNoResults mt={10} />
         ))}
-      {usePages &&
-        pagination.totalPages > 1 &&
-        (maxItems === undefined || itemsPerPage < maxItems) && (
-          <HStack alignContent="space-around">
-            <Button
-              variant="ghost-hover-outline"
-              size="sm"
-              borderRadius="lg"
-              leftIcon={<ChevronLeftIcon />}
-              isDisabled={pagination.currentPage === 1}
-              onClick={pagination.previousPage}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="ghost-hover-outline"
-              size="sm"
-              borderRadius="lg"
-              rightIcon={<ChevronRightIcon />}
-              isDisabled={pagination.currentPage === pagination.totalPages}
-              onClick={pagination.nextPage}
-            >
-              Next
-            </Button>
-          </HStack>
-        )}
+      {usePages && (!!postData.prevCursor || !!postData.nextCursor) && (
+        <HStack alignContent="space-around">
+          <Button
+            variant="ghost-hover-outline"
+            size="sm"
+            borderRadius="lg"
+            leftIcon={<ChevronLeftIcon />}
+            isDisabled={!postData.prevCursor}
+            onClick={pagination.previousPage}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="ghost-hover-outline"
+            size="sm"
+            borderRadius="lg"
+            rightIcon={<ChevronRightIcon />}
+            isDisabled={!postData?.hasMore}
+            onClick={handleNextPage}
+          >
+            Next
+          </Button>
+        </HStack>
+      )}
       {!usePages && postData.state !== 'inactive' && postData.hasMore && (
         <Button
           variant="ghost-hover-outline"

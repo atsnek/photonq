@@ -152,7 +152,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                   }}
                   cursor="pointer"
                 >
-                  {post.language === 'english' ? '🇺🇸' : '🇦🇹'}
+                  {post.language === 'EN' ? '🇺🇸' : '🇦🇹'}
                 </MenuButton>
                 <PostLanguageMenuList
                   changeLanguage={handleLanguageChange}

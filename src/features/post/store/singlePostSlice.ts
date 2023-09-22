@@ -6,7 +6,7 @@ import { sq } from "@snek-functions/origin";
 import { asEnumKey } from "snek-query";
 import { EnPostLanguage, TPost, TPostPrivacy } from "../types/post";
 import { TUser } from "../../user/types/user";
-import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { LanguageInputInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { osg } from "@atsnek/jaen";
 import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/types";
 
@@ -175,6 +175,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
                 avatarURL: post.avatarUrl ?? '',
                 content,
                 privacy: asEnumKey(PrivacyInputInput, post.privacy),
+                language: asEnumKey(LanguageInputInput, post.language),
                 summary: post.summary ?? '',
             }
         }));
