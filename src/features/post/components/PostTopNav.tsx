@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef } from 'react';
+import { ChangeEvent, FC, useRef, useState } from 'react';
 import { TPost, EnPostLanguage } from '../types/post';
 import { TUser } from '../../user/types/user';
 import {
@@ -20,6 +20,7 @@ import PostRatingButton from './PostRatingButton';
 import TbLanguage from '../../../shared/components/icons/tabler/TbLanguage';
 import PostLanguageMenuList from './PostLanguageMenuList';
 import { useAppStore } from '../../../shared/store/store';
+import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
 
 interface IPostTopNavProps {
   post?: TPost;
@@ -32,6 +33,9 @@ interface IPostTopNavProps {
   handleRatePost: () => void;
   isRating?: boolean;
   handleLanguageChange: (language: EnPostLanguage) => void;
+  isNewPost: boolean;
+  createNewPost: () => void;
+  isCreatingNewPost: boolean;
 }
 
 /**
@@ -47,7 +51,10 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   canEdit,
   handleRatePost,
   isRating,
-  handleLanguageChange
+  handleLanguageChange,
+  isNewPost,
+  createNewPost,
+  isCreatingNewPost
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,7 +64,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
     setPostPreviewImage(file);
   };
 
-  const isPublic = post?.privacy === 'public';
+  const isPublic = post?.privacy === 'PUBLIC';
 
   return (
     <Box
@@ -127,15 +134,27 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                     changeLanguage={handleLanguageChange}
                   />
                 </Menu>
-                <Button
-                  colorScheme="gray"
-                  size="sm"
-                  leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
-                  onClick={handleTogglePrivacy}
-                  isDisabled={isUpdatingPrivacy}
-                >
-                  {isPublic ? 'Unpublish' : 'Publish'}
-                </Button>
+                {isNewPost ? (
+                  <Button
+                    colorScheme="gray"
+                    size="sm"
+                    leftIcon={<TbDeviceIpadPlus />}
+                    onClick={createNewPost}
+                    isDisabled={isCreatingNewPost}
+                  >
+                    Create post
+                  </Button>
+                ) : (
+                  <Button
+                    colorScheme="gray"
+                    size="sm"
+                    leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
+                    onClick={handleTogglePrivacy}
+                    isDisabled={isUpdatingPrivacy}
+                  >
+                    {isPublic ? 'Unpublish' : 'Publish'}
+                  </Button>
+                )}
               </>
             )}
           </HStack>

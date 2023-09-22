@@ -16,11 +16,12 @@ export interface ISinglePostStateActions {
     editContent: (content: MdastRoot) => Promise<boolean>;
     editSummary: (summary: string) => Promise<boolean>;
     fetchPost: (slug: string) => Promise<boolean>;
-    createNewPost: () => Promise<boolean>;
+    createNewPost: () => Promise<string | undefined>;
     togglePostRating: () => Promise<boolean>;
     updatePreviewImage: (src: File) => Promise<boolean>;
     togglePrivacy: () => Promise<boolean>;
     changeLanguage: (language: EnPostLanguage) => Promise<boolean>;
+    reset: () => void;
 }
 
 export type TSinglePostSlice = ISinglePostStateDefinition & ISinglePostStateActions;

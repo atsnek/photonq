@@ -10,9 +10,11 @@ import { navigate } from '@reach/router';
 const DocsPage: React.FC<PageProps> = ({ params }) => {
   const slug = params.slug?.trim();
 
+  const resetStoreState = useAppStore(state => state.singlePost.reset);
   const fetchPost = useAppStore(state => state.singlePost.fetchPost);
 
   useEffect(() => {
+    resetStoreState();
     if (slug) {
       fetchPost(slug).then(succeed => {
         if (!succeed) navigate('/docs/');

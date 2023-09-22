@@ -11,6 +11,8 @@ import Alert from '../shared/components/alert/Alert';
 import { useDisclosure } from '@chakra-ui/react';
 import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import { navigate } from '@reach/router';
+import { wait } from '../shared/utils/utils';
 
 export interface IBlogPostContentProps {
   isNewPost?: boolean;
@@ -46,6 +48,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   );
   const changeLanguage = useAppStore(state => state.singlePost.changeLanguage);
   const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
+  const createNewPost = useAppStore(state => state.singlePost.createNewPost);
+  const [isCreatingNewPost, setIsCreatingNewPost] = useState(false);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === 'read' ? 'edit' : 'read');
@@ -88,6 +92,16 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     changeLanguage(language);
   };
 
+  const handleCreateNewPost = async () => {
+    setIsCreatingNewPost(true);
+    const slug = await createNewPost();
+    if (slug) {
+      await wait(500); // Make sure the new post is created before navigating to it
+      navigate(`/post/${slug}`);
+    }
+    setIsCreatingNewPost(false);
+  };
+
   const isPostAuthor =
     isNewPost || (!!currentUser && currentUser?.id === author?.id);
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
@@ -108,6 +122,9 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         handleRatePost={handleRatePost}
         isRating={isRating}
         handleLanguageChange={handleLanguageChange}
+        isNewPost={isNewPost ?? false}
+        createNewPost={handleCreateNewPost}
+        isCreatingNewPost={isCreatingNewPost}
       />
       <MainWrapper>
         <PostLeftNav

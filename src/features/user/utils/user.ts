@@ -55,7 +55,6 @@ export const buildUserActivities = (q: Query, activityEdges: Edge_1_2_3_4[], cur
             activityRatingPostIds[pos].createdAt = createdAt;
         }
         else if (!isUnstar) activityRatingPostIds.push({ createdAt, id: post.id });
-        console.log(isUnstar, activityRatingPostIds)
     })
 
     const activityList: TPaginationData<TActivity[]> = {

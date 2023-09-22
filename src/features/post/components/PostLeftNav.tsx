@@ -76,7 +76,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
       >
         <Box overflow="hidden" borderRadius="full">
           <Image
-            src={post?.avatarUrl ?? 'https://api.dicebear.com/7.x/shapes/svg'}
+            src={post?.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg'}
             w={{ base: '50%', md: 'full' }}
             maxW="120px"
             h="max-content"

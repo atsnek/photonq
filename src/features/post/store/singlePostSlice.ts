@@ -1,6 +1,6 @@
 import { getUserDisplayname } from "../../user/utils/user";
 import { produce } from "immer";
-import { TSinglePostSlice } from "../types/singlePostState";
+import { ISinglePostStateDefinition, TSinglePostSlice } from "../types/singlePostState";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
 import { sq } from "@snek-functions/origin";
 import { asEnumKey } from "snek-query";
@@ -10,14 +10,19 @@ import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated"
 import { osg } from "@atsnek/jaen";
 import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/types";
 
-export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
+
+const initState: ISinglePostStateDefinition = {
     isNewPost: false,
     postAuthor: null,
     post: undefined,
+}
+
+export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) => ({
+    ...initState,
     createEmptyPost: async () => {
-        const [post, error] = await sq.query(q => {
+        const [post, error] = await sq.query((q): TPost | undefined => {
             if (!q.userMe) return undefined;
-            return <TPost>{
+            return {
                 authorProfileId: q.userMe.id,
                 avatarUrl: null,
                 content: undefined,
@@ -157,14 +162,14 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
     createNewPost: async () => {
         const post = get().singlePost.post;
 
-        if (!post) return false;
+        if (!post) return undefined;
 
         let content: string = '';
         try {
             content = JSON.stringify(post.content);
         } catch { }
 
-        const [, error] = await sq.mutate(q => q.socialPostCreate({
+        const [newPost, error] = await sq.mutate(q => q.socialPostCreate({
             values: {
                 title: post.title,
                 avatarURL: post.avatarUrl ?? '',
@@ -173,7 +178,9 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
                 summary: post.summary ?? '',
             }
         }));
-        return !!error;
+        if (error?.length > 0 || post === null) return undefined;
+
+        return newPost?.slug;
     },
     togglePostRating: async () => {
         const hasRated = get().singlePost.post?.hasRated ?? false;
@@ -231,4 +238,11 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         }))
         return true;
     },
+    reset: () => {
+        set(produce((state: TStoreState) => {
+            state.singlePost.isNewPost = initState.isNewPost;
+            state.singlePost.postAuthor = initState.postAuthor;
+            state.singlePost.post = initState.post;
+        }))
+    }
 })
