@@ -12,9 +12,11 @@ import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
 import TbEye from '../../../shared/components/icons/tabler/TbEye';
 import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
 
 interface IPostActionToolbarProps {
   viewMode?: TPostViewMode;
+  isNewPost?: boolean;
   toggleViewMode?: () => void;
   toggleRating: () => void;
   hasRated: boolean;
@@ -31,6 +33,7 @@ interface IPostActionToolbarProps {
  */
 const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   viewMode,
+  isNewPost,
   toggleViewMode,
   isPublic,
   canEdit,
@@ -65,32 +68,44 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
 
   if (canEdit) {
     if (handleTogglePrivacy) {
-      actionToolbarItems.push(
-        {
+      actionToolbarItems.push({
+        order: 1,
+        icon: <TbPhoto fontSize="xl" />,
+        onClick: () => previewImageInputRef.current?.click(),
+        tooltip: 'Upload new image',
+        ariaLabel: 'Upload new image'
+      });
+      if (!isNewPost) {
+        actionToolbarItems.push(
+          {
+            order: 2,
+            icon: isPublic ? <TbBookDownload /> : <TbBookUpload />,
+            ariaLabel: isPublic ? 'Unpublish this post' : 'Publish this post',
+            tooltip: isPublic ? 'Unpublish this post' : 'Publish this post',
+            onClick: handleTogglePrivacy,
+            hoverColor: 'components.postEditor.publish.hover.color',
+            disabled: isTogglingPrivacy
+          },
+          {
+            order: 1,
+            icon: <TbDeviceFloppy />,
+            ariaLabel: 'Save this post',
+            tooltip: 'Save this post',
+            onClick: () => console.log('Save'),
+            hoverColor: 'components.postEditor.save.hover.color'
+          }
+        );
+      } else {
+        actionToolbarItems.push({
           order: 1,
-          icon: <TbPhoto fontSize="xl" />,
-          onClick: () => previewImageInputRef.current?.click(),
-          tooltip: 'Upload new image',
-          ariaLabel: 'Upload new image'
-        },
-        {
-          order: 1,
-          icon: <TbDeviceFloppy />,
-          ariaLabel: 'Save this post',
-          tooltip: 'Save this post',
-          onClick: () => console.log('Save'),
+          ariaLabel: 'Create new post',
+          tooltip: 'Create new post',
+          icon: <TbDeviceIpadPlus />,
+          onClick: () => {},
+          disabled: false,
           hoverColor: 'components.postEditor.save.hover.color'
-        },
-        {
-          order: 2,
-          icon: isPublic ? <TbBookDownload /> : <TbBookUpload />,
-          ariaLabel: isPublic ? 'Unpublish this post' : 'Publish this post',
-          tooltip: isPublic ? 'Unpublish this post' : 'Publish this post',
-          onClick: handleTogglePrivacy,
-          hoverColor: 'components.postEditor.publish.hover.color',
-          disabled: isTogglingPrivacy
-        }
-      );
+        });
+      }
     }
   } else {
     if (isAuthenticated) {

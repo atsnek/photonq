@@ -5,15 +5,18 @@ import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/type
 
 
 export interface ISinglePostStateDefinition {
+    isNewPost: boolean;
     post?: TPost;
     postAuthor: TUser | null;
 }
 
 export interface ISinglePostStateActions {
+    createEmptyPost: () => void;
     editTitle: (title: string) => Promise<boolean>;
     editContent: (content: MdastRoot) => Promise<boolean>;
     editSummary: (summary: string) => Promise<boolean>;
     fetchPost: (slug: string) => Promise<boolean>;
+    createNewPost: () => Promise<boolean>;
     togglePostRating: () => Promise<boolean>;
     updatePreviewImage: (src: File) => Promise<boolean>;
     togglePrivacy: () => Promise<boolean>;

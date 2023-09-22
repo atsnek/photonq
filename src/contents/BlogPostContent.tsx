@@ -13,14 +13,17 @@ import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 export interface IBlogPostContentProps {
-  slug: string;
+  isNewPost?: boolean;
+  slug?: string;
 }
 
 /**
  * Content for the blog post page (reading and editing).
  */
-const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
-  const [viewMode, setViewMode] = useState<TPostViewMode>('read');
+const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
+  const [viewMode, setViewMode] = useState<TPostViewMode>(
+    isNewPost ? 'edit' : 'read'
+  );
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const privacyAlertDisclosure = useDisclosure();
@@ -70,7 +73,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     editSummary(summary);
   };
 
-  const handelTitleChange = (title: string) => {
+  const handleTitleChange = (title: string) => {
     editTitle(title);
   };
 
@@ -85,7 +88,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
     changeLanguage(language);
   };
 
-  const isPostAuthor = !!currentUser && currentUser?.id === author?.id;
+  const isPostAuthor =
+    isNewPost || (!!currentUser && currentUser?.id === author?.id);
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
   const isPostPublic = post?.privacy === 'PUBLIC';
 
@@ -107,7 +111,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
       />
       <MainWrapper>
         <PostLeftNav
-          handleTitleChange={handelTitleChange}
+          handleTitleChange={handleTitleChange}
           handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
           isPostAuthor={isPostAuthor}
@@ -128,6 +132,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ slug }) => {
         )}
       </MainWrapper>
       <PostActionToolbar
+        isNewPost={isNewPost}
         viewMode={viewMode}
         toggleViewMode={toggleViewMode}
         isPublic={isPostPublic}
