@@ -187,7 +187,11 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             onBlur={e => handleSummaryChange(e.target.value)}
           />
         ) : (
-          <Text size="sm" color="pages.singlePost.leftNav.summary.color">
+          <Text
+            size="sm"
+            color="pages.singlePost.leftNav.summary.color"
+            textAlign="justify"
+          >
             {post.summary}
           </Text>
         )}
