@@ -1,4 +1,4 @@
-import { Edge_1_2_3_4, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
+import { Edge_1_2_3_4, Edge_1_2_3_4_5, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
 import { TActivity, TActivityType } from "../activity/types/activity";
 import { t } from "snek-query";
 import { sq } from "@snek-functions/origin";
@@ -35,7 +35,7 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
  * @param activities  The activities to build the section from
  * @returns One or more activity sections
  */
-export const buildUserActivities = (q: Query, activityEdges: Edge_1_2_3_4[], currentUser: t.Nullable<User>): TPaginationData<TActivity[]> => {
+export const buildUserActivities = (q: Query, activityEdges: Edge_1_2_3_4_5[], currentUser: t.Nullable<User>): TPaginationData<TActivity[]> => {
     // Only show the most recent rating for a post
     const activityRatingPostIds: Array<{ createdAt: string, id: string }> = [];
     activityEdges.filter(ae => ae.node.type.startsWith("star")).sort((a, b) => {
