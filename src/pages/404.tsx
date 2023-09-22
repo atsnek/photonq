@@ -1,34 +1,34 @@
-import * as React from 'react';
-import { Link, HeadFC, PageProps } from 'gatsby';
-import { PageConfig } from '@atsnek/jaen';
-import { LightMode, GlobalStyle } from '@chakra-ui/react';
+import * as React from 'react'
+import {Link, HeadFC, PageProps} from 'gatsby'
+import {PageConfig} from '@atsnek/jaen'
+import {LightMode, GlobalStyle} from '@chakra-ui/react'
 
 const pageStyles = {
   color: '#232129',
   padding: '96px',
   fontFamily: '-apple-system, Roboto, sans-serif, serif'
-};
+}
 const headingStyles = {
   marginTop: 0,
   marginBottom: 64,
   maxWidth: 320
-};
+}
 
 const paragraphStyles = {
   marginBottom: 48
-};
+}
 const codeStyles = {
   color: '#8A6534',
   padding: 4,
   backgroundColor: '#FFF4DB',
   fontSize: '1.25rem',
   borderRadius: 4
-};
+}
 
 const NotFoundPage: React.FC<PageProps> = () => {
   React.useEffect(() => {
-    alert('404');
-  }, []);
+    alert('404')
+  }, [])
 
   return (
     <LightMode>
@@ -50,14 +50,14 @@ const NotFoundPage: React.FC<PageProps> = () => {
         </p>
       </main>
     </LightMode>
-  );
-};
+  )
+}
 
-export default NotFoundPage;
+export default NotFoundPage
 
-export { Head } from '@atsnek/jaen';
+export {Head} from '@atsnek/jaen'
 
 export const pageConfig: PageConfig = {
   label: 'Oops! Page not found',
   childTemplates: ['BlogPage']
-};
+}

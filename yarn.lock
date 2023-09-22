@@ -70,10 +70,10 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.22":
-  version "1.0.0-rc.22"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.22.tgz#9f1419cae557f2f65f846ac3bcb6f32a40ec7dbd"
-  integrity sha512-a7giU7kN1OeuSoiR4MNOthrVj4JyIDpi8BNnmy6vXv6ARavhbaV/SDa6CeeKUOk9m5EHUdVl30ZDGBYCweTXSQ==
+"@atsnek/jaen@^1.0.0-rc.24":
+  version "1.0.0-rc.24"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.24.tgz#9938e98742ab93acd7dc10962792f573d37bedaa"
+  integrity sha512-ObA2jB64TVUq/g+P1ouKrbBJmo03jUOVyLHwLtL46t6DZbVQwvxH+FzO2Rno3tOVI0Npyym22I/I4uSHoxNCfw==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
@@ -7598,21 +7598,23 @@ gatsby-graphiql-explorer@^3.12.0:
   resolved "https://registry.yarnpkg.com/gatsby-graphiql-explorer/-/gatsby-graphiql-explorer-3.12.0.tgz#13122bcd742de0f4ad51ff87c9f4c7c4def78da1"
   integrity sha512-vr86oLhif5uZ+VSTE34DYjtBDCIHWpJHh4+65fmgZh+WtDv1lyONJ/WWmyD+dNMHlGsZtR6wVvBjrj5iFRDGRw==
 
-gatsby-jaen-lens@^0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.12.tgz#c3ba3dbb9c5a91b5a419b4b645092eb015209c77"
-  integrity sha512-MYICN49QSIyI8omx0cUTUWhn8GrkOurDQPJU+rw3AzWYCvYnLZF6VXBZKRoWB5wFYXYgVWn/LLAyIt4D1n+Z6Q==
+gatsby-jaen-lens@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.13.tgz#2bfd2d8cd9f2652d1ac62d42a461ba07c83c9d1b"
+  integrity sha512-wb0hgGrdA06JaCd6zp7uBW8GEUe43bpm7RcTMy9p1Lqbwcl7njE13AIC4erVdn7aND6hj+O0VPJaFU4JQJWavg==
   dependencies:
     react-hook-form "^7.46.1"
+    react-icons "^4.11.0"
     snek-query "^0.0.83"
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
 
-gatsby-jaen-resource@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-resource/-/gatsby-jaen-resource-0.0.2.tgz#121f3a756c1343b68fca9542a40aaaaa9d578d46"
-  integrity sha512-vZPcZG+6oJ+cBIXLfgLVcqb37SbSI1wYYQ/qtrpx/ocU6DtMBMzU0kNIZSRoqsWrhVLtH2CqcyCsgQrJLUcvng==
+gatsby-jaen-resource@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-resource/-/gatsby-jaen-resource-0.0.4.tgz#ba6bca41431e6134981e3128671f5f48a0bc754f"
+  integrity sha512-alnJjZF7G9hG5P36EJCFiwhkcANPkj4UyXVC5+fjjpxiX5SPA7o00slBUoO4C8tlFScAAORDJ6U4Xk3CZbtBtw==
   dependencies:
+    "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
     react-hook-form "^7.46.1"
     snek-query "^0.0.83"
 
@@ -7673,6 +7675,14 @@ gatsby-plugin-compile-es6-packages@^2.1.1:
     "@babel/runtime" "^7.0.0"
     regex-escape "^3.4.8"
 
+gatsby-plugin-google-gtag@^5.12.0:
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-google-gtag/-/gatsby-plugin-google-gtag-5.12.0.tgz#b7595083a74286ab92295b7c750a7a2a7adfb69e"
+  integrity sha512-Ih9YmiJh06pTqHZbOFCcXDjeRavT7HCafBIW7m46yJtryB3dnda1N0HhmN75dww59kEh+cbVkZS8QM58ccIKyg==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    minimatch "^3.1.2"
+
 gatsby-plugin-image@^3.11.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-image/-/gatsby-plugin-image-3.12.0.tgz#903e84029ff74cbd4a1dbb6f755d01134678b9aa"
@@ -7693,29 +7703,29 @@ gatsby-plugin-image@^3.11.0:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.22:
-  version "1.0.0-rc.23"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.23.tgz#e6e882849d443b76c6e673e03efd72777f086166"
-  integrity sha512-xa8BYwIqC0jmcm0F0pvUUG1D6DreH53McJP6Yk5DalncAbpJ+iHlH9cHdvuyOjdsmOXYloQmqvjRGqER/VWPXQ==
+gatsby-plugin-jaen@^1.0.0-rc.38:
+  version "1.0.0-rc.38"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.38.tgz#16f0f5b5434dbf70629300d6450674b83e7387ef"
+  integrity sha512-eeY+rf4ifMjzAlY3m4T18szLocX+ltqe+A2t7L4DfkGHWXOdDS7zqCGXMldOtWuHBpLM95cobE7q+/Mtv7OYsA==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
     "@emotion/styled" "^11.11.0"
     framer-motion "^10.13.0"
-    gatsby-jaen-resource "^0.0.2"
+    gatsby-jaen-resource "^0.0.4"
+    gatsby-plugin-google-gtag "^5.12.0"
     gatsby-plugin-manifest "^5.12.0"
     gatsby-plugin-sharp "^5.11.0"
     gatsby-plugin-sitemap "^6.12.0"
     gatsby-plugin-ts-config "^2.1.3"
     gatsby-source-filesystem "^5.11.0"
-    gatsby-source-jaen "^1.0.0-rc.7"
+    gatsby-source-jaen "^1.0.0-rc.16"
     gatsby-transformer-sharp "^5.11.0"
     isomorphic-dompurify "^1.8.0"
     react-complex-tree "^2.2.0"
     react-dropzone "^14.2.3"
     react-filerobot-image-editor "^4.5.1"
     react-hook-form "^7.45.2"
-    react-icons "^4.10.1"
     react-konva "^18.2.10"
     react-photo-view "^1.2.3"
     react-zoom-pan-pinch "^3.1.0"
@@ -7872,11 +7882,12 @@ gatsby-source-filesystem@^5.11.0:
     valid-url "^1.0.9"
     xstate "^4.38.0"
 
-gatsby-source-jaen@^1.0.0-rc.7:
-  version "1.0.0-rc.7"
-  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.7.tgz#fb9c5dac0e786aeb74baa1cc1cbe0abd4ea9c666"
-  integrity sha512-PM8JuZMkw5uaL3NcIW/vlLIu7yHUCJKfTkz9Ysa1Q/Krhfu5y8hlPMQZHZN42pHTQ2U1CnjLNghWZlDg0yjuzA==
+gatsby-source-jaen@^1.0.0-rc.16:
+  version "1.0.0-rc.16"
+  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.16.tgz#d352c475542c8048d275b07cc9f6b9a2cfead702"
+  integrity sha512-FIPd8q41c+pcy8k9RfrwXGeuerYC2fTmaueVYlavBjqQ5ZI/b2+cbxk39q8XGKfLiarrMwWXrstBKRKRtwkLxQ==
   dependencies:
+    "@babel/generator" "^7.22.15"
     "@babel/parser" "^7.22.11"
     "@babel/traverse" "^7.22.11"
     deepmerge "^4.2.2"
@@ -12567,7 +12578,7 @@ react-hook-form@^7.45.2, react-hook-form@^7.45.4, react-hook-form@^7.46.1:
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.46.1.tgz#39347dbff19d980cb41087ac32a57abdc6045bb3"
   integrity sha512-0GfI31LRTBd5tqbXMGXT1Rdsv3rnvy0FjEk8Gn9/4tp6+s77T7DPZuGEpBRXOauL+NhyGT5iaXzdIM2R6F/E+w==
 
-react-icons@^4.10.1:
+react-icons@^4.11.0:
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.11.0.tgz#4b0e31c9bfc919608095cc429c4f1846f4d66c65"
   integrity sha512-V+4khzYcE5EBk/BvcuYRq6V/osf11ODUM2J8hg2FDSswRrGvqiYUYPRy4OdrWaQOBj4NcpJfmHZLNaD+VH0TyA==
