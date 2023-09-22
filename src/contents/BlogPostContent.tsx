@@ -97,7 +97,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     const slug = await createNewPost();
     if (slug) {
       await wait(500); // Make sure the new post is created before navigating to it
-      navigate(`/post/${slug}`);
+      navigate(`/post/${slug}/`);
     }
     setIsCreatingNewPost(false);
   };
