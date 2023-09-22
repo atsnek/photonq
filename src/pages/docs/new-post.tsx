@@ -20,11 +20,7 @@ export const pageConfig: PageConfig = {
       label: 'New post',
       path: '/docs/new-post/'
     }
-  ],
-  menu: {
-    type: 'user',
-    label: 'New post'
-  }
+  ]
 };
 
 export const query = graphql`
