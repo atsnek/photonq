@@ -105,10 +105,10 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       {...wrapperProps}
     >
       <HStack {...postCardPreviewStyling.topHStack}>
-        {avatarUrl !== null && (
+        {avatarUrl && avatarUrl?.length > 0 && (
           <Image
             {...postCardPreviewStyling.previewImage}
-            src={avatarUrl ?? 'https://picsum.photos/200'}
+            src={avatarUrl}
             borderRadius="md"
             objectFit="cover"
           />

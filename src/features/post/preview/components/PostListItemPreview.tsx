@@ -91,7 +91,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
     >
       <VStack spacing={3} alignItems="flex-start">
         <HStack spacing={4} w="full">
-          {avatarUrl !== null && (
+          {avatarUrl && avatarUrl.length > 0 && (
             <Image
               display={{ base: 'none', md: 'initial' }}
               boxSize="75px"
