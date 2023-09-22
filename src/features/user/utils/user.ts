@@ -1,4 +1,4 @@
-import { Edge_1_2_3_4, Nodes_1_2_3_4, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
+import { Edge_1_2_3_4, ObjectAndUser, Privacy, Query, User } from "@snek-functions/origin/dist/schema.generated";
 import { TActivity, TActivityType } from "../activity/types/activity";
 import { t } from "snek-query";
 import { sq } from "@snek-functions/origin";
@@ -55,6 +55,7 @@ export const buildUserActivities = (q: Query, activityEdges: Edge_1_2_3_4[], cur
             activityRatingPostIds[pos].createdAt = createdAt;
         }
         else if (!isUnstar) activityRatingPostIds.push({ createdAt, id: post.id });
+        console.log(isUnstar, activityRatingPostIds)
     })
 
     const activityList: TPaginationData<TActivity[]> = {
@@ -105,6 +106,7 @@ export const buildUserActivities = (q: Query, activityEdges: Edge_1_2_3_4[], cur
                 href
             }
         })
+        console.log("ae result: ", activityList, title, href, "type: ", type)
     });
     return activityList;
 }

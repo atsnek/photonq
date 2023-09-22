@@ -6,7 +6,7 @@ import { TProfileSlice } from "../types/profileState";
 import { buildUserActivities, changeUserFollowingState } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
 import { buildPostPreview, searchPosts, togglePostRating } from "../../../shared/utils/features/post";
-import { TPaginatedPostListData, TPostListData } from "../../post/types/post";
+import { TPaginatedPostListData } from "../../post/types/post";
 
 export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     activity: { items: [], totalCount: 0 },
@@ -102,7 +102,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username })
             const profile = user.profile;
 
-            const activityList = buildUserActivities(q, profile?.activity().edges ?? [], currentUser);
+            //TODO: Adapt limit once the backend has been updated
+            const activityList = buildUserActivities(q, profile?.activity({ first: 30, after: get().profile.activity.cursor }).edges ?? [], currentUser);
             activityList.cursor = profile?.activity().pageInfo.endCursor ?? undefined;
             activityList.hasMore = profile?.activity().pageInfo.hasNextPage ?? false;
             set(produce((state: TStoreState): void => {

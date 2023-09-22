@@ -10,13 +10,12 @@ import {
   Spacer,
   Text
 } from '@chakra-ui/react';
-import { FC, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useMemo, useState } from 'react';
 import { TActivity, TActivitySection, TActivityType } from '../types/activity';
 import { TStepperSection } from '../../../../shared/components/stepper/types/stepper';
 import Stepper from '../../../../shared/components/stepper/Stepper';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import Link from '../../../../shared/components/Link';
-import usePagination from '../../../../shared/hooks/use-pagination';
 import ActivityListSkeleton from './ActivityListSkeleton';
 import TbConfetti from '../../../../shared/components/icons/tabler/TbConfetti';
 import TbPencilPlus from '../../../../shared/components/icons/tabler/TbPencilPlus';
@@ -42,19 +41,18 @@ const activityIcons: Record<TActivityType, ReactNode> = {
 
 interface IActivityListProps extends BoxProps {
   activity: TPaginationData<TActivity[]>;
-  fetchMoreActivities?: (offset: number, limit: number) => void;
+  fetchMore?: () => Promise<boolean>;
 }
 
 /**
  * Component for displaying a list of activities.
  */
-const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
-  const pagination = usePagination({
-    items: activity.items,
-    itemsPerPage: 3,
-    type: 'pages'
-  });
-  const currentLimit = pagination.currentPage * pagination.itemsPerPage;
+const ActivityList: FC<IActivityListProps> = ({
+  activity,
+  fetchMore,
+  ...props
+}) => {
+  const [isFetching, setIsFetching] = useState(false);
 
   const stepperData = useMemo(() => {
     let visibileActivities = 0;
@@ -62,8 +60,9 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
 
     const sections: TActivitySection[] = [];
 
-    for (let i = 0; i < Math.min(currentLimit, activity.items.length); i++) {
-      const item = activity.items[i];
+    // for (let i = 0; i < Math.min(currentLimit, activity.items.length); i++) {
+    for (const item of activity.items) {
+      // const item = activity.items[i];
       const itemDate = new Date(item.timestamp);
       const sectionDate = new Date(
         itemDate.getFullYear(),
@@ -94,9 +93,9 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
       );
       let lastDay = -1; // Used to cache the latest activity's day of the month
       for (const activity of section.activities) {
-        if (visibileActivities >= currentLimit) {
-          break;
-        }
+        // if (visibileActivities >= currentLimit) {
+        //   break;
+        // }
         const itemDate = new Date(activity.timestamp);
         // Only show the date if it differs from the previous activity
         const showDate = lastDay !== itemDate.getDate();
@@ -152,7 +151,14 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
       }
     }
     return stepperData;
-  }, [activity, currentLimit]);
+  }, [activity]);
+
+  const handleFetchMore = async () => {
+    if (!fetchMore || isFetching) return;
+    setIsFetching(true);
+    await fetchMore();
+    setIsFetching(false);
+  };
 
   if (!activity || !stepperData) {
     return (
@@ -167,19 +173,15 @@ const ActivityList: FC<IActivityListProps> = ({ activity, ...props }) => {
       <Heading size="md" {...activityListStyling.title}>
         Activity
       </Heading>
-      <Stepper
-        sections={stepperData.slice(
-          0,
-          pagination.currentPage * pagination.itemsPerPage
-        )}
-      />
-      {pagination.currentPage < pagination.totalPages && (
+      <Stepper sections={stepperData} />
+      {activity.hasMore && (
         <Center mt={5}>
           <Button
             variant="ghost-hover-outline"
             size="sm"
             borderRadius="lg"
-            onClick={pagination.nextPage}
+            onClick={handleFetchMore}
+            isDisabled={isFetching}
           >
             Show more
           </Button>

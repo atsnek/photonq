@@ -16,6 +16,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
   const postData = useAppStore(state => state.profile.overviewPosts);
   const activity = useAppStore(state => state.profile.activity);
   const togglePostRating = useAppStore(state => state.profile.togglePostRating);
+  const fetchActivities = useAppStore(state => state.profile.fetchActivity);
   //TODO: implement toggleLike with API call
   const toggleRating = (id: TPostPreview['id']) => {
     if (isOwnProfile) return;
@@ -35,7 +36,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
         maxItems={6}
       />
       {/* {(hasOverviewPosts || postData.state === 'loading') && <Divider />} */}
-      <ActivityList activity={activity} mb={10} />
+      <ActivityList activity={activity} mb={10} fetchMore={fetchActivities} />
     </VStack>
   );
 };
