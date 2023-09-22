@@ -102,9 +102,9 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         }
 
         set(produce((state: TStoreState) => {
-            if (query !== state.profile.searchPosts.query) {
+            if (query !== state.communityPosts.searchPosts.query) {
                 // Reset the state if the query changed
-                state.profile.searchPosts = {
+                state.communityPosts.searchPosts = {
                     query,
                     state: "loading",
                     items: [],
@@ -112,7 +112,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                     totalCount: 0,
                 };
             } else {
-                state.profile.searchPosts.state = "loading";
+                state.communityPosts.searchPosts.state = "loading";
             }
         }))
 
