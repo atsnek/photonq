@@ -56,6 +56,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   return (
     <LeftNav
       minW="250px"
+      maxW="5rem"
       w="max-content"
       isExpanded={true}
       display={{ base: 'none', md: 'flex' }}
