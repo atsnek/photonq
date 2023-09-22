@@ -31,6 +31,10 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
  */
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
     const author = q.user({ id: post?.profileId ?? '' });
+    if (author.username !== "jan") {
+        console.log(post, author, "<---")
+
+    }
     return {
         id: post?.id ?? '',
         slug: post?.slug ?? '',
@@ -40,7 +44,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
         createdAt: formatPostDate(post?.createdAt),
         privacy: post?.privacy as any,
         profile: {
-            id: post?.profileId ?? '',
+            id: author?.id ?? '',
             username: author?.username ?? '',
             displayName: author ? getUserDisplayname(author) : '',
             avatarUrl: author?.details?.avatarURL,

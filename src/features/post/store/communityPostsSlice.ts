@@ -35,9 +35,13 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             })
             return postComm?.nodes ?? [];
         });
-        const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
+        // const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
+        const posts = await Promise.all((rawPosts?.map(async (p) => {
+            if (!p) return;
+            return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
+        }) ?? []).filter(p => !!p)) as TPostPreview[];
 
-        if (rawError || buildError) return;
+        if (rawError) return;
         set(produce((state: TStoreState) => {
             state.communityPosts.featuredPosts = {
                 state: 'success',
@@ -79,7 +83,6 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
         }) ?? []).filter(p => !!p)) as TPostPreview[];
 
-        console.log("latest post info: ", postConnection?.pageInfo)
         if (rawError) return;
         set(produce((state: TStoreState) => {
             state.communityPosts.latestPosts = {
