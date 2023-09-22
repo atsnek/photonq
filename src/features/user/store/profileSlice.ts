@@ -59,7 +59,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         const userId = get().profile.profile?.id;
         const [rawPosts, error] = await sq.query(q => {
-            const posts = q.allSocialPostTrending({ filters: { profileId: userId }, first: 6 });
+            const posts = q.allSocialPostTrending({ filters: { userId }, first: 6 });
             posts?.pageInfo.hasNextPage;
             posts?.pageInfo.endCursor;
             posts?.nodes.forEach(pn => {
@@ -103,11 +103,18 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const profile = user.profile;
 
             //TODO: Adapt limit once the backend has been updated
-            const activityList = buildUserActivities(q, profile?.activity({ first: 30, after: get().profile.activity.cursor }).edges ?? [], currentUser);
+            const activityList = buildUserActivities(q, profile?.activity({ first: 10, after: get().profile.activity.cursor }).edges ?? [], currentUser);
             activityList.cursor = profile?.activity().pageInfo.endCursor ?? undefined;
             activityList.hasMore = profile?.activity().pageInfo.hasNextPage ?? false;
             set(produce((state: TStoreState): void => {
-                state.profile.activity = activityList;
+                state.profile.activity = state.profile.activity.totalCount === 0
+                    ? activityList
+                    : {
+                        items: [...state.profile.activity.items, ...activityList.items],
+                        totalCount: state.profile.activity.totalCount,
+                        cursor: activityList.cursor,
+                        hasMore: activityList.hasMore
+                    };
             }))
         })
 
