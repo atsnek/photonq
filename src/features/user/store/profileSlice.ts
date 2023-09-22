@@ -102,10 +102,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username })
             const profile = user.profile;
 
-<<<<<<< HEAD
-=======
-            //TODO: Adapt limit once the backend has been updated
->>>>>>> main
             const activityList = buildUserActivities(q, profile?.activity({ first: 10, after: get().profile.activity.cursor }).edges ?? [], currentUser);
             activityList.cursor = profile?.activity().pageInfo.endCursor ?? undefined;
             activityList.hasMore = profile?.activity().pageInfo.hasNextPage ?? false;
