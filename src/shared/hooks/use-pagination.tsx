@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-export type TPaginationType = 'pages' | 'load-more';
+import { TPaginationType } from '../types/pagination';
 
 interface IUsePaginationProps<T> {
   items: T[];
@@ -34,10 +33,12 @@ const usePagination = <T,>({
   maxItems,
   type = 'pages'
 }: IUsePaginationProps<T>): IUsePaginationReturn<T> => {
-  const usePages = type === 'pages';
+  const usePages = type === 'pages' || type === 'async-pages';
 
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(items?.length / itemsPerPage);
+  const totalPages =
+    Math.ceil(items?.length / itemsPerPage) +
+    (type === 'async-pages' && hasMoreItems ? 1 : 0);
   const currentItems = usePages
     ? items?.slice(
         currentPage * itemsPerPage - itemsPerPage,

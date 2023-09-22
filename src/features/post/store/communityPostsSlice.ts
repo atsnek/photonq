@@ -47,6 +47,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         }))
     },
     fetchLatestPosts: async (silent) => {
+        const FETCH_LIMIT = 10;
         if (!silent) {
             set(produce((state: TStoreState) => {
                 state.communityPosts.latestPosts.state = 'loading';
@@ -56,7 +57,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         const [currentUser,] = await sq.query(q => q.userMe);
 
         const [postConnection, rawError] = await sq.query(q => {
-            const postComm = q.allSocialPost({ first: 2, after: get().communityPosts.latestPosts.nextCursor, filters: { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
+            const postComm = q.allSocialPost({ first: FETCH_LIMIT, after: get().communityPosts.latestPosts.nextCursor, filters: { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
             //! Existing issue: see post utils -> buildPostPreview
             postComm?.pageInfo.endCursor;
             postComm?.pageInfo.hasNextPage;
@@ -78,11 +79,13 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
         }) ?? []).filter(p => !!p)) as TPostPreview[];
 
+        console.log("latest post info: ", postConnection?.pageInfo)
         if (rawError) return;
         set(produce((state: TStoreState) => {
             state.communityPosts.latestPosts = {
                 state: 'success',
                 items: postConnection?.pageInfo.hasPreviousPage ? [...state.communityPosts.latestPosts.items, ...posts] : posts,
+                itemsPerPage: FETCH_LIMIT,
                 totalCount: posts.length,
                 nextCursor: postConnection?.pageInfo?.hasNextPage && postConnection.pageInfo.endCursor ? postConnection?.pageInfo.endCursor : undefined,
                 prevCursor: postConnection?.pageInfo?.hasPreviousPage && postConnection.pageInfo.startCursor ? postConnection?.pageInfo.startCursor : undefined,

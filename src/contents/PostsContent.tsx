@@ -105,7 +105,7 @@ const PostsContent: FC = () => {
                 postData={latestPosts}
                 pt={5}
                 previewType="list"
-                itemsPerPage={latestPosts.totalCount}
+                itemsPerPage={latestPosts.itemsPerPage}
                 maxItems={
                   latestPosts.hasMore ?? false
                     ? undefined
@@ -115,6 +115,7 @@ const PostsContent: FC = () => {
                   w: 'full'
                 }}
                 toggleRating={toggleRating}
+                paginationType="async-pages"
               />
             </Box>
           </>

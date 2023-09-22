@@ -16,15 +16,14 @@ import {
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import PostCardPreview from './preview/components/PostCardPreview';
-import usePagination, {
-  TPaginationType
-} from '../../shared/hooks/use-pagination';
 import PostListControls from './PostListControls';
 import PostCardPreviewSkeleton from './preview/components/PostCardPreviewSkeleton';
 import PostListItemPreview from './preview/components/PostListItemPreview';
 import PostListItemPreviewSkeleton from './preview/components/PostListItemPreviewSkeleton';
 import PostListNoResults from './preview/components/PostListNoResults';
 import { query } from '../../pages';
+import { TPaginationType } from '../../shared/types/pagination';
+import usePagination from '../../shared/hooks/use-pagination';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (query: string, offset: number) => void;
@@ -72,7 +71,8 @@ const PostList: FC<IPostListProps> = ({
     items: postData.items,
     itemsPerPage: itemsPerPage,
     maxItems: usePages ? maxItems : undefined,
-    type: paginationType
+    type: paginationType,
+    hasMoreItems: !!postData.nextCursor || postData.hasMore
   });
 
   const memoizedPostPreviews = useMemo(() => {
@@ -106,17 +106,22 @@ const PostList: FC<IPostListProps> = ({
       );
     }
 
-    const postPreviews = pagination.currentItems.map(postPreview => (
-      <PreviewComp
-        key={postPreview.id}
-        toggleRating={toggleRating}
-        {...postPreview}
-        {...previewCompProps}
-        hideAuthor={hidePostAuthor}
-        showPrivacy={showPostPrivacy}
-        wrapperProps={{ minW: '33%' }}
-      />
-    ));
+    let postPreviews: JSX.Element[] = [];
+
+    if (paginationType !== 'async-pages' || postData.state !== 'loading') {
+      postPreviews = pagination.currentItems.map(postPreview => (
+        <PreviewComp
+          key={postPreview.id}
+          toggleRating={toggleRating}
+          {...postPreview}
+          {...previewCompProps}
+          hideAuthor={hidePostAuthor}
+          showPrivacy={showPostPrivacy}
+          wrapperProps={{ minW: '33%' }}
+        />
+      ));
+    }
+
     return [...postPreviews, ...previewSkeletons];
   }, [postData, pagination]);
 
@@ -145,10 +150,22 @@ const PostList: FC<IPostListProps> = ({
   };
 
   const handleNextPage = async () => {
-    if (fetchNextPagePosts) await fetchNextPagePosts();
+    // Only fetch next page if
+    // 1. the pagination type is async
+    // 2. the pagination type is pages
+    // 3. There are more posts to fetch
+    // 4. The current page is the last page (exlcuding the placeholder last page)
+    if (
+      fetchNextPagePosts &&
+      paginationType === 'async-pages' &&
+      postData.hasMore &&
+      pagination.currentPage === pagination.totalPages - 1
+    )
+      await fetchNextPagePosts();
     pagination.setCurrentPage(pagination.currentPage + 1);
   };
 
+  console.log('paginationData: ', pagination);
   return (
     <VStack w="full" gap={5} {...props}>
       {showControls && fetchPosts && (
@@ -164,51 +181,59 @@ const PostList: FC<IPostListProps> = ({
         ) : (
           <PostListNoResults mt={10} />
         ))}
-      {usePages && (!!postData.prevCursor || !!postData.nextCursor) && (
-        <HStack alignContent="space-around">
-          <Button
-            variant="ghost-hover-outline"
-            size="sm"
-            borderRadius="lg"
-            leftIcon={<ChevronLeftIcon />}
-            isDisabled={!postData.prevCursor}
-            onClick={pagination.previousPage}
-          >
-            Previous
-          </Button>
+      {paginationType === 'pages' ||
+        (paginationType === 'async-pages' &&
+          (pagination.currentPage > 1 ||
+            pagination.currentPage < pagination.totalPages) && (
+            <HStack alignContent="space-around">
+              <Button
+                variant="ghost-hover-outline"
+                size="sm"
+                borderRadius="lg"
+                leftIcon={<ChevronLeftIcon />}
+                isDisabled={pagination.currentPage === 1}
+                onClick={pagination.previousPage}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="ghost-hover-outline"
+                size="sm"
+                borderRadius="lg"
+                rightIcon={<ChevronRightIcon />}
+                isDisabled={
+                  !postData?.hasMore &&
+                  pagination.currentPage === pagination.totalPages
+                }
+                onClick={handleNextPage}
+              >
+                Next
+              </Button>
+            </HStack>
+          ))}
+      {paginationType === 'load-more' &&
+        postData.state !== 'inactive' &&
+        postData.hasMore && (
           <Button
             variant="ghost-hover-outline"
             size="sm"
             borderRadius="lg"
             rightIcon={<ChevronRightIcon />}
-            isDisabled={!postData?.hasMore}
-            onClick={handleNextPage}
+            isDisabled={postData.state === 'loading'}
+            onClick={
+              !!fetchPosts
+                ? () => {
+                    fetchPosts(
+                      currentQuery ?? defaultFilterQuery ?? '',
+                      pagination.currentItems.length
+                    );
+                  }
+                : undefined
+            }
           >
-            Next
+            Load more
           </Button>
-        </HStack>
-      )}
-      {!usePages && postData.state !== 'inactive' && postData.hasMore && (
-        <Button
-          variant="ghost-hover-outline"
-          size="sm"
-          borderRadius="lg"
-          rightIcon={<ChevronRightIcon />}
-          isDisabled={postData.state === 'loading'}
-          onClick={
-            !!fetchPosts
-              ? () => {
-                  fetchPosts(
-                    currentQuery ?? defaultFilterQuery ?? '',
-                    pagination.currentItems.length
-                  );
-                }
-              : undefined
-          }
-        >
-          Load more
-        </Button>
-      )}
+        )}
     </VStack>
   );
 };
