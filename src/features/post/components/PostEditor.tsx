@@ -1,12 +1,6 @@
 import { FC, useRef, useState } from 'react';
 import { TPost } from '../types/post';
-import {
-  Stack,
-  Box,
-  useBreakpointValue,
-  useDisclosure,
-  useToast
-} from '@chakra-ui/react';
+import { Stack, Box, useDisclosure, useToast } from '@chakra-ui/react';
 import MdxEditor from '../../../shared/components/mdx-editor/MdxEditor';
 import { wait } from '../../../shared/utils/utils';
 import Alert from '../../../shared/components/alert/Alert';
@@ -51,6 +45,7 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
     isPublic ? alertText.publish : alertText.publish
   );
   const showToast = useToast();
+
   const publishPost = async () => {
     //TODO: Connect to Jaen
     showToast({

@@ -1,6 +1,6 @@
-import { FiltersInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
+import { Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
-import { TPaginatedPostListData, TPost, TPostListData, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
+import { TPaginatedPostListData, TPost, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from "snek-query";
 import { sq } from '@snek-functions/origin';
@@ -31,10 +31,6 @@ export const formatPostDate = (date?: string, dateFormat: 'l' | 's' = 's') => {
  */
 export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?: t.Nullable<User>): TPostPreview => {
     const author = q.user({ id: post?.profileId ?? '' });
-    if (author.username !== "jan") {
-        console.log(post, author, "<---")
-
-    }
     return {
         id: post?.id ?? '',
         slug: post?.slug ?? '',

@@ -9,6 +9,7 @@ import { navigate } from '@reach/router';
 
 const DocsPage: React.FC<PageProps> = ({ params }) => {
   const slug = params.slug?.trim();
+  const post = useAppStore(state => state.singlePost.post);
 
   const resetStoreState = useAppStore(state => state.singlePost.reset);
   const fetchPost = useAppStore(state => state.singlePost.fetchPost);
@@ -21,6 +22,12 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
       });
     }
   }, [slug]);
+
+  useEffect(() => {
+    if (post) {
+      document.title = post.title;
+    }
+  }, [post]);
 
   if (!slug) {
     //? This could currently cause some issues with the SSR

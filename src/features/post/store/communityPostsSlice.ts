@@ -5,7 +5,7 @@ import { produce } from "immer";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { asEnumKey } from "snek-query";
 import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
-import { TPost, TPostPreview } from "../types/post";
+import { TPostPreview } from "../types/post";
 
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set, get) => ({
