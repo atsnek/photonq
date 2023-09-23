@@ -26,11 +26,12 @@ import Highlighter from 'react-highlight-words';
 import { useLocation, navigate } from '@reach/router';
 // import { SearchProvider, useSearch } from '@atsnek/jaen';
 import { searchDocs } from '../../../shared/utils/search';
+import { SearchProvider } from '../../../search/search-provider';
 
 /**
  * The search menu item component for displaying a specific search result item.
  */
-const SearchResultItem: FC<{
+export const SearchResultItem: FC<{
   item: TSearchResult;
   query: string;
   id: number;
@@ -120,7 +121,7 @@ const SearchResultItem: FC<{
 /**
  * The search menu section component for displaying a search result section containing multiple search result items.
  */
-const SearchResultSection: FC<{
+export const SearchResultSection: FC<{
   section: TSearchResultSection;
   idx: number;
   query: string;
@@ -231,13 +232,13 @@ const SearchMenu: FC<SearchMenuProps> = ({
       isLazy
       id="search-menu"
     >
-      {/* <SearchProvider>
+      <SearchProvider>
         <SearchInput
           setSearchQuery={setSearchQuery}
           openFirstLink={openFirstLink}
           styleProps={styleProps?.input}
         />
-      </SearchProvider> */}
+      </SearchProvider>
 
       <Portal>
         <Box

@@ -18,7 +18,7 @@ const smtShared = {
   body: {
     bgColor: {
       default: 'white',
-      _dark: 'gray.900'
+      _dark: 'gray.800'
     }
   },
   scrollbar: {

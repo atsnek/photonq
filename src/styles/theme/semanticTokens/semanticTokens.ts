@@ -35,6 +35,7 @@ import smtTextareaComponent from './components/textarea';
 import smtImageComponent from './components/image';
 import smtBadgeComponent from './components/badge';
 import smtSinglePostPage from '../../../features/post/styles/singlePost';
+import smtSearchFeature from './features/search';
 
 const themeSemanticTokens = {
   colors: {
@@ -75,6 +76,7 @@ const themeSemanticTokens = {
     },
     features: {
       rating: smtRatingFeature,
+      search: smtSearchFeature,
     },
     shared: smtShared,
     topNav: smtTopNav,
