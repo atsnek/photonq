@@ -1,4 +1,4 @@
-import { Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
+import { Connection_1, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
 import { TPaginatedPostListData, TPost, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
@@ -63,15 +63,24 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
 export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string): Promise<TPaginatedPostListData> => {
     const [postConnection,] = await sq.query(q => {
         const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
-            filters: { query: searchQuery, privacy: asEnumKey(PrivacyInputInput, privacy) },
+            filters: { privacy: asEnumKey(PrivacyInputInput, privacy) },
             first: limit,
         };
-        if (userId && requestArgs.filters) {
-            requestArgs.filters.userId = userId;
+
+        if (requestArgs.filters) {
+            if (searchQuery.length > 0) {
+                requestArgs.filters.query = searchQuery;
+            }
+
+            if (userId) {
+                requestArgs.filters.userId = userId;
+            }
         }
+
         if (cursor) {
             requestArgs.after = cursor;
         }
+
         const posts = q.allSocialPost(requestArgs);
         //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
         posts?.pageInfo.hasNextPage;

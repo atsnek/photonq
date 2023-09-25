@@ -58,6 +58,16 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     });
   }, [username]);
 
+  useEffect(() => {
+    if (
+      activeTab === 'posts' &&
+      searchPosts.items.length === 0 &&
+      searchPosts.query.length === 0
+    ) {
+      fetchSearchPosts('', SEARCH_LIMIT, 0);
+    }
+  }, [activeTab]);
+
   const isOwnProfile = useMemo(
     () => profile?.username === currentUser?.username,
     [profile?.username, currentUser?.username]

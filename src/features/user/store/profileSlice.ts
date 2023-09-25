@@ -120,18 +120,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         return !!error;
     },
     fetchSearchPosts: async (query, limit, offset) => {
-        if (!query.length) {
-            set(produce((state: TStoreState): void => {
-                state.profile.searchPosts = {
-                    query: '',
-                    state: "inactive",
-                    items: [],
-                    hasMore: false,
-                    totalCount: 0,
-                };
-            }))
-            return;
-        }
 
         set(produce((state: TStoreState) => {
             if (query !== state.profile.searchPosts.query) {
