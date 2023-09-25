@@ -39,6 +39,8 @@ export const pageConfig: PageConfig = {
       // get username from url
       let username = window.location.pathname.split('/user/')[1]
 
+      if (!username) return {label: 'User', path: '/user'}
+
       // Remove trailing slash
       if (username.endsWith('/')) {
         username = username.substring(0, username.length - 1)

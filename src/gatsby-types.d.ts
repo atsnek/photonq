@@ -1409,7 +1409,6 @@ type JaenPage = Node & {
   readonly childPages: ReadonlyArray<JaenPage>;
   readonly childTemplates: ReadonlyArray<Scalars['String']>;
   readonly children: ReadonlyArray<Node>;
-  readonly createdAt: Maybe<Scalars['Date']>;
   readonly excludedFromIndex: Maybe<Scalars['Boolean']>;
   readonly id: Scalars['ID'];
   readonly internal: Internal;
@@ -1423,14 +1422,6 @@ type JaenPage = Node & {
   readonly sections: ReadonlyArray<JaenSection>;
   readonly slug: Scalars['String'];
   readonly template: Maybe<Scalars['String']>;
-};
-
-
-type JaenPage_createdAtArgs = {
-  difference: InputMaybe<Scalars['String']>;
-  formatString: InputMaybe<Scalars['String']>;
-  fromNow: InputMaybe<Scalars['Boolean']>;
-  locale: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1491,7 +1482,6 @@ type JaenPageFieldSelector = {
   readonly childPages: InputMaybe<JaenPageFieldSelector>;
   readonly childTemplates: InputMaybe<FieldSelectorEnum>;
   readonly children: InputMaybe<NodeFieldSelector>;
-  readonly createdAt: InputMaybe<FieldSelectorEnum>;
   readonly excludedFromIndex: InputMaybe<FieldSelectorEnum>;
   readonly id: InputMaybe<FieldSelectorEnum>;
   readonly internal: InputMaybe<InternalFieldSelector>;
@@ -1512,7 +1502,6 @@ type JaenPageFilterInput = {
   readonly childPages: InputMaybe<JaenPageFilterListInput>;
   readonly childTemplates: InputMaybe<StringQueryOperatorInput>;
   readonly children: InputMaybe<NodeFilterListInput>;
-  readonly createdAt: InputMaybe<DateQueryOperatorInput>;
   readonly excludedFromIndex: InputMaybe<BooleanQueryOperatorInput>;
   readonly id: InputMaybe<StringQueryOperatorInput>;
   readonly internal: InputMaybe<InternalFilterInput>;
@@ -1630,7 +1619,6 @@ type JaenPageSortInput = {
   readonly childPages: InputMaybe<JaenPageSortInput>;
   readonly childTemplates: InputMaybe<SortOrderEnum>;
   readonly children: InputMaybe<NodeSortInput>;
-  readonly createdAt: InputMaybe<SortOrderEnum>;
   readonly excludedFromIndex: InputMaybe<SortOrderEnum>;
   readonly id: InputMaybe<SortOrderEnum>;
   readonly internal: InputMaybe<InternalSortInput>;
@@ -2661,7 +2649,6 @@ type Query_jaenPageArgs = {
   childPages: InputMaybe<JaenPageFilterListInput>;
   childTemplates: InputMaybe<StringQueryOperatorInput>;
   children: InputMaybe<NodeFilterListInput>;
-  createdAt: InputMaybe<DateQueryOperatorInput>;
   excludedFromIndex: InputMaybe<BooleanQueryOperatorInput>;
   id: InputMaybe<StringQueryOperatorInput>;
   internal: InputMaybe<InternalFilterInput>;

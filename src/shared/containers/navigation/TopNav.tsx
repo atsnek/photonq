@@ -257,7 +257,7 @@ const TopNav: FC<ITopNavProps> = ({
                   href="https://github.com/Jan-Emig/snek-docs"
                   // This doesnt work for some reason (min-width solves it temporarily)
                   boxSize="32px"
-                  minW="32px"
+                  minWidth="32px"
                   _hover={{
                     transform: 'scale(1.2)'
                   }}
