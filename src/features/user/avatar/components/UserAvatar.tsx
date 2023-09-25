@@ -2,13 +2,10 @@ import { FC } from 'react';
 import {
   Avatar,
   AvatarProps,
-  Center,
-  Flex,
   HStack,
   LinkBox,
   LinkOverlay,
   LinkOverlayProps,
-  Text,
   Tooltip
 } from '@chakra-ui/react';
 import UserPreview from './UserPreview';
@@ -79,6 +76,11 @@ const UserAvatar: FC<IUserAvatarProps> = ({
         boxShadow="lg"
       >
         {avatar}
+        {showName && (
+          <Link href={link} {...nameProps}>
+            {user.displayName}
+          </Link>
+        )}
       </Tooltip>
     );
   }

@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef, useState } from 'react';
+import { ChangeEvent, FC, useRef } from 'react';
 import { TPost, EnPostLanguage } from '../types/post';
 import { TUser } from '../../user/types/user';
 import {
@@ -6,7 +6,6 @@ import {
   Center,
   HStack,
   Spacer,
-  Text,
   Input,
   Button,
   Menu,
@@ -19,7 +18,6 @@ import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import PostRatingButton from './PostRatingButton';
 import TbLanguage from '../../../shared/components/icons/tabler/TbLanguage';
 import PostLanguageMenuList from './PostLanguageMenuList';
-import { useAppStore } from '../../../shared/store/store';
 import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
 
 interface IPostTopNavProps {
@@ -69,16 +67,16 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   return (
     <Center>
       <Box
+        position="relative"
         w="full"
         maxW="7xl"
-        // borderBottom="1px solid"
-        // borderBottomColor="topNav.borderColor"
         bgColor="pages.singlePost.topNav.bgColor"
         borderRadius="xl"
         py={3}
         px={5}
         my={5}
         display={{ base: 'none', md: 'block' }}
+        overflow="hidden"
       >
         <Center>
           <HStack
@@ -91,19 +89,14 @@ const PostTopNav: FC<IPostTopNavProps> = ({
             }}
           >
             {author && (
-              <>
-                {
-                  <UserAvatar
-                    user={author}
-                    boxSize="30px"
-                    showName
-                    nameProps={{ fontWeight: 'medium' }}
-                    redirectToProfile
-                    scaleOnHover
-                  />
-                }
-                {/* <Text fontWeight="medium">{author.displayName}</Text> */}
-              </>
+              <UserAvatar
+                user={author}
+                boxSize="30px"
+                showName
+                nameProps={{ fontWeight: 'medium' }}
+                redirectToProfile
+                scaleOnHover
+              />
             )}
             <Spacer />
             <HStack spacing={3}>
