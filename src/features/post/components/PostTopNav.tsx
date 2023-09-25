@@ -67,100 +67,117 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   const isPublic = post?.privacy === 'PUBLIC';
 
   return (
-    <Box
-      w="full"
-      borderBottom="1px solid"
-      borderBottomColor="topNav.borderColor"
-      bgColor="shared.translucent.bgColor"
-      py={3}
-      mb={5}
-      display={{ base: 'none', md: 'block' }}
-    >
-      <Center>
-        <HStack w="full" maxW="7xl">
-          {author && (
-            <>
-              {
-                <UserAvatar
-                  user={author}
-                  boxSize="30px"
-                  redirectToProfile
-                  scaleOnHover
-                />
+    <Center>
+      <Box
+        w="full"
+        maxW="7xl"
+        // borderBottom="1px solid"
+        // borderBottomColor="topNav.borderColor"
+        bgColor="gray.700"
+        borderRadius="xl"
+        py={3}
+        px={5}
+        my={5}
+        display={{ base: 'none', md: 'block' }}
+      >
+        <Center>
+          <HStack
+            w="full"
+            maxW="7xl"
+            __css={{
+              '& span img': {
+                borderRadius: 'lg'
               }
-              <Text fontWeight="medium">{author.displayName}</Text>
-            </>
-          )}
-          <Spacer />
-          <HStack spacing={3}>
-            {!canEdit && (
-              <PostRatingButton
-                hasRated={post?.hasRated ?? false}
-                isRating={isRating ?? false}
-                toggleRating={handleRatePost}
-                stars={post?.stars ?? 0}
-              />
-            )}
-            <Input
-              ref={imageInputRef}
-              type="file"
-              display="none"
-              visibility="hidden"
-              zIndex={-9999}
-              accept="image/*"
-              onChange={handleImageInputChange}
-            />
-            {canEdit && (
+            }}
+          >
+            {author && (
               <>
-                <Button
-                  colorScheme="gray"
-                  size="sm"
-                  leftIcon={<TbPhoto />}
-                  onClick={() => imageInputRef.current?.click()}
-                >
-                  Image
-                </Button>
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    colorScheme="gray"
-                    size="sm"
-                    leftIcon={<TbLanguage />}
-                  >
-                    Language
-                  </MenuButton>
-                  <PostLanguageMenuList
-                    currentLanguage={EnPostLanguage.ENGLISH}
-                    changeLanguage={handleLanguageChange}
+                {
+                  <UserAvatar
+                    user={author}
+                    boxSize="30px"
+                    showName
+                    nameProps={{ fontWeight: 'medium' }}
+                    redirectToProfile
+                    scaleOnHover
                   />
-                </Menu>
-                {isNewPost ? (
-                  <Button
-                    colorScheme="gray"
-                    size="sm"
-                    leftIcon={<TbDeviceIpadPlus />}
-                    onClick={createNewPost}
-                    isDisabled={isCreatingNewPost}
-                  >
-                    Create post
-                  </Button>
-                ) : (
-                  <Button
-                    colorScheme="gray"
-                    size="sm"
-                    leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
-                    onClick={handleTogglePrivacy}
-                    isDisabled={isUpdatingPrivacy}
-                  >
-                    {isPublic ? 'Unpublish' : 'Publish'}
-                  </Button>
-                )}
+                }
+                {/* <Text fontWeight="medium">{author.displayName}</Text> */}
               </>
             )}
+            <Spacer />
+            <HStack spacing={3}>
+              {!canEdit && (
+                <PostRatingButton
+                  hasRated={post?.hasRated ?? false}
+                  isRating={isRating ?? false}
+                  toggleRating={handleRatePost}
+                  stars={post?.stars ?? 0}
+                />
+              )}
+              <Input
+                ref={imageInputRef}
+                type="file"
+                display="none"
+                visibility="hidden"
+                zIndex={-9999}
+                accept="image/*"
+                onChange={handleImageInputChange}
+              />
+              {canEdit && (
+                <>
+                  <Button
+                    colorScheme="gray"
+                    size="sm"
+                    leftIcon={<TbPhoto />}
+                    onClick={() => imageInputRef.current?.click()}
+                  >
+                    Image
+                  </Button>
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      colorScheme="gray"
+                      size="sm"
+                      leftIcon={<TbLanguage />}
+                    >
+                      Language
+                    </MenuButton>
+                    <PostLanguageMenuList
+                      currentLanguage={EnPostLanguage.ENGLISH}
+                      changeLanguage={handleLanguageChange}
+                    />
+                  </Menu>
+                  {isNewPost ? (
+                    <Button
+                      colorScheme="gray"
+                      size="sm"
+                      leftIcon={<TbDeviceIpadPlus />}
+                      onClick={createNewPost}
+                      isDisabled={isCreatingNewPost}
+                    >
+                      Create post
+                    </Button>
+                  ) : (
+                    <Button
+                      colorScheme="gray"
+                      size="sm"
+                      leftIcon={
+                        isPublic ? <TbBookDownload /> : <TbBookUpload />
+                      }
+                      onClick={handleTogglePrivacy}
+                      isDisabled={isUpdatingPrivacy}
+                    >
+                      {isPublic ? 'Unpublish' : 'Publish'}
+                    </Button>
+                  )}
+                </>
+              )}
+            </HStack>
           </HStack>
-        </HStack>
-      </Center>
-    </Box>
+        </Center>
+      </Box>
+    </Center>
   );
 };
 

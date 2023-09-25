@@ -44,7 +44,6 @@ const PostsContent: FC = () => {
     return await togglePostRating(id);
   };
 
-  console.log('searchPosts: ', searchPosts);
   return (
     <Container maxW="7xl" mt={10}>
       <VStack>

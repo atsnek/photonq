@@ -2,15 +2,23 @@ import { FC } from 'react';
 import {
   Avatar,
   AvatarProps,
+  Center,
+  Flex,
+  HStack,
   LinkBox,
   LinkOverlay,
+  LinkOverlayProps,
+  Text,
   Tooltip
 } from '@chakra-ui/react';
 import UserPreview from './UserPreview';
 import { TUser } from '../../types/user';
+import Link from '../../../../shared/components/Link';
 
 export interface IUserAvatarProps extends AvatarProps {
   user: TUser;
+  showName?: boolean;
+  nameProps?: LinkOverlayProps;
   showTooltip?: boolean;
   redirectToProfile?: boolean;
   scaleOnHover?: boolean;
@@ -18,6 +26,8 @@ export interface IUserAvatarProps extends AvatarProps {
 
 const UserAvatar: FC<IUserAvatarProps> = ({
   user,
+  showName,
+  nameProps,
   showTooltip,
   redirectToProfile,
   scaleOnHover,
@@ -40,12 +50,21 @@ const UserAvatar: FC<IUserAvatarProps> = ({
     _hover: { ...avatarProps._hover, ...props._hover } // merge hover props properly
   };
 
+  const link = `/user/${user.username}`;
+
   let avatar: JSX.Element;
   if (redirectToProfile) {
     avatar = (
-      <LinkBox as={Avatar} src={imgSrc} {...avatarProps}>
-        <LinkOverlay href={`/user/${user.username}`} />
-      </LinkBox>
+      <HStack spacing={3}>
+        <LinkBox as={Avatar} src={imgSrc} {...avatarProps}>
+          <LinkOverlay href={link} />
+        </LinkBox>
+        {showName && (
+          <Link href={link} {...nameProps}>
+            {user.displayName}
+          </Link>
+        )}
+      </HStack>
     );
   } else {
     avatar = <Avatar src={imgSrc} {...avatarProps} />;
