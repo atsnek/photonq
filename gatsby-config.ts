@@ -16,7 +16,12 @@ const config: GatsbyConfig = {
     DEV_SSR: true
   },
   plugins: [
-    'gatsby-jaen-lens',
+    {
+      resolve: `gatsby-jaen-lens`,
+      options: {
+        roles: ['005559cd-c204-4919-80a9-0059f213eafc']
+      }
+    },
     {
       resolve: `gatsby-plugin-jaen`,
       options: {
