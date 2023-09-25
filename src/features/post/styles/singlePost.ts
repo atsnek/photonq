@@ -1,4 +1,10 @@
 const smtSinglePostPage = {
+    topNav: {
+        bgColor: {
+            default: 'gray.100',
+            _dark: 'gray.700'
+        },
+    },
     leftNav: {
         summary: {
             color: {
