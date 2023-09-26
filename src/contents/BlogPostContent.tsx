@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import PostTopNav from '../features/post/components/PostTopNav';
 import { useAppStore } from '../shared/store/store';
 import PostLeftNav from '../features/post/components/PostLeftNav';
@@ -14,6 +14,12 @@ import { useAuthenticationContext } from '@atsnek/jaen';
 import { navigate } from '@reach/router';
 import { wait } from '../shared/utils/utils';
 
+const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+  e.preventDefault();
+  e.returnValue = '';
+  return '';
+};
+
 export interface IBlogPostContentProps {
   isNewPost?: boolean;
   slug?: string;
@@ -26,6 +32,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [viewMode, setViewMode] = useState<TPostViewMode>(
     isNewPost ? 'edit' : 'read'
   );
+  const [madeChanges, setMadeChanges] = useState(false);
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const privacyAlertDisclosure = useDisclosure();
@@ -51,6 +58,18 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const createNewPost = useAppStore(state => state.singlePost.createNewPost);
   const [isCreatingNewPost, setIsCreatingNewPost] = useState(false);
 
+  useEffect(() => {
+    if (isNewPost) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      if (isNewPost) {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      }
+    };
+  }, []);
+
   const toggleViewMode = () => {
     setViewMode(viewMode === 'read' ? 'edit' : 'read');
   };
@@ -59,6 +78,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     setIsPreviewImageUploading(true);
     await updatePreviewImage(src);
     setIsPreviewImageUploading(false);
+    if (!madeChanges) setMadeChanges(true);
   };
 
   const handleTogglePrivacy = () => {
@@ -70,15 +90,18 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     setIsUpdatingPrivacy(true);
     await togglePostPrivacy();
     setIsUpdatingPrivacy(false);
+    if (!madeChanges) setMadeChanges(true);
     ref.current.oldPrivacy = undefined;
   };
 
-  const handleSummaryChange = (summary: string) => {
-    editSummary(summary);
+  const handleSummaryChange = async (summary: string) => {
+    await editSummary(summary);
+    if (!madeChanges) setMadeChanges(true);
   };
 
-  const handleTitleChange = (title: string) => {
-    editTitle(title);
+  const handleTitleChange = async (title: string) => {
+    await editTitle(title);
+    if (!madeChanges) setMadeChanges(true);
   };
 
   const handleRatePost = async () => {
@@ -89,7 +112,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   };
 
   const handleLanguageChange = async (language: EnPostLanguage) => {
-    changeLanguage(language);
+    await changeLanguage(language);
+    if (!madeChanges) setMadeChanges(true);
   };
 
   const handleCreateNewPost = async () => {
@@ -100,6 +124,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       navigate(`/post/${slug}/`);
     }
     setIsCreatingNewPost(false);
+    setMadeChanges(false);
+    window.removeEventListener('beforeunload', handleBeforeUnload);
   };
 
   const isPostAuthor =
