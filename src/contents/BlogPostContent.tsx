@@ -125,7 +125,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     }
     setIsCreatingNewPost(false);
     setMadeChanges(false);
-    window.removeEventListener('beforeunload', handleBeforeUnload);
+    if (slug) window.removeEventListener('beforeunload', handleBeforeUnload);
   };
 
   const isPostAuthor =
@@ -188,6 +188,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         toggleRating={handleRatePost}
         hasRated={post?.hasRated ?? false}
         isRating={isRating}
+        createNewPost={handleCreateNewPost}
+        isCreatingNewPost={isCreatingNewPost}
       />
       <Alert
         disclosure={privacyAlertDisclosure}
