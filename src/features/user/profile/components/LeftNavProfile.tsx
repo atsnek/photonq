@@ -1,7 +1,7 @@
 import {
   Avatar,
-  Box,
   Button,
+  Center,
   Divider,
   Flex,
   GridProps,
@@ -33,6 +33,8 @@ import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck'
 import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
 import TbUsers from '../../../../shared/components/icons/tabler/TbUsers';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import { formatNumber } from '../../../../shared/utils/utils';
+import TbEye from '../../../../shared/components/icons/tabler/TbEye';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -103,7 +105,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   const bioInputRef = useRef<HTMLTextAreaElement>(null);
 
   const userData = useAppStore(state => state.profile.profile);
-  const followers = useAppStore(state => state.profile.followers);
+  const profileStats = useAppStore(state => state.profile.stats);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const isFollowing = useAppStore(state => state.profile.isFollowing);
   const changeBio = useAppStore(state => state.profile.changeBio);
@@ -300,21 +302,40 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
         {userData.socials.length > 0 && (
           <Divider {...leftNavProfileStyling.bioDividers} />
         )}
-        {followers > 0 && (
-          <HStack spacing={1} mt={2} cursor="default">
-            <TbUsers />
-            <Text color="pages.userProfile.leftNav.followers.text.color">
-              <Text
-                as="span"
-                color="pages.userProfile.leftNav.followers.count.color"
-                mx={1}
-              >
-                {followers}
-              </Text>
-              follower{followers > 1 && 's'}
-            </Text>
+        <Center w="full">
+          <HStack spacing={3}>
+            {profileStats.followers > 0 && (
+              <HStack spacing={0} mt={2} cursor="default">
+                <TbUsers />
+                <Text color="pages.userProfile.leftNav.followers.text.color">
+                  <Text
+                    as="span"
+                    color="pages.userProfile.leftNav.followers.count.color"
+                    mx={1}
+                  >
+                    {profileStats.followers}
+                  </Text>
+                  follower{profileStats.followers > 1 && 's'}
+                </Text>
+              </HStack>
+            )}
+            {profileStats.views > 0 && (
+              <HStack spacing={0} mt={2} cursor="default">
+                <TbEye />
+                <Text color="pages.userProfile.leftNav.followers.text.color">
+                  <Text
+                    as="span"
+                    color="pages.userProfile.leftNav.followers.count.color"
+                    mx={1}
+                  >
+                    {formatNumber(profileStats.views)}
+                  </Text>
+                  view{profileStats.views > 1 && 's'}
+                </Text>
+              </HStack>
+            )}
           </HStack>
-        )}
+        </Center>
         {/* <Grid {...leftNavProfileStyling.socialInfo.grid}>
           {memoizedSocialLink}
         </Grid> */}

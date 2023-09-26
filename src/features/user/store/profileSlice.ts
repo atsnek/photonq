@@ -12,12 +12,20 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     activity: { items: [], totalCount: 0 },
     overviewPosts: { state: "loading", items: [], totalCount: 0 },
     searchPosts: { query: '', state: "inactive", items: [], totalCount: 0 },
-    followers: 0,
+    stats: {
+        followers: 0,
+        views: 0,
+        stars: 0,
+    },
     isFollowing: undefined,
     profile: undefined,
     fetchProfile: async (username) => {
         let isFollowing: boolean | undefined = undefined;
-        let followers: number = 0;
+        const stats: TProfileSlice['stats'] = {
+            followers: 0,
+            views: 0,
+            stars: 0,
+        }
 
         const [currentUser, currentUserError] = await sq.query(q => q.userMe);
 
@@ -29,8 +37,9 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
                 isFollowing = !!profile?.followers && profile?.followers()?.nodes.findIndex(f => f.follower.id === currentUser.id) !== -1;
             }
 
-            if (profile?.followers) {
-                followers = profile.followers().totalCount;
+            if (profile) {
+                stats.followers = profile.followers().totalCount;
+                stats.views = profile.views;
             }
 
             return {
@@ -48,7 +57,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         set(produce((state: TStoreState): void => {
             state.profile.profile = userData;
             state.profile.isFollowing = isFollowing;
-            state.profile.followers = followers;
+            state.profile.stats = stats;
         }))
         return true;
     },
@@ -183,7 +192,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         if (succeed) {
             set(produce((state: TStoreState): void => {
                 state.profile.isFollowing = !get().profile.isFollowing;
-                state.profile.followers += get().profile.isFollowing ? -1 : 1;
+                state.profile.stats.followers += get().profile.isFollowing ? -1 : 1;
             }))
         }
 

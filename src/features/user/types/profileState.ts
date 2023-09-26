@@ -1,5 +1,5 @@
 import { TPaginationData } from "../../../shared/types/pagination";
-import { EnPostLanguage, TPaginatedPostListData, TPostListData, TPostPreview, TSearchPostListData } from "../../post/types/post";
+import { EnPostLanguage, TPaginatedPostListData, TPostPreview, TSearchPostListData } from "../../post/types/post";
 import { TActivity } from "../activity/types/activity";
 import { TUser } from "./user";
 
@@ -9,7 +9,11 @@ export interface IProfileStateDefinition {
     overviewPosts: TPaginatedPostListData;
     searchPosts: TSearchPostListData;
     activity: TPaginationData<TActivity[]>;
-    followers: number;
+    stats: {
+        followers: number;
+        views: number;
+        stars: number;
+    };
     isFollowing?: boolean;
 }
 
