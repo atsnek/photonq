@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { EnPostLanguage, TPost } from '../types/post';
 import {
   Box,
+  Button,
   Divider,
   HStack,
   Heading,
@@ -30,6 +31,8 @@ interface IPostLeftNavProps {
   setPostPreviewImage: (src: File) => void;
   isPostPreviewImageUploading: boolean;
   handleLanguageChange: (language: EnPostLanguage) => void;
+  handleTogglePrivacy: () => void;
+  isUpdatingPrivacy: boolean;
 }
 
 /**
@@ -43,7 +46,9 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   handleSummaryChange,
   setPostPreviewImage,
   isPostPreviewImageUploading,
-  handleLanguageChange
+  handleLanguageChange,
+  handleTogglePrivacy,
+  isUpdatingPrivacy
 }) => {
   const navOffset = useNavOffset();
 
@@ -52,6 +57,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   if (!post) return <LeftNavPostReaderSkeleton />;
 
   const isPublic = post?.privacy === 'PUBLIC';
+  const privacyLabel = isPublic ? 'public' : 'private';
 
   return (
     <LeftNav
@@ -138,8 +144,19 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
         {canEdit && (
           <>
             <HStack>
-              <Tag size="sm" colorScheme={isPublic ? 'green' : 'yellow'}>
-                {isPublic ? 'public' : 'private'}
+              <Tag
+                h="auto"
+                as={Button}
+                size="sm"
+                colorScheme={isPublic ? 'green' : 'yellow'}
+                _hover={{
+                  bg: `pages.singlePost.leftNav.tags.privacy.${privacyLabel}.hover.bgColor`,
+                  color: `pages.singlePost.leftNav.tags.privacy.${privacyLabel}.hover.color`
+                }}
+                onClick={handleTogglePrivacy}
+                isDisabled={isUpdatingPrivacy}
+              >
+                {privacyLabel}
               </Tag>
               <Menu>
                 <MenuButton
@@ -148,7 +165,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                   h="fit-content"
                   colorScheme="gray"
                   _hover={{
-                    bg: 'gray.200'
+                    bg: 'pages.singlePost.leftNav.tags.language.hover.bgColor'
                   }}
                   cursor="pointer"
                 >

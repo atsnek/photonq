@@ -136,6 +136,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
           post={post}
           isPostPreviewImageUploading={isPreviewImageUploading}
           handleLanguageChange={handleLanguageChange}
+          handleTogglePrivacy={handleTogglePrivacy}
+          isUpdatingPrivacy={isUpdatingPrivacy}
         />
         {canEditPost ? (
           <PostEditor post={post} />

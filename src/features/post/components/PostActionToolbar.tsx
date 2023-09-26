@@ -4,7 +4,6 @@ import ActionToolbar from '../../../shared/components/action-toolbar/ActionToolb
 import { TActionToolbarItem } from '../../../shared/components/action-toolbar/types/actionToolbar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
-import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
 import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import useScrollPosition from '../../../shared/hooks/use-scroll-position';
 import { TPostViewMode } from '../types/post';
@@ -47,11 +46,6 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   const scrollPosition = useScrollPosition();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const previewImageInputRef = useRef<HTMLInputElement>(null);
-  // const deviceSpecificActionToolbarItems =
-  //   useBreakpointValue<TActionToolbarItem[]>({
-  //     base: [],
-  //     md: []
-  //   }) ?? [];
 
   const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (
