@@ -65,7 +65,7 @@ const Image: FC<ImageProps> = ({
       <Input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept=".jpg,.jpeg,.png,.gif"
         display="none"
         visibility="hidden"
         zIndex={-9999}

@@ -85,15 +85,15 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
             onClick: handleTogglePrivacy,
             hoverColor: 'components.postEditor.publish.hover.color',
             disabled: isTogglingPrivacy
-          },
-          {
-            order: 1,
-            icon: <TbDeviceFloppy />,
-            ariaLabel: 'Save this post',
-            tooltip: 'Save this post',
-            onClick: () => console.log('Save'),
-            hoverColor: 'components.postEditor.save.hover.color'
           }
+          // {
+          //   order: 1,
+          //   icon: <TbDeviceFloppy />,
+          //   ariaLabel: 'Save this post',
+          //   tooltip: 'Save this post',
+          //   onClick: () => console.log('Save'),
+          //   hoverColor: 'components.postEditor.save.hover.color'
+          // }
         );
       } else {
         actionToolbarItems.push({
@@ -144,7 +144,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
       <Input
         type="file"
         ref={previewImageInputRef}
-        accept="image/*"
+        accept=".jpg,.jpeg,.png,.gif"
         visibility="hidden"
         display="none"
         zIndex={-999}
