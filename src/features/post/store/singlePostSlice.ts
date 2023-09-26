@@ -39,9 +39,29 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
             }
         });
 
+        const [author, authorError] = await sq.query((q): TUser => {
+            const user = q.user({ id: post?.authorProfileId ?? '' })
+
+            if (post) {
+                post.language = user.profile?.language ?? EnPostLanguage.EN;
+            }
+
+
+            return {
+                id: user.id,
+                username: user.username,
+                displayName: getUserDisplayname(user),
+                bio: user.profile?.bio ?? null,
+                socials: [],
+                avatarUrl: user.details?.avatarURL ?? undefined,
+                location: undefined,
+            }
+        });
+
         set(produce((state: TStoreState) => {
             state.singlePost.isNewPost = true;
             state.singlePost.post = post;
+            state.singlePost.postAuthor = author;
         }))
     },
     editContent: async (content) => {
