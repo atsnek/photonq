@@ -29,6 +29,7 @@ import TbPlus from '../../shared/components/icons/tabler/TbPlus';
 import Link from '../../shared/components/Link';
 import { sq } from '@snek-functions/origin';
 import { formatPostDate } from '../../shared/utils/features/post';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostListControlsProps extends StackProps {
   fetchPosts: (query: string) => void;
@@ -46,6 +47,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
   setQuery,
   ...props
 }) => {
+  const isAuthenticated = useAuthenticationContext().user !== null;
   const [activeSortOption, setActiveSortOption] =
     useState<(typeof sortOptions)[number]['value']>('recent');
 
@@ -157,7 +159,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
             onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
           />
         )}
-        {showCreatePostButton && (
+        {showCreatePostButton && isAuthenticated && (
           <Tooltip openDelay={500} label="Create a new post">
             <IconButton
               as={Link}
