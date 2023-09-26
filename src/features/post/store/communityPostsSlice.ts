@@ -96,7 +96,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             };
         }));
     },
-    fetchSearchPosts: async (query, limit, offset) => {
+    fetchSearchPosts: async (query, limit, offset, language) => {
         if (!query.length) {
             set(produce((state: TStoreState) => {
                 state.communityPosts.searchPosts = { state: "inactive", items: [], totalCount: 0, query: query };
@@ -121,7 +121,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.nextCursor, currentUser);
+        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.nextCursor, currentUser, undefined, language);
 
         set(produce((state: TStoreState) => {
             state.communityPosts.searchPosts = {

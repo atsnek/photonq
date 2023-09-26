@@ -50,7 +50,7 @@ const PostsContent: FC = () => {
         <PostListControls
           // setPosts={setPostResults}
           w={{ base: 'full', md: '75%' }}
-          fetchPosts={query => fetchSearchPosts(query, 10, 0)}
+          fetchPosts={(query, lang) => fetchSearchPosts(query, 10, 0, lang)}
           showCreatePostButton
         />
         {searchPosts.state === 'inactive' ? (

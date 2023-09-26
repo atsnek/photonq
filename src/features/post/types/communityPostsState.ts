@@ -1,4 +1,4 @@
-import { TPaginatedPostListData, TPostPreview, TSearchPostListData } from "./post";
+import { EnPostLanguage, TPaginatedPostListData, TPostPreview, TSearchPostListData } from "./post";
 
 
 export interface ICommunityPostsStateDefinitions {
@@ -10,7 +10,7 @@ export interface ICommunityPostsStateDefinitions {
 export interface ICommunityPostsStateActions {
     fetchFeaturedPosts: (silent?: boolean) => void;
     fetchLatestPosts: (silent?: boolean) => void;
-    fetchSearchPosts: (query: string, limit: number, offset: number) => void;
+    fetchSearchPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage) => void;
     togglePostRating: (id: TPostPreview['id']) => Promise<boolean>;
 }
 

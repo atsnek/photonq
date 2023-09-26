@@ -1,5 +1,6 @@
 import { FC, ReactElement, ReactNode, useMemo } from 'react';
 import {
+  EnPostLanguage,
   IPostPreviewProps,
   TPaginatedPostListData,
   TPostListData,
@@ -26,7 +27,11 @@ import { TPaginationType } from '../../shared/types/pagination';
 import usePagination from '../../shared/hooks/use-pagination';
 
 interface IPostListProps extends StackProps {
-  fetchPosts?: (query: string, offset: number) => void;
+  fetchPosts?: (
+    query: string,
+    offset: number,
+    language?: EnPostLanguage
+  ) => void;
   fetchNextPagePosts?: () => void;
   postData: TPaginatedPostListData;
   itemsPerPage?: number;
@@ -144,9 +149,9 @@ const PostList: FC<IPostListProps> = ({
     }
   }
 
-  const handleFetchPosts = (query: string) => {
+  const handleFetchPosts = (query: string, language?: EnPostLanguage) => {
     if (query.length === 0) pagination.setCurrentPage(1);
-    if (fetchPosts) fetchPosts(query, 0);
+    if (fetchPosts) fetchPosts(query, 0, language);
   };
 
   const handleNextPage = async () => {
@@ -165,7 +170,6 @@ const PostList: FC<IPostListProps> = ({
     pagination.setCurrentPage(pagination.currentPage + 1);
   };
 
-  console.log('paginationData: ', pagination);
   return (
     <VStack w="full" gap={5} {...props}>
       {showControls && fetchPosts && (

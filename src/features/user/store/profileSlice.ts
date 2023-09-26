@@ -119,7 +119,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         return !!error;
     },
-    fetchSearchPosts: async (query, limit, offset) => {
+    fetchSearchPosts: async (query, limit, offset, language) => {
+        console.log("language", language);
 
         set(produce((state: TStoreState) => {
             if (query !== state.profile.searchPosts.query) {
@@ -140,11 +141,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
-        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id);
+        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id, language);
 
         let privatePosts: TPaginatedPostListData = { state: "inactive", items: [], totalCount: 0 };
         if (currentUser && currentUser?.id === currentProfile.id) {
-            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id);
+            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id, language);
         }
 
         const combinedPosts = [...publicPosts.items, ...privatePosts.items];

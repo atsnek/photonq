@@ -15,13 +15,11 @@ import {
   InputRightAddon,
   Select,
   Collapse,
-  Tooltip,
-  LinkBox,
-  LinkOverlay
+  Tooltip
 } from '@chakra-ui/react';
 import { ChangeEvent, FC, useMemo, useRef, useState } from 'react';
 import { TDebounceData } from '../../shared/types/comm';
-import { TPostListData, TPostPreview } from './types/post';
+import { EnPostLanguage, TPostListData, TPostPreview } from './types/post';
 import TbFilterDown from '../../shared/components/icons/tabler/TbFilterDown';
 import TbFilterUp from '../../shared/components/icons/tabler/TbFilterUp';
 import { wait } from '../../shared/utils/utils';
@@ -32,7 +30,7 @@ import { formatPostDate } from '../../shared/utils/features/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostListControlsProps extends StackProps {
-  fetchPosts: (query: string) => void;
+  fetchPosts: (query: string, language?: EnPostLanguage) => void;
   enableAdvancedSearch?: boolean;
   showCreatePostButton?: boolean;
   defaultQuery?: string;
@@ -56,6 +54,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
     state: 'inactive',
     timeout: undefined
   }); // Keep track of the current state of the search
+  const [filterLanguage, setFilterLanguage] = useState<EnPostLanguage>();
 
   const sortOptions = [
     {
@@ -110,9 +109,17 @@ const PostListControls: FC<IPostListControlsProps> = ({
 
     clearTimeout(stateRef.current.timeout);
     stateRef.current.timeout = setTimeout(async () => {
-      fetchPosts(query);
+      fetchPosts(query, filterLanguage);
     }, 300);
   };
+
+  const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const language =
+      EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage];
+    setFilterLanguage(language);
+    fetchPosts('', language);
+  };
+
   return (
     <VStack w="full">
       <HStack spacing={3} w="75%" {...props}>
@@ -185,9 +192,14 @@ const PostListControls: FC<IPostListControlsProps> = ({
             <InputRightAddon>Date to</InputRightAddon>
             <Input type="date" sx={{ borderRightRadius: 'lg' }} />
           </InputGroup>
-          <Select placeholder="Language" size="sm" borderRadius="lg">
-            <option value="english">English 🇺🇸</option>
-            <option value="german">German 🇦🇹</option>
+          <Select
+            placeholder="Language"
+            size="sm"
+            borderRadius="lg"
+            onChange={handleLanguageChange}
+          >
+            <option value="EN">English 🇺🇸</option>
+            <option value="DE">German 🇦🇹</option>
           </Select>
         </HStack>
       </Collapse>

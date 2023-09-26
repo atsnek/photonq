@@ -114,8 +114,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   } else {
     mainContent = (
       <PostList
-        fetchPosts={(query: string, offset: number) =>
-          fetchSearchPosts(query, SEARCH_LIMIT, offset)
+        fetchPosts={(query, offset, language) =>
+          fetchSearchPosts(query, SEARCH_LIMIT, offset, language)
         }
         postData={searchPosts}
         previewType="list"

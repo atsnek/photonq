@@ -1,5 +1,5 @@
 import { TPaginationData } from "../../../shared/types/pagination";
-import { TPaginatedPostListData, TPostListData, TPostPreview, TSearchPostListData } from "../../post/types/post";
+import { EnPostLanguage, TPaginatedPostListData, TPostListData, TPostPreview, TSearchPostListData } from "../../post/types/post";
 import { TActivity } from "../activity/types/activity";
 import { TUser } from "./user";
 
@@ -17,7 +17,7 @@ export interface IProfileStateActions {
     fetchProfile: (username: string, currentUserId?: string) => Promise<boolean>;
     fetchOverviewPosts: () => Promise<boolean>;
     fetchActivity: () => Promise<boolean>;
-    fetchSearchPosts: (query: string, limit: number, offset: number) => Promise<void>;
+    fetchSearchPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage) => Promise<void>;
     toggleFollow: () => Promise<boolean>;
     changeBio: (bio: string) => Promise<boolean>;
     togglePostRating: (id: TPostPreview['id'], source: 'overview' | 'search') => Promise<boolean>;

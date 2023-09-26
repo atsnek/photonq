@@ -1,6 +1,6 @@
-import { Connection_1, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
+import { Connection_1, LanguageInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
-import { TPaginatedPostListData, TPost, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
+import { EnPostLanguage, TPaginatedPostListData, TPost, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from "snek-query";
 import { sq } from '@snek-functions/origin';
@@ -57,10 +57,12 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
  * @param limit The amount of posts to fetch
  * @param privacy  The privacy of posts to fetch
  * @param cursor The cursor to fetch posts from (optional). If not provided, the first posts will be fetched
+ * @param currentUser The current user (if exists)
  * @param userId  The user id to fetch posts from (optional). If identical to the current user, private posts will be fetched as well
+ * @param language The language of posts to fetch (optional)
  * @returns The post list data
  */
-export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string): Promise<TPaginatedPostListData> => {
+export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string, language?: EnPostLanguage): Promise<TPaginatedPostListData> => {
     const [postConnection,] = await sq.query(q => {
         const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
             filters: { privacy: asEnumKey(PrivacyInputInput, privacy) },
@@ -74,6 +76,10 @@ export const searchPosts = async (searchQuery: string, limit: number, privacy: T
 
             if (userId) {
                 requestArgs.filters.userId = userId;
+            }
+
+            if (language) {
+                requestArgs.filters.language = asEnumKey(LanguageInputInput, language);
             }
         }
 
