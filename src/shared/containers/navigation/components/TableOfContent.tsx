@@ -4,11 +4,15 @@ import { useTocNavigation } from '../../../hooks/use-toc-navigation';
 import { TableOfContentItem } from '../../../types/navigation';
 import Link from '../../../components/Link';
 
+interface ITableOfContentProps {
+  mdxFieldName?: string;
+}
+
 /**
  * Component for the table of content.
  */
-const TableOfContent: FC = ({}) => {
-  const data = useTocNavigation('documentation');
+const TableOfContent: FC<ITableOfContentProps> = ({ mdxFieldName }) => {
+  const data = useTocNavigation(mdxFieldName ?? 'documentation');
 
   return (
     <VStack spacing={2}>

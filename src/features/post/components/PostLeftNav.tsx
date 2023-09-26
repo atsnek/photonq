@@ -66,7 +66,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
       w="max-content"
       isExpanded={true}
       display={{ base: 'none', md: 'flex' }}
-      top={isAuthenticated ? `${navOffset}` : '75px'}
+      top={isAuthenticated ? `${navOffset}` : '85px'}
       h={`calc(100vh - 100px  - ${navOffset})`}
       mr={10}
     >

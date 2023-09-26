@@ -21,6 +21,7 @@ const links = [
 
 interface IRightNavPostReaderProps {
   canEdit?: boolean;
+  slug: string;
 }
 
 //! This causes an hydration error (TableOfContent is the polluter)
@@ -28,12 +29,18 @@ interface IRightNavPostReaderProps {
 /**
  * Right navigation for reading a post.
  */
-const RightNavPostReader: FC<IRightNavPostReaderProps> = ({ canEdit }) => {
+const RightNavPostReader: FC<IRightNavPostReaderProps> = ({
+  canEdit,
+  slug
+}) => {
   const navTopOffset = useNavOffset();
 
   const isAuthenticated = useAuthenticationContext().user !== null;
 
-  const MemoizedToc = memo(TableOfContent, () => false);
+  const MemoizedToc = memo(
+    () => <TableOfContent mdxFieldName={`${slug}`} />,
+    () => false
+  );
 
   return (
     <Box position="sticky" top={`calc(0px + ${navTopOffset})`}>
@@ -46,7 +53,7 @@ const RightNavPostReader: FC<IRightNavPostReaderProps> = ({ canEdit }) => {
           On This Page
         </Text>
         <Flex as="nav" direction="column" mt={5}>
-          {/* <MemoizedToc /> */}
+          <MemoizedToc />
         </Flex>
         <Box
           mt={7}
