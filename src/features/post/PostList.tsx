@@ -153,13 +153,15 @@ const PostList: FC<IPostListProps> = ({
 
   const handleFetchPosts = (
     query: string,
+    offset?: number,
     language?: EnPostLanguage | null
   ) => {
+    if (query === currentQuery && postData.state === 'inactive') return; // This prevents the posts from being fetched because only the language has changed wile the feature is inactive
     if (query.length === 0) pagination.setCurrentPage(1);
     if (fetchPosts)
       fetchPosts(
         query,
-        0,
+        offset ?? 0,
         language === null ? undefined : language ?? filterLanguage
       );
   };
@@ -186,6 +188,7 @@ const PostList: FC<IPostListProps> = ({
         <PostListControls
           fetchPosts={handleFetchPosts}
           defaultQuery={defaultFilterQuery}
+          query={currentQuery ?? ''}
           setQuery={setFilterQuery}
           filterLanguage={filterLanguage}
           setFilterLanguage={setFilterLanguage}

@@ -30,10 +30,15 @@ import { formatPostDate } from '../../shared/utils/features/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostListControlsProps extends StackProps {
-  fetchPosts: (query: string, language?: EnPostLanguage | null) => void;
+  fetchPosts: (
+    query: string,
+    offset?: number,
+    language?: EnPostLanguage | null
+  ) => void;
   enableAdvancedSearch?: boolean;
   showCreatePostButton?: boolean;
   defaultQuery?: string;
+  query: string;
   setQuery?: (query: string) => void;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage: (language: EnPostLanguage) => void;
@@ -46,6 +51,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
   defaultQuery,
   filterLanguage,
   setFilterLanguage,
+  query,
   setQuery,
   ...props
 }) => {
@@ -117,15 +123,10 @@ const PostListControls: FC<IPostListControlsProps> = ({
   };
 
   const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log(
-      'value: ',
-      e.currentTarget.value,
-      EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage]
-    );
     const language =
       EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage];
     setFilterLanguage(language);
-    fetchPosts('', language ?? null);
+    fetchPosts(query, 0, language ?? null);
   };
 
   return (

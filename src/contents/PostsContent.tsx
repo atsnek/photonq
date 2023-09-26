@@ -1,7 +1,7 @@
 import { Box, Heading, VStack, keyframes, Container } from '@chakra-ui/react';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import PostList from '../features/post/PostList';
-import { TPostPreview } from '../features/post/types/post';
+import { EnPostLanguage, TPostPreview } from '../features/post/types/post';
 import PostListControls from '../features/post/PostListControls';
 import { useAppStore } from '../shared/store/store';
 
@@ -35,6 +35,8 @@ const PostsContent: FC = () => {
     state => state.communityPosts.fetchSearchPosts
   );
 
+  const [filterLanguage, setFilterLanguage] = useState<EnPostLanguage>();
+
   useEffect(() => {
     fetchFeaturedPosts();
     fetchLatestPosts();
@@ -48,10 +50,15 @@ const PostsContent: FC = () => {
     <Container maxW="7xl" mt={10}>
       <VStack>
         <PostListControls
+          filterLanguage={filterLanguage}
+          setFilterLanguage={setFilterLanguage}
           // setPosts={setPostResults}
           w={{ base: 'full', md: '75%' }}
-          fetchPosts={(query, lang) => fetchSearchPosts(query, 10, 0, lang)}
+          fetchPosts={(query, offset, lang) =>
+            fetchSearchPosts(query, 10, 0, lang ?? undefined)
+          }
           showCreatePostButton
+          query={searchPosts.query}
         />
         {searchPosts.state === 'inactive' ? (
           <>

@@ -141,11 +141,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
-        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id, language);
+        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", offset === 0 ? undefined : get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id, language);
 
         let privatePosts: TPaginatedPostListData = { state: "inactive", items: [], totalCount: 0 };
         if (currentUser && currentUser?.id === currentProfile.id) {
-            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id, language);
+            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", offset === 0 ? undefined : get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id, language);
         }
 
         const combinedPosts = [...publicPosts.items, ...privatePosts.items];

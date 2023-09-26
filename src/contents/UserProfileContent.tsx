@@ -31,7 +31,7 @@ interface IUserProfileContent {
  * Component for displaying a certain user profile.
  */
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
-  const SEARCH_LIMIT = 3;
+  const SEARCH_LIMIT = 10; //TODO: Get this outsourced to the store
 
   const { hash } = useLocation();
 
@@ -95,7 +95,6 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
             onClick={
               !isActive
                 ? () => {
-                    //TODO: Add a way to change the URL hash without reloading the page
                     setActiveTab(item.value);
                   }
                 : undefined
