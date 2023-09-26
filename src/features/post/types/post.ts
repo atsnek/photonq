@@ -1,6 +1,7 @@
 import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
 import { TPaginationData, TPaginationPageInfo } from '../../../shared/types/pagination';
 import { TUser } from '../../user/types/user';
+import { Language } from '@snek-functions/origin/dist/schema.generated';
 
 /**
  * A single post
@@ -22,10 +23,7 @@ import { TUser } from '../../user/types/user';
 export type TPostViewMode = 'read' | 'edit';
 export type TPostPrivacy = 'PUBLIC' | 'PRIVATE' | 'FRIENDS';
 
-export enum EnPostLanguage {
-  ENGLISH = 'EN',
-  GERMAN = 'DE',
-}
+export { Language as EnPostLanguage }
 
 //TODO: This type needs to be improved to better fit the needs of the current system
 export type TPost = {
@@ -41,7 +39,7 @@ export type TPost = {
   canManage?: boolean;
   privacy: TPostPrivacy,
   authorProfileId: string | null;
-  language: EnPostLanguage;
+  language: Language;
 }
 
 /**

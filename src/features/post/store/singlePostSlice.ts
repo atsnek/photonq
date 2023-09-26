@@ -6,7 +6,7 @@ import { sq } from "@snek-functions/origin";
 import { asEnumKey } from "snek-query";
 import { EnPostLanguage, TPost, TPostPrivacy } from "../types/post";
 import { TUser } from "../../user/types/user";
-import { LanguageInputInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { Language, LanguageInputInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { osg } from "@atsnek/jaen";
 import { MdastRoot } from "@atsnek/jaen-fields-mdx/dist/MdxField/components/types";
 
@@ -35,7 +35,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
                 summary: 'A short cool summary',
                 title: 'My new post',
                 canManage: true,
-                language: EnPostLanguage.ENGLISH,
+                language: EnPostLanguage.EN,
             }
         });
 
@@ -131,7 +131,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
                 summary: post.summary,
                 title: post.title,
                 canManage: currentUser?.id === post.profileId,
-                language: EnPostLanguage.ENGLISH, //TODO: Implement this
+                language: post.language ?? Language.EN,
             };
         });
 
@@ -232,12 +232,18 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         return !!error && updateSucceed;
     },
     changeLanguage: async (language) => {
-        //TODO: Implement this
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
             state.singlePost.post.language = language;
         }))
-        return true;
+
+        const postId = get().singlePost.post?.id;
+
+        if (!postId) return false;
+
+        const [, error] = await sq.mutate(m => m.socialPostUpdate({ postId, values: { language: asEnumKey(LanguageInputInput, language) } }));
+
+        return !!error;
     },
     reset: () => {
         set(produce((state: TStoreState) => {

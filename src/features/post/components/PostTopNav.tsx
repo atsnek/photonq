@@ -137,7 +137,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                       Language
                     </MenuButton>
                     <PostLanguageMenuList
-                      currentLanguage={EnPostLanguage.ENGLISH}
+                      currentLanguage={post?.language ?? EnPostLanguage.EN}
                       changeLanguage={handleLanguageChange}
                     />
                   </Menu>
