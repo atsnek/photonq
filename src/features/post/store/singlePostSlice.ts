@@ -179,10 +179,17 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
 
         return true;
     },
-    createNewPost: async () => {
+    createNewPost: async (file) => {
         const post = get().singlePost.post;
 
         if (!post) return undefined;
+
+        let previewImage: string = '';
+        if (file) {
+            // Until now, the selected image was only handeled locally, so we need to upload it to the server first.
+            const { fileUrl } = await osg.uploadFile(file);
+            previewImage = fileUrl;
+        }
 
         let content: string = '';
         try {
@@ -192,7 +199,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         const [newPost, error] = await sq.mutate(q => q.socialPostCreate({
             values: {
                 title: post.title,
-                avatarURL: post.avatarUrl ?? '',
+                avatarURL: previewImage,
                 content,
                 privacy: asEnumKey(PrivacyInputInput, post.privacy),
                 language: asEnumKey(LanguageInputInput, post.language),
@@ -221,14 +228,26 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
     },
     updatePreviewImage: async (src) => {
         if (!get().singlePost.post) return false;
+
+        if (get().singlePost.isNewPost) {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(src);
+
+            fileReader.onload = () => {
+                set(produce((state: TStoreState) => {
+                    if (!state.singlePost.post) return;
+                    state.singlePost.post.avatarUrl = fileReader.result as string;
+                }));
+            }
+            return true;
+        }
+
         const { fileUrl } = await osg.uploadFile(src);
 
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
             state.singlePost.post.avatarUrl = fileUrl;
         }))
-
-        if (get().singlePost.isNewPost) return true;
 
         await sq.mutate(q => q.socialPostUpdate({ postId: get().singlePost.post?.id ?? '', values: { avatarURL: fileUrl } }));
 

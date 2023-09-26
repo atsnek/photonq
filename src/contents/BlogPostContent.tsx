@@ -57,6 +57,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
   const createNewPost = useAppStore(state => state.singlePost.createNewPost);
   const [isCreatingNewPost, setIsCreatingNewPost] = useState(false);
+  const [newPostPreviewImage, setNewPostPreviewImage] = useState<File>();
 
   useEffect(() => {
     if (isNewPost) {
@@ -79,6 +80,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     await updatePreviewImage(src);
     setIsPreviewImageUploading(false);
     if (!madeChanges) setMadeChanges(true);
+    if (isNewPost) setNewPostPreviewImage(src);
   };
 
   const handleTogglePrivacy = () => {
@@ -118,7 +120,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
 
   const handleCreateNewPost = async () => {
     setIsCreatingNewPost(true);
-    const slug = await createNewPost();
+    const slug = await createNewPost(newPostPreviewImage);
     if (slug) {
       await wait(500); // Make sure the new post is created before navigating to it
       navigate(`/post/${slug}/`);

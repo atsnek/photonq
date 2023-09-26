@@ -25,6 +25,8 @@ interface IPostActionToolbarProps {
   setPostPreviewImage?: (src: File) => void;
   handleTogglePrivacy?: () => void;
   isTogglingPrivacy?: boolean;
+  createNewPost: () => void;
+  isCreatingNewPost: boolean;
 }
 
 /**
@@ -40,7 +42,9 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   toggleRating,
   setPostPreviewImage,
   handleTogglePrivacy,
-  isTogglingPrivacy
+  isTogglingPrivacy,
+  createNewPost,
+  isCreatingNewPost
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
   const scrollPosition = useScrollPosition();
@@ -95,8 +99,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
           ariaLabel: 'Create new post',
           tooltip: 'Create new post',
           icon: <TbDeviceIpadPlus />,
-          onClick: () => {},
-          disabled: false,
+          onClick: createNewPost,
+          disabled: isCreatingNewPost,
           hoverColor: 'components.postEditor.save.hover.color'
         });
       }
