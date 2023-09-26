@@ -1,4 +1,4 @@
-import { FC, ReactElement, ReactNode, useMemo } from 'react';
+import { FC, ReactElement, ReactNode, useMemo, useState } from 'react';
 import {
   EnPostLanguage,
   IPostPreviewProps,
@@ -80,6 +80,8 @@ const PostList: FC<IPostListProps> = ({
     hasMoreItems: !!postData.nextCursor || postData.hasMore
   });
 
+  const [filterLanguage, setFilterLanguage] = useState<EnPostLanguage>();
+
   const memoizedPostPreviews = useMemo(() => {
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
     let PreviewSkeletonComp:
@@ -149,9 +151,17 @@ const PostList: FC<IPostListProps> = ({
     }
   }
 
-  const handleFetchPosts = (query: string, language?: EnPostLanguage) => {
+  const handleFetchPosts = (
+    query: string,
+    language?: EnPostLanguage | null
+  ) => {
     if (query.length === 0) pagination.setCurrentPage(1);
-    if (fetchPosts) fetchPosts(query, 0, language);
+    if (fetchPosts)
+      fetchPosts(
+        query,
+        0,
+        language === null ? undefined : language ?? filterLanguage
+      );
   };
 
   const handleNextPage = async () => {
@@ -159,7 +169,7 @@ const PostList: FC<IPostListProps> = ({
     // 1. the pagination type is async
     // 2. the pagination type is pages
     // 3. There are more posts to fetch
-    // 4. The current page is the last page (exlcuding the placeholder last page)
+    // 4. The current page is the last synced page (exlcuding the placeholder last page)
     if (
       fetchNextPagePosts &&
       paginationType === 'async-pages' &&
@@ -177,6 +187,8 @@ const PostList: FC<IPostListProps> = ({
           fetchPosts={handleFetchPosts}
           defaultQuery={defaultFilterQuery}
           setQuery={setFilterQuery}
+          filterLanguage={filterLanguage}
+          setFilterLanguage={setFilterLanguage}
         />
       )}
       {postData.state !== 'inactive' &&
@@ -229,7 +241,8 @@ const PostList: FC<IPostListProps> = ({
                 ? () => {
                     fetchPosts(
                       currentQuery ?? defaultFilterQuery ?? '',
-                      pagination.currentItems.length
+                      pagination.currentItems.length,
+                      filterLanguage
                     );
                   }
                 : undefined

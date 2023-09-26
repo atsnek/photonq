@@ -30,11 +30,13 @@ import { formatPostDate } from '../../shared/utils/features/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostListControlsProps extends StackProps {
-  fetchPosts: (query: string, language?: EnPostLanguage) => void;
+  fetchPosts: (query: string, language?: EnPostLanguage | null) => void;
   enableAdvancedSearch?: boolean;
   showCreatePostButton?: boolean;
   defaultQuery?: string;
   setQuery?: (query: string) => void;
+  filterLanguage?: EnPostLanguage;
+  setFilterLanguage: (language: EnPostLanguage) => void;
 }
 
 const PostListControls: FC<IPostListControlsProps> = ({
@@ -42,6 +44,8 @@ const PostListControls: FC<IPostListControlsProps> = ({
   enableAdvancedSearch = true,
   showCreatePostButton,
   defaultQuery,
+  filterLanguage,
+  setFilterLanguage,
   setQuery,
   ...props
 }) => {
@@ -54,7 +58,6 @@ const PostListControls: FC<IPostListControlsProps> = ({
     state: 'inactive',
     timeout: undefined
   }); // Keep track of the current state of the search
-  const [filterLanguage, setFilterLanguage] = useState<EnPostLanguage>();
 
   const sortOptions = [
     {
@@ -109,15 +112,20 @@ const PostListControls: FC<IPostListControlsProps> = ({
 
     clearTimeout(stateRef.current.timeout);
     stateRef.current.timeout = setTimeout(async () => {
-      fetchPosts(query, filterLanguage);
+      fetchPosts(query);
     }, 300);
   };
 
   const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    console.log(
+      'value: ',
+      e.currentTarget.value,
+      EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage]
+    );
     const language =
       EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage];
     setFilterLanguage(language);
-    fetchPosts('', language);
+    fetchPosts('', language ?? null);
   };
 
   return (
@@ -197,6 +205,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
             size="sm"
             borderRadius="lg"
             onChange={handleLanguageChange}
+            defaultValue={filterLanguage}
           >
             <option value="EN">English 🇺🇸</option>
             <option value="DE">German 🇦🇹</option>

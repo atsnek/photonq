@@ -31,7 +31,7 @@ interface IUserProfileContent {
  * Component for displaying a certain user profile.
  */
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
-  const SEARCH_LIMIT = 10;
+  const SEARCH_LIMIT = 3;
 
   const { hash } = useLocation();
 
