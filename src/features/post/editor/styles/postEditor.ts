@@ -27,6 +27,14 @@ const smtPostEditorComponent = {
             color: 'features.rating.rated.color'
         },
     },
+    delete: {
+        hover: {
+            color: {
+                default: 'red.500',
+                _dark: 'red.300'
+            }
+        }
+    }
 }
 
 export default smtPostEditorComponent

@@ -25,6 +25,12 @@ const smtActionToolbarComponent = {
             },
         },
     },
+    divider: {
+        borderColor: {
+            default: 'gray.200',
+            _dark: 'gray.600',
+        }
+    }
 };
 
 export default smtActionToolbarComponent;

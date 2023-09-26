@@ -36,6 +36,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const privacyAlertDisclosure = useDisclosure();
+  const deletePostDisclosure = useDisclosure();
+  const [isDeletingPost, setIsDeletingPost] = useState(false);
   const isAuthenticated = useAuthenticationContext().user !== null;
   const ref = useRef<{ oldPrivacy?: string }>({ oldPrivacy: undefined }); // This allows us to retrieve the old privacy value to keep the same alert styling while optimistically updating the post's privacy
 
@@ -58,6 +60,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const createNewPost = useAppStore(state => state.singlePost.createNewPost);
   const [isCreatingNewPost, setIsCreatingNewPost] = useState(false);
   const [newPostPreviewImage, setNewPostPreviewImage] = useState<File>();
+
+  const deletePost = useAppStore(state => state.singlePost.deletePost);
 
   useEffect(() => {
     if (isNewPost) {
@@ -130,6 +134,17 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     if (slug) window.removeEventListener('beforeunload', handleBeforeUnload);
   };
 
+  const handleDeletePost = () => {
+    deletePostDisclosure.onOpen();
+  };
+
+  const handleDeletePostConfirmation = async () => {
+    setIsDeletingPost(true);
+    const succeed = await deletePost();
+    if (succeed) navigate(`/user/${currentUser?.username}`);
+    setIsDeletingPost(false);
+  };
+
   const isPostAuthor =
     isNewPost || (!!currentUser && currentUser?.id === author?.id);
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
@@ -146,7 +161,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         post={post}
         setPostPreviewImage={setPostPreviewImage}
         isAuthor={isPostAuthor}
-        canEdit={canEditPost}
+        canEdit={canEditPost && !isDeletingPost}
         handleRatePost={handleRatePost}
         isRating={isRating}
         handleLanguageChange={handleLanguageChange}
@@ -160,7 +175,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
           handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
           isPostAuthor={isPostAuthor}
-          canEdit={canEditPost}
+          canEdit={canEditPost && !isDeletingPost}
           post={post}
           isPostPreviewImageUploading={isPreviewImageUploading}
           handleLanguageChange={handleLanguageChange}
@@ -192,6 +207,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         isRating={isRating}
         createNewPost={handleCreateNewPost}
         isCreatingNewPost={isCreatingNewPost}
+        handleDeletePost={handleDeletePost}
+        isDeletingPost={isDeletingPost}
       />
       <Alert
         disclosure={privacyAlertDisclosure}
@@ -209,6 +226,13 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
             : 'Are you sure you want to publish this post? This post will be visible to everyone.'
         }
         header={isPostPublic ? 'Unpublish this post?' : 'Publish this post?'}
+      />
+      <Alert
+        disclosure={deletePostDisclosure}
+        body="Are you sure you want to delete this post? This action cannot be undone."
+        header="Delete this post?"
+        confirmationAction={handleDeletePostConfirmation}
+        confirmationProps={{ variant: 'filledRed' }}
       />
     </>
   );

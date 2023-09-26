@@ -12,6 +12,7 @@ import TbEye from '../../../shared/components/icons/tabler/TbEye';
 import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
+import TbSquareRoundedX from '../../../shared/components/icons/tabler/TbSquareRoundedX';
 
 interface IPostActionToolbarProps {
   viewMode?: TPostViewMode;
@@ -27,6 +28,8 @@ interface IPostActionToolbarProps {
   isTogglingPrivacy?: boolean;
   createNewPost: () => void;
   isCreatingNewPost: boolean;
+  handleDeletePost?: () => void;
+  isDeletingPost?: boolean;
 }
 
 /**
@@ -44,7 +47,9 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   handleTogglePrivacy,
   isTogglingPrivacy,
   createNewPost,
-  isCreatingNewPost
+  isCreatingNewPost,
+  handleDeletePost,
+  isDeletingPost
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
   const scrollPosition = useScrollPosition();
@@ -64,6 +69,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
 
   const actionToolbarItems: TActionToolbarItem[] = [];
 
+  const areActionsDisabled = isDeletingPost;
+
   if (canEdit) {
     if (handleTogglePrivacy) {
       actionToolbarItems.push({
@@ -71,7 +78,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
         icon: <TbPhoto fontSize="xl" />,
         onClick: () => previewImageInputRef.current?.click(),
         tooltip: 'Upload new image',
-        ariaLabel: 'Upload new image'
+        ariaLabel: 'Upload new image',
+        disabled: areActionsDisabled
       });
       if (!isNewPost) {
         actionToolbarItems.push(
@@ -82,7 +90,19 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
             tooltip: isPublic ? 'Unpublish this post' : 'Publish this post',
             onClick: handleTogglePrivacy,
             hoverColor: 'components.postEditor.publish.hover.color',
-            disabled: isTogglingPrivacy
+            disabled: isTogglingPrivacy || areActionsDisabled
+          },
+          {
+            order: 3 // Divider Item
+          },
+          {
+            order: 3,
+            icon: <TbSquareRoundedX />,
+            ariaLabel: 'Delete post',
+            tooltip: 'Delete post',
+            onClick: handleDeletePost,
+            disabled: isDeletingPost || areActionsDisabled,
+            hoverColor: 'components.postEditor.delete.hover.color'
           }
           // {
           //   order: 1,
@@ -100,7 +120,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
           tooltip: 'Create new post',
           icon: <TbDeviceIpadPlus />,
           onClick: createNewPost,
-          disabled: isCreatingNewPost,
+          disabled: isCreatingNewPost || areActionsDisabled,
           hoverColor: 'components.postEditor.save.hover.color'
         });
       }
@@ -116,7 +136,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
           />
         ),
         onClick: toggleRating,
-        disabled: isTogglingPrivacy,
+        disabled: isTogglingPrivacy || areActionsDisabled,
         tooltip: hasRated ? 'Unrate this post' : 'Rate this post',
         ariaLabel: hasRated ? 'Unrated this post' : 'Rate this post',
         hoverColor: 'components.postEditor.rate.hover.color'
@@ -132,6 +152,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
       ariaLabel: isEditing ? 'Preview this post' : 'Edit this post',
       tooltip: isEditing ? 'Preview this post' : 'Edit this post',
       onClick: toggleViewMode,
+      disabled: areActionsDisabled,
       hoverColor: 'components.postEditor.viewMode.hover.color'
     });
   }

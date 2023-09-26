@@ -22,6 +22,7 @@ export interface ISinglePostStateActions {
     togglePrivacy: () => Promise<boolean>;
     changeLanguage: (language: EnPostLanguage) => Promise<boolean>;
     reset: () => void;
+    deletePost: () => Promise<boolean>;
 }
 
 export type TSinglePostSlice = ISinglePostStateDefinition & ISinglePostStateActions;

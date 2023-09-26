@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { TActionToolbarItem } from './types/actionToolbar';
-import { HStack, Tooltip, IconButton, Box } from '@chakra-ui/react';
+import { HStack, Tooltip, IconButton, Box, Divider } from '@chakra-ui/react';
 
 interface IActionTOolbarProps {
   actions: TActionToolbarItem[];
@@ -21,38 +21,54 @@ const ActionToolbar: FC<IActionTOolbarProps> = ({
       if (b.order === undefined) return -1;
       return a.order - b.order;
     })
-    .map((action, index) => (
-      <Tooltip
-        key={index}
-        label={action.tooltip}
-        placement="top"
-        marginBottom={1}
-      >
-        <IconButton
-          icon={action.icon}
-          fontSize="xl"
-          size="md"
-          aria-label={action.ariaLabel}
-          variant="ghost"
-          borderRadius="full"
-          onClick={action.onClick}
-          color="components.actionToolbar.button.color"
-          {...action.buttonProps}
-          _hover={{
-            bgColor: 'components.actionToolbar.button._hover.bgColor',
-            color:
-              action.hoverColor ??
-              'components.actionToolbar.button._hover.color',
-            ...action.buttonProps?._hover
-          }}
-          isDisabled={action.disabled}
-          transition={`background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out ${
-            index * 0.05
-          }s`}
-          transform={compactMode ? 'translateY(50px)' : undefined}
+    .map((item, index) => {
+      // We can distinguish between actions and dividers by checking for the onClick prop existence
+      if ('onClick' in item) {
+        return (
+          <Tooltip
+            key={index}
+            label={item.tooltip}
+            placement="top"
+            marginBottom={1}
+          >
+            <IconButton
+              icon={item.icon}
+              fontSize="xl"
+              size="md"
+              aria-label={item.ariaLabel}
+              variant="ghost"
+              borderRadius="full"
+              onClick={item.onClick}
+              color="components.actionToolbar.button.color"
+              {...item.buttonProps}
+              _hover={{
+                bgColor: 'components.actionToolbar.button._hover.bgColor',
+                color:
+                  item.hoverColor ??
+                  'components.actionToolbar.button._hover.color',
+                ...item.buttonProps?._hover
+              }}
+              isDisabled={item.disabled}
+              transition={`background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out ${
+                index * 0.05
+              }s`}
+              transform={compactMode ? 'translateY(50px)' : undefined}
+            />
+          </Tooltip>
+        );
+      }
+
+      // Otherwise, it's a divider
+      return (
+        <Divider
+          orientation="vertical"
+          h={5}
+          borderColor="components.actionToolbar.divider.borderColor"
+          opacity={1}
+          {...item.style}
         />
-      </Tooltip>
-    ));
+      );
+    });
 
   return (
     <HStack

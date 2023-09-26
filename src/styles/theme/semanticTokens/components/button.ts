@@ -106,6 +106,28 @@ const smtButtonComponent = {
       },
     }
   },
+  filledRed: {
+    color: {
+      default: 'gray.800',
+      _dark: 'gray.200'
+    },
+    bgColor: {
+      default: 'red.400',
+      _dark: 'red.700'
+    },
+    hover: {
+      bgColor: {
+        default: 'red.300',
+        _dark: 'red.600'
+      },
+    },
+    loading: {
+      bgColor: {
+        default: 'red.300',
+        _dark: 'red.400'
+      },
+    },
+  },
 };
 
 export default smtButtonComponent;

@@ -138,6 +138,21 @@ const themeButtonComponent: ComponentStyleConfig = {
         }
       }
     },
+    'filledRed': {
+      color: 'components.button.filledRed.color',
+      bgColor: 'components.button.filledRed.bgColor',
+      _hover: {
+        bgColor: 'components.button.filledRed.hover.bgColor'
+      },
+      _loading: {
+        color: 'white',
+        opacity: 1,
+        bgColor: 'components.button.filledRed.loading.bgColor',
+        _hover: {
+          bgColor: 'components.button.filledRed.loading.bgColor'
+        }
+      }
+    },
   },
 };
 
