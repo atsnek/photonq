@@ -25,6 +25,7 @@ export interface IProfileStateActions {
     toggleFollow: () => Promise<boolean>;
     changeBio: (bio: string) => Promise<boolean>;
     togglePostRating: (id: TPostPreview['id'], source: 'overview' | 'search') => Promise<boolean>;
+    reset: () => void;
 }
 
 export type TProfileSlice = IProfileStateDefinition & IProfileStateActions;

@@ -35,6 +35,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   const { hash } = useLocation();
 
+  const resetProfile = useAppStore(state => state.profile.reset);
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
   const fetchOverviewPosts = useAppStore(
@@ -51,6 +52,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { user } = useAuthenticationContext();
 
   useEffect(() => {
+    resetProfile();
+    setPostFilterQuery(undefined);
+    setActiveTab(hash === '#posts' ? 'posts' : 'overview');
     fetchProfile(username, user?.id).then(async succeed => {
       if (!succeed) navigate('/docs/');
       fetchOverviewPosts();
@@ -130,11 +134,6 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       />
     );
   }
-
-  useEffect(() => {
-    setActiveTab(hash === '#posts' ? 'posts' : 'overview');
-  }, []);
-
   //TODO: Fix hydration issue
   return (
     <>

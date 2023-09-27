@@ -2,13 +2,13 @@ import { TProfile } from "../types/user";
 import { sq } from "@snek-functions/origin";
 import { produce } from "immer";
 import { TStoreSlice, TStoreState } from "../../../shared/types/store";
-import { TProfileSlice } from "../types/profileState";
+import { IProfileStateDefinition, TProfileSlice } from "../types/profileState";
 import { buildUserActivities, changeUserFollowingState } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
 import { buildPostPreview, searchPosts, togglePostRating } from "../../../shared/utils/features/post";
 import { TPaginatedPostListData } from "../../post/types/post";
 
-export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
+const initState: IProfileStateDefinition = {
     activity: { items: [], totalCount: 0 },
     overviewPosts: { state: "loading", items: [], totalCount: 0 },
     searchPosts: { query: '', state: "inactive", items: [], totalCount: 0 },
@@ -19,6 +19,10 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     },
     isFollowing: undefined,
     profile: undefined,
+}
+
+export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
+    ...initState,
     fetchProfile: async (username) => {
         let isFollowing: boolean | undefined = undefined;
         const stats: TProfileSlice['stats'] = {
@@ -241,4 +245,14 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         return succeed;
     },
+    reset: () => {
+        set(produce((state: TStoreState) => {
+            state.profile.activity = initState.activity;
+            state.profile.overviewPosts = initState.overviewPosts;
+            state.profile.profile = initState.profile;
+            state.profile.searchPosts = initState.searchPosts;
+            state.profile.stats = initState.stats;
+            state.profile.isFollowing = initState.isFollowing;
+        }))
+    }
 })
