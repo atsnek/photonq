@@ -78,7 +78,7 @@ const PostReader: FC<IPostReaderProps> = ({
           />
         </VStack>
       </Box>
-      <RightNavPostReader slug={post?.id ?? '' + post?.slug ?? ''} />
+      <RightNavPostReader postContent={post?.content} />
     </Stack>
   );
 };

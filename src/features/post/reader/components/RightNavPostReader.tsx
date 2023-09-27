@@ -5,6 +5,7 @@ import RightNav from '../../../../shared/containers/navigation/RightNav';
 import TableOfContent from '../../../../shared/containers/navigation/components/TableOfContent';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
 
 // Example links - these would probably be fetched from a CMS or other data source
 const links = [
@@ -20,8 +21,8 @@ const links = [
 ];
 
 interface IRightNavPostReaderProps {
+  postContent?: MdastRoot;
   canEdit?: boolean;
-  slug: string;
 }
 
 //! This causes an hydration error (TableOfContent is the polluter)
@@ -30,15 +31,15 @@ interface IRightNavPostReaderProps {
  * Right navigation for reading a post.
  */
 const RightNavPostReader: FC<IRightNavPostReaderProps> = ({
-  canEdit,
-  slug
+  postContent,
+  canEdit
 }) => {
   const navTopOffset = useNavOffset();
 
   const isAuthenticated = useAuthenticationContext().user !== null;
 
   const MemoizedToc = memo(
-    () => <TableOfContent mdxFieldName={`${slug}`} />,
+    () => <TableOfContent fieldContent={postContent} />,
     () => false
   );
 
