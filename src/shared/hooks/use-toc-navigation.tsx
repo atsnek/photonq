@@ -30,7 +30,10 @@ export const useTocNavigation = (mdxFieldName?: string, fieldContent?: any) => {
         let id = text
           .toLowerCase()
           .replace(/ |%/g, '-') // Removed spaces and % from the id
-          .replace(/\p{Extended_Pictographic}/u, ''); // Remove emojis from the id
+          .replace(
+            /[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]| /g,
+            ''
+          ); // Remove emojis from the id
 
         if (takenIds[id]) {
           takenIds[id] += 1;
