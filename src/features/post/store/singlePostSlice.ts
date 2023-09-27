@@ -224,7 +224,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         });
 
         const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
-        return error.length === 0 && updateSucceed;
+        return error?.length === 0 && updateSucceed;
     },
     updatePreviewImage: async (src) => {
         if (!get().singlePost.post) return false;
@@ -268,7 +268,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         const [, error] = await sq.mutate(m => m.socialPostUpdate({ postId, values: { privacy: asEnumKey(PrivacyInputInput, newPrivacy) } }));
 
         const updateSucceed = await get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
-        return error.length === 0 && updateSucceed;
+        return error?.length === 0 && updateSucceed;
     },
     changeLanguage: async (language) => {
         set(produce((state: TStoreState) => {
@@ -282,7 +282,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
 
         const [, error] = await sq.mutate(m => m.socialPostUpdate({ postId, values: { language: asEnumKey(LanguageInputInput, language) } }));
 
-        return error.length === 0;
+        return error?.length === 0;
     },
     reset: () => {
         set(produce((state: TStoreState) => {
@@ -298,6 +298,6 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
 
         const [, error] = await sq.mutate(m => m.socialPostDelete({ postId }));
 
-        return error.length === 0;
+        return error?.length === 0;
     }
 })
