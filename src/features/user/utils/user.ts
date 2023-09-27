@@ -62,7 +62,7 @@ export const buildUserActivities = (q: Query, activityEdges: Edge_1_2_3_4_5[], c
         totalCount: activityEdges.length,
     };
 
-    activityEdges.forEach(async (ae) => {
+    activityEdges.filter(fe => fe.node.type !== "blog_create" || fe.node.post !== null).forEach(async (ae) => {
         const { createdAt, post, type, follow } = ae.node;
         //! Because of snek-query, we must access all post props we need here, otherwise it won't be fetched
         post?.slug;
