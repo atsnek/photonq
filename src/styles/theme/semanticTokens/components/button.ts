@@ -108,7 +108,7 @@ const smtButtonComponent = {
   },
   filledRed: {
     color: {
-      default: 'gray.800',
+      default: 'white',
       _dark: 'gray.200'
     },
     bgColor: {
