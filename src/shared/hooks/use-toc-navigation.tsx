@@ -1,55 +1,45 @@
-import { useMemo } from 'react';
-import { useField } from '@atsnek/jaen';
-import { TableOfContentItem } from '../types/navigation';
-import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
+import {useMemo} from 'react'
+import {useField} from '@atsnek/jaen'
+import GithubSlugger from 'github-slugger'
+import {TableOfContentItem} from '../types/navigation'
+import {MdastRoot} from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types'
 
-export const useTocNavigation = (mdxFieldName?: string, fieldContent?: any) => {
-  let value: MdastRoot | undefined = undefined;
-  if (mdxFieldName && !fieldContent) {
-    const field = useField<MdastRoot>(mdxFieldName, 'IMA:MdxField');
-    value = field.value || field.staticValue;
-  } else {
-    value = fieldContent;
-  }
+export const useTocNavigation = (
+  mdxFieldName?: string,
+  fieldContent?: MdastRoot
+) => {
+  const field = useField<MdastRoot>(mdxFieldName || '', 'IMA:MdxField')
+
+  const value = useMemo(() => {
+    return fieldContent || field.value || field.staticValue
+  }, [field])
 
   const headings = useMemo(() => {
+    const slugger = new GithubSlugger()
+
     if (!value) {
-      return [];
+      return []
     }
 
-    const headings: TableOfContentItem[] = [];
-
-    const takenIds: {
-      [key: string]: number;
-    } = {};
+    const headings: TableOfContentItem[] = []
 
     value.children.forEach(node => {
       if (node.type === 'heading') {
         // @ts-expect-error
-        const text = node.children[0]?.value || '';
-        let id = text
-          .toLowerCase()
-          .replace(/ |%/g, '-') // Removed spaces and % from the id
-          .replace(
-            /[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]| /g,
-            ''
-          ); // Remove emojis from the id
+        const text = node.children[0]?.value || ''
 
-        if (takenIds[id]) {
-          takenIds[id] += 1;
-          id = `${id}-${takenIds[id]}`;
-        }
+        let id = slugger.slug(text)
 
         headings.push({
           id,
           level: node.depth,
           text
-        });
+        })
       }
-    });
+    })
 
-    return headings;
-  }, [value]);
+    return headings
+  }, [value])
 
-  return headings;
-};
+  return headings
+}
