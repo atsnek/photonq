@@ -41,7 +41,7 @@ interface IPostListControlsProps extends StackProps {
   query: string;
   setQuery?: (query: string) => void;
   filterLanguage?: EnPostLanguage;
-  setFilterLanguage: (language: EnPostLanguage) => void;
+  setFilterLanguage?: (language: EnPostLanguage) => void;
 }
 
 const PostListControls: FC<IPostListControlsProps> = ({
@@ -89,28 +89,28 @@ const PostListControls: FC<IPostListControlsProps> = ({
     }
   ] as const;
 
-  const sortMenuItems = useMemo(() => {
-    return sortOptions.map((option, i) => {
-      const isActive = option.value === activeSortOption;
-      return (
-        <MenuItem
-          key={i}
-          onClick={option.onClick}
-          position={isActive ? 'relative' : undefined}
-        >
-          {option.label}
-          {isActive && (
-            <CheckIcon
-              position="absolute"
-              right={3}
-              boxSize="10px"
-              color="brand.500"
-            />
-          )}
-        </MenuItem>
-      );
-    });
-  }, [sortOptions, activeSortOption]);
+  // const sortMenuItems = useMemo(() => {
+  //   return sortOptions.map((option, i) => {
+  //     const isActive = option.value === activeSortOption;
+  //     return (
+  //       <MenuItem
+  //         key={i}
+  //         onClick={option.onClick}
+  //         position={isActive ? 'relative' : undefined}
+  //       >
+  //         {option.label}
+  //         {isActive && (
+  //           <CheckIcon
+  //             position="absolute"
+  //             right={3}
+  //             boxSize="10px"
+  //             color="brand.500"
+  //           />
+  //         )}
+  //       </MenuItem>
+  //     );
+  //   });
+  // }, [sortOptions, activeSortOption]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.trim();
@@ -123,6 +123,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
   };
 
   const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    if (!setFilterLanguage) return;
     const language =
       EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage];
     setFilterLanguage(language);
@@ -143,7 +144,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
           // focusBorderColor="components.input._focus.borderColor"
           // bgColor="components.input._focus.borderColor"
         />
-        <Menu>
+        {/* <Menu>
           <MenuButton
             as={Button}
             colorScheme="gray"
@@ -164,7 +165,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
             Sort
           </MenuButton>
           <MenuList zIndex={99}>{sortMenuItems}</MenuList>
-        </Menu>
+        </Menu> */}
         {enableAdvancedSearch && (
           <IconButton
             colorScheme="gray"
@@ -201,16 +202,18 @@ const PostListControls: FC<IPostListControlsProps> = ({
             <InputRightAddon>Date to</InputRightAddon>
             <Input type="date" sx={{ borderRightRadius: 'lg' }} />
           </InputGroup>
-          <Select
-            placeholder="Language"
-            size="sm"
-            borderRadius="lg"
-            onChange={handleLanguageChange}
-            defaultValue={filterLanguage}
-          >
-            <option value="EN">English 🇺🇸</option>
-            <option value="DE">German 🇦🇹</option>
-          </Select>
+          {!!setFilterLanguage && (
+            <Select
+              placeholder="Language"
+              size="sm"
+              borderRadius="lg"
+              onChange={handleLanguageChange}
+              defaultValue={filterLanguage}
+            >
+              <option value="EN">English 🇺🇸</option>
+              <option value="DE">German 🇦🇹</option>
+            </Select>
+          )}
         </HStack>
       </Collapse>
     </VStack>

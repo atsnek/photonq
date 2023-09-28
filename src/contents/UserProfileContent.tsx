@@ -9,6 +9,7 @@ import TbUser from '../shared/components/icons/tabler/TbUser';
 import TbBook from '../shared/components/icons/tabler/TbBook';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../shared/store/store';
+import { EnPostLanguage } from '../features/post/types/post';
 
 const tabNavItems = [
   {
@@ -47,6 +48,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
 
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
+  const [postFilterLanguage, setPostFilterLanguage] =
+    useState<EnPostLanguage>();
   const [activeTab, setActiveTab] =
     useState<(typeof tabNavItems)[number]['value']>('posts');
   const { user } = useAuthenticationContext();
@@ -131,6 +134,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         showControls
         maxItems={SEARCH_LIMIT}
         showPostPrivacy={isOwnProfile}
+        filterLanguage={postFilterLanguage}
+        setFilterLanguage={setPostFilterLanguage}
       />
     );
   }

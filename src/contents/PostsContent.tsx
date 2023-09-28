@@ -35,12 +35,17 @@ const PostsContent: FC = () => {
     state => state.communityPosts.fetchSearchPosts
   );
 
-  const [filterLanguage, setFilterLanguage] = useState<EnPostLanguage>();
+  const filterLanguage = useAppStore(
+    state => state.communityPosts.postLanguage
+  );
+  const setFilterLanguage = useAppStore(
+    state => state.communityPosts.setPostLanguage
+  );
 
   useEffect(() => {
     fetchFeaturedPosts();
     fetchLatestPosts();
-  }, []);
+  }, [filterLanguage]);
 
   const toggleRating = async (id: TPostPreview['id']) => {
     return await togglePostRating(id);

@@ -4,7 +4,7 @@ import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { asEnumKey } from "snek-query";
-import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { FiltersInput_1Input, LanguageInputInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { TPostPreview } from "../types/post";
 
 
@@ -12,17 +12,31 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
     featuredPosts: { state: 'loading', items: [], totalCount: 0 },
     latestPosts: { state: 'loading', items: [], totalCount: 0 },
     searchPosts: { state: 'inactive', items: [], totalCount: 0, query: '' },
+    postLanguage: undefined,
     fetchFeaturedPosts: async (silent) => {
         if (!silent) {
             set(produce((state: TStoreState) => {
-                state.communityPosts.featuredPosts.state = 'loading';
+                state.communityPosts.featuredPosts = {
+                    items: [],
+                    totalCount: 0,
+                    nextCursor: undefined,
+                    prevCursor: undefined,
+                    hasMore: false,
+                    state: 'loading'
+                }
             }))
         }
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
+        const filters: FiltersInput_1Input = {}
+        const postLanguage = get().communityPosts.postLanguage;
+        if (postLanguage) {
+            filters.language = asEnumKey(LanguageInputInput, postLanguage);
+        }
+
         const [rawPosts, rawError] = await sq.query(q => {
-            const postComm = q.allSocialPostTrending({ first: 4 });
+            const postComm = q.allSocialPostTrending({ first: 4, filters });
             //! Existing issue: see post utils -> buildPostPreview
             postComm?.nodes.forEach(pn => {
                 try {
@@ -121,7 +135,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.nextCursor, currentUser, undefined, language);
+        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.nextCursor, currentUser, undefined, language ?? get().communityPosts.postLanguage);
 
         set(produce((state: TStoreState) => {
             state.communityPosts.searchPosts = {
@@ -155,5 +169,10 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         await Promise.all([get().communityPosts.fetchFeaturedPosts(true), get().communityPosts.fetchLatestPosts(true)]);
         return true;
+    },
+    setPostLanguage: (language) => {
+        set(produce((state: TStoreState) => {
+            state.communityPosts.postLanguage = language;
+        }))
     },
 });

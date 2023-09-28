@@ -47,6 +47,8 @@ interface IPostListProps extends StackProps {
   showNoListResult?: boolean;
   showPostPrivacy?: boolean;
   toggleRating: (id: TPostPreview['id']) => void;
+  filterLanguage?: EnPostLanguage;
+  setFilterLanguage?: (language: EnPostLanguage) => void;
 }
 
 /**
@@ -69,6 +71,8 @@ const PostList: FC<IPostListProps> = ({
   showNoListResult = true,
   showPostPrivacy,
   toggleRating,
+  filterLanguage,
+  setFilterLanguage,
   ...props
 }) => {
   const usePages = paginationType === 'pages';
@@ -79,8 +83,6 @@ const PostList: FC<IPostListProps> = ({
     type: paginationType,
     hasMoreItems: !!postData.nextCursor || postData.hasMore
   });
-
-  const [filterLanguage, setFilterLanguage] = useState<EnPostLanguage>();
 
   const memoizedPostPreviews = useMemo(() => {
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
