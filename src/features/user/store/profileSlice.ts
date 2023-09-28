@@ -278,6 +278,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             state.profile.overviewPosts = initState.overviewPosts;
             state.profile.profile = initState.profile;
             state.profile.searchPosts = initState.searchPosts;
+            state.profile.searchPostLanguage = initState.searchPostLanguage;
+            state.profile.searchPostsDateRange = initState.searchPostsDateRange;
             state.profile.stats = initState.stats;
             state.profile.isFollowing = initState.isFollowing;
         }))

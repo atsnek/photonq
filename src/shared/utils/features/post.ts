@@ -1,4 +1,4 @@
-import { Connection_1, LanguageInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
+import { LanguageInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
 import { EnPostLanguage, TPaginatedPostListData, TPost, TPostDateRange, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
