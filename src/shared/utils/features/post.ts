@@ -70,8 +70,6 @@ export const searchPosts = async (searchQuery: string, limit: number, privacy: T
             first: limit,
         };
 
-        console.log("received date range", dateRange)
-
         if (requestArgs.filters) {
             if (searchQuery.length > 0) {
                 requestArgs.filters.query = searchQuery;

@@ -9,7 +9,6 @@ import TbUser from '../shared/components/icons/tabler/TbUser';
 import TbBook from '../shared/components/icons/tabler/TbBook';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../shared/store/store';
-import { EnPostLanguage } from '../features/post/types/post';
 import { POST_FETCH_LIMIT } from './PostsContent';
 
 const tabNavItems = [

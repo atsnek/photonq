@@ -156,11 +156,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const [currentUser,] = await sq.query(q => q.userMe);
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
+        const isOwnProfile = !!currentUser && currentUser.id === currentProfile.id;
 
-        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", offset === 0 ? undefined : get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id, language ?? get().profile.searchPostLanguage, dateRange ?? get().profile.searchPostsDateRange);
+        const publicPosts = await searchPosts(query, isOwnProfile ? Math.ceil(limit / 2) : limit, "PUBLIC", offset === 0 ? undefined : get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id, language ?? get().profile.searchPostLanguage, dateRange ?? get().profile.searchPostsDateRange);
 
         let privatePosts: TPaginatedPostListData = { state: "inactive", items: [], totalCount: 0 };
-        if (currentUser && currentUser?.id === currentProfile.id) {
+        if (isOwnProfile) {
             privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", offset === 0 ? undefined : get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id, language ?? get().profile.searchPostLanguage, dateRange ?? get().profile.searchPostsDateRange);
         }
 
