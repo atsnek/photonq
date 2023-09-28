@@ -22,6 +22,7 @@ import { Language } from '@snek-functions/origin/dist/schema.generated';
 
 export type TPostViewMode = 'read' | 'edit';
 export type TPostPrivacy = 'PUBLIC' | 'PRIVATE' | 'FRIENDS';
+export type TPostDateRange = { from: Date | undefined, to: Date | undefined }
 
 export { Language as EnPostLanguage }
 

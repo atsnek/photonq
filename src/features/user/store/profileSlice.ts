@@ -7,11 +7,14 @@ import { buildUserActivities, changeUserFollowingState } from "../utils/user";
 import { useAppStore } from "../../../shared/store/store";
 import { buildPostPreview, searchPosts, togglePostRating } from "../../../shared/utils/features/post";
 import { TPaginatedPostListData } from "../../post/types/post";
+import { POST_FETCH_LIMIT } from "../../../contents/PostsContent";
 
 const initState: IProfileStateDefinition = {
     activity: { items: [], totalCount: 0 },
     overviewPosts: { state: "loading", items: [], totalCount: 0 },
     searchPosts: { query: '', state: "inactive", items: [], totalCount: 0 },
+    searchPostLanguage: undefined,
+    searchPostsDateRange: { from: undefined, to: undefined },
     stats: {
         followers: 0,
         views: 0,
@@ -132,7 +135,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         return !!error;
     },
-    fetchSearchPosts: async (query, limit, offset, language) => {
+    fetchSearchPosts: async (query, limit, offset, language, dateRange) => {
         console.log("language", language);
 
         set(produce((state: TStoreState) => {
@@ -154,11 +157,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const currentProfile = useAppStore.getState().profile.profile;
         if (!currentProfile) return;
 
-        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", offset === 0 ? undefined : get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id, language);
+        const publicPosts = await searchPosts(query, Math.ceil(limit / 2), "PUBLIC", offset === 0 ? undefined : get().profile.searchPosts.publicPageInfo?.nextCursor, currentUser, currentProfile?.id, language ?? get().profile.searchPostLanguage, dateRange ?? get().profile.searchPostsDateRange);
 
         let privatePosts: TPaginatedPostListData = { state: "inactive", items: [], totalCount: 0 };
         if (currentUser && currentUser?.id === currentProfile.id) {
-            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", offset === 0 ? undefined : get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id, language);
+            privatePosts = await searchPosts(query, Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length), "PRIVATE", offset === 0 ? undefined : get().profile.searchPosts.privatePageInfo?.nextCursor, currentUser, currentProfile?.id, language ?? get().profile.searchPostLanguage, dateRange ?? get().profile.searchPostsDateRange);
         }
 
         const combinedPosts = [...publicPosts.items, ...privatePosts.items];
@@ -244,6 +247,29 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         }
 
         return succeed;
+    },
+    setSearchPostLanguage: (language) => {
+        set(produce((state: TStoreState) => {
+            state.profile.searchPostLanguage = language;
+            state.profile.searchPosts.nextCursor = undefined;
+        }))
+
+        get().profile.fetchSearchPosts(get().profile.searchPosts.query, POST_FETCH_LIMIT, 0, language);
+    },
+    setSearchPostsDateRange: (from, to) => {
+        set(produce((state: TStoreState) => {
+            // null is only used to reset the date
+            // undefined is used to keep the current value
+            // a date value is used to set the date
+            if (from !== undefined) state.profile.searchPostsDateRange.from = from ?? undefined;
+            if (to !== undefined) state.profile.searchPostsDateRange.to = to ?? undefined;
+
+            state.profile.searchPosts.nextCursor = undefined;
+        }))
+
+        const searchPostsDateRange = { from: from ?? get().profile.searchPostsDateRange.from, to: to ?? get().profile.searchPostsDateRange.to };
+
+        get().profile.fetchSearchPosts(get().profile.searchPosts.query, POST_FETCH_LIMIT, 0, undefined, searchPostsDateRange);
     },
     reset: () => {
         set(produce((state: TStoreState) => {

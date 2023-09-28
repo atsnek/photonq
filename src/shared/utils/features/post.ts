@@ -1,6 +1,6 @@
 import { Connection_1, LanguageInputInput, Post, PrivacyInputInput, Query, User } from '@snek-functions/origin/dist/schema.generated';
 import { format } from 'date-fns';
-import { EnPostLanguage, TPaginatedPostListData, TPost, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
+import { EnPostLanguage, TPaginatedPostListData, TPost, TPostDateRange, TPostPreview, TPostPrivacy } from '../../../features/post/types/post';
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from "snek-query";
 import { sq } from '@snek-functions/origin';
@@ -60,14 +60,17 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
  * @param currentUser The current user (if exists)
  * @param userId  The user id to fetch posts from (optional). If identical to the current user, private posts will be fetched as well
  * @param language The language of posts to fetch (optional)
+ * @param dateRange The date range of posts to fetch (optional)
  * @returns The post list data
  */
-export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string, language?: EnPostLanguage): Promise<TPaginatedPostListData> => {
+export const searchPosts = async (searchQuery: string, limit: number, privacy: TPostPrivacy, cursor?: string, currentUser?: t.Nullable<User>, userId?: string, language?: EnPostLanguage, dateRange?: TPostDateRange): Promise<TPaginatedPostListData> => {
     const [postConnection,] = await sq.query(q => {
         const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
             filters: { privacy: asEnumKey(PrivacyInputInput, privacy) },
             first: limit,
         };
+
+        console.log("received date range", dateRange)
 
         if (requestArgs.filters) {
             if (searchQuery.length > 0) {
@@ -80,6 +83,13 @@ export const searchPosts = async (searchQuery: string, limit: number, privacy: T
 
             if (language) {
                 requestArgs.filters.language = asEnumKey(LanguageInputInput, language);
+            }
+
+            if (dateRange?.from) {
+                requestArgs.filters.from = `${dateRange.from.getFullYear()}-${dateRange.from.getMonth() + 1}-${dateRange.from.getDate()}`;
+            }
+            if (dateRange?.to) {
+                requestArgs.filters.to = `${dateRange.to.getFullYear()}-${dateRange.to.getMonth() + 1}-${dateRange.to.getDate()}`;
             }
         }
 

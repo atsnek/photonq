@@ -42,6 +42,11 @@ interface IPostListControlsProps extends StackProps {
   setQuery?: (query: string) => void;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
+  dateRange?: { from: Date | undefined; to: Date | undefined };
+  setDateRange?: (
+    from: Date | null | undefined,
+    to: Date | null | undefined
+  ) => void;
 }
 
 const PostListControls: FC<IPostListControlsProps> = ({
@@ -53,6 +58,8 @@ const PostListControls: FC<IPostListControlsProps> = ({
   setFilterLanguage,
   query,
   setQuery,
+  dateRange,
+  setDateRange,
   ...props
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
@@ -64,6 +71,9 @@ const PostListControls: FC<IPostListControlsProps> = ({
     state: 'inactive',
     timeout: undefined
   }); // Keep track of the current state of the search
+
+  const dateFromRef = useRef<HTMLInputElement>(null);
+  const dateToRef = useRef<HTMLInputElement>(null);
 
   const sortOptions = [
     {
@@ -196,12 +206,58 @@ const PostListControls: FC<IPostListControlsProps> = ({
         style={{ width: '75%' }}
       >
         <HStack gap={5} w="full">
-          <InputGroup size="sm">
-            <InputLeftAddon borderLeftRadius="lg">Date from</InputLeftAddon>
-            <Input type="date" />
-            <InputRightAddon>Date to</InputRightAddon>
-            <Input type="date" sx={{ borderRightRadius: 'lg' }} />
-          </InputGroup>
+          {!!setDateRange && (
+            <InputGroup size="sm">
+              <InputLeftAddon borderLeftRadius="lg">Date from</InputLeftAddon>
+              <Input
+                ref={dateFromRef}
+                type="date"
+                onChange={e => {
+                  const date = e.currentTarget.valueAsDate;
+
+                  if (!date) return;
+
+                  let dateTo: Date | null | undefined = undefined;
+                  if (
+                    date.getTime() >
+                    (dateToRef.current?.valueAsDate?.getTime() ?? 0)
+                  ) {
+                    if (!dateToRef.current) return;
+                    dateToRef.current.value = '';
+                    dateTo = null;
+                  }
+
+                  setDateRange(
+                    isNaN(date.getTime()) ? undefined : date,
+                    dateTo
+                  );
+                }}
+              />
+              <InputRightAddon>Date to</InputRightAddon>
+              <Input
+                ref={dateToRef}
+                type="date"
+                sx={{ borderRightRadius: 'lg' }}
+                onChange={e => {
+                  const date = e.currentTarget.valueAsDate;
+                  if (!date) return;
+                  let dateFrom: Date | null | undefined = undefined;
+                  if (
+                    date.getTime() <
+                    (dateFromRef.current?.valueAsDate?.getTime() ?? 0)
+                  ) {
+                    if (!dateFromRef.current) return;
+                    dateFromRef.current.value = '';
+                    dateFrom = null;
+                  }
+                  setDateRange(
+                    dateFrom,
+                    isNaN(date.getTime()) ? undefined : date
+                  );
+                }}
+              />
+            </InputGroup>
+          )}
           {!!setFilterLanguage && (
             <Select
               placeholder="Language"

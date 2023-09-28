@@ -3,6 +3,7 @@ import {
   EnPostLanguage,
   IPostPreviewProps,
   TPaginatedPostListData,
+  TPostDateRange,
   TPostListData,
   TPostPreview
 } from './types/post';
@@ -25,12 +26,15 @@ import PostListNoResults from './preview/components/PostListNoResults';
 import { query } from '../../pages';
 import { TPaginationType } from '../../shared/types/pagination';
 import usePagination from '../../shared/hooks/use-pagination';
+import { POST_FETCH_LIMIT } from '../../contents/PostsContent';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (
     query: string,
+    limit: number,
     offset: number,
-    language?: EnPostLanguage
+    language?: EnPostLanguage,
+    dateRange?: TPostDateRange
   ) => void;
   fetchNextPagePosts?: () => void;
   postData: TPaginatedPostListData;
@@ -49,6 +53,11 @@ interface IPostListProps extends StackProps {
   toggleRating: (id: TPostPreview['id']) => void;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
+  dateRange?: { from: Date | undefined; to: Date | undefined };
+  setDateRange?: (
+    from: Date | null | undefined,
+    to: Date | null | undefined
+  ) => void;
 }
 
 /**
@@ -73,6 +82,8 @@ const PostList: FC<IPostListProps> = ({
   toggleRating,
   filterLanguage,
   setFilterLanguage,
+  dateRange,
+  setDateRange,
   ...props
 }) => {
   const usePages = paginationType === 'pages';
@@ -163,6 +174,7 @@ const PostList: FC<IPostListProps> = ({
     if (fetchPosts)
       fetchPosts(
         query,
+        POST_FETCH_LIMIT,
         offset ?? 0,
         language === null ? undefined : language ?? filterLanguage
       );
@@ -194,6 +206,8 @@ const PostList: FC<IPostListProps> = ({
           setQuery={setFilterQuery}
           filterLanguage={filterLanguage}
           setFilterLanguage={setFilterLanguage}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
         />
       )}
       {postData.state !== 'inactive' &&
@@ -246,6 +260,7 @@ const PostList: FC<IPostListProps> = ({
                 ? () => {
                     fetchPosts(
                       currentQuery ?? defaultFilterQuery ?? '',
+                      POST_FETCH_LIMIT,
                       pagination.currentItems.length,
                       filterLanguage
                     );

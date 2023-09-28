@@ -5,6 +5,8 @@ import { EnPostLanguage, TPostPreview } from '../features/post/types/post';
 import PostListControls from '../features/post/PostListControls';
 import { useAppStore } from '../shared/store/store';
 
+export const POST_FETCH_LIMIT = 3;
+
 const gradientAnimation = keyframes`
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
@@ -42,6 +44,11 @@ const PostsContent: FC = () => {
     state => state.communityPosts.setPostLanguage
   );
 
+  const filterDateRange = useAppStore(state => state.communityPosts.dateRange);
+  const setFilterDateRange = useAppStore(
+    state => state.communityPosts.setDateRange
+  );
+
   useEffect(() => {
     fetchFeaturedPosts();
     fetchLatestPosts();
@@ -60,8 +67,9 @@ const PostsContent: FC = () => {
           // setPosts={setPostResults}
           w={{ base: 'full', md: '75%' }}
           fetchPosts={(query, offset, lang) =>
-            fetchSearchPosts(query, 10, 0, lang ?? undefined)
+            fetchSearchPosts(query, POST_FETCH_LIMIT, 0, lang ?? undefined)
           }
+          setDateRange={setFilterDateRange}
           showCreatePostButton
           query={searchPosts.query}
         />
@@ -134,6 +142,13 @@ const PostsContent: FC = () => {
         ) : (
           <PostList
             mt={10}
+            fetchPosts={(query, offset, lang) => {
+              fetchSearchPosts(
+                searchPosts.query,
+                POST_FETCH_LIMIT,
+                searchPosts.items.length
+              );
+            }}
             postData={searchPosts}
             toggleRating={toggleRating}
             paginationType="load-more"
@@ -145,4 +160,3 @@ const PostsContent: FC = () => {
 };
 
 export default PostsContent;
-1;

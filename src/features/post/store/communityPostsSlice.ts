@@ -6,6 +6,7 @@ import { buildPostPreview, searchPosts } from "../../../shared/utils/features/po
 import { asEnumKey } from "snek-query";
 import { FiltersInput_1Input, LanguageInputInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { TPostPreview } from "../types/post";
+import { POST_FETCH_LIMIT } from "../../../contents/PostsContent";
 
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set, get) => ({
@@ -13,6 +14,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
     latestPosts: { state: 'loading', items: [], totalCount: 0 },
     searchPosts: { state: 'inactive', items: [], totalCount: 0, query: '' },
     postLanguage: undefined,
+    dateRange: { from: undefined, to: undefined },
     fetchFeaturedPosts: async (silent) => {
         if (!silent) {
             set(produce((state: TStoreState) => {
@@ -65,7 +67,6 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         }))
     },
     fetchLatestPosts: async (silent) => {
-        const FETCH_LIMIT = 10;
         if (!silent) {
             set(produce((state: TStoreState) => {
                 state.communityPosts.latestPosts.state = 'loading';
@@ -75,7 +76,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         const [currentUser,] = await sq.query(q => q.userMe);
 
         const [postConnection, rawError] = await sq.query(q => {
-            const postComm = q.allSocialPost({ first: FETCH_LIMIT, after: get().communityPosts.latestPosts.nextCursor, filters: { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
+            const postComm = q.allSocialPost({ first: POST_FETCH_LIMIT, after: get().communityPosts.latestPosts.nextCursor, filters: { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
             //! Existing issue: see post utils -> buildPostPreview
             postComm?.pageInfo.endCursor;
             postComm?.pageInfo.hasNextPage;
@@ -102,7 +103,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             state.communityPosts.latestPosts = {
                 state: 'success',
                 items: postConnection?.pageInfo.hasPreviousPage ? [...state.communityPosts.latestPosts.items, ...posts] : posts,
-                itemsPerPage: FETCH_LIMIT,
+                itemsPerPage: POST_FETCH_LIMIT,
                 totalCount: posts.length,
                 nextCursor: postConnection?.pageInfo?.hasNextPage && postConnection.pageInfo.endCursor ? postConnection?.pageInfo.endCursor : undefined,
                 prevCursor: postConnection?.pageInfo?.hasPreviousPage && postConnection.pageInfo.startCursor ? postConnection?.pageInfo.startCursor : undefined,
@@ -110,7 +111,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             };
         }));
     },
-    fetchSearchPosts: async (query, limit, offset, language) => {
+    fetchSearchPosts: async (query, limit, offset, language, dateRange) => {
         if (!query.length) {
             set(produce((state: TStoreState) => {
                 state.communityPosts.searchPosts = { state: "inactive", items: [], totalCount: 0, query: query };
@@ -135,7 +136,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
-        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.nextCursor, currentUser, undefined, language ?? get().communityPosts.postLanguage);
+        const posts = await searchPosts(query, limit, 'PUBLIC', get().communityPosts.searchPosts.nextCursor, currentUser, undefined, language ?? get().communityPosts.postLanguage, dateRange ?? get().communityPosts.dateRange);
 
         set(produce((state: TStoreState) => {
             state.communityPosts.searchPosts = {
@@ -145,6 +146,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
                     : [...state.communityPosts.searchPosts.items, ...posts.items],
                 hasMore: posts.hasMore,
                 totalCount: posts.totalCount,
+                nextCursor: posts.nextCursor,
                 query: query
             };
         }));
@@ -174,5 +176,20 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         set(produce((state: TStoreState) => {
             state.communityPosts.postLanguage = language;
         }))
+    },
+    setDateRange: (from, to) => {
+        set(produce((state: TStoreState) => {
+            // null is only used to reset the date
+            // undefined is used to keep the current value
+            // a date value is used to set the date
+            if (from !== undefined) state.communityPosts.dateRange.from = from ?? undefined;
+            if (to !== undefined) state.communityPosts.dateRange.to = to ?? undefined;
+
+            state.communityPosts.searchPosts.nextCursor = undefined;
+        }))
+
+        const dateRange = { from: from ?? get().communityPosts.dateRange.from, to: to ?? get().communityPosts.dateRange.to };
+
+        get().communityPosts.fetchSearchPosts(get().communityPosts.searchPosts.query, POST_FETCH_LIMIT, 0, get().communityPosts.postLanguage, dateRange);
     },
 });

@@ -10,6 +10,7 @@ import TbBook from '../shared/components/icons/tabler/TbBook';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../shared/store/store';
 import { EnPostLanguage } from '../features/post/types/post';
+import { POST_FETCH_LIMIT } from './PostsContent';
 
 const tabNavItems = [
   {
@@ -32,8 +33,6 @@ interface IUserProfileContent {
  * Component for displaying a certain user profile.
  */
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
-  const SEARCH_LIMIT = 10; //TODO: Get this outsourced to the store
-
   const { hash } = useLocation();
 
   const resetProfile = useAppStore(state => state.profile.reset);
@@ -46,10 +45,21 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const searchPosts = useAppStore(state => state.profile.searchPosts);
   const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
+  const searchPostLanguage = useAppStore(
+    state => state.profile.searchPostLanguage
+  );
+  const setSearchPostLanguage = useAppStore(
+    state => state.profile.setSearchPostLanguage
+  );
+  const togglePostRating = useAppStore(state => state.profile.togglePostRating);
 
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
-  const [postFilterLanguage, setPostFilterLanguage] =
-    useState<EnPostLanguage>();
+  const searchPostDateRange = useAppStore(
+    state => state.profile.searchPostsDateRange
+  );
+  const setSearchPostDateRange = useAppStore(
+    state => state.profile.setSearchPostsDateRange
+  );
   const [activeTab, setActiveTab] =
     useState<(typeof tabNavItems)[number]['value']>('posts');
   const { user } = useAuthenticationContext();
@@ -71,7 +81,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       searchPosts.items.length === 0 &&
       searchPosts.query.length === 0
     ) {
-      fetchSearchPosts('', SEARCH_LIMIT, 0);
+      fetchSearchPosts('', POST_FETCH_LIMIT, 0);
     }
   }, [activeTab]);
 
@@ -120,8 +130,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   } else {
     mainContent = (
       <PostList
-        fetchPosts={(query, offset, language) =>
-          fetchSearchPosts(query, SEARCH_LIMIT, offset, language)
+        fetchPosts={(query, limit, offset, language) =>
+          fetchSearchPosts(query, POST_FETCH_LIMIT, offset, language)
         }
         postData={searchPosts}
         previewType="list"
@@ -129,13 +139,15 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         defaultFilterQuery={postFilterQuery}
         setFilterQuery={setPostFilterQuery}
         currentQuery={postFilterQuery}
-        toggleRating={() => {}} //TODO: implement toggleLike with API call
+        toggleRating={id => togglePostRating(id, 'search')}
         hidePostAuthor
         showControls
-        maxItems={SEARCH_LIMIT}
+        maxItems={POST_FETCH_LIMIT}
         showPostPrivacy={isOwnProfile}
-        filterLanguage={postFilterLanguage}
-        setFilterLanguage={setPostFilterLanguage}
+        filterLanguage={searchPostLanguage}
+        setFilterLanguage={setSearchPostLanguage}
+        dateRange={searchPostDateRange}
+        setDateRange={setSearchPostDateRange}
       />
     );
   }
