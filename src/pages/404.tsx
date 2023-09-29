@@ -1,115 +1,163 @@
 import * as React from 'react';
-import { Link, HeadFC, PageProps } from 'gatsby';
+import { PageProps } from 'gatsby';
 import { PageConfig } from '@atsnek/jaen';
-import { LightMode, GlobalStyle, Progress, Center } from '@chakra-ui/react';
+import { Progress, Center, Divider, UnorderedList } from '@chakra-ui/react';
 
-import {
-  Box,
-  Flex,
-  Grid,
-  GridItem,
-  Heading,
-  List,
-  ListItem,
-  Text,
-  useBreakpointValue
-} from '@chakra-ui/react';
+import { Box, Grid, GridItem, Heading, ListItem, Text } from '@chakra-ui/react';
+import { useNavOffset } from '../shared/hooks/use-nav-offset';
 
 function VennDiagram() {
-  const vennBaseSize = useBreakpointValue({ base: '100px', md: '200px' });
-
   return (
-    <Flex as="main" justifyContent="center" alignItems="center" height="100vh">
-      <Grid
-        templateColumns={`repeat(3, ${vennBaseSize})`}
-        templateAreas="'left center right'"
-        gap={4}
+    <Grid
+      templateColumns="repeat(3, 12.5rem)"
+      gridTemplateAreas="'left center right'"
+    >
+      <GridItem
+        gridRow={1}
+        gridColumnStart="left"
+        gridColumnEnd="center"
+        bgColor="#f53b57"
+        border="2px solid rgba(0, 0, 0, 0.2)"
+        boxShadow="inset 12.5rem #d2dae2"
+        borderRadius="full"
+        h="25rem"
+      ></GridItem>
+      <GridItem
+        gridRow={1}
+        gridColumnStart="center"
+        gridColumnEnd="right"
+        background="#3c40c6 repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0rem, rgba(0, 0, 0, 0) 0.0625rem, rgba(0, 0, 0, 0) 0.5rem, rgba(255, 255, 255, 0.2) 0.5625rem)"
+        border="2px solid rgba(0, 0, 0, 0.2)"
+        boxShadow="inset -12.5rem 0 #3c40c6"
+        borderRadius="full"
+        h="25rem"
+        mixBlendMode="hard-light"
+      ></GridItem>
+      <GridItem
+        display="flex"
+        gridRow={1}
+        gridColumnStart="left"
+        gridColumnEnd="center"
+        h="full"
+        alignItems="center"
+        pl={3}
       >
-        <GridItem
-          gridArea="left"
-          display="flex"
-          alignItems="center"
-          borderRadius="50%"
-          bgColor="secondary"
-          border="2px solid rgba(0, 0, 0, 0.2)"
-          boxShadow={`inset ${vennBaseSize} 0 var(--secondary)`}
+        <Heading
+          as="h2"
+          fontSize="2xl"
+          maxW="50%"
+          color="white"
+          fontWeight="medium"
+          textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
         >
-          <Text
-            fontSize="xl"
-            fontWeight="lighter"
-            textShadow="0 3px 18px rgba(0, 0, 0, 0.84)"
-            color="primary-text-on-secondary"
-          >
-            We broke Something
-          </Text>
-        </GridItem>
-        <GridItem
-          gridArea="center"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+          We broke something
+        </Heading>
+      </GridItem>
+      <GridItem
+        gridRow={1}
+        gridColumnStart="center"
+        gridColumnEnd="center"
+        display="flex"
+        h="full"
+        alignItems="center"
+        justifyContent="center"
+        pl={3}
+        zIndex={1}
+      >
+        <Text
+          fontSize="5xl"
+          maxW="50%"
+          color="white"
+          fontWeight="medium"
+          textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
         >
-          <Text
-            fontSize={{ base: '2xl', md: '4xl' }}
-            color="primary-text-on-primary"
-          >
-            404
-          </Text>
-        </GridItem>
-        <GridItem
-          gridArea="right"
-          display="flex"
-          alignItems="center"
-          justifyContent="flex-end"
-          borderRadius="50%"
-          border="2px solid rgba(0, 0, 0, 0.2)"
-          boxShadow={`inset calc(${vennBaseSize} * -1) 0 var(--tertiary)`}
-          mixBlendMode="hard-light"
-          bgColor="tertiary"
+          404
+        </Text>
+      </GridItem>
+      <GridItem
+        display="flex"
+        gridRow={1}
+        gridColumnStart="right"
+        gridColumnEnd="right"
+        h="full"
+        alignItems="center"
+        justifyContent="right"
+        pr={3}
+        zIndex={1}
+      >
+        <Heading
+          as="h2"
+          fontSize="2xl"
+          maxW="75%"
+          color="white"
+          fontWeight="medium"
+          textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
+          textAlign="right"
         >
-          <Text
-            fontSize="xl"
-            fontWeight="lighter"
-            textShadow="0 3px 18px rgba(0, 0, 0, 0.84)"
-            color="primary-text-on-tertiary"
-          >
-            You cannot type!
-          </Text>
-        </GridItem>
-      </Grid>
-    </Flex>
+          You cannot type
+        </Heading>
+      </GridItem>
+    </Grid>
   );
 }
 
 function ErrorDescription() {
-  const vennBaseSize = useBreakpointValue({ base: '100px', md: '200px' });
+  const staticErrorReasons = [
+    'The page has moved',
+    'The page no longer exists'
+  ];
+  const errorReasons = [
+    'The page no longer exists',
+    'You were looking for kittens and got lost',
+    'You are on a typo marahton. Keep trying!',
+    "You tried to divide by zero. Don't do that.",
+    'A Sneaky squirrel chewed our internet cables',
+    'Our hamster fell asleep on the server wheel',
+    'You tried to time travel to a page that doesnt exist yet',
+    'Your cat walked over your keyboard',
+    'A ghost in the machine got mischievous',
+    'A dragon though this link was its treasure',
+    'A space pirate though this link was its treasure',
+    'A super-intelligent AI is testing your patience',
+    "A pirate buried the page's treasure too deep",
+    'A time-traveling DJ dropped the beat. Stay tuned!',
+    'A wizard cast as disappearing spell. Abra-404-dabra!',
+    'A time-traveling detective is solving the binary mysters'
+  ];
 
+  const reasonList = React.useMemo(() => {
+    const chosenReasons = [];
+
+    const usedIndexes: number[] = [];
+    while (chosenReasons.length < 3) {
+      const randomIndex = Math.floor(Math.random() * errorReasons.length);
+      if (usedIndexes.includes(randomIndex)) {
+        continue;
+      }
+      usedIndexes.push(randomIndex);
+      chosenReasons.push(errorReasons[randomIndex]);
+    }
+
+    return [...staticErrorReasons, ...chosenReasons].map((reason, index) => (
+      <ListItem key={index}>{reason}</ListItem>
+    ));
+  }, []);
   return (
-    <Box as="div" width="100%" maxW={`calc(${vennBaseSize} * 2)`}>
-      <Heading
-        fontSize="lg"
-        paddingBottom="2"
-        marginBottom="4"
-        textAlign="center"
-        borderBottom="1px solid var(--border-on-light)"
-      >
-        Error: 404 - Page Not Found
-      </Heading>
-      <Box color="disabled-text-on-light">
-        <Text>You might be here because:</Text>
-        <List styleType="disc" listStylePosition="inside" paddingTop="2">
-          <ListItem>The page has moved</ListItem>
-          <ListItem>The page no longer exists</ListItem>
-          <ListItem>You were looking for your kittens and got lost</ListItem>
-          <ListItem>You like 404 pages</ListItem>
-        </List>
+    <Center>
+      <Box mt={10}>
+        <Heading as="h3" size="md" mx={10}>
+          Error 404 - Page Not Found
+        </Heading>
+        <Divider my={3} />
+        <UnorderedList color="gray.600">{reasonList}</UnorderedList>
       </Box>
-    </Box>
+    </Center>
   );
 }
 
 const NotFoundPage: React.FC<PageProps> = () => {
   const [isMounted, setIsMounted] = React.useState(false);
+  const topNavOffset = useNavOffset();
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -124,10 +172,12 @@ const NotFoundPage: React.FC<PageProps> = () => {
   }
 
   return (
-    <Flex flexDirection="column" alignItems="center">
-      <VennDiagram />
-      <ErrorDescription />
-    </Flex>
+    <Center h={`calc(100vh - ${topNavOffset})`} as="main">
+      <Box>
+        <VennDiagram />
+        <ErrorDescription />
+      </Box>
+    </Center>
   );
 };
 
