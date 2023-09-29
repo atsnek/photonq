@@ -1,103 +1,127 @@
 import * as React from 'react';
 import { PageProps } from 'gatsby';
 import { PageConfig } from '@atsnek/jaen';
-import { Progress, Center, Divider, UnorderedList } from '@chakra-ui/react';
+import {
+  Progress,
+  Center,
+  Divider,
+  UnorderedList,
+  useColorModeValue
+} from '@chakra-ui/react';
 
 import { Box, Grid, GridItem, Heading, ListItem, Text } from '@chakra-ui/react';
 import { useNavOffset } from '../shared/hooks/use-nav-offset';
 
+//TODO: Find a way to hide the gradient on smaller devices (has to do with the background of the right circle)
 function VennDiagram() {
+  const redColor = useColorModeValue('#f53b57', '#b32b3f');
   return (
-    <Grid
-      templateColumns="repeat(3, 12.5rem)"
-      gridTemplateAreas="'left center right'"
-    >
-      <GridItem
-        gridRow={1}
-        gridColumnStart="left"
-        gridColumnEnd="center"
-        bgColor="#f53b57"
-        border="2px solid rgba(0, 0, 0, 0.2)"
-        boxShadow="inset 12.5rem #d2dae2"
-        borderRadius="full"
-        h="25rem"
-      ></GridItem>
-      <GridItem
-        gridRow={1}
-        gridColumnStart="center"
-        gridColumnEnd="right"
-        background="#3c40c6 repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0rem, rgba(0, 0, 0, 0) 0.0625rem, rgba(0, 0, 0, 0) 0.5rem, rgba(255, 255, 255, 0.2) 0.5625rem)"
-        border="2px solid rgba(0, 0, 0, 0.2)"
-        boxShadow="inset -12.5rem 0 #3c40c6"
-        borderRadius="full"
-        h="25rem"
-        mixBlendMode="hard-light"
-      ></GridItem>
-      <GridItem
-        display="flex"
-        gridRow={1}
-        gridColumnStart="left"
-        gridColumnEnd="center"
-        h="full"
-        alignItems="center"
-        pl={3}
+    <Center>
+      <Grid
+        templateColumns={{
+          base: 'repeat(3, 3.125rem)',
+          sm: 'repeat(3, 6.25rem)',
+          md: 'repeat(3, 12.5rem)'
+        }}
+        gridTemplateAreas="'left center right'"
+        color="white"
       >
-        <Heading
-          as="h2"
-          fontSize="2xl"
-          maxW="50%"
-          color="white"
-          fontWeight="medium"
-          textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
+        <GridItem
+          gridRow={1}
+          gridColumnStart="left"
+          gridColumnEnd="center"
+          bgColor={redColor}
+          border="2px solid rgba(0, 0, 0, 0.2)"
+          boxShadow={{
+            base: 'inset 3.125rem #f53b57',
+            sm: 'inset 6.25rem #f53b57',
+            md: 'inset 12.5rem #f53b57'
+          }}
+          borderRadius="full"
+          h={{ base: '6.5rem', sm: '12.5rem', md: '25rem' }}
+        />
+        <GridItem
+          gridRow={1}
+          gridColumnStart="center"
+          gridColumnEnd="right"
+          background="#3c40c6 repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0rem, rgba(0, 0, 0, 0) 0.0625rem, rgba(0, 0, 0, 0) 0.5rem, rgba(255, 255, 255, 0.2) 0.5625rem)"
+          border="2px solid rgba(0, 0, 0, 0.2)"
+          boxShadow={{
+            base: 'inset -3.125rem #3c40c6',
+            sm: 'inset -6.25rem #3c40c6',
+            md: 'inset -12.5rem 0 #3c40c6'
+          }}
+          borderRadius="full"
+          h={{ base: '6.25rem', sm: '12.5rem', md: '25rem' }}
+          mixBlendMode="hard-light"
+        />
+        <GridItem
+          display="flex"
+          gridRow={1}
+          gridColumnStart="left"
+          gridColumnEnd="center"
+          h="full"
+          alignItems="center"
+          pl={3}
         >
-          We broke something
-        </Heading>
-      </GridItem>
-      <GridItem
-        gridRow={1}
-        gridColumnStart="center"
-        gridColumnEnd="center"
-        display="flex"
-        h="full"
-        alignItems="center"
-        justifyContent="center"
-        pl={3}
-        zIndex={1}
-      >
-        <Text
-          fontSize="5xl"
-          maxW="50%"
-          color="white"
-          fontWeight="medium"
-          textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
+          <Heading
+            as="h2"
+            fontSize={{ sm: 'md', md: '2xl' }}
+            display={{ base: 'none', sm: 'initial' }}
+            maxW="50%"
+            fontWeight="medium"
+            textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
+          >
+            We broke something
+          </Heading>
+        </GridItem>
+        <GridItem
+          gridRow={1}
+          gridColumnStart="center"
+          gridColumnEnd="center"
+          display="flex"
+          h="full"
+          alignItems="center"
+          justifyContent="center"
+          pl={3}
+          zIndex={1}
         >
-          404
-        </Text>
-      </GridItem>
-      <GridItem
-        display="flex"
-        gridRow={1}
-        gridColumnStart="right"
-        gridColumnEnd="right"
-        h="full"
-        alignItems="center"
-        justifyContent="right"
-        pr={3}
-        zIndex={1}
-      >
-        <Heading
-          as="h2"
-          fontSize="2xl"
-          maxW="75%"
-          color="white"
-          fontWeight="medium"
-          textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
-          textAlign="right"
+          <Heading
+            as="h1"
+            fontSize={{ sm: 'xl', md: '5xl' }}
+            display={{ base: 'none', sm: 'initial' }}
+            maxW="50%"
+            fontWeight="medium"
+            textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
+          >
+            404
+          </Heading>
+        </GridItem>
+        <GridItem
+          display="flex"
+          gridRow={1}
+          gridColumnStart="right"
+          gridColumnEnd="right"
+          h="full"
+          alignItems="center"
+          justifyContent="right"
+          pr={3}
+          zIndex={1}
         >
-          You cannot type
-        </Heading>
-      </GridItem>
-    </Grid>
+          <Heading
+            as="h2"
+            fontSize={{ sm: 'md', md: '2xl' }}
+            display={{ base: 'none', sm: 'initial' }}
+            maxW="75%"
+            fontWeight="medium"
+            textShadow="0px 0px 20px rgba(0, 0, 0, 0.28)"
+            textAlign="right"
+          >
+            You cannot type
+          </Heading>
+        </GridItem>
+      </Grid>
+    </Center>
   );
 }
 
@@ -144,12 +168,12 @@ function ErrorDescription() {
   }, []);
   return (
     <Center>
-      <Box mt={10}>
-        <Heading as="h3" size="md" mx={10}>
+      <Box mt={10} w={{ base: '75%', md: undefined }}>
+        <Heading as="h3" size="md" mx={{ base: 0, md: 10 }} textAlign="center">
           Error 404 - Page Not Found
         </Heading>
         <Divider my={3} />
-        <UnorderedList color="gray.600">{reasonList}</UnorderedList>
+        <UnorderedList opacity={0.6}>{reasonList}</UnorderedList>
       </Box>
     </Center>
   );
