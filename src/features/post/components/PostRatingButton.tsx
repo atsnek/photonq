@@ -1,5 +1,5 @@
 import { useAuthenticationContext } from '@atsnek/jaen';
-import { Button, ButtonProps } from '@chakra-ui/react';
+import { Button, ButtonProps, Tooltip } from '@chakra-ui/react';
 import { FC } from 'react';
 import TbStar from '../../../shared/components/icons/tabler/TbStar';
 
@@ -9,6 +9,7 @@ interface IPostRatingButtonProps extends ButtonProps {
   hasRated: boolean;
   toggleRating: () => void;
   stars: number;
+  showTooltip?: boolean;
 }
 
 /**
@@ -19,10 +20,14 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
   isRating,
   hasRated,
   toggleRating,
-  stars
+  stars,
+  showTooltip = true
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
-  return (
+
+  const canRate = isAuthenticated && !isAuthor;
+
+  const rating = (
     <Button
       variant={isAuthor || !isAuthenticated ? 'invisible' : 'solid'}
       colorScheme="gray"
@@ -39,6 +44,22 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
       {stars}
     </Button>
   );
+
+  if (canRate && showTooltip) {
+    const label = `${hasRated ? 'Unr' : 'R'}ate this post`;
+    return (
+      <Tooltip
+        label={label}
+        aria-label={label}
+        placement="bottom"
+        openDelay={500}
+      >
+        {rating}
+      </Tooltip>
+    );
+  }
+
+  return rating;
 };
 
 export default PostRatingButton;
