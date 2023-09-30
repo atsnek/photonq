@@ -175,6 +175,3 @@ const PostTopNav: FC<IPostTopNavProps> = ({
 };
 
 export default PostTopNav;
-function setPostPreviewImage(file: File) {
-  throw new Error('Function not implemented.');
-}
