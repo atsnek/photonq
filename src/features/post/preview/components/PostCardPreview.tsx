@@ -7,6 +7,7 @@ import {
   LinkBox,
   LinkBoxProps,
   LinkOverlay,
+  Spacer,
   Text
 } from '@chakra-ui/react';
 import { FC, ReactNode, useState } from 'react';
@@ -113,7 +114,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             objectFit="cover"
           />
         )}
-        <Box>
+        <Box maxW="63%">
           {!hideAuthor && (
             <Link
               variant="hover-theme"
@@ -134,6 +135,14 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             <LinkOverlay href={`/post/${slug}`}>{title}</LinkOverlay>
           </Heading>
         </Box>
+        <Spacer />
+        {canManage && (
+          <PostPreviewManageMenu
+            postId={id}
+            postPrivacy={privacy}
+            togglePostPrivacy={() => {}}
+          />
+        )}
       </HStack>
 
       <Text
@@ -159,7 +168,15 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
           {showPrivacy && <PostPreviewPrivacy privacy={privacy} />}
         </HStack>
         <Box pointerEvents="all">
-          {canManage && false ? <PostPreviewManageMenu /> : ratingComp}
+          {canManage && false ? (
+            <PostPreviewManageMenu
+              postId={id}
+              postPrivacy={privacy}
+              togglePostPrivacy={() => {}}
+            />
+          ) : (
+            ratingComp
+          )}
         </Box>
       </HStack>
     </LinkBox>

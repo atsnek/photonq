@@ -259,7 +259,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (set, get) =
         const newPrivacy = isPublished ? 'PRIVATE' : 'PUBLIC';
         set(produce((state: TStoreState) => {
             if (!state.singlePost.post) return;
-            state.singlePost.post.privacy = isPublished ? 'PRIVATE' : 'PUBLIC';
+            state.singlePost.post.privacy = newPrivacy;
         }));
 
         if (get().singlePost.isNewPost) return true;

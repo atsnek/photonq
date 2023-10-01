@@ -29,6 +29,7 @@ export interface IProfileStateActions {
     toggleFollow: () => Promise<boolean>;
     changeBio: (bio: string) => Promise<boolean>;
     togglePostRating: (id: TPostPreview['id'], source: 'overview' | 'search') => Promise<boolean>;
+    togglePrivacy: (id: TPostPreview['id'], privacy: TPostPreview['privacy']) => Promise<boolean>;
     reset: () => void;
 }
 

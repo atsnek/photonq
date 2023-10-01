@@ -4,7 +4,6 @@ import {
   IPostPreviewProps,
   TPaginatedPostListData,
   TPostDateRange,
-  TPostListData,
   TPostPreview
 } from './types/post';
 import {

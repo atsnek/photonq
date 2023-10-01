@@ -8,6 +8,8 @@ import { useAppStore } from "../../../shared/store/store";
 import { buildPostPreview, searchPosts, togglePostRating } from "../../../shared/utils/features/post";
 import { TPaginatedPostListData } from "../../post/types/post";
 import { POST_FETCH_LIMIT } from "../../../contents/PostsContent";
+import { asEnumKey } from "snek-query";
+import { PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 
 const initState: IProfileStateDefinition = {
     activity: { items: [], totalCount: 0 },
@@ -271,6 +273,24 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         const searchPostsDateRange = { from: from ?? get().profile.searchPostsDateRange.from, to: to ?? get().profile.searchPostsDateRange.to };
 
         get().profile.fetchSearchPosts(get().profile.searchPosts.query, POST_FETCH_LIMIT, 0, undefined, searchPostsDateRange);
+    },
+    togglePrivacy: async (postId, privacy) => {
+        if (!get().profile.profile) return false;
+
+        const postIdx = [get().profile.searchPosts.items.findIndex(p => p.id === postId), get().profile.overviewPosts.items.findIndex(p => p.id === postId)];
+
+        if (get().profile.searchPosts.items[postIdx[0]]?.privacy === privacy || get().profile.overviewPosts.items[postIdx[1]]?.privacy === privacy) return true;
+
+        const [, err] = await sq.mutate(m => m.socialPostUpdate({ postId, values: { privacy: asEnumKey(PrivacyInputInput, privacy) } }));
+
+        if (err?.length === 0) return false;
+
+        set(produce((state: TStoreState): void => {
+            if (postIdx[0] !== -1) state.profile.searchPosts.items[postIdx[0]].privacy = privacy;
+            if (postIdx[1] !== -1) state.profile.overviewPosts.items[postIdx[1]].privacy = privacy;
+        }))
+
+        return true;
     },
     reset: () => {
         set(produce((state: TStoreState) => {
