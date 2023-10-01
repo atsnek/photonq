@@ -70,7 +70,15 @@ const PostReader: FC<IPostReaderProps> = ({
             />
           )}
         </Heading>
-        <VStack spacing={3} alignItems="start">
+        <VStack
+          spacing={3}
+          alignItems="start"
+          __css={{
+            pre: {
+              w: 'full'
+            }
+          }}
+        >
           <UncontrolledMdxEditor
             value={post?.content}
             isEditing={false}
