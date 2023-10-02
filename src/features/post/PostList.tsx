@@ -1,4 +1,11 @@
-import { FC, ReactElement, ReactNode, useMemo, useState } from 'react';
+import {
+  FC,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import {
   EnPostLanguage,
   IPostPreviewProps,
@@ -53,7 +60,7 @@ interface IPostListProps extends StackProps {
   togglePostPrivacy: (
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
-  ) => void;
+  ) => Promise<boolean>;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
   dateRange?: { from: Date | undefined; to: Date | undefined };
@@ -81,9 +88,9 @@ const PostList: FC<IPostListProps> = ({
   currentQuery,
   setFilterQuery,
   showNoListResult = true,
+  toggleRating,
   showPostPrivacy,
   togglePostPrivacy,
-  toggleRating,
   filterLanguage,
   setFilterLanguage,
   dateRange,
@@ -98,6 +105,17 @@ const PostList: FC<IPostListProps> = ({
     type: paginationType,
     hasMoreItems: !!postData.nextCursor || postData.hasMore
   });
+
+  const [isTogglingPostPrivacy, setIsTogglingPostPrivacy] = useState(false);
+
+  const handleTogglePostPrivacy = async (
+    id: TPostPreview['id'],
+    privacy: TPostPreview['privacy']
+  ) => {
+    setIsTogglingPostPrivacy(true);
+    await togglePostPrivacy(id, privacy);
+    setIsTogglingPostPrivacy(false);
+  };
 
   const memoizedPostPreviews = useMemo(() => {
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
@@ -138,7 +156,8 @@ const PostList: FC<IPostListProps> = ({
           key={postPreview.id}
           post={postPreview}
           toggleRating={toggleRating}
-          togglePostPrivacy={togglePostPrivacy}
+          togglePostPrivacy={handleTogglePostPrivacy}
+          isTogglingPostPrivacy={isTogglingPostPrivacy}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}
           showPrivacy={showPostPrivacy}
@@ -148,7 +167,7 @@ const PostList: FC<IPostListProps> = ({
     }
 
     return [...postPreviews, ...previewSkeletons];
-  }, [postData, pagination]);
+  }, [postData, pagination, isTogglingPostPrivacy]);
 
   let postPreviews: ReactNode;
   if (memoizedPostPreviews.length > 0) {

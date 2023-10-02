@@ -8,11 +8,13 @@ import {
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import { TPostPreview } from '../../types/post';
+import TbBookUpload from '../../../../shared/components/icons/tabler/TbBookUpload';
 
 interface IPostPreviewManageMenuProps extends ButtonProps {
   postId: TPostPreview['id'];
   postPrivacy: TPostPreview['privacy'];
   togglePostPrivacy: (id: TPostPreview['id']) => void;
+  isTogglingPostPrivacy: boolean;
 }
 
 /**
@@ -22,8 +24,11 @@ const PostPreviewManageMenu: FC<IPostPreviewManageMenuProps> = ({
   postId,
   postPrivacy,
   togglePostPrivacy,
+  isTogglingPostPrivacy,
   ...props
 }) => {
+  const isPostPrivate = postPrivacy === 'PRIVATE';
+
   return (
     <Menu>
       <MenuButton
@@ -36,8 +41,12 @@ const PostPreviewManageMenu: FC<IPostPreviewManageMenuProps> = ({
         Manage
       </MenuButton>
       <MenuList zIndex={999}>
-        <MenuItem onClick={() => togglePostPrivacy(postId)}>
-          {postPrivacy === 'PRIVATE' ? 'Publish' : 'Unpublish'}
+        <MenuItem
+          onClick={() => togglePostPrivacy(postId)}
+          isDisabled={isTogglingPostPrivacy}
+          icon={isPostPrivate ? <TbBookUpload /> : <TbBookUpload />}
+        >
+          {isPostPrivate ? 'Publish' : 'Unpublish'}
         </MenuItem>
       </MenuList>
     </Menu>

@@ -1,7 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Flex, Spacer, Text } from '@chakra-ui/react';
 import React, { FC, useEffect, useMemo } from 'react';
-import { useJaenPageTree } from '@snek-at/jaen';
 import { useLocation } from '@reach/router';
 import { TAdjacentPages, TLinkData } from '../../types/navigation';
 import {
@@ -10,6 +9,7 @@ import {
   getAdjacentPages
 } from '../../utils/navigation';
 import Link from '../../components/Link';
+import { useCMSManagementContext } from '@atsnek/jaen';
 
 interface MainBottomNavProps {
   previousPage?: TLinkData;
@@ -31,7 +31,8 @@ const props = {
  * This shows links to the respective previous and next page.
  */
 const MainBottomNav: FC<MainBottomNavProps> = ({}) => {
-  const pageTree = useJaenPageTree();
+  const manager = useCMSManagementContext();
+  const pageTree = manager.tree;
 
   const location = useLocation();
 

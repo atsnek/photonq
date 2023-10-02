@@ -50,6 +50,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   toggleRating,
   showPrivacy,
   togglePostPrivacy,
+  isTogglingPostPrivacy,
   wrapperProps
 }) => {
   const isAuthor = useAuthenticationContext().user?.id === post.profile.id;
@@ -138,6 +139,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
                 post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC'
               )
             }
+            isTogglingPostPrivacy={isTogglingPostPrivacy}
           />
         )}
       </HStack>
