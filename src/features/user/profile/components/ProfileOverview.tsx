@@ -7,17 +7,24 @@ import { useAppStore } from '../../../../shared/store/store';
 
 interface IProfileOverviewProps {
   isOwnProfile?: boolean;
+  togglePostPrivacy: (
+    id: TPostPreview['id'],
+    privacy: TPostPreview['privacy']
+  ) => void;
 }
 
 /**
  * Component for displaying a user's profile overview.
  */
-const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
+const ProfileOverview: FC<IProfileOverviewProps> = ({
+  isOwnProfile,
+  togglePostPrivacy
+}) => {
   const postData = useAppStore(state => state.profile.overviewPosts);
   const activity = useAppStore(state => state.profile.activity);
   const togglePostRating = useAppStore(state => state.profile.togglePostRating);
   const fetchActivities = useAppStore(state => state.profile.fetchActivity);
-  //TODO: implement toggleLike with API call
+
   const toggleRating = (id: TPostPreview['id']) => {
     if (isOwnProfile) return;
     togglePostRating(id, 'overview');
@@ -31,6 +38,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile }) => {
         previewType="card"
         hidePostAuthor
         showPostPrivacy={isOwnProfile}
+        togglePostPrivacy={togglePostPrivacy}
         toggleRating={toggleRating}
         itemsPerPage={6}
         maxItems={6}

@@ -14,6 +14,7 @@ export interface ICommunityPostsStateActions {
     fetchLatestPosts: (silent?: boolean) => void;
     fetchSearchPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => void;
     togglePostRating: (id: TPostPreview['id']) => Promise<boolean>;
+    togglePostPrivacy: (id: string, privacy: TPostPreview['privacy']) => void;
     setPostLanguage: (language?: EnPostLanguage) => void;
     setDateRange: (from: Date | null | undefined, to: Date | null | undefined) => void;
 }

@@ -274,7 +274,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         get().profile.fetchSearchPosts(get().profile.searchPosts.query, POST_FETCH_LIMIT, 0, undefined, searchPostsDateRange);
     },
-    togglePrivacy: async (postId, privacy) => {
+    togglePostPrivacy: async (postId, privacy) => {
         if (!get().profile.profile) return false;
 
         const postIdx = [get().profile.searchPosts.items.findIndex(p => p.id === postId), get().profile.overviewPosts.items.findIndex(p => p.id === postId)];

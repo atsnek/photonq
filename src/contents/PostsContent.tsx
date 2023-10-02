@@ -31,6 +31,9 @@ const PostsContent: FC = () => {
   const togglePostRating = useAppStore(
     state => state.communityPosts.togglePostRating
   );
+  const togglePostPrivacy = useAppStore(
+    state => state.communityPosts.togglePostPrivacy
+  );
 
   const searchPosts = useAppStore(state => state.communityPosts.searchPosts);
   const fetchSearchPosts = useAppStore(
@@ -113,6 +116,7 @@ const PostsContent: FC = () => {
                     minW: '100%'
                   }}
                   toggleRating={toggleRating}
+                  togglePostPrivacy={togglePostPrivacy}
                 />
               </Box>
             </Box>
@@ -135,6 +139,7 @@ const PostsContent: FC = () => {
                   w: 'full'
                 }}
                 toggleRating={toggleRating}
+                togglePostPrivacy={togglePostPrivacy}
                 paginationType="async-pages"
               />
             </Box>
@@ -151,6 +156,7 @@ const PostsContent: FC = () => {
             }}
             postData={searchPosts}
             toggleRating={toggleRating}
+            togglePostPrivacy={togglePostPrivacy}
             paginationType="load-more"
           />
         )}

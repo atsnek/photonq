@@ -172,6 +172,29 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
         await Promise.all([get().communityPosts.fetchFeaturedPosts(true), get().communityPosts.fetchLatestPosts(true)]);
         return true;
     },
+    togglePostPrivacy: async (id, privacy) => {
+        const postIdx = [get().communityPosts.searchPosts.items.findIndex(p => p.id === id), get().communityPosts.featuredPosts.items.findIndex(p => p.id === id), get().communityPosts.latestPosts.items.findIndex(p => p.id === id)];
+
+        if (get().communityPosts.searchPosts.items[postIdx[0]]?.privacy === privacy || get().communityPosts.featuredPosts.items[postIdx[1]]?.privacy === privacy || get().communityPosts.latestPosts.items[postIdx[2]]?.privacy === privacy) return true;
+
+        const [, err] = await sq.mutate(m => m.socialPostUpdate({ postId: id, values: { privacy: asEnumKey(PrivacyInputInput, privacy) } }));
+
+        if (err?.length === 0) return false;
+
+        set(produce((state: TStoreState): void => {
+            if (postIdx[0] !== -1) state.communityPosts.featuredPosts.items[postIdx[0]].privacy = privacy;
+            if (postIdx[1] !== -1) state.communityPosts.latestPosts.items[postIdx[1]].privacy = privacy;
+            if (postIdx[2] !== -1) state.communityPosts.latestPosts.items[postIdx[2]].privacy = privacy;
+        }))
+
+        get().communityPosts.fetchFeaturedPosts(true)
+        get().communityPosts.fetchLatestPosts(true);
+        if (get().communityPosts.searchPosts.state === "success") {
+            get().communityPosts.fetchSearchPosts(get().communityPosts.searchPosts.query, POST_FETCH_LIMIT, 0, get().communityPosts.postLanguage, get().communityPosts.dateRange);
+        }
+
+        return true;
+    },
     setPostLanguage: (language) => {
         set(produce((state: TStoreState) => {
             state.communityPosts.postLanguage = language;

@@ -51,6 +51,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     state => state.profile.setSearchPostLanguage
   );
   const togglePostRating = useAppStore(state => state.profile.togglePostRating);
+  const togglePostPrivacy = useAppStore(
+    state => state.profile.togglePostPrivacy
+  );
 
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const searchPostDateRange = useAppStore(
@@ -125,7 +128,12 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   let mainContent: ReactNode;
   if (activeTab === 'overview') {
-    mainContent = <ProfileOverview isOwnProfile={isOwnProfile} />;
+    mainContent = (
+      <ProfileOverview
+        isOwnProfile={isOwnProfile}
+        togglePostPrivacy={togglePostPrivacy}
+      />
+    );
   } else {
     mainContent = (
       <PostList
@@ -143,6 +151,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         showControls
         maxItems={POST_FETCH_LIMIT}
         showPostPrivacy={isOwnProfile}
+        togglePostPrivacy={togglePostPrivacy}
         filterLanguage={searchPostLanguage}
         setFilterLanguage={setSearchPostLanguage}
         dateRange={searchPostDateRange}

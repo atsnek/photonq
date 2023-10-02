@@ -50,6 +50,10 @@ interface IPostListProps extends StackProps {
   showNoListResult?: boolean
   showPostPrivacy?: boolean
   toggleRating: (id: TPostPreview['id']) => void
+  togglePostPrivacy: (
+    id: TPostPreview['id'],
+    privacy: TPostPreview['privacy']
+  ) => void
   filterLanguage?: EnPostLanguage
   setFilterLanguage?: (language: EnPostLanguage) => void
   dateRange?: {from: Date | undefined; to: Date | undefined}
@@ -78,6 +82,7 @@ const PostList: FC<IPostListProps> = ({
   setFilterQuery,
   showNoListResult = true,
   showPostPrivacy,
+  togglePostPrivacy,
   toggleRating,
   filterLanguage,
   setFilterLanguage,
@@ -133,6 +138,7 @@ const PostList: FC<IPostListProps> = ({
           key={postPreview.id}
           post={postPreview}
           toggleRating={toggleRating}
+          togglePostPrivacy={togglePostPrivacy}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}
           showPrivacy={showPostPrivacy}

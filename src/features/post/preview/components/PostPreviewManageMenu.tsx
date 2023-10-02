@@ -10,7 +10,7 @@ import { FC } from 'react';
 import { TPostPreview } from '../../types/post';
 
 interface IPostPreviewManageMenuProps extends ButtonProps {
-  postId?: TPostPreview['id'];
+  postId: TPostPreview['id'];
   postPrivacy: TPostPreview['privacy'];
   togglePostPrivacy: (id: TPostPreview['id']) => void;
 }
@@ -36,7 +36,7 @@ const PostPreviewManageMenu: FC<IPostPreviewManageMenuProps> = ({
         Manage
       </MenuButton>
       <MenuList zIndex={999}>
-        <MenuItem>
+        <MenuItem onClick={() => togglePostPrivacy(postId)}>
           {postPrivacy === 'PRIVATE' ? 'Publish' : 'Unpublish'}
         </MenuItem>
       </MenuList>
