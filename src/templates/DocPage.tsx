@@ -1,16 +1,17 @@
-import {PageConfig} from '@atsnek/jaen'
-import {PageProps} from 'gatsby'
-import * as React from 'react'
+import { PageConfig } from '@atsnek/jaen';
+import { PageProps } from 'gatsby';
+import * as React from 'react';
+import { DocContent } from '../contents/DocContent';
 
 const DocPage: React.FC<PageProps> = props => {
-  return <main>to be implemented by jan</main>
-}
+  return <DocContent />;
+};
 
-export default DocPage
+export default DocPage;
 
-export {Head} from '@atsnek/jaen'
+export { Head } from '@atsnek/jaen';
 
 export const pageConfig: PageConfig = {
   label: 'DocPage',
   childTemplates: ['DocPage']
-}
+};
