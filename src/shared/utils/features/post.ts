@@ -36,6 +36,7 @@ export const buildPostPreview = (q: Query, post: t.Nullable<Post>, currentUser?:
         slug: post?.slug ?? '',
         title: post?.title ?? '',
         summary: post?.summary ?? null,
+        language: post?.language ?? EnPostLanguage.EN,
         avatarUrl: post?.avatarURL ?? null,
         createdAt: formatPostDate(post?.createdAt),
         privacy: post?.privacy as any,

@@ -16,6 +16,7 @@ import Link from '../../../../shared/components/Link';
 import { IPostPreviewProps } from '../../types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import PostPreviewPrivacy from './PostPreviewPrivacy';
+import PostPreviewLanguage from './PostPreviewLanguage';
 
 const postListItemPreviewStyling = {
   wrapper: {
@@ -91,23 +92,26 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             />
           )}
           <VStack alignItems="flex-start">
-            <LinkOverlay
-              href={`/post/${post.slug}`}
-              _hover={{
-                h5: {
-                  color: 'components.postPreview.listItem._hover.title.color'
-                }
-              }}
-            >
-              <Heading
-                as="h5"
-                size="sm"
-                color="components.postPreview.listItem.initial.title.color"
-                transition="color 0.2s ease-in-out"
+            <HStack>
+              <LinkOverlay
+                href={`/post/${post.slug}`}
+                _hover={{
+                  h5: {
+                    color: 'components.postPreview.listItem._hover.title.color'
+                  }
+                }}
               >
-                {post.title}
-              </Heading>
-            </LinkOverlay>
+                <Heading
+                  as="h5"
+                  size="sm"
+                  color="components.postPreview.listItem.initial.title.color"
+                  transition="color 0.2s ease-in-out"
+                >
+                  {post.title}
+                </Heading>
+              </LinkOverlay>
+              <PostPreviewLanguage language={post.language} />
+            </HStack>
             <HStack>
               <Text
                 color="components.postPreview.listItem.initial.date.color"

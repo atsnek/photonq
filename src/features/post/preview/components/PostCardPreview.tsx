@@ -17,6 +17,7 @@ import PostPreviewManageMenu from './PostPreviewManageMenu';
 import Link from '../../../../shared/components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import PostPreviewPrivacy from './PostPreviewPrivacy';
+import PostPreviewLanguage from './PostPreviewLanguage';
 
 const postCardPreviewStyling = {
   wrapper: {
@@ -155,6 +156,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
           <Text fontSize={12} color="components.postPreview.date.color">
             {post.createdAt}
           </Text>
+          <PostPreviewLanguage language={post.language} />
           {showPrivacy && <PostPreviewPrivacy privacy={post.privacy} />}
         </HStack>
         <Box pointerEvents="all">{ratingComp}</Box>

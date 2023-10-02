@@ -56,6 +56,7 @@ export type TPostPreview = {
   slug: string;
   title: string;
   summary: string | null;
+  language: Language;
   stars: number;
   hasRated: boolean;
   avatarUrl: string | null;
