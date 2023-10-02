@@ -97,7 +97,6 @@ export type TSearchPostListData = TPaginatedPostListData & {
 export interface IPostPreviewProps<T> {
   post: TPostPreview;
   toggleRating: (id: TPostPreview['id']) => void;
-  canManage?: boolean;
   wrapperProps?: T;
   hideAuthor?: boolean;
   showPrivacy?: boolean;

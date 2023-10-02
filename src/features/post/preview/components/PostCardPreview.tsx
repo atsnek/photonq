@@ -47,7 +47,6 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   post,
   hideAuthor,
   toggleRating,
-  canManage,
   showPrivacy,
   wrapperProps
 }) => {
@@ -68,7 +67,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       toggleRating={handleRating}
       isRating={isRating}
       hasRated={post.hasRated}
-      isPostManagable={canManage && false}
+      isPostManagable={post.canManage}
       isAuthor={isAuthor}
     />
   );
@@ -127,7 +126,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
           </Heading>
         </Box>
         <Spacer />
-        {canManage && (
+        {post.canManage && (
           <PostPreviewManageMenu
             postId={post.id}
             postPrivacy={post.privacy}

@@ -53,7 +53,6 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   wrapperProps,
   showPrivacy,
   toggleRating,
-  canManage,
   hideAuthor
 }) => {
   const [isRating, setIsRating] = useState(false);
@@ -122,7 +121,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             </HStack>
           </VStack>
           <Spacer />
-          {canManage && false && (
+          {post.canManage && false && (
             <PostPreviewManageMenu
               alignSelf="flex-start"
               minW="fit-content"
@@ -153,7 +152,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             likes={post.stars}
             toggleRating={handleRating}
             hasRated={post.hasRated}
-            isPostManagable={canManage}
+            isPostManagable={post.canManage}
             isAuthor={isAuthor}
             useHighContrast
           />
