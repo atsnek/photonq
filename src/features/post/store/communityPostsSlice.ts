@@ -4,7 +4,7 @@ import { TCommunityPostsSlice } from "../types/communityPostsState";
 import { produce } from "immer";
 import { buildPostPreview, searchPosts } from "../../../shared/utils/features/post";
 import { asEnumKey } from "snek-query";
-import { FiltersInput_1Input, LanguageInputInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
+import { FiltersInputInput, FiltersInput_1Input, LanguageInputInput, PrivacyInputInput } from "@snek-functions/origin/dist/schema.generated";
 import { TPostPreview } from "../types/post";
 import { POST_FETCH_LIMIT } from "../../../contents/PostsContent";
 
@@ -66,8 +66,19 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
             };
         }))
     },
-    fetchLatestPosts: async (silent) => {
-        if (!silent) {
+    fetchLatestPosts: async (silent, reload) => {
+        if (reload) {
+            set(produce((state: TStoreState) => {
+                state.communityPosts.latestPosts = {
+                    items: [],
+                    totalCount: 0,
+                    nextCursor: undefined,
+                    prevCursor: undefined,
+                    hasMore: false,
+                    state: 'loading'
+                }
+            }))
+        } else if (!silent) {
             set(produce((state: TStoreState) => {
                 state.communityPosts.latestPosts.state = 'loading';
             }));
@@ -75,8 +86,18 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
         const [currentUser,] = await sq.query(q => q.userMe);
 
+        const filters: FiltersInputInput = { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") };
+
+        if (get().communityPosts.postLanguage) {
+            filters.language = asEnumKey(LanguageInputInput, get().communityPosts.postLanguage!);
+        }
+
         const [postConnection, rawError] = await sq.query(q => {
-            const postComm = q.allSocialPost({ first: POST_FETCH_LIMIT, after: get().communityPosts.latestPosts.nextCursor, filters: { privacy: asEnumKey(PrivacyInputInput, "PUBLIC") } })
+            const postComm = q.allSocialPost({
+                first: POST_FETCH_LIMIT,
+                after: get().communityPosts.latestPosts.hasMore && !reload ? get().communityPosts.latestPosts.nextCursor : undefined,
+                filters
+            })
             //! Existing issue: see post utils -> buildPostPreview
             postComm?.pageInfo.endCursor;
             postComm?.pageInfo.hasNextPage;
@@ -153,7 +174,6 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (set
 
     },
     togglePostRating: async (postId) => {
-
         const hasRated = get().communityPosts.featuredPosts.items.some(post => post.id === postId && post.hasRated) || get().communityPosts.latestPosts.items.some(post => post.id === postId && post.hasRated);
 
         set(produce((state: TStoreState) => {

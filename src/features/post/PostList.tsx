@@ -1,11 +1,11 @@
-import {FC, ReactElement, ReactNode, useMemo, useState} from 'react'
+import { FC, ReactElement, ReactNode, useMemo, useState } from 'react';
 import {
   EnPostLanguage,
   IPostPreviewProps,
   TPaginatedPostListData,
   TPostDateRange,
   TPostPreview
-} from './types/post'
+} from './types/post';
 import {
   Button,
   CardProps,
@@ -14,18 +14,18 @@ import {
   SimpleGrid,
   StackProps,
   VStack
-} from '@chakra-ui/react'
-import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons'
-import PostCardPreview from './preview/components/PostCardPreview'
-import PostListControls from './PostListControls'
-import PostCardPreviewSkeleton from './preview/components/PostCardPreviewSkeleton'
-import PostListItemPreview from './preview/components/PostListItemPreview'
-import PostListItemPreviewSkeleton from './preview/components/PostListItemPreviewSkeleton'
-import PostListNoResults from './preview/components/PostListNoResults'
-import {query} from '../../pages'
-import {TPaginationType} from '../../shared/types/pagination'
-import usePagination from '../../shared/hooks/use-pagination'
-import {POST_FETCH_LIMIT} from '../../contents/PostsContent'
+} from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import PostCardPreview from './preview/components/PostCardPreview';
+import PostListControls from './PostListControls';
+import PostCardPreviewSkeleton from './preview/components/PostCardPreviewSkeleton';
+import PostListItemPreview from './preview/components/PostListItemPreview';
+import PostListItemPreviewSkeleton from './preview/components/PostListItemPreviewSkeleton';
+import PostListNoResults from './preview/components/PostListNoResults';
+import { query } from '../../pages';
+import { TPaginationType } from '../../shared/types/pagination';
+import usePagination from '../../shared/hooks/use-pagination';
+import { POST_FETCH_LIMIT } from '../../contents/PostsContent';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (
@@ -34,33 +34,33 @@ interface IPostListProps extends StackProps {
     offset: number,
     language?: EnPostLanguage,
     dateRange?: TPostDateRange
-  ) => void
-  fetchNextPagePosts?: () => void
-  postData: TPaginatedPostListData
-  itemsPerPage?: number
-  maxItems?: number
-  paginationType?: TPaginationType
-  showControls?: boolean
-  hidePostAuthor?: boolean
-  previewType?: 'card' | 'list'
-  skeletonProps?: CardProps & LinkBoxProps
-  defaultFilterQuery?: string
-  currentQuery?: string
-  setFilterQuery?: (query: string) => void
-  showNoListResult?: boolean
-  showPostPrivacy?: boolean
-  toggleRating: (id: TPostPreview['id']) => void
+  ) => void;
+  fetchNextPagePosts?: () => void;
+  postData: TPaginatedPostListData;
+  itemsPerPage?: number;
+  maxItems?: number;
+  paginationType?: TPaginationType;
+  showControls?: boolean;
+  hidePostAuthor?: boolean;
+  previewType?: 'card' | 'list';
+  skeletonProps?: CardProps & LinkBoxProps;
+  defaultFilterQuery?: string;
+  currentQuery?: string;
+  setFilterQuery?: (query: string) => void;
+  showNoListResult?: boolean;
+  showPostPrivacy?: boolean;
+  toggleRating: (id: TPostPreview['id']) => void;
   togglePostPrivacy: (
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
-  ) => void
-  filterLanguage?: EnPostLanguage
-  setFilterLanguage?: (language: EnPostLanguage) => void
-  dateRange?: {from: Date | undefined; to: Date | undefined}
+  ) => void;
+  filterLanguage?: EnPostLanguage;
+  setFilterLanguage?: (language: EnPostLanguage) => void;
+  dateRange?: { from: Date | undefined; to: Date | undefined };
   setDateRange?: (
     from: Date | null | undefined,
     to: Date | null | undefined
-  ) => void
+  ) => void;
 }
 
 /**
@@ -90,36 +90,36 @@ const PostList: FC<IPostListProps> = ({
   setDateRange,
   ...props
 }) => {
-  const usePages = paginationType === 'pages'
+  const usePages = paginationType === 'pages';
   const pagination = usePagination({
     items: postData.items,
     itemsPerPage: itemsPerPage,
     maxItems: usePages ? maxItems : undefined,
     type: paginationType,
     hasMoreItems: !!postData.nextCursor || postData.hasMore
-  })
+  });
 
   const memoizedPostPreviews = useMemo(() => {
-    let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview
+    let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
     let PreviewSkeletonComp:
       | typeof PostCardPreviewSkeleton
-      | typeof PostListItemPreviewSkeleton
-    type ExtractProps<T> = T extends FC<IPostPreviewProps<infer P>> ? P : never
+      | typeof PostListItemPreviewSkeleton;
+    type ExtractProps<T> = T extends FC<IPostPreviewProps<infer P>> ? P : never;
     let previewCompProps:
       | ExtractProps<typeof PostCardPreview>
-      | ExtractProps<typeof PostListItemPreview> = {}
+      | ExtractProps<typeof PostListItemPreview> = {};
 
     if (previewType === 'card') {
-      PreviewComp = PostCardPreview
-      PreviewSkeletonComp = PostCardPreviewSkeleton
+      PreviewComp = PostCardPreview;
+      PreviewSkeletonComp = PostCardPreviewSkeleton;
     } else {
-      PreviewComp = PostListItemPreview
-      PreviewSkeletonComp = PostListItemPreviewSkeleton
+      PreviewComp = PostListItemPreview;
+      PreviewSkeletonComp = PostListItemPreviewSkeleton;
     }
 
-    let previewSkeletons: ReactElement[] = []
+    let previewSkeletons: ReactElement[] = [];
     if (postData.state === 'loading') {
-      previewSkeletons = Array.from({length: pagination.itemsPerPage}).map(
+      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map(
         (_, i) => (
           <PreviewSkeletonComp
             key={i}
@@ -127,10 +127,10 @@ const PostList: FC<IPostListProps> = ({
             hideAuthor={hidePostAuthor}
           />
         )
-      )
+      );
     }
 
-    let postPreviews: JSX.Element[] = []
+    let postPreviews: JSX.Element[] = [];
 
     if (paginationType !== 'async-pages' || postData.state !== 'loading') {
       postPreviews = pagination.currentItems.map(postPreview => (
@@ -142,30 +142,30 @@ const PostList: FC<IPostListProps> = ({
           {...previewCompProps}
           hideAuthor={hidePostAuthor}
           showPrivacy={showPostPrivacy}
-          wrapperProps={{minW: '33%'}}
+          wrapperProps={{ minW: '33%' }}
         />
-      ))
+      ));
     }
 
-    return [...postPreviews, ...previewSkeletons]
-  }, [postData, pagination])
+    return [...postPreviews, ...previewSkeletons];
+  }, [postData, pagination]);
 
-  let postPreviews: ReactNode
+  let postPreviews: ReactNode;
   if (memoizedPostPreviews.length > 0) {
     if (previewType === 'card') {
       // Shows the posts in a grid of cards
       postPreviews = (
-        <SimpleGrid w="full" spacing={5} columns={{base: 1, sm: 2}}>
+        <SimpleGrid w="full" spacing={5} columns={{ base: 1, sm: 2 }}>
           {memoizedPostPreviews}
         </SimpleGrid>
-      )
+      );
     } else {
       // Shows the posts in a list
       postPreviews = (
         <VStack w="full" spacing={5}>
           {memoizedPostPreviews}
         </VStack>
-      )
+      );
     }
   }
 
@@ -174,16 +174,16 @@ const PostList: FC<IPostListProps> = ({
     offset?: number,
     language?: EnPostLanguage | null
   ) => {
-    if (query === currentQuery && postData.state === 'inactive') return // This prevents the posts from being fetched because only the language has changed wile the feature is inactive
-    if (query.length === 0) pagination.setCurrentPage(1)
+    if (query === currentQuery && postData.state === 'inactive') return; // This prevents the posts from being fetched because only the language has changed wile the feature is inactive
+    if (query.length === 0) pagination.setCurrentPage(1);
     if (fetchPosts)
       fetchPosts(
         query,
         POST_FETCH_LIMIT,
         offset ?? 0,
         language === null ? undefined : language ?? filterLanguage
-      )
-  }
+      );
+  };
 
   const handleNextPage = async () => {
     // Only fetch next page if
@@ -197,9 +197,16 @@ const PostList: FC<IPostListProps> = ({
       postData.hasMore &&
       pagination.currentPage === pagination.totalPages - 1
     )
-      await fetchNextPagePosts()
-    pagination.setCurrentPage(pagination.currentPage + 1)
-  }
+      await fetchNextPagePosts();
+    pagination.setCurrentPage(pagination.currentPage + 1);
+  };
+
+  const handleToggleLanguage = (language: EnPostLanguage) => {
+    if (!setFilterLanguage) return;
+
+    pagination.setCurrentPage(1);
+    setFilterLanguage(language);
+  };
 
   return (
     <VStack w="full" gap={5} {...props}>
@@ -210,7 +217,7 @@ const PostList: FC<IPostListProps> = ({
           query={currentQuery ?? ''}
           setQuery={setFilterQuery}
           filterLanguage={filterLanguage}
-          setFilterLanguage={setFilterLanguage}
+          setFilterLanguage={handleToggleLanguage}
           dateRange={dateRange}
           setDateRange={setDateRange}
         />
@@ -232,7 +239,8 @@ const PostList: FC<IPostListProps> = ({
                 borderRadius="lg"
                 leftIcon={<ChevronLeftIcon />}
                 isDisabled={pagination.currentPage === 1}
-                onClick={pagination.previousPage}>
+                onClick={pagination.previousPage}
+              >
                 Previous
               </Button>
               <Button
@@ -244,7 +252,8 @@ const PostList: FC<IPostListProps> = ({
                   !postData?.hasMore &&
                   pagination.currentPage === pagination.totalPages
                 }
-                onClick={handleNextPage}>
+                onClick={handleNextPage}
+              >
                 Next
               </Button>
             </HStack>
@@ -266,15 +275,16 @@ const PostList: FC<IPostListProps> = ({
                       POST_FETCH_LIMIT,
                       pagination.currentItems.length,
                       filterLanguage
-                    )
+                    );
                   }
                 : undefined
-            }>
+            }
+          >
             Load more
           </Button>
         )}
     </VStack>
-  )
-}
+  );
+};
 
-export default PostList
+export default PostList;

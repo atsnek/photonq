@@ -11,7 +11,7 @@ export interface ICommunityPostsStateDefinitions {
 
 export interface ICommunityPostsStateActions {
     fetchFeaturedPosts: (silen?: boolean) => void;
-    fetchLatestPosts: (silent?: boolean) => void;
+    fetchLatestPosts: (silent?: boolean, reload?: boolean) => void;
     fetchSearchPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => void;
     togglePostRating: (id: TPostPreview['id']) => Promise<boolean>;
     togglePostPrivacy: (id: string, privacy: TPostPreview['privacy']) => void;

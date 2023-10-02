@@ -54,7 +54,7 @@ const PostsContent: FC = () => {
 
   useEffect(() => {
     fetchFeaturedPosts();
-    fetchLatestPosts();
+    fetchLatestPosts(false, true); // Reload latest posts
   }, [filterLanguage]);
 
   const toggleRating = async (id: TPostPreview['id']) => {
