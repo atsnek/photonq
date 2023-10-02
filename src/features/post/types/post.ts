@@ -94,7 +94,8 @@ export type TSearchPostListData = TPaginatedPostListData & {
 /**
  * Props for a single post preview components (for all variants)
  */
-export interface IPostPreviewProps<T> extends TPostPreview {
+export interface IPostPreviewProps<T> {
+  post: TPostPreview;
   toggleRating: (id: TPostPreview['id']) => void;
   canManage?: boolean;
   wrapperProps?: T;

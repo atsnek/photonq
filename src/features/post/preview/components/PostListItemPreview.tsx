@@ -49,36 +49,27 @@ const postListItemPreviewStyling = {
  * Component for displaying a preview of a post in form of a list item.
  */
 const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
-  id,
-  slug,
+  post,
   wrapperProps,
-  avatarUrl,
   showPrivacy,
-  privacy,
   toggleRating,
-  hasRated,
-  title,
-  createdAt,
-  summary,
   canManage,
-  hideAuthor,
-  profile,
-  stars
+  hideAuthor
 }) => {
   const [isRating, setIsRating] = useState(false);
 
-  const isAuthor = useAuthenticationContext().user?.id === profile.id;
+  const isAuthor = useAuthenticationContext().user?.id === post.profile.id;
 
   const handleRating = async () => {
     if (isRating || isAuthor) return;
     setIsRating(true);
-    await toggleRating(id);
+    await toggleRating(post.id);
     setIsRating(false);
   };
 
   return (
     <LinkBox
-      key={id}
+      key={post.id}
       {...postListItemPreviewStyling.wrapper}
       bgColor="components.postPreview.listItem.initial.bgColor"
       borderColor="components.postPreview.listItem.initial.borderColor"
@@ -91,18 +82,18 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
     >
       <VStack spacing={3} alignItems="flex-start">
         <HStack spacing={4} w="full">
-          {avatarUrl && avatarUrl.length > 0 && (
+          {post.avatarUrl && post.avatarUrl.length > 0 && (
             <Image
               display={{ base: 'none', md: 'initial' }}
               boxSize="75px"
               objectFit="cover"
-              src={avatarUrl}
+              src={post.avatarUrl}
               borderRadius="md"
             />
           )}
           <VStack alignItems="flex-start">
             <LinkOverlay
-              href={`/post/${slug}`}
+              href={`/post/${post.slug}`}
               _hover={{
                 h5: {
                   color: 'components.postPreview.listItem._hover.title.color'
@@ -115,7 +106,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
                 color="components.postPreview.listItem.initial.title.color"
                 transition="color 0.2s ease-in-out"
               >
-                {title}
+                {post.title}
               </Heading>
             </LinkOverlay>
             <HStack>
@@ -123,40 +114,45 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
                 color="components.postPreview.listItem.initial.date.color"
                 fontSize="sm"
               >
-                {createdAt}
+                {post.createdAt}
               </Text>
               {showPrivacy && (
-                <PostPreviewPrivacy privacy={privacy} opacity={0.8} />
+                <PostPreviewPrivacy privacy={post.privacy} opacity={0.8} />
               )}
             </HStack>
           </VStack>
           <Spacer />
           {canManage && false && (
-            <PostPreviewManageMenu alignSelf="flex-start" minW="fit-content" />
+            <PostPreviewManageMenu
+              alignSelf="flex-start"
+              minW="fit-content"
+              postPrivacy={post.privacy}
+              togglePostPrivacy={() => {}}
+            />
           )}
         </HStack>
         <Text
           maxW="75%"
           color="components.postPreview.listItem.initial.summary.color"
         >
-          {summary}
+          {post.summary}
         </Text>
         <HStack {...postListItemPreviewStyling.bottomHStack}>
           {!hideAuthor && (
             <Link
-              href={`/user/${profile.username}`}
+              href={`/user/${post.profile.username}`}
               color="components.postPreview.author.color"
               fontSize="sm"
               variant="hover-theme"
             >
-              @{profile.username}
+              @{post.profile.username}
             </Link>
           )}
           <PostPreviewRating
-            id={id}
-            likes={stars}
+            id={post.id}
+            likes={post.stars}
             toggleRating={handleRating}
-            hasRated={hasRated}
+            hasRated={post.hasRated}
             isPostManagable={canManage}
             isAuthor={isAuthor}
             useHighContrast

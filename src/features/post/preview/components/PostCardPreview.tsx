@@ -44,39 +44,30 @@ const postCardPreviewStyling = {
  * Component for displaying a post preview.
  */
 const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
-  id,
-  slug,
-  avatarUrl,
-  profile,
-  createdAt,
-  stars,
-  hasRated,
+  post,
   hideAuthor,
-  title,
-  summary,
   toggleRating,
   canManage,
-  privacy,
   showPrivacy,
   wrapperProps
 }) => {
-  const isAuthor = useAuthenticationContext().user?.id === profile.id;
+  const isAuthor = useAuthenticationContext().user?.id === post.profile.id;
   const [isRating, setIsRating] = useState(false);
 
   const handleRating = async () => {
     if (isRating || isAuthor) return;
     setIsRating(true);
-    await toggleRating(id);
+    await toggleRating(post.id);
     setIsRating(false);
   };
 
   let ratingComp: ReactNode = (
     <PostPreviewRating
-      id={id}
-      likes={stars}
+      id={post.id}
+      likes={post.stars}
       toggleRating={handleRating}
       isRating={isRating}
-      hasRated={hasRated}
+      hasRated={post.hasRated}
       isPostManagable={canManage && false}
       isAuthor={isAuthor}
     />
@@ -106,10 +97,10 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       {...wrapperProps}
     >
       <HStack {...postCardPreviewStyling.topHStack}>
-        {avatarUrl && avatarUrl?.length > 0 && (
+        {post.avatarUrl && post.avatarUrl?.length > 0 && (
           <Image
             {...postCardPreviewStyling.previewImage}
-            src={avatarUrl}
+            src={post.avatarUrl}
             borderRadius="md"
             objectFit="cover"
           />
@@ -120,9 +111,9 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
               variant="hover-theme"
               fontSize="sm"
               color="components.postPreview.author.color"
-              href={`/user/${profile.username}`}
+              href={`/user/${post.profile.username}`}
             >
-              @{profile.username}
+              @{post.profile.username}
             </Link>
           )}
           <Heading
@@ -132,14 +123,14 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             flex={1}
             w={{ base: 'full', md: 'auto' }}
           >
-            <LinkOverlay href={`/post/${slug}`}>{title}</LinkOverlay>
+            <LinkOverlay href={`/post/${post.slug}`}>{post.title}</LinkOverlay>
           </Heading>
         </Box>
         <Spacer />
         {canManage && (
           <PostPreviewManageMenu
-            postId={id}
-            postPrivacy={privacy}
+            postId={post.id}
+            postPrivacy={post.privacy}
             togglePostPrivacy={() => {}}
           />
         )}
@@ -152,7 +143,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
         className="sd-pp-summary"
         transition="opacity 0.2s ease-in-out"
       >
-        {summary}
+        {post.summary}
       </Text>
       <HStack
         zIndex={2}
@@ -163,21 +154,11 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       >
         <HStack opacity={0.8}>
           <Text fontSize={12} color="components.postPreview.date.color">
-            {createdAt}
+            {post.createdAt}
           </Text>
-          {showPrivacy && <PostPreviewPrivacy privacy={privacy} />}
+          {showPrivacy && <PostPreviewPrivacy privacy={post.privacy} />}
         </HStack>
-        <Box pointerEvents="all">
-          {canManage && false ? (
-            <PostPreviewManageMenu
-              postId={id}
-              postPrivacy={privacy}
-              togglePostPrivacy={() => {}}
-            />
-          ) : (
-            ratingComp
-          )}
-        </Box>
+        <Box pointerEvents="all">{ratingComp}</Box>
       </HStack>
     </LinkBox>
   );
