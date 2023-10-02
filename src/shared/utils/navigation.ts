@@ -1,4 +1,4 @@
-import { JaenPage } from '@atsnek/jaen';
+import { JaenPage, useCMSManagementContext } from '@atsnek/jaen';
 import {
   NavMenuSection,
   NavMenuItem,
@@ -9,12 +9,12 @@ import { TMenuStructure } from '../types/menu';
 
 /**
  * Converts a page tree to a usable menu data structure.
- * @param pageTree  The page tree to convert
+ * @param manager The CMS manager instance
  * @param currentPath  The current path of the page
  * @returns  The converted menu data structure and an array of indices of expanded items
  */
-export function convertPageTreeToMenu(
-  pageTree: JaenPage[],
+export function createPageTree(
+  manager: ReturnType<typeof useCMSManagementContext>,
   currentPath: string
 ) {
   let expandedItemIdx = 0; // The next index of an possibly expanded item
@@ -22,26 +22,25 @@ export function convertPageTreeToMenu(
     menu: [],
     activeIdx: []
   };
-  const pageMap: { [key: string]: JaenPage } = {};
-  pageTree.forEach(page => (pageMap[page.id] = page));
 
-  const docs_page = pageTree.find(page => page.slug === 'docs');
-  if (!docs_page) return result;
+  // Get the page tree of the doc's root
+  const docsTree = manager.tree[0].children.find(p => manager.pagePath(p.id) === "/docs");
+  if (!docsTree) return result;
+
+  const pageMap: { [key: string]: ReturnType<typeof useCMSManagementContext>['tree'][0] } = {};
+  docsTree.children.filter(page => page.label.toLocaleLowerCase() != "community").forEach(page => (pageMap[page.id] = page));
 
   // Recursively build a menu item from a page
-  //TODO: Replace the any type with the correct type
   const buildMenuItem = (
-    page_id: string,
-    buildPath: string
+    pageId: string
   ): NavMenuItem | undefined => {
-    const page = pageMap[page_id];
+    const page = pageMap[pageId];
     if (!page) return undefined;
 
-    const href = page.buildPath ?? buildPath + page.slug + '/';
-    const children: any = page.children
-      .filter((child: any) => !child.deleted)
-      .map(({ id }: any) => buildMenuItem(id, href))
-      .filter((item: any): item is NavMenuItem => !!item);
+    const href = manager.pagePath(page.id);
+    const children: NavMenuItem[] = page.children
+      .map(({ id }) => buildMenuItem(id))
+      .filter((item): item is NavMenuItem => !!item);
 
     // Check if any item in the current page or its children is active
     // If so, add the index of the current item to the expanded item index array
@@ -52,8 +51,8 @@ export function convertPageTreeToMenu(
 
     return {
       href: currentPath === href ? '' : href,
-      name: page.jaenPageMetadata.title ?? page.slug,
-      children: children,
+      name: page.label,
+      children,
       isActive: currentPath === href,
       hasActiveChild: hasActiveChild
     };
@@ -61,9 +60,9 @@ export function convertPageTreeToMenu(
 
   const menuData: NavMenuSection[] = [
     {
-      items: docs_page.children
+      items: docsTree.children
         .filter((child: any) => !child.deleted)
-        .map(({ id }: any) => buildMenuItem(id, docs_page.buildPath ?? '/'))
+        .map(({ id }: any) => buildMenuItem(id))
         .filter((item: any): item is NavMenuItem => !!item)
     }
   ];
@@ -136,7 +135,7 @@ export function createBreadCrumbParts(
     if (!child) return false;
     parts.push({
       name: child.name,
-      href: child.href
+      href: child.href ?? ''
     });
 
     if (!child.hasActiveChild && !child.isActive) return !!child.isActive;
@@ -152,7 +151,7 @@ export function createBreadCrumbParts(
   // This is necessary because the first breadcrumb part is not added to the result array by the function above
   parts.push({
     name: activeItem.name,
-    href: activeItem.href
+    href: activeItem.href ?? ''
   });
 
   buildBreadcrumbPart(activeItem, 2);

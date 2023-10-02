@@ -15,7 +15,7 @@ import {
 import { FC, Fragment, MouseEvent, createRef, useMemo, useState } from 'react';
 import { NavMenuSection, NavMenuItem } from '../../../types/navigation';
 import {
-  convertPageTreeToMenu,
+  createPageTree,
   getExpandedMenuItemIndices
 } from '../../../utils/navigation';
 import Link from '../../../components/Link';
@@ -228,7 +228,7 @@ const generateMenuItem = (
 };
 
 interface PageDirectoryProps {
-  data: ReturnType<typeof convertPageTreeToMenu>;
+  data: ReturnType<typeof createPageTree>;
   isExpanded?: boolean;
   isMobile?: boolean;
   closeMobileDrawer?: () => void;

@@ -34,7 +34,7 @@ export const DocContent: FC<DocContentProps> = () => {
       <Stack spacing={{ base: 0, xl: 12 }} direction="row">
         <Box w="full" overflow="hidden">
           <MdxEditor />
-          {/* <MainBottomNav /> */}
+          <MainBottomNav />
         </Box>
 
         <Box position="sticky" top={`calc(0px + ${navTopOffset})`}>

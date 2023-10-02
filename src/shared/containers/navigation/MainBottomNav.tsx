@@ -4,7 +4,7 @@ import React, { FC, useEffect, useMemo } from 'react';
 import { useLocation } from '@reach/router';
 import { TAdjacentPages, TLinkData } from '../../types/navigation';
 import {
-  convertPageTreeToMenu,
+  createPageTree,
   buildActiveMenuItemIndexArray,
   getAdjacentPages
 } from '../../utils/navigation';
@@ -38,7 +38,7 @@ const MainBottomNav: FC<MainBottomNavProps> = ({}) => {
 
   // Memoized adjacent pages object to navigate to previous and next page.
   const pages: TAdjacentPages = useMemo(() => {
-    const menu = convertPageTreeToMenu(pageTree, location.pathname).menu;
+    const menu = createPageTree(manager, location.pathname).menu;
     const idxArr = buildActiveMenuItemIndexArray(menu);
     return getAdjacentPages(idxArr, menu);
   }, [pageTree]);

@@ -1,7 +1,7 @@
 import { LayoutProps } from '@atsnek/jaen';
 import AppLayout from '../../shared/containers/AppLayout';
 import { useLocation } from '@reach/router';
-import { useJaenFrameMenuContext } from 'gatsby-plugin-jaen';
+import { CMSManagement, useJaenFrameMenuContext } from 'gatsby-plugin-jaen';
 import { useEffect } from 'react';
 import { FaCogs } from 'react-icons/fa';
 import { useAppStore } from '../../shared/store/store';
@@ -33,18 +33,20 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   }
 
   return (
-    <AppLayout
-      isDocs={docsPaths.some(docsPath => path.startsWith(docsPath))}
-      isCommunity={path.startsWith('/docs/community')}
-      path={path}
-      topNavProps={{
-        isVisible: !hiddenTopNavPaths.some(hiddenPath =>
-          path.startsWith(hiddenPath)
-        )
-      }}
-    >
-      {children}
-    </AppLayout>
+    <CMSManagement>
+      <AppLayout
+        isDocs={docsPaths.some(docsPath => path.startsWith(docsPath))}
+        isCommunity={path.startsWith('/docs/community')}
+        path={path}
+        topNavProps={{
+          isVisible: !hiddenTopNavPaths.some(hiddenPath =>
+            path.startsWith(hiddenPath)
+          )
+        }}
+      >
+        {children}
+      </AppLayout>
+    </CMSManagement>
   );
 };
 

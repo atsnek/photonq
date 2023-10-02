@@ -14,10 +14,13 @@ import { TSearchMenuStyleProps } from '../../features/search/components/SearchMe
 import { THamburgerMenuIconStylerProps } from '../components/HamburgerMenuIcon';
 import { MenuContext } from '../contexts/menu';
 import { useNavOffset } from '../hooks/use-nav-offset';
-import { convertPageTreeToMenu } from '../utils/navigation';
 import theme from '../../styles/theme/theme';
 import Toast from '../components/toast/Toast';
-import { useAuthenticationContext } from '@atsnek/jaen';
+import {
+  useAuthenticationContext,
+  useCMSManagementContext
+} from '@atsnek/jaen';
+import { createPageTree } from '../utils/navigation';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -55,16 +58,17 @@ const AppLayout: FC<AppLayoutProps> = ({
   topNavProps,
   branding
 }) => {
+  const cmsManager = useCMSManagementContext();
   // const pageTree = useJaenPageTree(); //TODO: Implement this
   const location = useLocation();
   const topNavDisclosure = useDisclosure(); // for the top nav mobile drawer
   const { isAuthenticated } = useAuthenticationContext();
 
   // This generates the menu structure from the page tree that is used over the whole app by accessing the context.
-  // const menuStructure = useMemo(
-  //   () => convertPageTreeToMenu(pageTree, location.pathname),
-  //   [pageTree, path]
-  // ); //TODO: Implement this
+  const menuStructure = useMemo(
+    () => createPageTree(cmsManager, location.pathname),
+    [cmsManager, path]
+  ); //TODO: Implement this
 
   const navTopOffset = useNavOffset();
 
@@ -72,38 +76,38 @@ const AppLayout: FC<AppLayoutProps> = ({
 
   return (
     <>
-      {/* <MenuContext.Provider value={{ menuStructure }}> */}
-      <Flex
-        minW="210px"
-        h="max(100%, 100vh)"
-        minH="100vh"
-        direction="column"
-        pb={5}
-      >
-        {!isAuthenticated && topNavProps?.isVisible && (
-          <TopNav
-            drawerDisclosure={customTopNavDisclosure ?? topNavDisclosure}
-            linkProps={topNavProps?.link}
-            wrapperProps={topNavProps?.wrapper}
-            colorMode={topNavProps?.colorMode}
-            hamburgerIconProps={topNavProps?.hamburger}
-            searchProps={topNavProps?.searchProps}
-            mobileMenuButtonProps={topNavProps?.mobileMenuButtonProps}
-            branding={branding}
-          />
-        )}
-        {/*`mt={navTopOffset} */}
-        <Box flex="1">
-          {isDocs ? (
-            <DocsLayout path={path} isCommunity={isCommunity}>
-              {children}
-            </DocsLayout>
-          ) : (
-            <>{children}</>
+      <MenuContext.Provider value={{ menuStructure }}>
+        <Flex
+          minW="210px"
+          h="max(100%, 100vh)"
+          minH="100vh"
+          direction="column"
+          pb={5}
+        >
+          {!isAuthenticated && topNavProps?.isVisible && (
+            <TopNav
+              drawerDisclosure={customTopNavDisclosure ?? topNavDisclosure}
+              linkProps={topNavProps?.link}
+              wrapperProps={topNavProps?.wrapper}
+              colorMode={topNavProps?.colorMode}
+              hamburgerIconProps={topNavProps?.hamburger}
+              searchProps={topNavProps?.searchProps}
+              mobileMenuButtonProps={topNavProps?.mobileMenuButtonProps}
+              branding={branding}
+            />
           )}
-        </Box>
-      </Flex>
-      {/* </MenuContext.Provider> */}
+          {/*`mt={navTopOffset} */}
+          <Box flex="1">
+            {isDocs ? (
+              <DocsLayout path={path} isCommunity={isCommunity}>
+                {children}
+              </DocsLayout>
+            ) : (
+              <>{children}</>
+            )}
+          </Box>
+        </Flex>
+      </MenuContext.Provider>
       <FooterComp />
     </>
   );
