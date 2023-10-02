@@ -9,7 +9,9 @@ import {
   Box,
   Center,
   CenterProps,
+  HStack,
   LinkProps,
+  Text,
   useBreakpointValue
 } from '@chakra-ui/react';
 import { FC, Fragment, MouseEvent, createRef, useMemo, useState } from 'react';
@@ -20,6 +22,10 @@ import {
 } from '../../../utils/navigation';
 import Link from '../../../components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import TbBook from '../../../components/icons/tabler/TbBook';
+import TbBookUpload from '../../../components/icons/tabler/TbBookUpload';
+import TbConfetti from '../../../components/icons/tabler/TbConfetti';
+import TbUsers from '../../../components/icons/tabler/TbUsers';
 
 const baseMenuItemProps = {
   transition: 'opacity 0.2s ease-in-out, background-color 0.2s ease-in-out'
@@ -264,6 +270,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   const baseMenuItems: NavMenuSection[] = [
     {
       name: 'Community',
+      icon: <TbUsers strokeWidth={3} />,
       items: [
         {
           name: 'Posts',
@@ -273,6 +280,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
     },
     {
       name: 'More',
+      icon: <TbBook strokeWidth={3} />,
       items: [
         {
           name: 'PhotonQ',
@@ -316,15 +324,18 @@ const PageDirectory: FC<PageDirectoryProps> = ({
       {[...data.menu, ...baseMenuItems].map((section, i) => (
         <Fragment key={i}>
           {section.name && (
-            <Box
+            <HStack
               key={0}
+              spacing={2}
+              ml={4}
               mt={i === 0 ? 0 : 9}
               fontSize="sm"
               fontWeight="bold"
-              ml={4}
+              {...section.styling}
             >
-              {section.name}
-            </Box>
+              <Text>{section.name}</Text>
+              {section.icon}
+            </HStack>
           )}
           <Box key={1}>
             {section.items?.map((item: NavMenuItem) => {

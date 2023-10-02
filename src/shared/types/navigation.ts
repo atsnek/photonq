@@ -1,6 +1,6 @@
-import { SnekUser } from '@atsnek/jaen';
 import { ReactNode } from 'react';
 import { TUser } from '../../features/user/types/user';
+import { BoxProps } from '@chakra-ui/react';
 
 export type NavMenuItem = {
   name: string;
@@ -16,6 +16,8 @@ export type NavMenuItem = {
 export type NavMenuSection = {
   name?: string;
   items: NavMenuItem[];
+  styling?: BoxProps;
+  icon?: ReactNode;
 };
 
 export type TLinkData = {
