@@ -5,7 +5,6 @@ import { CMSManagement, useJaenFrameMenuContext } from 'gatsby-plugin-jaen';
 import { useEffect } from 'react';
 import { FaCogs } from 'react-icons/fa';
 import { useAppStore } from '../../shared/store/store';
-import { stat } from 'fs';
 
 const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   const path = useLocation().pathname;

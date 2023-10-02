@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Flex, Spacer, Text } from '@chakra-ui/react';
-import React, { FC, useEffect, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useLocation } from '@reach/router';
 import { TAdjacentPages, TLinkData } from '../../types/navigation';
 import {

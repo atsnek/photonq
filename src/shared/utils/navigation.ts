@@ -1,4 +1,4 @@
-import { JaenPage, useCMSManagementContext } from '@atsnek/jaen';
+import { useCMSManagementContext } from '@atsnek/jaen';
 import {
   NavMenuSection,
   NavMenuItem,

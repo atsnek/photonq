@@ -1,21 +1,18 @@
-import React, { FC, ReactNode, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import TopNav, {
   TBrandImage,
   TMobileMenuButtonProps,
   TTopNavLinkProps,
   TTopNavWrapperProps
 } from './navigation/TopNav';
-import { Box, ChakraProvider, Flex, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, useDisclosure } from '@chakra-ui/react';
 import Footer from './Footer';
 import DocsLayout from './DocsLayout';
 import { useLocation } from '@reach/router';
-import ColorizedUniWienLogo from '../photonq/assets/icons/uni-wien-logo-colorized.svg';
 import { TSearchMenuStyleProps } from '../../features/search/components/SearchMenu';
 import { THamburgerMenuIconStylerProps } from '../components/HamburgerMenuIcon';
 import { MenuContext } from '../contexts/menu';
 import { useNavOffset } from '../hooks/use-nav-offset';
-import theme from '../../styles/theme/theme';
-import Toast from '../components/toast/Toast';
 import {
   useAuthenticationContext,
   useCMSManagementContext
