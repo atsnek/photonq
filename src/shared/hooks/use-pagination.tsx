@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TPaginationType } from '../types/pagination';
 
 interface IUsePaginationProps<T> {
@@ -45,6 +45,12 @@ const usePagination = <T,>({
         currentPage * itemsPerPage
       )
     : items?.slice(0, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [items]);
 
   /**
    * Increments the current page by 1 if the current page is less than the total pages
