@@ -23,6 +23,7 @@ export function createPageTree(
     activeIdx: []
   };
 
+  if (!manager.tree || manager.tree.length === 0) return result;
   // Get the page tree of the doc's root
   const docsTree = manager.tree[0].children.find(p => manager.pagePath(p.id) === "/docs");
   if (!docsTree) return result;
