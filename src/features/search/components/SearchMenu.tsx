@@ -3,6 +3,8 @@ import {
   Center,
   Heading,
   InputProps,
+  LinkBox,
+  LinkOverlay,
   Menu,
   MenuDivider,
   MenuGroup,
@@ -65,6 +67,7 @@ export const SearchResultItem: FC<{
 
   return (
     <MenuItem
+      as={LinkBox}
       key={id}
       fontWeight="normal"
       _focus={{
@@ -91,7 +94,7 @@ export const SearchResultItem: FC<{
       {...props}
       transition="background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
     >
-      <Link href={item.href}>
+      <LinkOverlay href={item.href}>
         <Heading
           size="sm"
           transition="color 0.2s ease-in-out"
@@ -114,7 +117,7 @@ export const SearchResultItem: FC<{
             highlightTag={highlightTag}
           />
         </Text>
-      </Link>
+      </LinkOverlay>
     </MenuItem>
   );
 };
@@ -129,6 +132,7 @@ export const SearchResultSection: FC<{
   defaultHighlight?: boolean;
   onItemClickCapture?: () => void;
 }> = ({ section, idx, query, defaultHighlight, onItemClickCapture }) => {
+  console.log('section', section);
   return (
     <MenuGroup key={idx}>
       <Heading
