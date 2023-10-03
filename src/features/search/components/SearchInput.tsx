@@ -6,6 +6,7 @@ import {
   InputRightElement,
   InputRightElementProps,
   Kbd,
+  useColorModeValue,
   useMenuButton,
   useMenuContext
 } from '@chakra-ui/react';
@@ -62,6 +63,7 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
     // console.log("menuButton['aria-controls']", menuButton['aria-label']);
 
     const [kbd, setKbd] = useState<string | null>(null);
+    const focusBorderColor = useColorModeValue('theme.500', 'theme.700'); // We need this because semanticTokens seem to be broken for that prop
 
     useEffect(() => {
       const platform = getPlatform();
@@ -115,7 +117,7 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
             _focus={{
               backgroundColor: 'topNav.input.focus.bgColor'
             }}
-            focusBorderColor="components.input._focus.borderColor"
+            focusBorderColor={focusBorderColor}
             {...menuButton}
             {...styleProps?.parent}
             onClick={e => {
