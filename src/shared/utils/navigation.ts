@@ -24,6 +24,9 @@ export function createPageTree(
   };
 
   if (!manager.tree || manager.tree.length === 0) return result;
+
+  if (currentPath.endsWith(("/"))) currentPath = currentPath.slice(0, -1); // Remove trailing slash
+
   // Get the page tree of the doc's root
   const docsTree = manager.tree[0].children.find(p => manager.pagePath(p.id) === "/docs");
   if (!docsTree) return result;
@@ -183,6 +186,7 @@ export function getAdjacentPages(
     idx: number,
     parentMenuItem: NavMenuItem
   ) => {
+    // debugger;
     //* posIdx is undefined for the last recursive call
     const posIdx = idxArray[idx];
     const activeChild = menuItem.children?.[posIdx];
@@ -191,7 +195,8 @@ export function getAdjacentPages(
     if (!result.prev) {
       let prev;
       if (posIdx > 0) {
-        prev = menuItem.children?.[posIdx - 1];
+        // prev = menuItem.children?.[posIdx - 1];
+        prev = menuItem;
       } else {
         // If the current item is already the most outer item, get the previous item via the section
         if (
@@ -203,7 +208,7 @@ export function getAdjacentPages(
           const prevSibling =
             parentMenuItem.children[idxArray[idxArray.length - 1] - 1];
           let lastChild =
-            prevSibling.children?.[prevSibling.children.length - 1];
+            prevSibling.children?.[prevSibling.children.length - 1] ?? prevSibling;
           while (
             lastChild &&
             lastChild.children &&
@@ -261,6 +266,7 @@ export function getAdjacentPages(
       children: menu[idxArray[0]].items
     };
 
+    // Changed idxArray[1] to idxArray[0] and idx to 1 instead of 2
     getAdjacentPage(menu[idxArray[0]].items[idxArray[1]], 2, boxedSection);
   }
   return result;

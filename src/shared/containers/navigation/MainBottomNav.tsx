@@ -41,11 +41,11 @@ const MainBottomNav: FC<MainBottomNavProps> = ({}) => {
     const menu = createPageTree(manager, location.pathname).menu;
     const idxArr = buildActiveMenuItemIndexArray(menu);
     return getAdjacentPages(idxArr, menu);
-  }, [pageTree]);
+  }, [pageTree, location.pathname]);
 
   return (
     <Flex
-      borderTop="1px solid"
+      borderTop={pages.prev || pages.next ? '1px solid' : undefined}
       borderColor="components.separator.borderColor"
       mt={10}
       pt={5}
