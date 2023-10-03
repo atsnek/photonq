@@ -321,6 +321,7 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
       const [id, errors] = await sq.mutate(
         m =>
           m.userCreate({
+            createProfile: true,
             values: {
               password: data.password,
               username: data.username,
