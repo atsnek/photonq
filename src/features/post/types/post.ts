@@ -1,5 +1,8 @@
 import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
-import { TPaginationData, TPaginationPageInfo } from '../../../shared/types/pagination';
+import {
+  TPaginationData,
+  TPaginationPageInfo
+} from '../../../shared/types/pagination';
 import { TUser } from '../../user/types/user';
 import { Language } from '@snek-functions/origin/dist/schema.generated';
 
@@ -22,9 +25,9 @@ import { Language } from '@snek-functions/origin/dist/schema.generated';
 
 export type TPostViewMode = 'read' | 'edit';
 export type TPostPrivacy = 'PUBLIC' | 'PRIVATE' | 'FRIENDS';
-export type TPostDateRange = { from: Date | undefined, to: Date | undefined }
+export type TPostDateRange = { from: Date | undefined; to: Date | undefined };
 
-export { Language as EnPostLanguage }
+export { Language as EnPostLanguage };
 
 //TODO: This type needs to be improved to better fit the needs of the current system
 export type TPost = {
@@ -38,10 +41,10 @@ export type TPost = {
   avatarUrl: string | null;
   createdAt: string;
   canManage?: boolean;
-  privacy: TPostPrivacy,
+  privacy: TPostPrivacy;
   authorProfileId: string | null;
   language: Language;
-}
+};
 
 /**
  * A single preview of a post
@@ -71,7 +74,7 @@ export type TPostAuthor = {
   username: string;
   displayName: string;
   avatarUrl?: string | null;
-}
+};
 
 /**
  * Metadata for fetching posts
@@ -81,7 +84,10 @@ export type TPostListData = {
   state: 'inactive' | 'loading' | 'error' | 'success';
 };
 
-export type TPaginatedPostListData = TPaginationData<TPostPreview[], TPostListData>;
+export type TPaginatedPostListData = TPaginationData<
+  TPostPreview[],
+  TPostListData
+>;
 
 /**
  * Extended post list data for search results
@@ -117,7 +123,7 @@ export type TPostReview = {
   reviewers: TUser[];
   status: TPostReviewStatus;
   comments: TPostReviewComment[];
-}
+};
 
 /**
  * Represents a comment on a post review by a reviewer
@@ -127,4 +133,4 @@ export type TPostReviewComment = {
   datetime: string;
   comment: string;
   textReference?: string; // This is the commented text
-}
+};

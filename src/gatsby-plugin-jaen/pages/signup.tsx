@@ -23,31 +23,31 @@ import {
   Progress,
   Stack,
   Text
-} from '@chakra-ui/react'
-import {useCallback, useEffect, useState} from 'react'
-import {Control, Controller, SubmitHandler, useForm} from 'react-hook-form'
-import Particles from 'react-tsparticles'
-import {loadFull} from 'tsparticles' // if you are going to use `loadFull`, install the "tsparticles" package too.
-import {Container, Engine} from 'tsparticles-engine'
-import Logo from '../components/Logo'
-import {JaenFullLogo, Link, PasswordField} from 'gatsby-plugin-jaen'
-import {FaArrowLeft} from '@react-icons/all-files/fa/FaArrowLeft'
-import {FaEye} from '@react-icons/all-files/fa/FaEye'
-import {FaEyeSlash} from '@react-icons/all-files/fa/FaEyeSlash'
-import zxcvbn from 'zxcvbn'
+} from '@chakra-ui/react';
+import { useCallback, useEffect, useState } from 'react';
+import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form';
+import Particles from 'react-tsparticles';
+import { loadFull } from 'tsparticles'; // if you are going to use `loadFull`, install the "tsparticles" package too.
+import { Container, Engine } from 'tsparticles-engine';
+import Logo from '../components/Logo';
+import { JaenFullLogo, Link, PasswordField } from 'gatsby-plugin-jaen';
+import { FaArrowLeft } from '@react-icons/all-files/fa/FaArrowLeft';
+import { FaEye } from '@react-icons/all-files/fa/FaEye';
+import { FaEyeSlash } from '@react-icons/all-files/fa/FaEyeSlash';
+import zxcvbn from 'zxcvbn';
 
-import {PageConfig, PageProps, snekResourceId} from '@atsnek/jaen'
-import {sq} from '@snek-functions/origin'
+import { PageConfig, PageProps, snekResourceId } from '@atsnek/jaen';
+import { sq } from '@snek-functions/origin';
 
 const Page: React.FC<PageProps> = () => {
   const [alert, setAlert] = useState<{
-    status: 'error' | 'success' | 'info'
-    message: string | JSX.Element
-    description?: string
-  } | null>(null)
+    status: 'error' | 'success' | 'info';
+    message: string | JSX.Element;
+    description?: string;
+  } | null>(null);
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData, e) => {
-    e?.preventDefault()
+    e?.preventDefault();
 
     try {
       //   await props.onSignUp(data)
@@ -56,30 +56,30 @@ const Page: React.FC<PageProps> = () => {
         status: 'error',
         message: `Unable to sign up.`,
         description: e.message
-      })
+      });
     }
-  }
+  };
 
   const resetAlert = () => {
-    setAlert(null)
-  }
+    setAlert(null);
+  };
 
   const particlesInit = useCallback(async (engine: Engine) => {
-    console.log(engine)
+    console.log(engine);
 
     // you can initialize the tsParticles instance (engine) here, adding custom shapes or presets
     // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
     // starting from v2 you can add only the features you need reducing the bundle size
-    await loadFull(engine)
+    await loadFull(engine);
     // await loadSlim(engine);
-  }, [])
+  }, []);
 
   const particlesLoaded = useCallback(
     async (container: Container | undefined) => {
-      await console.log(container)
+      await console.log(container);
     },
     []
-  )
+  );
 
   return (
     <Box pos="relative" id="coco">
@@ -152,7 +152,7 @@ const Page: React.FC<PageProps> = () => {
               type: 'circle'
             },
             size: {
-              value: {min: 1, max: 5}
+              value: { min: 1, max: 5 }
             }
           },
           detectRetina: true
@@ -162,8 +162,9 @@ const Page: React.FC<PageProps> = () => {
       <Box pos="relative">
         <ChakraContainer
           maxW="2xl"
-          py={{base: '6', md: '12'}}
-          px={{base: '4', sm: '8'}}>
+          py={{ base: '6', md: '12' }}
+          px={{ base: '4', sm: '8' }}
+        >
           <Stack spacing="8">
             <Stack spacing="6">
               <HStack justify="center">
@@ -172,8 +173,8 @@ const Page: React.FC<PageProps> = () => {
                 </Link>
               </HStack>
 
-              <Stack spacing={{base: '2', md: '3'}} textAlign="center">
-                <Heading size={{base: 'xs', md: 'sm'}} color="white">
+              <Stack spacing={{ base: '2', md: '3' }} textAlign="center">
+                <Heading size={{ base: 'xs', md: 'sm' }} color="white">
                   Create your account
                 </Heading>
                 <Text color="fg.inverted">
@@ -203,11 +204,12 @@ const Page: React.FC<PageProps> = () => {
             )}
 
             <Box
-              py={{base: '2', sm: '8'}}
-              px={{base: '4', sm: '10'}}
+              py={{ base: '2', sm: '8' }}
+              px={{ base: '4', sm: '10' }}
               bg="bg.surface"
               boxShadow={'md'}
-              borderRadius={'xl'}>
+              borderRadius={'xl'}
+            >
               <SignupForm
                 welcomeText={`Welcome to PhotonQ!\n\nJoin our community and unlock the fascinating world of quantum computing.`}
               />
@@ -218,22 +220,22 @@ const Page: React.FC<PageProps> = () => {
         </ChakraContainer>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 interface SignupFormProps {
-  welcomeText: string
+  welcomeText: string;
 }
 
 interface SignupFormData {
-  email: string
-  password: string
-  username: string
+  email: string;
+  password: string;
+  username: string;
   details: {
-    firstName: string
-    lastName: string
-  }
-  terms: boolean
+    firstName: string;
+    lastName: string;
+  };
+  terms: boolean;
 }
 
 enum SignupFormStep {
@@ -245,7 +247,7 @@ enum SignupFormStep {
   Complete
 }
 
-const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
+const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
   const {
     register,
     handleSubmit,
@@ -253,69 +255,69 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
     setError,
     reset,
     control,
-    formState: {errors, isSubmitting, isSubmitted, isSubmitSuccessful}
-  } = useForm<SignupFormData>()
+    formState: { errors, isSubmitting, isSubmitted, isSubmitSuccessful }
+  } = useForm<SignupFormData>();
 
-  const [displayText, setDisplayText] = useState('')
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [showInput, setShowInput] = useState(false)
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showInput, setShowInput] = useState(false);
 
   const [alert, setAlert] = useState<{
-    status: 'error' | 'success' | 'info'
-    message: string | JSX.Element
-    description?: string
-  } | null>(null)
+    status: 'error' | 'success' | 'info';
+    message: string | JSX.Element;
+    description?: string;
+  } | null>(null);
 
   useEffect(() => {
     if (currentIndex < welcomeText.length) {
       const timer = setTimeout(() => {
-        setDisplayText(prevText => prevText + welcomeText[currentIndex])
-        setCurrentIndex(currentIndex + 1)
-      }, 50) // Adjust the speed by changing the delay (e.g., 100ms for 10 characters per second)
+        setDisplayText(prevText => prevText + welcomeText[currentIndex]);
+        setCurrentIndex(currentIndex + 1);
+      }, 50); // Adjust the speed by changing the delay (e.g., 100ms for 10 characters per second)
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     } else {
       // Typewriter animation is complete
-      setShowInput(true)
+      setShowInput(true);
     }
-  }, [currentIndex, welcomeText])
+  }, [currentIndex, welcomeText]);
 
-  const [step, setStep] = useState<SignupFormStep>(SignupFormStep.Email)
+  const [step, setStep] = useState<SignupFormStep>(SignupFormStep.Email);
 
   const onSubmit = async (data: SignupFormData) => {
-    console.log(data)
+    console.log(data);
 
     // Validation based on step
 
-    let shouldJumpToNextStep = true
+    let shouldJumpToNextStep = true;
 
     if (step === SignupFormStep.Email) {
       const [id] = await sq.query(
-        q => q.user({login: data.email, resourceId: snekResourceId}).id
-      )
+        q => q.user({ login: data.email, resourceId: snekResourceId }).id
+      );
 
       // check if user exists
       if (id) {
         setError('email', {
           type: 'manual',
           message: 'Email is already registered'
-        })
+        });
 
-        shouldJumpToNextStep = false
+        shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Username) {
       const [id] = await sq.query(
-        q => q.user({login: data.username, resourceId: snekResourceId}).id
-      )
+        q => q.user({ login: data.username, resourceId: snekResourceId }).id
+      );
 
       // check if user exists
       if (id) {
         setError('username', {
           type: 'manual',
           message: 'Username is already registered'
-        })
+        });
 
-        shouldJumpToNextStep = false
+        shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Complete) {
       const [id, errors] = await sq.mutate(
@@ -333,39 +335,39 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
             },
             resourceId: snekResourceId
           }).id
-      )
+      );
 
       if (errors?.length > 0) {
         setAlert({
           status: 'error',
           message: `Unable to sign up.`,
           description: errors[0].message
-        })
+        });
       } else {
         setAlert({
           status: 'success',
           message: `Successfully signed up.`,
           description: `Please check your email for a confirmation link.`
-        })
+        });
       }
 
-      shouldJumpToNextStep = false
+      shouldJumpToNextStep = false;
     }
 
     if (shouldJumpToNextStep) {
-      setStep(step + 1)
+      setStep(step + 1);
 
       // reset isSubmitted
     }
-  }
+  };
 
   useEffect(() => {
-    const submittedData = getValues()
+    const submittedData = getValues();
 
     if (isSubmitSuccessful) {
-      reset({...submittedData})
+      reset({ ...submittedData });
     }
-  }, [isSubmitSuccessful, reset])
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <Stack spacing="4">
@@ -393,7 +395,8 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
           <FormControl
             isInvalid={!!errors.email}
             isRequired
-            id="login_form_email">
+            id="login_form_email"
+          >
             <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
               Enter your email
             </FormLabel>
@@ -417,7 +420,8 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
             <FormControl
               isInvalid={!!errors.password}
               isRequired
-              id="login_form_password">
+              id="login_form_password"
+            >
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Enter your password
               </FormLabel>
@@ -441,7 +445,8 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
             <FormControl
               isInvalid={!!errors.username}
               isRequired
-              id="login_form_username">
+              id="login_form_username"
+            >
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Enter your username
               </FormLabel>
@@ -467,7 +472,8 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
             <FormControl
               isInvalid={!!errors.details}
               isRequired
-              id="login_form_details">
+              id="login_form_details"
+            >
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Enter your first and last name
               </FormLabel>
@@ -499,25 +505,27 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
             <FormControl
               isInvalid={!!errors.terms}
               isRequired
-              id="login_form_terms">
+              id="login_form_terms"
+            >
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Terms and conditions
               </FormLabel>
               <Controller
                 control={control}
                 name="terms"
-                render={({field: {onChange, value}}) => (
+                render={({ field: { onChange, value } }) => (
                   <Checkbox
                     onChange={e => {
-                      onChange(e.target.checked)
+                      onChange(e.target.checked);
 
                       if (e.target.checked) {
-                        setStep(step + 1)
+                        setStep(step + 1);
                       } else {
-                        setStep(step - 1)
+                        setStep(step - 1);
                       }
                     }}
-                    checked={value}>
+                    checked={value}
+                  >
                     I agree to the terms and conditions
                   </Checkbox>
                 )}
@@ -530,21 +538,22 @@ const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
               mt="4"
               type="submit"
               isLoading={isSubmitting}
-              isDisabled={isSubmitted}>
+              isDisabled={isSubmitted}
+            >
               Sign up for PhotonQ
             </Button>
           )}
         </Stack>
       )}
     </Stack>
-  )
-}
+  );
+};
 
 interface PasswordInput {
-  control: Control<any>
-  isInvalid?: FormControlProps['isInvalid']
-  errorMessage?: string
-  inputRightElement?: JSX.Element
+  control: Control<any>;
+  isInvalid?: FormControlProps['isInvalid'];
+  errorMessage?: string;
+  inputRightElement?: JSX.Element;
 }
 
 const PasswordInput: React.FC<PasswordInput> = ({
@@ -553,25 +562,25 @@ const PasswordInput: React.FC<PasswordInput> = ({
   errorMessage,
   inputRightElement
 }) => {
-  const [passwordStrength, setPasswordStrength] = useState<number | null>(null)
-  const [passwordSuggestions, setPasswordSuggestions] = useState<string[]>([])
-  const [showPassword, setShowPassword] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState<number | null>(null);
+  const [passwordSuggestions, setPasswordSuggestions] = useState<string[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   const checkPasswordStrength = (password: string) => {
-    const result = zxcvbn(password)
-    setPasswordStrength(result.score)
-    setPasswordSuggestions(result.feedback.suggestions)
-  }
+    const result = zxcvbn(password);
+    setPasswordStrength(result.score);
+    setPasswordSuggestions(result.feedback.suggestions);
+  };
 
   const getPasswordStrengthColor = () => {
     if (passwordStrength === null) {
-      return 'gray'
+      return 'gray';
     }
     // Define color codes for different password strengths
-    const colors = ['red', 'orange', 'yellow', 'green', 'teal']
+    const colors = ['red', 'orange', 'yellow', 'green', 'teal'];
     // Map the password strength score (0-4) to the colors
-    return colors[passwordStrength]
-  }
+    return colors[passwordStrength];
+  };
 
   return (
     <FormControl isInvalid={isInvalid}>
@@ -583,14 +592,14 @@ const PasswordInput: React.FC<PasswordInput> = ({
           required: 'New Password is required',
           validate: value => {
             // Custom validation for password strength
-            const strengthResult = zxcvbn(value)
+            const strengthResult = zxcvbn(value);
             if (strengthResult.score < 2) {
-              return 'Password strength is insufficient'
+              return 'Password strength is insufficient';
             }
-            return true
+            return true;
           }
         }}
-        render={({field}) => (
+        render={({ field }) => (
           <Stack>
             <HStack>
               <InputGroup>
@@ -598,8 +607,8 @@ const PasswordInput: React.FC<PasswordInput> = ({
                   {...field}
                   type={showPassword ? 'text' : 'password'}
                   onChange={e => {
-                    field.onChange(e)
-                    checkPasswordStrength(e.target.value)
+                    field.onChange(e);
+                    checkPasswordStrength(e.target.value);
                   }}
                   autoComplete="current-password"
                 />
@@ -637,10 +646,10 @@ const PasswordInput: React.FC<PasswordInput> = ({
       )}
       <FormErrorMessage>{errorMessage}</FormErrorMessage>
     </FormControl>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;
 
 export const pageConfig: PageConfig = {
   label: 'Signup',
@@ -649,6 +658,6 @@ export const pageConfig: PageConfig = {
     name: 'jaen',
     type: 'full'
   }
-}
+};
 
-export {Head} from '@atsnek/jaen'
+export { Head } from '@atsnek/jaen';

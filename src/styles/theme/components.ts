@@ -24,7 +24,7 @@ const themeComponents: { [key: string]: ComponentStyleConfig } = {
   InputGroup: themeInputGroupComponent,
   Tooltip: themeTooltipComponent,
   Textarea: themeTextareaComponent,
-  Skeleton: themeSkeletonComponent,
+  Skeleton: themeSkeletonComponent
 };
 
 export default themeComponents;

@@ -22,7 +22,6 @@ const links = [
 
 export interface DocContentProps {}
 
-//TODO: Re-implement commented out jsx below
 export const DocContent: FC<DocContentProps> = () => {
   const navTopOffset = useNavOffset();
 

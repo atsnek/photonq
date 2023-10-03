@@ -1,8 +1,8 @@
-import type {GatsbyConfig} from 'gatsby'
+import type { GatsbyConfig } from 'gatsby';
 
 require('dotenv').config({
   path: `.env.public`
-})
+});
 
 const config: GatsbyConfig = {
   siteMetadata: {
@@ -13,7 +13,7 @@ const config: GatsbyConfig = {
   // Learn more at: https://gatsby.dev/graphql-typegen
   graphqlTypegen: true,
   flags: {
-    DEV_SSR: true
+    DEV_SSR: false
   },
   plugins: [
     {
@@ -31,6 +31,6 @@ const config: GatsbyConfig = {
       }
     }
   ]
-}
+};
 
-export default config
+export default config;

@@ -1,4 +1,4 @@
-import { AlertStatus } from "@chakra-ui/react";
+import { AlertStatus } from '@chakra-ui/react';
 
 /**
  * All possible toast status

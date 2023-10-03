@@ -1,8 +1,8 @@
-import { ComponentStyleConfig } from "@chakra-ui/react";
+import { ComponentStyleConfig } from '@chakra-ui/react';
 
 const themeButtonComponent: ComponentStyleConfig = {
   variants: {
-    'invisible': {
+    invisible: {
       bgColor: 'transparent',
       border: 'none',
       _hover: {
@@ -12,10 +12,10 @@ const themeButtonComponent: ComponentStyleConfig = {
       _focus: {
         bgColor: 'transparent',
         border: 'none',
-        outline: 'none',
+        outline: 'none'
       },
       cursor: 'default',
-      paddingInline: 3,
+      paddingInline: 3
     },
     'ghost-hover': {
       bgColor: 'transparent',
@@ -104,11 +104,11 @@ const themeButtonComponent: ComponentStyleConfig = {
       borderRadius: 'lg',
       _hover: {
         transform: 'scale(1.1)'
-      },
+      }
     },
     // COLOR VARIANTS
     //TODO: Find a better way to do this (we need the colorScheme to use other color values than f.e. 500 & 600 by default)
-    'filledGreen': {
+    filledGreen: {
       color: 'components.button.filledGreen.color',
       bgColor: 'components.button.filledGreen.bgColor',
       _hover: {
@@ -123,7 +123,7 @@ const themeButtonComponent: ComponentStyleConfig = {
         }
       }
     },
-    'filledYellow': {
+    filledYellow: {
       color: 'components.button.filledYellow.color',
       bgColor: 'components.button.filledYellow.bgColor',
       _hover: {
@@ -138,7 +138,7 @@ const themeButtonComponent: ComponentStyleConfig = {
         }
       }
     },
-    'filledRed': {
+    filledRed: {
       color: 'components.button.filledRed.color',
       bgColor: 'components.button.filledRed.bgColor',
       _hover: {
@@ -152,8 +152,8 @@ const themeButtonComponent: ComponentStyleConfig = {
           bgColor: 'components.button.filledRed.loading.bgColor'
         }
       }
-    },
-  },
+    }
+  }
 };
 
 export default themeButtonComponent;

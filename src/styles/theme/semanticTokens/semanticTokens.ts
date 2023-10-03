@@ -61,7 +61,7 @@ const themeSemanticTokens = {
       actionToolbar: smtActionToolbarComponent,
       tooltip: smtTooltipComponent,
       image: smtImageComponent,
-      badge: smtBadgeComponent,
+      badge: smtBadgeComponent
     },
     modals: {
       // Add styles for modals here
@@ -69,14 +69,14 @@ const themeSemanticTokens = {
     pages: {
       userProfile: smtUserProfilePage,
       posts: smtPostsPage,
-      singlePost: smtSinglePostPage,
+      singlePost: smtSinglePostPage
     },
     views: {
-      postReader: smtPostReaderView,
+      postReader: smtPostReaderView
     },
     features: {
       rating: smtRatingFeature,
-      search: smtSearchFeature,
+      search: smtSearchFeature
     },
     shared: smtShared,
     topNav: smtTopNav,

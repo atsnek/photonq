@@ -15,39 +15,39 @@ import {
   Input,
   Stack,
   Text
-} from '@chakra-ui/react'
-import {useCallback, useState} from 'react'
-import {SubmitHandler, useForm} from 'react-hook-form'
-import Particles from 'react-tsparticles'
-import {loadFull} from 'tsparticles' // if you are going to use `loadFull`, install the "tsparticles" package too.
-import {Container, Engine} from 'tsparticles-engine'
-import Logo from '../Logo'
-import {JaenFullLogo, Link, PasswordField} from 'gatsby-plugin-jaen'
-import {FaArrowLeft} from '@react-icons/all-files/fa/FaArrowLeft'
+} from '@chakra-ui/react';
+import { useCallback, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import Particles from 'react-tsparticles';
+import { loadFull } from 'tsparticles'; // if you are going to use `loadFull`, install the "tsparticles" package too.
+import { Container, Engine } from 'tsparticles-engine';
+import Logo from '../Logo';
+import { JaenFullLogo, Link, PasswordField } from 'gatsby-plugin-jaen';
+import { FaArrowLeft } from '@react-icons/all-files/fa/FaArrowLeft';
 // import { loadSlim } from "tsparticles-slim"; // if you are going to use `loadSlim`, install the "tsparticles-slim" package too.
 
 interface FormData {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
 }
 
 export const Signup = () => {
   const {
     handleSubmit,
     register,
-    formState: {errors, isSubmitting}
-  } = useForm<FormData>()
+    formState: { errors, isSubmitting }
+  } = useForm<FormData>();
 
   const [alert, setAlert] = useState<{
-    status: 'error' | 'success' | 'info'
-    message: string | JSX.Element
-    description?: string
-  } | null>(null)
+    status: 'error' | 'success' | 'info';
+    message: string | JSX.Element;
+    description?: string;
+  } | null>(null);
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData, e) => {
-    e?.preventDefault()
+    e?.preventDefault();
 
     try {
       //   await props.onSignUp(data)
@@ -56,30 +56,30 @@ export const Signup = () => {
         status: 'error',
         message: `Unable to sign up.`,
         description: e.message
-      })
+      });
     }
-  }
+  };
 
   const resetAlert = () => {
-    setAlert(null)
-  }
+    setAlert(null);
+  };
 
   const particlesInit = useCallback(async (engine: Engine) => {
-    console.log(engine)
+    console.log(engine);
 
     // you can initialize the tsParticles instance (engine) here, adding custom shapes or presets
     // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
     // starting from v2 you can add only the features you need reducing the bundle size
-    await loadFull(engine)
+    await loadFull(engine);
     // await loadSlim(engine);
-  }, [])
+  }, []);
 
   const particlesLoaded = useCallback(
     async (container: Container | undefined) => {
-      await console.log(container)
+      await console.log(container);
     },
     []
-  )
+  );
 
   return (
     <Box pos="relative" id="coco">
@@ -152,7 +152,7 @@ export const Signup = () => {
               type: 'circle'
             },
             size: {
-              value: {min: 1, max: 5}
+              value: { min: 1, max: 5 }
             }
           },
           detectRetina: true
@@ -163,8 +163,9 @@ export const Signup = () => {
         <ChakraContainer
           maxW="lg"
           zIndex={9999}
-          py={{base: '6', md: '12'}}
-          px={{base: '0', sm: '8'}}>
+          py={{ base: '6', md: '12' }}
+          px={{ base: '0', sm: '8' }}
+        >
           <Stack spacing="8">
             <Stack spacing="6">
               <HStack justify="center">
@@ -173,8 +174,8 @@ export const Signup = () => {
                 </Link>
               </HStack>
 
-              <Stack spacing={{base: '2', md: '3'}} textAlign="center">
-                <Heading size={{base: 'xs', md: 'sm'}} color="white">
+              <Stack spacing={{ base: '2', md: '3' }} textAlign="center">
+                <Heading size={{ base: 'xs', md: 'sm' }} color="white">
                   Create your account
                 </Heading>
                 <Text color="fg.muted">
@@ -205,11 +206,12 @@ export const Signup = () => {
 
             <form onSubmit={handleSubmit(onSubmit) as any}>
               <Box
-                py={{base: '0', sm: '8'}}
-                px={{base: '4', sm: '10'}}
+                py={{ base: '0', sm: '8' }}
+                px={{ base: '4', sm: '10' }}
                 bg="bg.surface"
-                boxShadow={{base: 'none', sm: 'md'}}
-                borderRadius={{base: 'none', sm: 'xl'}}>
+                boxShadow={{ base: 'none', sm: 'md' }}
+                borderRadius={{ base: 'none', sm: 'xl' }}
+              >
                 <Stack spacing="6">
                   <HStack justify="center" py="4">
                     <Box maxW="64">
@@ -222,11 +224,13 @@ export const Signup = () => {
                       direction={{
                         base: 'column',
                         md: 'row'
-                      }}>
+                      }}
+                    >
                       <FormControl
                         id="login_form_first_name"
                         isRequired
-                        isInvalid={!!errors.firstName}>
+                        isInvalid={!!errors.firstName}
+                      >
                         <FormLabel htmlFor="firstName">First name</FormLabel>
                         <Input
                           id="firstName"
@@ -241,7 +245,8 @@ export const Signup = () => {
                       <FormControl
                         id="login_form_last_name"
                         isRequired
-                        isInvalid={!!errors.lastName}>
+                        isInvalid={!!errors.lastName}
+                      >
                         <FormLabel htmlFor="lastName">Last name</FormLabel>
                         <Input
                           id="lastName"
@@ -258,7 +263,8 @@ export const Signup = () => {
                     <FormControl
                       id="login_form_email"
                       isRequired
-                      isInvalid={!!errors.email}>
+                      isInvalid={!!errors.email}
+                    >
                       <FormLabel htmlFor="email">Email</FormLabel>
                       <Input
                         id="email"
@@ -272,7 +278,7 @@ export const Signup = () => {
                     </FormControl>
 
                     <PasswordField
-                      {...register('password', {required: true})}
+                      {...register('password', { required: true })}
                       isRequired
                       isInvalid={!!errors.password?.message}
                     />
@@ -283,7 +289,8 @@ export const Signup = () => {
                       type="submit"
                       variant="primary"
                       size="lg"
-                      isLoading={isSubmitting}>
+                      isLoading={isSubmitting}
+                    >
                       Sign up
                     </Button>
                     {/* <HStack>
@@ -304,5 +311,5 @@ export const Signup = () => {
         </ChakraContainer>
       </Box>
     </Box>
-  )
-}
+  );
+};

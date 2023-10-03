@@ -34,7 +34,7 @@ const smtShared = {
         }
       }
     }
-  },
+  }
 };
 
 export default smtShared;

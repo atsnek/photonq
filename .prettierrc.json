@@ -2,11 +2,13 @@
   "printWidth": 80,
   "tabWidth": 2,
   "useTabs": false,
-  "semi": false,
+  "semi": true,
   "singleQuote": true,
   "trailingComma": "none",
-  "bracketSpacing": false,
+  "bracketSpacing": true,
   "arrowParens": "avoid",
-  "bracketSameLine": true,
-  "jsxBracketSameLine": true
+  "jsxBracketSameLine": false,
+  "importOrder": ["^@(.*)$", "^[./]"],
+  "importOrderSeparation": true,
+  "experimentalBabelParserPluginsList": ["jsx", "typescript"]
 }

@@ -18,6 +18,12 @@ export type TActivity = {
   type: TActivityType;
   timestamp: string;
   title: Omit<TLinkData, 'isActive'>;
-}
+};
 
-export type TActivityType = 'blog_create' | 'blog_publish' | 'follow_follow' | 'profile_create' | 'star_unstar' | 'star_star';
+export type TActivityType =
+  | 'blog_create'
+  | 'blog_publish'
+  | 'follow_follow'
+  | 'profile_create'
+  | 'star_unstar'
+  | 'star_star';

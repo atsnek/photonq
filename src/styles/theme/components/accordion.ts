@@ -18,7 +18,7 @@ const themeAccordionComponent = {
         fontSize: 'sm'
       }
     }
-  },
+  }
 };
 
 export default themeAccordionComponent;

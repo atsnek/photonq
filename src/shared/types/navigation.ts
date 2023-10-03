@@ -43,14 +43,15 @@ export type MainBreadcrumbPart = {
   isDisabled?: boolean;
   isActive?: boolean;
 } & (
-    {
+  | {
       isUser: true;
       user: TUser | null;
       showUserImage?: boolean;
-    } | {
+    }
+  | {
       isUser?: false;
     }
-  );
+);
 
 /**
  * Stores the data of the previous and next page

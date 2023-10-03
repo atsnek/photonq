@@ -256,7 +256,10 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
   const { isAuthenticated, openLoginModal } = useAuthenticationContext();
-  const isSmallScreen = useBreakpointValue({ base: true, md: false });
+  const isSmallScreen =
+    typeof window === 'undefined'
+      ? false
+      : useBreakpointValue({ base: true, md: false });
 
   const updateExpandedIdx = (idx: number, mode: 'toggle' | 'set') => {
     const isIncluded = expandedIdx.includes(idx);

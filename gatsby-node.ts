@@ -1,8 +1,8 @@
-import {PageConfig} from '@atsnek/jaen'
-import {GatsbyNode} from 'gatsby'
-import path from 'path'
-import fs from 'fs'
-import {buildSearchIndex} from './src/search/build-search-index'
+import { PageConfig } from '@atsnek/jaen';
+import { GatsbyNode } from 'gatsby';
+import path from 'path';
+import fs from 'fs';
+import { buildSearchIndex } from './src/search/build-search-index';
 
 export const onPostBuild: GatsbyNode['onPostBuild'] = async ({
   graphql,
@@ -11,20 +11,20 @@ export const onPostBuild: GatsbyNode['onPostBuild'] = async ({
   const result = await graphql<{
     allJaenPage: {
       nodes: Array<{
-        id: string
-        slug: string
+        id: string;
+        slug: string;
         parentPage: {
-          id: string
-        } | null
-        template: string | null
+          id: string;
+        } | null;
+        template: string | null;
         jaenPageMetadata: {
-          title: string
-        }
-        jaenFields: Record<string, any> | null
-        pageConfig: PageConfig | null
-        buildPath: string
-      }>
-    }
+          title: string;
+        };
+        jaenFields: Record<string, any> | null;
+        pageConfig: PageConfig | null;
+        buildPath: string;
+      }>;
+    };
   }>(`
     query {
       allJaenPage {
@@ -44,42 +44,44 @@ export const onPostBuild: GatsbyNode['onPostBuild'] = async ({
         }
       }
     }
-  `)
+  `);
 
   if (result.errors || !result.data) {
-    reporter.panicOnBuild(`Error while running GraphQL query. ${result.errors}`)
+    reporter.panicOnBuild(
+      `Error while running GraphQL query. ${result.errors}`
+    );
 
-    return
+    return;
   }
 
-  const {allJaenPage} = result.data
+  const { allJaenPage } = result.data;
 
-  await preparePagesAndBuildSearch(allJaenPage)
-}
+  await preparePagesAndBuildSearch(allJaenPage);
+};
 
 async function preparePagesAndBuildSearch(allJaenPage: {
   nodes: Array<{
-    id: string
-    slug: string
+    id: string;
+    slug: string;
     parentPage: {
-      id: string
-    } | null
-    template: string | null
+      id: string;
+    } | null;
+    template: string | null;
     jaenPageMetadata: {
-      title: string
-    }
-    jaenFields: Record<string, any> | null
-    pageConfig: PageConfig | null
-    buildPath: string
-  }>
+      title: string;
+    };
+    jaenFields: Record<string, any> | null;
+    pageConfig: PageConfig | null;
+    buildPath: string;
+  }>;
 }) {
   const nodesForSearchIndex = allJaenPage.nodes.map(node => {
-    const originPath = node.buildPath
+    const originPath = node.buildPath;
 
-    let type = node.template
+    let type = node.template;
 
     if (type && path.extname(type)) {
-      type = path.basename(type, path.extname(type))
+      type = path.basename(type, path.extname(type));
     }
 
     return {
@@ -88,13 +90,13 @@ async function preparePagesAndBuildSearch(allJaenPage: {
       jaenPageMetadata: node.jaenPageMetadata,
       jaenFields: node.jaenFields,
       type
-    }
-  })
+    };
+  });
 
-  const searchIndex = await buildSearchIndex(nodesForSearchIndex as any)
+  const searchIndex = await buildSearchIndex(nodesForSearchIndex as any);
 
   await fs.promises.writeFile(
     path.join('public', 'search-index.json'),
     JSON.stringify(searchIndex)
-  )
+  );
 }

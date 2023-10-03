@@ -103,6 +103,6 @@ const themeColors = {
       sunflower: '#FFC312'
     }
   }
-}
+};
 
-export default themeColors
+export default themeColors;

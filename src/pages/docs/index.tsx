@@ -1,14 +1,14 @@
-import {PageConfig, PageProps} from '@atsnek/jaen'
+import { PageConfig, PageProps } from '@atsnek/jaen';
 
-import {graphql} from 'gatsby'
-import * as React from 'react'
-import {DocContent} from '../../contents/DocContent'
+import { graphql } from 'gatsby';
+import * as React from 'react';
+import { DocContent } from '../../contents/DocContent';
 
 const DocsPage: React.FC<PageProps> = () => {
-  return <DocContent />
-}
+  return <DocContent />;
+};
 
-export default DocsPage
+export default DocsPage;
 
 export const pageConfig: PageConfig = {
   label: 'Documentation',
@@ -19,7 +19,7 @@ export const pageConfig: PageConfig = {
     order: 100,
     group: 'photonq'
   }
-}
+};
 
 export const query = graphql`
   query ($jaenPageId: String!) {
@@ -33,6 +33,6 @@ export const query = graphql`
       }
     }
   }
-`
+`;
 
-export {Head} from '@atsnek/jaen'
+export { Head } from '@atsnek/jaen';

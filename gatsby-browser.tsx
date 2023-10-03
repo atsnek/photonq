@@ -1,5 +1,5 @@
-import {GatsbyBrowser} from 'gatsby'
-import {Box, Heading} from '@chakra-ui/react'
+import { GatsbyBrowser } from 'gatsby';
+import { Box, Heading } from '@chakra-ui/react';
 
 // export const wrapPageElement: GatsbyBrowser['wrapPageElement'] = ({
 //   element,

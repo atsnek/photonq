@@ -27,6 +27,7 @@ import { useLocation, navigate } from '@reach/router';
 // import { SearchProvider, useSearch } from '@atsnek/jaen';
 import { searchDocs } from '../../../shared/utils/search';
 import { SearchProvider } from '../../../search/search-provider';
+import { useSearch } from '../../../search/use-search';
 
 /**
  * The search menu item component for displaying a specific search result item.
@@ -212,14 +213,14 @@ const SearchMenu: FC<SearchMenuProps> = ({
     }
   };
 
-  // const search = useSearch();
+  const search = useSearch();
 
-  // useEffect(() => {
-  //   if (searchQuery.length > 0) {
-  //     // Retrieve the search data
-  //     searchDocs(searchQuery, search.searchIndex).then(setSearchResultData);
-  //   } else setSearchResultData([]);
-  // }, [searchQuery]);
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      // Retrieve the search data
+      searchDocs(searchQuery, search.searchIndex).then(setSearchResultData);
+    } else setSearchResultData([]);
+  }, [searchQuery]);
 
   return (
     <Menu

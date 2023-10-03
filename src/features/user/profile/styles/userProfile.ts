@@ -37,7 +37,7 @@ const smtUserProfilePage = {
         borderColor: {
           default: 'theme.500',
           _dark: 'theme.500'
-        },
+        }
       }
     },
     followers: {
@@ -53,7 +53,7 @@ const smtUserProfilePage = {
           _dark: 'gray.500'
         }
       }
-    },
+    }
   },
   topNav: {
     tabs: {

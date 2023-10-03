@@ -58,8 +58,8 @@ const smtButtonComponent = {
       color: {
         default: 'theme.500',
         _dark: 'theme.500'
-      },
-    },
+      }
+    }
   },
   // COLOR VARIANTS
   filledGreen: {
@@ -75,13 +75,13 @@ const smtButtonComponent = {
       bgColor: {
         default: 'flat.se.green.550',
         _dark: 'flat.se.green.600'
-      },
+      }
     },
     loading: {
       bgColor: {
         default: 'flat.se.green.300',
         _dark: 'flat.se.green.400'
-      },
+      }
     }
   },
   filledYellow: {
@@ -97,13 +97,13 @@ const smtButtonComponent = {
       bgColor: {
         default: 'yellow.300',
         _dark: 'yellow.600'
-      },
+      }
     },
     loading: {
       bgColor: {
         default: 'yellow.300',
         _dark: 'yellow.400'
-      },
+      }
     }
   },
   filledRed: {
@@ -119,15 +119,15 @@ const smtButtonComponent = {
       bgColor: {
         default: 'red.300',
         _dark: 'red.600'
-      },
+      }
     },
     loading: {
       bgColor: {
         default: 'red.300',
         _dark: 'red.400'
-      },
-    },
-  },
+      }
+    }
+  }
 };
 
 export default smtButtonComponent;

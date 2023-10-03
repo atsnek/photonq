@@ -1,12 +1,11 @@
-import { SnekUser } from "@atsnek/jaen";
-
+import { SnekUser } from '@atsnek/jaen';
 
 export interface IUserStateDefinition {
-    userMe: SnekUser | null;
+  userMe: SnekUser | null;
 }
 
 export interface IUserStateActions {
-    fetchUser: () => void;
+  fetchUser: () => void;
 }
 
 export type TUserSlice = IUserStateDefinition & IUserStateActions;

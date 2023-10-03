@@ -1,4 +1,4 @@
-import {SearchIndex} from './types.js'
+import { SearchIndex } from './types.js';
 
 /**
  * Retrieves the built search index from a JSON file.
@@ -11,19 +11,19 @@ export async function getBuiltSearchIndex(): Promise<SearchIndex> {
       headers: {
         'Content-Type': 'application/json'
       }
-    })
+    });
 
     if (!res.ok) {
-      throw new Error('Failed to retrieve the built search index data.')
+      throw new Error('Failed to retrieve the built search index data.');
     }
 
-    const data = await res.json()
-    return data
+    const data = await res.json();
+    return data;
   } catch (err) {
     console.error(
       'Error occurred while retrieving the built search index:',
       err
-    )
-    return {}
+    );
+    return {};
   }
 }

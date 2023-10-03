@@ -15,11 +15,11 @@ const smtInputComponent = {
           borderColor: {
             default: 'gray.300',
             _dark: 'gray.600'
-          },
-        },
-      },
-    },
-  },
+          }
+        }
+      }
+    }
+  }
 };
 
 export default smtInputComponent;
