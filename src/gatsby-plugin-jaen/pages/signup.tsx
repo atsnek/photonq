@@ -9,39 +9,37 @@ import {
   Checkbox,
   CloseButton,
   FormControl,
+  FormControlProps,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   HStack,
   Heading,
+  IconButton,
   Input,
+  InputGroup,
+  InputProps,
+  InputRightElement,
+  Progress,
   Stack,
   Text
 } from '@chakra-ui/react'
 import {useCallback, useEffect, useState} from 'react'
-import {SubmitHandler, useForm} from 'react-hook-form'
+import {Control, Controller, SubmitHandler, useForm} from 'react-hook-form'
 import Particles from 'react-tsparticles'
 import {loadFull} from 'tsparticles' // if you are going to use `loadFull`, install the "tsparticles" package too.
 import {Container, Engine} from 'tsparticles-engine'
 import Logo from '../components/Logo'
 import {JaenFullLogo, Link, PasswordField} from 'gatsby-plugin-jaen'
 import {FaArrowLeft} from '@react-icons/all-files/fa/FaArrowLeft'
+import {FaEye} from '@react-icons/all-files/fa/FaEye'
+import {FaEyeSlash} from '@react-icons/all-files/fa/FaEyeSlash'
+import zxcvbn from 'zxcvbn'
 
-import {PageConfig, PageProps} from '@atsnek/jaen'
-
-interface FormData {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-}
+import {PageConfig, PageProps, snekResourceId} from '@atsnek/jaen'
+import {sq} from '@snek-functions/origin'
 
 const Page: React.FC<PageProps> = () => {
-  const {
-    handleSubmit,
-    register,
-    formState: {errors, isSubmitting}
-  } = useForm<FormData>()
-
   const [alert, setAlert] = useState<{
     status: 'error' | 'success' | 'info'
     message: string | JSX.Element
@@ -165,7 +163,7 @@ const Page: React.FC<PageProps> = () => {
         <ChakraContainer
           maxW="2xl"
           py={{base: '6', md: '12'}}
-          px={{base: '0', sm: '8'}}>
+          px={{base: '4', sm: '8'}}>
           <Stack spacing="8">
             <Stack spacing="6">
               <HStack justify="center">
@@ -204,18 +202,16 @@ const Page: React.FC<PageProps> = () => {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit(onSubmit) as any}>
-              <Box
-                py={{base: '0', sm: '8'}}
-                px={{base: '4', sm: '10'}}
-                bg="bg.surface"
-                boxShadow={{base: 'none', sm: 'md'}}
-                borderRadius={{base: 'none', sm: 'xl'}}>
-                <SignupForm
-                  welcomeText={`Welcome to PhotonQ!\n\nJoin our community and unlock the fascinating world of quantum computing.`}
-                />
-              </Box>
-            </form>
+            <Box
+              py={{base: '2', sm: '8'}}
+              px={{base: '4', sm: '10'}}
+              bg="bg.surface"
+              boxShadow={'md'}
+              borderRadius={'xl'}>
+              <SignupForm
+                welcomeText={`Welcome to PhotonQ!\n\nJoin our community and unlock the fascinating world of quantum computing.`}
+              />
+            </Box>
 
             <JaenFullLogo height="12" width="auto" />
           </Stack>
@@ -229,10 +225,46 @@ interface SignupFormProps {
   welcomeText: string
 }
 
-const SignupForm: React.FC<{welcomeText: string}> = ({welcomeText}) => {
+interface SignupFormData {
+  email: string
+  password: string
+  username: string
+  details: {
+    firstName: string
+    lastName: string
+  }
+  terms: boolean
+}
+
+enum SignupFormStep {
+  Email,
+  Password,
+  Username,
+  Details,
+  Terms,
+  Complete
+}
+
+const SignupForm: React.FC<SignupFormProps> = ({welcomeText}) => {
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    setError,
+    reset,
+    control,
+    formState: {errors, isSubmitting, isSubmitted, isSubmitSuccessful}
+  } = useForm<SignupFormData>()
+
   const [displayText, setDisplayText] = useState('')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showInput, setShowInput] = useState(false)
+
+  const [alert, setAlert] = useState<{
+    status: 'error' | 'success' | 'info'
+    message: string | JSX.Element
+    description?: string
+  } | null>(null)
 
   useEffect(() => {
     if (currentIndex < welcomeText.length) {
@@ -248,103 +280,362 @@ const SignupForm: React.FC<{welcomeText: string}> = ({welcomeText}) => {
     }
   }, [currentIndex, welcomeText])
 
-  const [step, setStep] = useState<number>(0)
+  const [step, setStep] = useState<SignupFormStep>(SignupFormStep.Email)
 
-  const handleButtonClick = () => {
-    setStep(step + 1)
+  const onSubmit = async (data: SignupFormData) => {
+    console.log(data)
+
+    // Validation based on step
+
+    let shouldJumpToNextStep = true
+
+    if (step === SignupFormStep.Email) {
+      const [id] = await sq.query(
+        q => q.user({login: data.email, resourceId: snekResourceId}).id
+      )
+
+      // check if user exists
+      if (id) {
+        setError('email', {
+          type: 'manual',
+          message: 'Email is already registered'
+        })
+
+        shouldJumpToNextStep = false
+      }
+    } else if (step === SignupFormStep.Username) {
+      const [id] = await sq.query(
+        q => q.user({login: data.username, resourceId: snekResourceId}).id
+      )
+
+      // check if user exists
+      if (id) {
+        setError('username', {
+          type: 'manual',
+          message: 'Username is already registered'
+        })
+
+        shouldJumpToNextStep = false
+      }
+    } else if (step === SignupFormStep.Complete) {
+      const [id, errors] = await sq.mutate(
+        m =>
+          m.userCreate({
+            values: {
+              password: data.password,
+              username: data.username,
+              emailAddress: data.email,
+              details: {
+                firstName: data.details.firstName,
+                lastName: data.details.lastName
+              }
+            },
+            resourceId: snekResourceId
+          }).id
+      )
+
+      if (errors?.length > 0) {
+        setAlert({
+          status: 'error',
+          message: `Unable to sign up.`,
+          description: errors[0].message
+        })
+      } else {
+        setAlert({
+          status: 'success',
+          message: `Successfully signed up.`,
+          description: `Please check your email for a confirmation link.`
+        })
+      }
+
+      shouldJumpToNextStep = false
+    }
+
+    if (shouldJumpToNextStep) {
+      setStep(step + 1)
+
+      // reset isSubmitted
+    }
   }
+
+  useEffect(() => {
+    const submittedData = getValues()
+
+    if (isSubmitSuccessful) {
+      reset({...submittedData})
+    }
+  }, [isSubmitSuccessful, reset])
 
   return (
     <Stack spacing="4">
+      {alert && (
+        <Alert status={alert.status}>
+          <AlertIcon />
+          <Box w="full">
+            <AlertTitle>{alert.message}</AlertTitle>
+            <AlertDescription>{alert.description}</AlertDescription>
+          </Box>
+          <CloseButton
+            alignSelf="flex-start"
+            position="relative"
+            right={-1}
+            top={-1}
+            onClick={() => setAlert(null)}
+          />
+        </Alert>
+      )}
       <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize="md">
         {displayText}
       </Text>
       {showInput && (
-        <>
-          <FormControl>
+        <Stack as="form" onSubmit={handleSubmit(onSubmit)}>
+          <FormControl
+            isInvalid={!!errors.email}
+            isRequired
+            id="login_form_email">
             <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
               Enter your email
             </FormLabel>
             <HStack>
-              <Input type="email" />
+              <Input
+                type="email"
+                {...register('email', {
+                  required: true
+                })}
+              />
 
               {step === 0 && (
-                <Button onClick={handleButtonClick}>Continue</Button>
+                <Button type="submit" isLoading={isSubmitting}>
+                  Continue
+                </Button>
               )}
             </HStack>
+            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
           </FormControl>
           {step > 0 && (
-            <FormControl>
+            <FormControl
+              isInvalid={!!errors.password}
+              isRequired
+              id="login_form_password">
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Enter your password
               </FormLabel>
               <HStack>
-                <Input type="password" />
-
-                {step === 1 && (
-                  <Button onClick={handleButtonClick}>Continue</Button>
-                )}
+                <PasswordInput
+                  control={control}
+                  inputRightElement={
+                    step === 1 ? (
+                      <Button type="submit" isLoading={isSubmitting}>
+                        Continue
+                      </Button>
+                    ) : undefined
+                  }
+                />
               </HStack>
+              <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
             </FormControl>
           )}
           {step > 1 && (
             // username
-            <FormControl>
+            <FormControl
+              isInvalid={!!errors.username}
+              isRequired
+              id="login_form_username">
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Enter your username
               </FormLabel>
               <HStack>
-                <Input />
+                <Input
+                  type="text"
+                  {...register('username', {
+                    required: true
+                  })}
+                />
 
                 {step === 2 && (
-                  <Button onClick={handleButtonClick}>Continue</Button>
+                  <Button type="submit" isLoading={isSubmitting}>
+                    Continue
+                  </Button>
                 )}
               </HStack>
+              <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
             </FormControl>
           )}
           {step > 2 && (
             // first and last name
-            <FormControl>
+            <FormControl
+              isInvalid={!!errors.details}
+              isRequired
+              id="login_form_details">
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Enter your first and last name
               </FormLabel>
               <HStack>
                 <HStack w="full">
-                  <Input />
-                  <Input />
+                  <Input
+                    {...register('details.firstName', {
+                      required: true
+                    })}
+                  />
+                  <Input
+                    {...register('details.lastName', {
+                      required: true
+                    })}
+                  />
                 </HStack>
 
                 {step === 3 && (
-                  <Button onClick={handleButtonClick}>Continue</Button>
+                  <Button type="submit" isLoading={isSubmitting}>
+                    Continue
+                  </Button>
                 )}
               </HStack>
+              <FormErrorMessage>{errors.details?.message}</FormErrorMessage>
             </FormControl>
           )}
 
           {step > 3 && (
-            <FormControl>
+            <FormControl
+              isInvalid={!!errors.terms}
+              isRequired
+              id="login_form_terms">
               <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Terms and conditions
               </FormLabel>
-              <HStack>
-                <Checkbox
-                  onChange={e => {
-                    if (e.target.checked) {
-                      setStep(step + 1)
-                    } else {
-                      setStep(step - 1)
-                    }
-                  }}>
-                  I agree to the terms and conditions
-                </Checkbox>
-              </HStack>
+              <Controller
+                control={control}
+                name="terms"
+                render={({field: {onChange, value}}) => (
+                  <Checkbox
+                    onChange={e => {
+                      onChange(e.target.checked)
+
+                      if (e.target.checked) {
+                        setStep(step + 1)
+                      } else {
+                        setStep(step - 1)
+                      }
+                    }}
+                    checked={value}>
+                    I agree to the terms and conditions
+                  </Checkbox>
+                )}
+              />
             </FormControl>
           )}
 
-          {step > 4 && <Button mt="4">Sign up for PhotonQ</Button>}
-        </>
+          {step > 4 && (
+            <Button
+              mt="4"
+              type="submit"
+              isLoading={isSubmitting}
+              isDisabled={isSubmitted}>
+              Sign up for PhotonQ
+            </Button>
+          )}
+        </Stack>
       )}
     </Stack>
+  )
+}
+
+interface PasswordInput {
+  control: Control<any>
+  isInvalid?: FormControlProps['isInvalid']
+  errorMessage?: string
+  inputRightElement?: JSX.Element
+}
+
+const PasswordInput: React.FC<PasswordInput> = ({
+  control,
+  isInvalid,
+  errorMessage,
+  inputRightElement
+}) => {
+  const [passwordStrength, setPasswordStrength] = useState<number | null>(null)
+  const [passwordSuggestions, setPasswordSuggestions] = useState<string[]>([])
+  const [showPassword, setShowPassword] = useState(false)
+
+  const checkPasswordStrength = (password: string) => {
+    const result = zxcvbn(password)
+    setPasswordStrength(result.score)
+    setPasswordSuggestions(result.feedback.suggestions)
+  }
+
+  const getPasswordStrengthColor = () => {
+    if (passwordStrength === null) {
+      return 'gray'
+    }
+    // Define color codes for different password strengths
+    const colors = ['red', 'orange', 'yellow', 'green', 'teal']
+    // Map the password strength score (0-4) to the colors
+    return colors[passwordStrength]
+  }
+
+  return (
+    <FormControl isInvalid={isInvalid}>
+      <FormLabel htmlFor="newPassword">Password</FormLabel>
+      <Controller
+        name="password"
+        control={control}
+        rules={{
+          required: 'New Password is required',
+          validate: value => {
+            // Custom validation for password strength
+            const strengthResult = zxcvbn(value)
+            if (strengthResult.score < 2) {
+              return 'Password strength is insufficient'
+            }
+            return true
+          }
+        }}
+        render={({field}) => (
+          <Stack>
+            <HStack>
+              <InputGroup>
+                <Input
+                  {...field}
+                  type={showPassword ? 'text' : 'password'}
+                  onChange={e => {
+                    field.onChange(e)
+                    checkPasswordStrength(e.target.value)
+                  }}
+                  autoComplete="current-password"
+                />
+
+                <InputRightElement>
+                  <IconButton
+                    aria-label="Show password"
+                    icon={showPassword ? <FaEyeSlash /> : <FaEye />}
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                </InputRightElement>
+              </InputGroup>
+
+              {inputRightElement}
+            </HStack>
+
+            <Progress
+              value={
+                passwordStrength === null ? 0 : (passwordStrength + 1) * 25
+              }
+              colorScheme={getPasswordStrengthColor()}
+              size="sm"
+              isAnimated
+            />
+          </Stack>
+        )}
+      />
+
+      {passwordSuggestions.length > 0 && (
+        <FormHelperText color="red">
+          Suggestions: {passwordSuggestions.join(' ')}
+        </FormHelperText>
+      )}
+      <FormErrorMessage>{errorMessage}</FormErrorMessage>
+    </FormControl>
   )
 }
 
