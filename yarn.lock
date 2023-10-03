@@ -3622,10 +3622,10 @@
   dependencies:
     snek-query "*"
 
-"@snek-functions/origin@^0.8.19":
-  version "0.8.19"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.19.tgz#721ba371f121d475e36cdfc9da8690d05d767045"
-  integrity sha512-vuf/bGAmKZcA5L+2nRpcZ3CklYQxpzAuI+vSnHAy4d5KX0HA2Pywn3251eKdnlOls1PoEwxf7mVr0DjAxF1urA==
+"@snek-functions/origin@^0.8.20":
+  version "0.8.20"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.20.tgz#6af2b1687b36acc7f798c32156d1997c73a1ff55"
+  integrity sha512-pPF3SjfTjALVYu5YeCdGSrxSY1/NGNrcdm1qP5NaxW20UgnZmOwDRQgz9dn4mRIEa0Mm7oxeHgID8Ls1TEdidg==
   dependencies:
     snek-query "*"
 
@@ -4072,6 +4072,11 @@
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/@types/yoga-layout/-/yoga-layout-1.9.2.tgz#efaf9e991a7390dc081a0b679185979a83a9639a"
   integrity sha512-S9q47ByT2pPvD65IvrWp7qppVMpk9WGMbVq9wbWZOHg6tnXSD4vyhao6nOSBwwfDdV2p3Kx9evA9vI+XWTfDvw==
+
+"@types/zxcvbn@^4.4.2":
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/@types/zxcvbn/-/zxcvbn-4.4.2.tgz#7b16c35330a15471cd7b9d3576503a40b6bd2416"
+  integrity sha512-T7SEL8b/eN7AEhHQ8oFt7c6Y+l3p8OpH7KwJIe+5oBOPLMMioPeMsUTB3huNgEnXhiittV8Ohdw21Jg8E/f70Q==
 
 "@typescript-eslint/eslint-plugin@^5.60.1":
   version "5.62.0"
