@@ -91,11 +91,16 @@ const ActivityList: FC<IActivityListProps> = ({
           <Text opacity={0.5}>{sectionDate.getFullYear()}</Text>
         </HStack>
       );
+      stepperData.push({
+        title: sectionTitle,
+        titleProps: {
+          fontSize: 'xs',
+          fontWeight: 'bold'
+        },
+        items: []
+      });
       let lastDay = -1; // Used to cache the latest activity's day of the month
       for (const activity of section.activities) {
-        // if (visibileActivities >= currentLimit) {
-        //   break;
-        // }
         const itemDate = new Date(activity.timestamp);
         // Only show the date if it differs from the previous activity
         const showDate = lastDay !== itemDate.getDate();
@@ -130,17 +135,6 @@ const ActivityList: FC<IActivityListProps> = ({
             )}
           </LinkBox>
         );
-
-        if (visibileActivities === 0) {
-          stepperData.push({
-            title: sectionTitle,
-            titleProps: {
-              fontSize: 'xs',
-              fontWeight: 'bold'
-            },
-            items: []
-          });
-        }
 
         stepperData[stepperData.length - 1].items.push({
           title: activityTitle,

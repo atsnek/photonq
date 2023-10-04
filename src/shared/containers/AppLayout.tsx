@@ -12,7 +12,6 @@ import { useLocation } from '@reach/router';
 import { TSearchMenuStyleProps } from '../../features/search/components/SearchMenu';
 import { THamburgerMenuIconStylerProps } from '../components/HamburgerMenuIcon';
 import { MenuContext } from '../contexts/menu';
-import { useNavOffset } from '../hooks/use-nav-offset';
 import {
   useAuthenticationContext,
   useCMSManagementContext
@@ -56,7 +55,6 @@ const AppLayout: FC<AppLayoutProps> = ({
   branding
 }) => {
   const cmsManager = useCMSManagementContext();
-  // const pageTree = useJaenPageTree(); //TODO: Implement this
   const location = useLocation();
   const topNavDisclosure = useDisclosure(); // for the top nav mobile drawer
   const { isAuthenticated } = useAuthenticationContext();
@@ -65,9 +63,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   const menuStructure = useMemo(
     () => createPageTree(cmsManager, location.pathname),
     [cmsManager, path]
-  ); //TODO: Implement this
-
-  const navTopOffset = useNavOffset();
+  );
 
   const FooterComp = footer ?? Footer;
 
