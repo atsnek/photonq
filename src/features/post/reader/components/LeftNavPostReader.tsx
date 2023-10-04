@@ -69,8 +69,6 @@ export const leftNavPostReaderStyling = {
 const LeftNavPostReader: FC<ILeftNavPostReaderProps> = ({ post }) => {
   const author = useAppStore(state => state.singlePost.postAuthor);
 
-  console.log('left nav author: ', author);
-
   if (!post || !author) return <LeftNavPostReaderSkeleton />;
 
   return (

@@ -34,7 +34,6 @@ const FilesystemItem: FC<IFilesystemItemProps> = ({
   //!Bug: Chakra doesnt set the bg color via the background-color css prop but via the bg prop, which allows our default tooltip props to take precedence. This is a temporary workaround
   const tooltipBgColor = useColorModeValue('theme.700', 'theme.800');
 
-  console.log(item.tooltip);
   // Tooltip sttings
   const tooltipText =
     typeof item.tooltip === 'string' ? item.tooltip : item.tooltip?.text;

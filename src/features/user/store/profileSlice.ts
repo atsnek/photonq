@@ -67,9 +67,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           id: user.id,
           avatarUrl: user.details?.avatarURL ?? '',
           bio: profile?.bio ?? null,
-          displayName: `${user.details?.firstName ?? ''} ${
-            user.details?.lastName ?? ''
-          }`,
+          displayName: `${user.details?.firstName ?? ''} ${user.details?.lastName ?? ''
+            }`,
           socials: [],
           username: username
         };
@@ -104,7 +103,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           for (const key in pn) {
             pn[key as keyof typeof pn];
           }
-        } catch {}
+        } catch { }
       });
       return posts;
     });
@@ -160,14 +159,14 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             state.profile.activity.totalCount === 0
               ? activityList
               : {
-                  items: [
-                    ...state.profile.activity.items,
-                    ...activityList.items
-                  ],
-                  totalCount: state.profile.activity.totalCount,
-                  nextCursor: activityList.nextCursor,
-                  hasMore: activityList.hasMore
-                };
+                items: [
+                  ...state.profile.activity.items,
+                  ...activityList.items
+                ],
+                totalCount: state.profile.activity.totalCount,
+                nextCursor: activityList.nextCursor,
+                hasMore: activityList.hasMore
+              };
         })
       );
     });
@@ -175,7 +174,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     return !!error;
   },
   fetchSearchPosts: async (query, limit, offset, language, dateRange) => {
-    console.log('language', language);
 
     set(
       produce((state: TStoreState) => {
