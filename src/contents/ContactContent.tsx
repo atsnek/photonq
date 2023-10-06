@@ -1,5 +1,6 @@
 import {
   Button,
+  ChakraProvider,
   Checkbox,
   FormControl,
   // FormErrorMessage,
@@ -14,6 +15,7 @@ import {
 import { FC } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import BaseContentLayout from '../shared/containers/BaseContentLayout';
+import theme from '../styles/theme/theme';
 
 type FormValues = {
   name: string;
@@ -33,6 +35,7 @@ const ContactContent: FC = () => {
     // TODO: Implement connection with Jaen
   };
 
+  //!Bug: The default focusBorderColor of all inputs is different from the theme (some strange purple color)
   return (
     <BaseContentLayout>
       <Heading as="h1" fontSize={{ base: '2xl', md: '4xl' }} mb={5}>
@@ -50,6 +53,7 @@ const ContactContent: FC = () => {
                 id="name"
                 type="text"
                 placeholder="Paige Turner"
+                focusBorderColor="theme.500"
                 {...register('name', { required: true, minLength: 3 })}
               />
             </FormControl>
@@ -59,6 +63,7 @@ const ContactContent: FC = () => {
                 id="email"
                 type="email"
                 placeholder="rocky-roads@snek-docs.com"
+                focusBorderColor="theme.500"
                 {...register('email', { required: true, minLength: 3 })}
               />
             </FormControl>
@@ -68,6 +73,7 @@ const ContactContent: FC = () => {
             <Textarea
               id="message"
               placeholder="I love your documentation!"
+              focusBorderColor="theme.500"
               {...register('message', { required: true, minLength: 20 })}
             />
           </FormControl>
