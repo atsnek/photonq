@@ -35,6 +35,7 @@ import TbUsers from '../../../../shared/components/icons/tabler/TbUsers';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { formatNumber } from '../../../../shared/utils/utils';
 import TbEye from '../../../../shared/components/icons/tabler/TbEye';
+import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -307,10 +308,10 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
             {profileStats.followers > 0 && (
               <HStack spacing={0} mt={2} cursor="default">
                 <TbUsers />
-                <Text color="pages.userProfile.leftNav.followers.text.color">
+                <Text color="pages.userProfile.leftNav.stats.text.color">
                   <Text
                     as="span"
-                    color="pages.userProfile.leftNav.followers.count.color"
+                    color="pages.userProfile.leftNav.stats.count.color"
                     mx={1}
                   >
                     {profileStats.followers}
@@ -322,15 +323,30 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
             {profileStats.views > 0 && (
               <HStack spacing={0} mt={2} cursor="default">
                 <TbEye />
-                <Text color="pages.userProfile.leftNav.followers.text.color">
+                <Text color="pages.userProfile.leftNav.stats.text.color">
                   <Text
                     as="span"
-                    color="pages.userProfile.leftNav.followers.count.color"
+                    color="pages.userProfile.leftNav.stats.count.color"
                     mx={1}
                   >
                     {formatNumber(profileStats.views)}
                   </Text>
                   view{profileStats.views > 1 && 's'}
+                </Text>
+              </HStack>
+            )}
+            {profileStats.stars > 0 && (
+              <HStack spacing={0} mt={2} cursor="default">
+                <TbStar />
+                <Text color="pages.userProfile.leftNav.stats.text.color">
+                  <Text
+                    as="span"
+                    color="pages.userProfile.leftNav.stats.count.color"
+                    mx={1}
+                  >
+                    {formatNumber(profileStats.stars)}
+                  </Text>
+                  star{profileStats.stars > 1 && 's'}
                 </Text>
               </HStack>
             )}

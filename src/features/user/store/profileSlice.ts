@@ -61,6 +61,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         if (profile) {
           stats.followers = profile.followers().totalCount;
           stats.views = profile.views;
+          stats.stars = profile.stars().totalCount;
         }
 
         return {

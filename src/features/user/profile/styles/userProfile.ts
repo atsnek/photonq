@@ -40,7 +40,7 @@ const smtUserProfilePage = {
         }
       }
     },
-    followers: {
+    stats: {
       count: {
         color: {
           default: 'gray.700',
