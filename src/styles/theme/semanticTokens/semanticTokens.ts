@@ -39,6 +39,7 @@ import smtSearchFeature from './features/search';
 import smtPqFeaturesSection from '../photonq/semanticTokens/sections/features';
 import smtPqPhotonQSection from '../photonq/semanticTokens/sections/photonQ';
 import smtPqAboutUsSection from '../photonq/semanticTokens/sections/aboutUs';
+import smtPageDirectoryComponent from '../components/pageDirectory';
 
 const themeSemanticTokens = {
   colors: {
@@ -54,6 +55,7 @@ const themeSemanticTokens = {
       callout: smtCalloutComponent,
       imageCard: smtImageCardComponent,
       iconCard: smtIconCardComponent,
+      pageDirectory: smtPageDirectoryComponent,
       postPreview: smtPostPreviewComponent,
       postEditor: smtPostEditorComponent,
       userActivity: smtUserActivityComponent,

@@ -335,7 +335,8 @@ const PageDirectory: FC<PageDirectoryProps> = ({
               fontSize="sm"
               fontWeight="bold"
               {...section.styling}
-              color="brand.500"
+              color="components.pageDirectory.section.title.color"
+              opacity={1}
             >
               <Text>{section.name}</Text>
               {section.icon}

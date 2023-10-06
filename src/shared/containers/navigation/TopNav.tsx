@@ -236,7 +236,8 @@ const TopNav: FC<ITopNavProps> = ({
                   props={{ ...navLinkProps, ...linkProps }}
                   activeProps={{
                     opacity: 1,
-                    fontWeight: 'semibold'
+                    fontWeight: 'semibold',
+                    color: 'topNav.links.active.color'
                   }}
                 />
                 <Box display={{ base: 'none', md: 'initial' }}>

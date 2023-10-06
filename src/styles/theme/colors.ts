@@ -1,4 +1,5 @@
 const themeColors = {
+  //* Use theme instead of brand (brand is too dark sometimes)
   brand: {
     50: 'rgb(229, 245, 255)',
     100: 'rgb(184, 226, 255)',
