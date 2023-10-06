@@ -4,6 +4,7 @@ import {
   AvatarProps,
   HStack,
   LinkBox,
+  LinkBoxProps,
   LinkOverlay,
   LinkOverlayProps,
   Tooltip
@@ -53,9 +54,19 @@ const UserAvatar: FC<IUserAvatarProps> = ({
 
   let avatar: JSX.Element;
   if (redirectToProfile) {
+    let linkBoxProps: LinkBoxProps = {};
+
+    if (scaleOnHover) {
+      linkBoxProps._hover = {
+        '& span.chakra-avatar': {
+          transform: 'scale(1.1)'
+        }
+      };
+    }
+
     avatar = (
       <HStack spacing={3}>
-        <LinkBox>
+        <LinkBox {...linkBoxProps}>
           <Avatar src={imgSrc} {...avatarProps} />
           <LinkOverlay href={link} />
         </LinkBox>
