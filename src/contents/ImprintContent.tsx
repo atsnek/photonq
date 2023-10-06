@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { Editor } from '@snek-at/jaen';
 import BaseContentLayout from '../shared/containers/BaseContentLayout';
+import { Field } from '@atsnek/jaen';
 
 /**
  * Content for the contact page.
@@ -8,7 +8,7 @@ import BaseContentLayout from '../shared/containers/BaseContentLayout';
 const ImprintContent: FC = () => {
   return (
     <BaseContentLayout>
-      <Editor />
+      <Field.Editor name="imprint" />
     </BaseContentLayout>
   );
 };
