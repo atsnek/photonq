@@ -60,7 +60,7 @@ export async function searchDocs(
 
       const text = item.data[heading];
 
-      const content = text ?? title;
+      const content = text ?? title ?? item.title ?? '';
 
       sectionIndex.add({
         id: url,
@@ -106,8 +106,7 @@ export async function searchDocs(
       suggest: true
     })[0]?.result ?? [];
 
-  console.log('--->');
-  console.log('pageResuts', pageResults, 'pageIndex', pageIndex);
+  // console.log('pageResuts', pageResults, 'pageIndex', pageIndex);
 
   const searchResults: Array<TSearchResultSection & TSearchMetadata> = [];
   const pageTitleMatches: Record<number, number> = {};
