@@ -273,7 +273,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   const baseMenuItems: NavMenuSection[] = [
     {
       name: 'Community',
-      icon: <TbUsers strokeWidth={3} />,
+      icon: <TbUsers />,
       items: [
         {
           name: 'Posts',
@@ -283,7 +283,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
     },
     {
       name: 'More',
-      icon: <TbBook strokeWidth={3} />,
+      icon: <TbBook />,
       items: [
         {
           name: 'PhotonQ',
@@ -335,6 +335,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
               fontSize="sm"
               fontWeight="bold"
               {...section.styling}
+              color="brand.500"
             >
               <Text>{section.name}</Text>
               {section.icon}
