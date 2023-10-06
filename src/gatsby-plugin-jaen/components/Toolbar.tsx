@@ -7,7 +7,7 @@ export const Toolbar: React.FC<ToolbarProps> = () => {
     <SearchMenu
       styleProps={{
         input: {
-          parent: { borderColor: undefined, borderRadius: undefined },
+          parent: { borderColor: 'gray.700', borderRadius: 'lg' },
           kbd: { mt: 1, mr: 2 }
         },
         menuList: {
