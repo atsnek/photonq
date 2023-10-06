@@ -91,7 +91,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
             {author && (
               <UserAvatar
                 user={author}
-                boxSize="30px"
+                size="sm"
                 showName
                 nameProps={{ fontWeight: 'medium' }}
                 redirectToProfile

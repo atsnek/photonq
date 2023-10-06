@@ -31,7 +31,9 @@ const UserAvatar: FC<IUserAvatarProps> = ({
   ...props
 }) => {
   const imgSrc = user.avatarUrl ?? 'https://api.dicebear.com/6.x/thumbs/svg';
-  let avatarProps: AvatarProps = {};
+  let avatarProps: AvatarProps = {
+    overflow: 'hidden'
+  };
 
   if (scaleOnHover) {
     avatarProps._hover = {
@@ -53,7 +55,8 @@ const UserAvatar: FC<IUserAvatarProps> = ({
   if (redirectToProfile) {
     avatar = (
       <HStack spacing={3}>
-        <LinkBox as={Avatar} src={imgSrc} {...avatarProps}>
+        <LinkBox>
+          <Avatar src={imgSrc} {...avatarProps} />
           <LinkOverlay href={link} />
         </LinkBox>
         {showName && (
