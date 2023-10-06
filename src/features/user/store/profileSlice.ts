@@ -1,4 +1,4 @@
-import { TProfile } from '../types/user';
+import { TProfile, TProfileStatType } from '../types/user';
 import { sq } from '@snek-functions/origin';
 import { produce } from 'immer';
 import { TStoreSlice, TStoreState } from '../../../shared/types/store';
@@ -21,11 +21,6 @@ const initState: IProfileStateDefinition = {
   searchPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
   searchPostLanguage: undefined,
   searchPostsDateRange: { from: undefined, to: undefined },
-  stats: {
-    followers: 0,
-    views: 0,
-    stars: 0
-  },
   isFollowing: undefined,
   profile: undefined
 };
@@ -34,10 +29,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   ...initState,
   fetchProfile: async username => {
     let isFollowing: boolean | undefined = undefined;
-    const stats: TProfileSlice['stats'] = {
+    const stats: { [key in TProfileStatType]: number } = {
       followers: 0,
       views: 0,
-      stars: 0
+      stars: 0,
+      posts: 0,
     };
 
     const [currentUser, currentUserError] = await sq.query(q => q.userMe);
@@ -62,6 +58,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           stats.followers = profile.followers().totalCount;
           stats.views = profile.views;
           stats.stars = profile.stars().totalCount;
+          stats.posts = profile.posts().totalCount;
         }
 
         return {
@@ -70,7 +67,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           bio: profile?.bio ?? null,
           displayName: `${user.details?.firstName ?? ''} ${user.details?.lastName ?? ''
             }`,
-          socials: [],
+          stats: {
+            followers: profile?.followers().totalCount ?? 0,
+            views: profile?.views ?? 0,
+            stars: profile?.stars().totalCount ?? 0,
+            posts: profile?.posts().totalCount ?? 0,
+          },
           username: username
         };
       }
@@ -82,7 +84,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       produce((state: TStoreState): void => {
         state.profile.profile = userData;
         state.profile.isFollowing = isFollowing;
-        state.profile.stats = stats;
       })
     );
     return true;
@@ -293,7 +294,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       set(
         produce((state: TStoreState): void => {
           state.profile.isFollowing = !get().profile.isFollowing;
-          state.profile.stats.followers += get().profile.isFollowing ? -1 : 1;
+          if (!state.profile.profile) return;
+          state.profile.profile.stats.followers += get().profile.isFollowing ? -1 : 1;
         })
       );
     }
@@ -439,7 +441,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         state.profile.searchPosts = initState.searchPosts;
         state.profile.searchPostLanguage = initState.searchPostLanguage;
         state.profile.searchPostsDateRange = initState.searchPostsDateRange;
-        state.profile.stats = initState.stats;
         state.profile.isFollowing = initState.isFollowing;
       })
     );

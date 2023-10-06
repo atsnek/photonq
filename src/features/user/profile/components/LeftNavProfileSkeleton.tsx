@@ -27,7 +27,7 @@ const LeftNavProfileSkeleton: FC = () => {
       <Divider {...leftNavProfileStyling.bioDividers} />
       <Skeleton w="full" h="150px" {...leftNavProfileStyling.bio} />
       <Divider {...leftNavProfileStyling.bioDividers} />
-      <Grid {...leftNavProfileStyling.socialInfo.grid} w="full">
+      <Grid {...leftNavProfileStyling.stats.grid} w="full">
         <GridItem as={HStack}>
           <Skeleton w="14px" h="14px" borderRadius="full" />
           <Skeleton w="30%" h="14px" borderRadius="sm" />

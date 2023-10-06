@@ -1,9 +1,10 @@
 import {
   Avatar,
   Button,
-  Center,
   Divider,
   Flex,
+  Grid,
+  GridItem,
   GridProps,
   HStack,
   Heading,
@@ -16,11 +17,7 @@ import {
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { FC, useRef, useState } from 'react';
-import FeatherInbox from '../../../../shared/components/icons/feather/FeatherInbox';
-import TbBuilding from '../../../../shared/components/icons/tabler/TbBuilding';
-import TbLinkedIn from '../../../../shared/components/icons/tabler/TbLinkedIn';
-import TbMapPin from '../../../../shared/components/icons/tabler/TbMapPin';
+import { FC, Fragment, ReactNode, useMemo, useRef, useState } from 'react';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
 import LeftNav, {
   ILeftNavProps
@@ -36,6 +33,8 @@ import { useAuthenticationContext } from '@atsnek/jaen';
 import { formatNumber } from '../../../../shared/utils/utils';
 import TbEye from '../../../../shared/components/icons/tabler/TbEye';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
+import { TProfileStatType } from '../../types/user';
+import TbBooks from '../../../../shared/components/icons/tabler/TbBooks';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -69,15 +68,15 @@ export const leftNavProfileStyling = {
     color: 'pages.userProfile.leftNav.bio.color',
     fontSize: '16px'
   },
-  socialInfo: {
+  stats: {
     grid: {
       templateColumns: { base: 'repeat(4, auto)', md: '1fr' },
       gap: { base: 4, md: 1 },
-      my: { base: 2, md: 5 }
+      mt: { base: 2, md: 2 }
     } as GridProps,
     gridItems: {
       verticalAlign: 'middle',
-      gap: { base: 0.5, md: 2 }
+      gap: { base: 0.5, md: 3 }
     }
   }
 };
@@ -90,11 +89,17 @@ interface LeftNavProfileProps {
  * Sub-component of the profile page that displays the key information about the user.
  */
 const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
-  const socialLinkIcons: { [key in TSocialLink]: FC<IconProps> } = {
-    email: FeatherInbox,
-    linkedin: TbLinkedIn,
-    location: TbMapPin,
-    company: TbBuilding
+  // const socialLinkIcons: { [key in TSocialLink]: FC<IconProps> } = {
+  //   email: FeatherInbox,
+  //   linkedin: TbLinkedIn,
+  //   location: TbMapPin,
+  //   company: TbBuilding
+  // };
+  const statIcons: { [key in TProfileStatType]: FC<IconProps> } = {
+    followers: TbUsers,
+    views: TbEye,
+    stars: TbStar,
+    posts: TbBooks
   };
 
   const navTopOffset = useNavOffset();
@@ -106,7 +111,6 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   const bioInputRef = useRef<HTMLTextAreaElement>(null);
 
   const userData = useAppStore(state => state.profile.profile);
-  const profileStats = useAppStore(state => state.profile.stats);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const isFollowing = useAppStore(state => state.profile.isFollowing);
   const changeBio = useAppStore(state => state.profile.changeBio);
@@ -138,42 +142,35 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
     bioInputRef.current.value = userData?.bio ?? '';
   };
 
-  // const memoizedSocialLink = useMemo(() => {
-  //   return user.socials?.map((data: any, idx: number) => {
-  //     const { type, label } = data;
-  //     const IconComp = socialLinkIcons[type as TSocialLink];
-  //     return (
-  //       <Fragment key={idx}>
-  //         <GridItem
-  //           {...leftNavProfileStyling.socialInfo.gridItems}
-  //           as={HStack}
-  //           // We currently display only the email link on mobile.
-  //           display={{ base: type !== 'email' ? 'none' : 'flex', md: 'flex' }}
-  //         >
-  //           <IconComp
-  //             strokeWidth={2.2}
-  //             h="full"
-  //             color="pages.userProfile.leftNav.socialLinks.icon.color"
-  //           />
-  //           {'url' in data ? (
-  //             <Link
-  //               href={data.url}
-  //               _hover={{
-  //                 color:
-  //                   'pages.userProfile.leftNav.socialLinks.text.hover.color'
-  //               }}
-  //               transition="color 0.2s ease-in-out"
-  //             >
-  //               {label}
-  //             </Link>
-  //           ) : (
-  //             <Text cursor="default">{label}</Text>
-  //           )}
-  //         </GridItem>
-  //       </Fragment>
-  //     );
-  //   });
-  // }, [userData?.socials]);
+  const statElements = useMemo(() => {
+    const output: ReactNode[] = [];
+    for (const key in userData?.stats) {
+      const IconComp = statIcons[key as TProfileStatType];
+      output.push(
+        <Fragment key={key}>
+          <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
+            <IconComp
+              strokeWidth={2.2}
+              h="full"
+              color="pages.userProfile.leftNav.socialLinks.icon.color"
+            />
+            <Text cursor="default">
+              <Text
+                as="span"
+                color="pages.userProfile.leftNav.stats.count.color"
+                fontWeight="semibold"
+                mr={1}
+              >
+                {formatNumber(userData.stats[key as TProfileStatType])}
+              </Text>
+              {key}
+            </Text>
+          </GridItem>
+        </Fragment>
+      );
+    }
+    return output;
+  }, [userData?.stats]);
 
   const leftNavProps: ILeftNavProps = {
     hideControls: hideControlsFallback,
@@ -300,61 +297,10 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
             </Flex>
           )}
         </VStack>
-        {userData.socials.length > 0 && (
-          <Divider {...leftNavProfileStyling.bioDividers} />
+        {Object.values(userData.stats).some(value => value > 0) && (
+          <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
         )}
-        <Center w="full">
-          <HStack spacing={3}>
-            {profileStats.followers > 0 && (
-              <HStack spacing={0} mt={2} cursor="default">
-                <TbUsers />
-                <Text color="pages.userProfile.leftNav.stats.text.color">
-                  <Text
-                    as="span"
-                    color="pages.userProfile.leftNav.stats.count.color"
-                    mx={1}
-                  >
-                    {profileStats.followers}
-                  </Text>
-                  follower{profileStats.followers > 1 && 's'}
-                </Text>
-              </HStack>
-            )}
-            {profileStats.views > 0 && (
-              <HStack spacing={0} mt={2} cursor="default">
-                <TbEye />
-                <Text color="pages.userProfile.leftNav.stats.text.color">
-                  <Text
-                    as="span"
-                    color="pages.userProfile.leftNav.stats.count.color"
-                    mx={1}
-                  >
-                    {formatNumber(profileStats.views)}
-                  </Text>
-                  view{profileStats.views > 1 && 's'}
-                </Text>
-              </HStack>
-            )}
-            {profileStats.stars > 0 && (
-              <HStack spacing={0} mt={2} cursor="default">
-                <TbStar />
-                <Text color="pages.userProfile.leftNav.stats.text.color">
-                  <Text
-                    as="span"
-                    color="pages.userProfile.leftNav.stats.count.color"
-                    mx={1}
-                  >
-                    {formatNumber(profileStats.stars)}
-                  </Text>
-                  star{profileStats.stars > 1 && 's'}
-                </Text>
-              </HStack>
-            )}
-          </HStack>
-        </Center>
-        {/* <Grid {...leftNavProfileStyling.socialInfo.grid}>
-          {memoizedSocialLink}
-        </Grid> */}
+        <Grid {...leftNavProfileStyling.stats.grid}>{statElements}</Grid>
       </VStack>
     </LeftNav>
   );

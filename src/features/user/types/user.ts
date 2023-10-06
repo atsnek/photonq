@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { TPostPreview } from '../../post/types/post';
 import { TActivity, TActivitySection } from '../activity/types/activity';
 
@@ -10,7 +11,8 @@ export type TUser = {
   displayName: string; // This is the name visible to other users
   bio: string | null;
   avatarUrl?: string;
-  socials: TUserSocials[];
+  // socials: TUserSocials[];
+  stats: TProfileStat;
   location?: string;
 };
 
@@ -23,23 +25,27 @@ export type TProfile = {
   posts: TPostPreview[];
 };
 
+export type TProfileStatType = 'stars' | 'followers' | 'views' | 'posts';
+
+export type TProfileStat = { [key in TProfileStatType]: number };
+
 /**
  * This contains all the variants of social links that a user can have.
  */
 //TODO: Maybe there is a better way to do this?
-export type TUserSocialType = 'email' | 'linkedin' | 'company';
-export type TUserLinklessSocialType = 'location';
+// export type TUserSocialType = 'email' | 'linkedin' | 'company';
+// export type TUserLinklessSocialType = 'location';
 
-/**
- * This represents a single social link of a user.
- */
-export type TUserSocials =
-  | {
-      type: TUserSocialType;
-      label: string;
-      url: string;
-    }
-  | {
-      type: TUserLinklessSocialType;
-      label: string;
-    };
+// /**
+//  * This represents a single social link of a user.
+//  */
+// export type TUserSocials =
+//   | {
+//     type: TUserSocialType;
+//     label: string;
+//     url: string;
+//   }
+//   | {
+//     type: TUserLinklessSocialType;
+//     label: string;
+//   };

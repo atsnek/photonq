@@ -16,11 +16,6 @@ export interface IProfileStateDefinition {
   searchPostLanguage: EnPostLanguage | undefined;
   searchPostsDateRange: TPostDateRange;
   activity: TPaginationData<TActivity[]>;
-  stats: {
-    followers: number;
-    views: number;
-    stars: number;
-  };
   isFollowing?: boolean;
 }
 
