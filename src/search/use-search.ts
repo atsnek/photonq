@@ -11,7 +11,7 @@ import { useAppSelector } from '@atsnek/jaen';
 /**
  * Represents the result of the useSearch hook.
  */
-interface UseSearchResult {
+export interface UseSearchResult {
   /**
    * The search index containing the merged data.
    */

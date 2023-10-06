@@ -1,5 +1,5 @@
 const FlexSearch = require('flexsearch');
-import { useSearch } from '@snek-at/jaen';
+import { UseSearchResult, useSearch } from '../../search/use-search';
 import {
   TSearchMetadata,
   TSearchResult,
@@ -14,16 +14,17 @@ import { filterWhitespaceItems } from './utils';
  */
 export async function searchDocs(
   query: string,
-  data: ReturnType<typeof useSearch>['searchIndex']
+  data: UseSearchResult['searchIndex']
 ): Promise<TSearchResultSection[]> {
+  console.log('search data: ', data);
   // This indexes a whole page by its content and stores the title.
   const pageIndex = new FlexSearch.Document({
     cache: 100,
     tokenize: 'full',
     document: {
       id: 'id',
-      index: 'content',
-      store: ['title', 'url']
+      index: 'title',
+      store: 'title'
     },
     context: {
       resolution: 9,
@@ -104,6 +105,9 @@ export async function searchDocs(
       enrich: true,
       suggest: true
     })[0]?.result ?? [];
+
+  console.log('--->');
+  console.log('pageResuts', pageResults, 'pageIndex', pageIndex);
 
   const searchResults: Array<TSearchResultSection & TSearchMetadata> = [];
   const pageTitleMatches: Record<number, number> = {};

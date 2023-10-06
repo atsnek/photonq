@@ -132,7 +132,6 @@ export const SearchResultSection: FC<{
   defaultHighlight?: boolean;
   onItemClickCapture?: () => void;
 }> = ({ section, idx, query, defaultHighlight, onItemClickCapture }) => {
-  console.log('section', section);
   return (
     <MenuGroup key={idx}>
       <Heading
