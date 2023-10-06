@@ -14,7 +14,8 @@ import {
   MenuListProps,
   MenuProps,
   Portal,
-  Text
+  Text,
+  ThemeProvider
 } from '@chakra-ui/react';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -30,6 +31,7 @@ import { useLocation, navigate } from '@reach/router';
 import { searchDocs } from '../../../shared/utils/search';
 import { SearchProvider } from '../../../search/search-provider';
 import { useSearch } from '../../../search/use-search';
+import theme from '../../../styles/theme/theme';
 
 /**
  * The search menu item component for displaying a specific search result item.
@@ -226,64 +228,66 @@ const SearchMenu: FC<SearchMenuProps> = ({
   }, [searchQuery]);
 
   return (
-    <Menu
-      variant="search-result"
-      {...styleProps?.menu}
-      autoSelect={false}
-      onClose={() => {
-        setIsAnyItemFocused(false);
-      }}
-      isLazy
-      id="search-menu"
-    >
-      <SearchProvider>
-        <SearchInput
-          setSearchQuery={setSearchQuery}
-          openFirstLink={openFirstLink}
-          styleProps={styleProps?.input}
-        />
-      </SearchProvider>
+    <ThemeProvider theme={theme}>
+      <Menu
+        variant="search-result"
+        {...styleProps?.menu}
+        autoSelect={false}
+        onClose={() => {
+          setIsAnyItemFocused(false);
+        }}
+        isLazy
+        id="search-menu"
+      >
+        <SearchProvider>
+          <SearchInput
+            setSearchQuery={setSearchQuery}
+            openFirstLink={openFirstLink}
+            styleProps={styleProps?.input}
+          />
+        </SearchProvider>
 
-      <Portal>
-        <Box
-          __css={{
-            '.sd-search-menu-list::-webkit-scrollbar-thumb': {
-              borderRadius: 'full',
-              backgroundColor: 'shared.scrollbar.thumb.bgColor',
-              '&:hover': {
-                backgroundColor: 'shared.scrollbar.thumb.hover.bgColor'
+        <Portal>
+          <Box
+            __css={{
+              '.sd-search-menu-list::-webkit-scrollbar-thumb': {
+                borderRadius: 'full',
+                backgroundColor: 'shared.scrollbar.thumb.bgColor',
+                '&:hover': {
+                  backgroundColor: 'shared.scrollbar.thumb.hover.bgColor'
+                }
+              },
+              '.sd-search-menu-list::-webkit-scrollbar': {
+                width: '4px',
+                backgroundColor: 'transparent'
               }
-            },
-            '.sd-search-menu-list::-webkit-scrollbar': {
-              width: '4px',
-              backgroundColor: 'transparent'
-            }
-          }}
-        >
-          <MenuList
-            className="sd-search-menu-list"
-            style={{
-              scrollbarColor: 'red'
-            }}
-            fontSize="sm"
-            backgroundColor="shared.translucent.bgColor"
-            backdropBlur={8}
-            h="50%"
-            height="auto"
-            maxHeight="xs"
-            overflowY="scroll"
-            {...styleProps?.menuList}
-            onFocusCapture={e => {
-              // If the user focuses on any result item for the first time, set the isAnyItemFocused state to true
-              if (!isAnyItemFocused && e.target instanceof HTMLButtonElement)
-                setIsAnyItemFocused(true);
             }}
           >
-            {resultItems}
-          </MenuList>
-        </Box>
-      </Portal>
-    </Menu>
+            <MenuList
+              className="sd-search-menu-list"
+              style={{
+                scrollbarColor: 'red'
+              }}
+              fontSize="sm"
+              backgroundColor="shared.translucent.bgColor"
+              backdropBlur={8}
+              h="50%"
+              height="auto"
+              maxHeight="xs"
+              overflowY="scroll"
+              {...styleProps?.menuList}
+              onFocusCapture={e => {
+                // If the user focuses on any result item for the first time, set the isAnyItemFocused state to true
+                if (!isAnyItemFocused && e.target instanceof HTMLButtonElement)
+                  setIsAnyItemFocused(true);
+              }}
+            >
+              {resultItems}
+            </MenuList>
+          </Box>
+        </Portal>
+      </Menu>
+    </ThemeProvider>
   );
 };
 
