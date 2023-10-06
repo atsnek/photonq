@@ -23,8 +23,8 @@ export async function searchDocs(
     tokenize: 'full',
     document: {
       id: 'id',
-      index: 'title',
-      store: 'title'
+      index: ['title', 'content'],
+      store: ['title', 'content', 'url']
     },
     context: {
       resolution: 9,
@@ -158,7 +158,7 @@ export async function searchDocs(
       searchResultItems.push({
         title: pageResult.doc.title,
         description: pageResult.doc.content ?? pageResult.doc.title,
-        href: pageResult.doc.url
+        href: pageResult.doc.url ?? '#'
       });
     }
 

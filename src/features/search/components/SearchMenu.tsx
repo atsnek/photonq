@@ -94,7 +94,7 @@ export const SearchResultItem: FC<{
       {...props}
       transition="background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
     >
-      <LinkOverlay href={item.href}>
+      <LinkOverlay as={Link} href={item.href}>
         <Heading
           size="sm"
           transition="color 0.2s ease-in-out"
