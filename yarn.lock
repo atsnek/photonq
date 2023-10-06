@@ -3615,14 +3615,7 @@
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
 
-"@snek-functions/origin@^0.8.16":
-  version "0.8.18"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.18.tgz#b0fd2f319113e8985991e2863b215a50f86453d3"
-  integrity sha512-RQamaeBSWpr9+BtBs/WGdHwfjYRCVYSHkVePyOr6fpCTQBwCRcnQUB83PRqJKEj9hiwX1TR08dUjPkqJWvwapw==
-  dependencies:
-    snek-query "*"
-
-"@snek-functions/origin@^0.8.21":
+"@snek-functions/origin@^0.8.16", "@snek-functions/origin@^0.8.21":
   version "0.8.21"
   resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.21.tgz#2abfb98747ac746bb9b3afa411e46869269c1cbd"
   integrity sha512-Uf3IWwH6xU6P1LY6HK/bupjFx1TIJuRYF7rQ+F/jFvqEL6y+JiyNEtgvHWumBn1R44ohvWA8e0FqWsjy97MDcw==
