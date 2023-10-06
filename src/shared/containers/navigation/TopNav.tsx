@@ -254,7 +254,7 @@ const TopNav: FC<ITopNavProps> = ({
                 </Box>
                 <Link
                   display="inline-block"
-                  href="https://github.com/Jan-Emig/snek-docs"
+                  href="https://github.com/atsnek/photonq"
                   // This doesnt work for some reason (min-width solves it temporarily)
                   boxSize="32px"
                   minWidth="32px"
