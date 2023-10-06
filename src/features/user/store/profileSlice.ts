@@ -175,7 +175,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     return !!error;
   },
   fetchSearchPosts: async (query, limit, offset, language, dateRange) => {
-
     set(
       produce((state: TStoreState) => {
         if (query !== state.profile.searchPosts.query) {
@@ -185,7 +184,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             state: 'loading',
             items: [],
             hasMore: false,
-            totalCount: 0
+            totalCount: 0,
           };
         } else {
           state.profile.searchPosts.state = 'loading';
@@ -198,25 +197,35 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     if (!currentProfile) return;
     const isOwnProfile = !!currentUser && currentUser.id === currentProfile.id;
 
-    const publicPosts = await searchPosts(
-      query,
-      isOwnProfile ? Math.ceil(limit / 2) : limit,
-      'PUBLIC',
-      offset === 0
-        ? undefined
-        : get().profile.searchPosts.publicPageInfo?.nextCursor,
-      currentUser,
-      currentProfile?.id,
-      language ?? get().profile.searchPostLanguage,
-      dateRange ?? get().profile.searchPostsDateRange
-    );
+    let publicPosts: TPaginatedPostListData = {
+      state: 'inactive',
+      items: [],
+      totalCount: 0
+    }
+
+
+    if (get().profile.searchPosts.publicPageInfo?.hasNextPage || offset === 0) {
+      publicPosts = await searchPosts(
+        query,
+        isOwnProfile ? Math.ceil(limit / 2) : limit,
+        'PUBLIC',
+        offset === 0
+          ? undefined
+          : get().profile.searchPosts.publicPageInfo?.nextCursor,
+        currentUser,
+        currentProfile?.id,
+        language ?? get().profile.searchPostLanguage,
+        dateRange ?? get().profile.searchPostsDateRange
+      );
+    }
+
 
     let privatePosts: TPaginatedPostListData = {
       state: 'inactive',
       items: [],
       totalCount: 0
     };
-    if (isOwnProfile) {
+    if (isOwnProfile && (get().profile.searchPosts.privatePageInfo?.hasNextPage || offset === 0)) {
       privatePosts = await searchPosts(
         query,
         Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length),
