@@ -79,19 +79,11 @@ const PostTopNav: FC<IPostTopNavProps> = ({
         overflow="hidden"
       >
         <Center>
-          <HStack
-            w="full"
-            maxW="7xl"
-            __css={{
-              '& span img': {
-                borderRadius: 'lg'
-              }
-            }}
-          >
+          <HStack w="full" maxW="7xl">
             {author && (
               <UserAvatar
                 user={author}
-                boxSize="30px"
+                size="sm"
                 showName
                 nameProps={{ fontWeight: 'medium' }}
                 redirectToProfile

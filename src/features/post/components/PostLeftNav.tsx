@@ -71,7 +71,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
       mr={10}
     >
       <VStack
-        spacing={2}
+        spacing={4}
         __css={{
           '& img': {
             // We need this to force the image to be a square
@@ -81,21 +81,18 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           }
         }}
       >
-        <Box overflow="hidden" borderRadius="full">
-          <Image
-            src={post?.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg'}
-            w={{ base: '50%', md: 'full' }}
-            maxW="120px"
-            h="max-content"
-            _hover={{
-              transform: 'scale(1.05)'
-            }}
-            transition="transform 0.2s cubic-bezier(.17,.67,.83,.67)"
-            handleImageChange={setPostPreviewImage}
-            editable={canEdit}
-            isUploading={isPostPreviewImageUploading}
-          />
-        </Box>
+        <Image
+          src={post?.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg'}
+          boxSize="3xs"
+          borderRadius="md"
+          _hover={{
+            transform: 'scale(1.05)'
+          }}
+          transition="transform 0.2s cubic-bezier(.17,.67,.83,.67)"
+          handleImageChange={setPostPreviewImage}
+          editable={canEdit}
+          isUploading={isPostPreviewImageUploading}
+        />
         <Box
           position="relative"
           __css={{
@@ -131,7 +128,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
               />
             </>
           ) : (
-            <Text size="sm" fontWeight="semibold" px={8}>
+            <Text size="sm" fontWeight="semibold">
               {post.title}
             </Text>
           )}

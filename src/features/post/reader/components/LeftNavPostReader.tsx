@@ -26,11 +26,7 @@ interface ILeftNavPostReaderProps {
 
 export const leftNavPostReaderStyling = {
   avatar: {
-    width: {
-      base: '50%',
-      md: 'full'
-    },
-    maxW: '120px',
+    boxSize: '3xs',
     aspectRatio: 1
   },
   divider: {
