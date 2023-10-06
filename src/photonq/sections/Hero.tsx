@@ -26,7 +26,7 @@ const Hero: FC = () => {
               top="calc(50% - 175px)"
               left={0}
               zIndex={0}
-              bgColor="pq.500"
+              bgColor="brand.500"
               boxSize="290px"
               filter="blur(140px)"
               opacity={1}
@@ -57,7 +57,7 @@ const Hero: FC = () => {
                 as={Link}
                 mt={10}
                 variant="pq-outline"
-                colorScheme="blue"
+                colorScheme="brand"
                 px={5}
                 borderRadius="xl"
                 bgColor="rgba(2, 116, 192, 0.07)"

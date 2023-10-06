@@ -15,7 +15,7 @@ import Link from '../../shared/components/Link';
 
 const Features: FC = () => {
   const cardProps: BoxProps = {
-    bgColor: 'white',
+    bgColor: 'pq.sections.features.card.bgColor',
     boxShadow: '4px 2px 16px -12px rgba(0,0,0,0.25)',
     padding: 10,
     borderRadius: '3xl',
@@ -31,7 +31,8 @@ const Features: FC = () => {
   const cardTitleProps: TextFieldProps = {
     fontSize: 'xl',
     fontWeight: 500,
-    mt: 10
+    mt: 10,
+    color: 'pq.sections.features.title.color'
   };
 
   //! Causes hydration issue
@@ -41,7 +42,7 @@ const Features: FC = () => {
       bgColor="pq.shared.section.bgColor"
       py={20}
       borderTopRadius="3xl"
-      color="gray.900"
+      color="pq.shared.section.color"
     >
       <Container maxW="7xl">
         <SectionTitle

@@ -1,6 +1,7 @@
 const smtPqFeatureCard = {
   color: {
-    default: '#747781'
+    default: '#747781',
+    _dark: 'gray.400'
   }
 };
 

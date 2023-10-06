@@ -1,9 +1,10 @@
 const smtPqSectionLabel = {
   bgColor: {
-    default: '#E8E9EB'
+    default: '#E8E9EB',
+    _dark: 'gray.700'
   },
   color: {
-    default: '#565656'
+    default: '#565656',
   }
 };
 

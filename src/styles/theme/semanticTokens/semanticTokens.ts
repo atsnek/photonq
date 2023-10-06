@@ -36,6 +36,9 @@ import smtImageComponent from './components/image';
 import smtBadgeComponent from './components/badge';
 import smtSinglePostPage from '../../../features/post/styles/singlePost';
 import smtSearchFeature from './features/search';
+import smtPqFeaturesSection from '../photonq/semanticTokens/sections/features';
+import smtPqPhotonQSection from '../photonq/semanticTokens/sections/photonQ';
+import smtPqAboutUsSection from '../photonq/semanticTokens/sections/aboutUs';
 
 const themeSemanticTokens = {
   colors: {
@@ -96,6 +99,11 @@ const themeSemanticTokens = {
       components: {
         sectionLabel: smtPqSectionLabel,
         featureCard: smtPqFeatureCard
+      },
+      sections: {
+        features: smtPqFeaturesSection,
+        photonq: smtPqPhotonQSection,
+        aboutUs: smtPqAboutUsSection,
       }
     }
   }

@@ -73,12 +73,12 @@ const themeButtonComponent: ComponentStyleConfig = {
     'pq-outline': {
       bgColor: 'rgba(2, 116, 192, 0.07)',
       border: '1px solid',
-      borderColor: 'pq.500',
-      color: 'pq.500',
+      borderColor: 'brand.500',
+      color: 'brand.500',
       px: 5,
       borderRadius: 'lg',
       _hover: {
-        bgColor: 'rgba(2, 116, 192, 1)',
+        bgColor: 'brand.600',
         color: 'white',
         transform: 'scale(1.05)'
       },
@@ -86,7 +86,7 @@ const themeButtonComponent: ComponentStyleConfig = {
         'background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out'
     },
     'pq-solid': {
-      bgColor: 'pq.500',
+      bgColor: 'brand.500',
       color: 'white',
       px: 5,
       borderRadius: 'lg',
@@ -99,7 +99,7 @@ const themeButtonComponent: ComponentStyleConfig = {
     },
     'pq-ghost': {
       bgColor: 'transparent',
-      color: 'pq.500',
+      color: 'brand.500',
       px: 5,
       borderRadius: 'lg',
       _hover: {

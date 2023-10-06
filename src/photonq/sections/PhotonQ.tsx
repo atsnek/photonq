@@ -11,7 +11,7 @@ const PhotonQ: FC = () => {
       bgColor="pq.shared.section.bgColor"
       py={20}
       px={{ base: 5 }}
-      color="gray.900"
+      color=""
     >
       <Flex maxW="7xl" mx="auto" wrap="wrap">
         <Box
@@ -29,6 +29,7 @@ const PhotonQ: FC = () => {
             name="PhotonQText"
             defaultValue="PhotonQ provides cloud-based access to a real photonic one-way computer backend. Our system exploits cutting-edge quantum photonic technology to realize a photonic quantum computing platform. The quantum processing unit can be accessed and programmed through our customized user interface."
             mt={5}
+            color="pq.sections.photonq.description.color"
           />
           <Button
             as={Link}

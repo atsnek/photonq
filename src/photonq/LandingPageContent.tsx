@@ -6,7 +6,11 @@ import PhotonQ from './sections/PhotonQ';
 import AboutUs from './sections/AboutUs';
 import Footer from './sections/Footer';
 import useScrollPosition from '../shared/hooks/use-scroll-position';
-import { useDisclosure, useColorMode } from '@chakra-ui/react';
+import {
+  useDisclosure,
+  useColorMode,
+  useColorModeValue
+} from '@chakra-ui/react';
 
 import AppLayout from '../shared/containers/AppLayout';
 import {
@@ -21,7 +25,7 @@ interface ILandingPageContentProps {
 
 export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
   const scrollPos = useScrollPosition();
-  // const { colorMode: chakraColorMode } = useColorMode();
+  const { colorMode: chakraColorMode } = useColorMode();
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
   const { isAuthenticated } = useAuthenticationContext();
 
@@ -43,7 +47,7 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
   };
 
   //? Maybe we keep the top nav dark in dark mode?
-  if (colorMode === 'dark') {
+  if (colorMode === 'dark' || chakraColorMode === 'dark') {
     wrapperProps = {
       ...wrapperProps,
       backgroundColor: 'rgba(13, 14, 17, 0.7)',
