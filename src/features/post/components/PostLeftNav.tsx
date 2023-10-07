@@ -84,7 +84,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
         <Image
           src={post?.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg'}
           boxSize="3xs"
-          borderRadius="md"
+          borderRadius="full"
           _hover={{
             transform: 'scale(1.05)'
           }}
