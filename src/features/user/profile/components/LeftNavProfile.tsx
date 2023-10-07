@@ -297,9 +297,10 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
             </Flex>
           )}
         </VStack>
-        {Object.values(userData.stats).some(value => value > 0) && (
-          <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
-        )}
+        {userData.stats &&
+          Object.values(userData.stats).some(value => value > 0) && (
+            <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
+          )}
         <Grid {...leftNavProfileStyling.stats.grid}>{statElements}</Grid>
       </VStack>
     </LeftNav>

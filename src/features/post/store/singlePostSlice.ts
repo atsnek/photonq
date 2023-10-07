@@ -60,7 +60,6 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
         username: user.username,
         displayName: getUserDisplayname(user),
         bio: user.profile?.bio ?? null,
-        socials: [],
         avatarUrl: user.details?.avatarURL ?? undefined,
         location: undefined
       };
@@ -165,7 +164,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
         if (post.content) {
           jsonContent = JSON.parse(post.content) as MdastRoot;
         }
-      } catch {}
+      } catch { }
 
       return {
         authorProfileId: post.profileId,
@@ -189,7 +188,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       };
     });
 
-    if (postError) return false;
+    if (postError || post === null) return false;
 
     const [author, authorError] = await sq.query((q): TUser => {
       const user = q.user({ id: post?.authorProfileId ?? '' });
@@ -198,7 +197,6 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
         username: user.username,
         displayName: getUserDisplayname(user),
         bio: user.profile?.bio ?? null,
-        socials: [],
         avatarUrl: user.details?.avatarURL ?? undefined,
         location: undefined
       };
@@ -230,7 +228,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     let content: string = '';
     try {
       content = JSON.stringify(post.content);
-    } catch {}
+    } catch { }
 
     const [newPost, error] = await sq.mutate(q =>
       q.socialPostCreate({
@@ -349,7 +347,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       })
     );
 
-    return error?.length === 0;
+    return !error || error?.length === 0;
   },
   reset: () => {
     set(
@@ -367,6 +365,6 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
 
     const [, error] = await sq.mutate(m => m.socialPostDelete({ postId }));
 
-    return error?.length === 0;
+    return !error || error?.length === 0;
   }
 });

@@ -12,7 +12,7 @@ export type TUser = {
   bio: string | null;
   avatarUrl?: string;
   // socials: TUserSocials[];
-  stats: TProfileStat;
+  stats?: TProfileStat;
   location?: string;
 };
 
