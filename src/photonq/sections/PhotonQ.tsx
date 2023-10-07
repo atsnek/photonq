@@ -1,10 +1,12 @@
 import { Box, Button, Container, Flex, Spacer } from '@chakra-ui/react';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
-import { Field } from '@atsnek/jaen';
+import { Field, useAuthenticationContext } from '@atsnek/jaen';
 import Link from '../../shared/components/Link';
 
 const PhotonQ: FC = () => {
+  const isAuthenticated = useAuthenticationContext().user !== null;
+
   return (
     <Box
       as="section"
@@ -36,13 +38,9 @@ const PhotonQ: FC = () => {
             mt={7}
             variant="pq-solid"
             mx={{ base: 'auto', sm: 0 }}
-            href="/signup"
+            href={isAuthenticated ? '/docs/community/new-post' : '/signup'}
           >
-            <Field.Text
-              as="span"
-              name="PhotonQButtonText"
-              defaultValue="Register Now"
-            ></Field.Text>
+            {isAuthenticated ? 'Create a Post' : 'Register Now'}
           </Button>
         </Box>
         <Spacer display={{ base: 'none', sm: 'inherit' }} />

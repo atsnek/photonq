@@ -2,11 +2,13 @@ import { Box, Button, Center, VStack } from '@chakra-ui/react';
 import { FC } from 'react';
 import { useNavOffset } from '../../shared/hooks/use-nav-offset';
 
-import { Field } from '@atsnek/jaen';
+import { Field, useAuthenticationContext } from '@atsnek/jaen';
 import Link from '../../shared/components/Link';
 
 const Hero: FC = () => {
   const navOffset = useNavOffset();
+
+  const isAuthenticated = useAuthenticationContext().user !== null;
 
   return (
     <VStack
@@ -61,13 +63,9 @@ const Hero: FC = () => {
                 px={5}
                 borderRadius="xl"
                 bgColor="rgba(2, 116, 192, 0.07)"
-                href="/signup"
+                href={isAuthenticated ? '/docs/community/new-post' : '/signup'}
               >
-                <Field.Text
-                  as="span"
-                  name="HeroButtonText"
-                  defaultValue="Register Now"
-                />
+                {isAuthenticated ? 'Create a Post' : 'Register Now'}
               </Button>
               <Center>
                 <Box mt={20} w="50vw" maxW="512px" minW="250px">

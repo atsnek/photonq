@@ -11,13 +11,13 @@ import {
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 import { useNavOffset } from '../../shared/hooks/use-nav-offset';
-import { Field } from '@atsnek/jaen';
+import { Field, useAuthenticationContext } from '@atsnek/jaen';
 
 import UniWienLogo from '../assets/icons/uni-wien-logo-gray.svg';
 import Link from '../../shared/components/Link';
 
 const Footer: FC = () => {
-  const navOffset = useNavOffset();
+  const isAuthenticated = useAuthenticationContext().user !== null;
 
   const links = [
     [
@@ -160,6 +160,7 @@ const Footer: FC = () => {
                 fontWeight="500"
                 w={{ base: 'full', lg: 'fit-content' }}
                 display={{ base: 'block', lg: 'initial' }}
+                mr={{ base: 0, md: 3 }}
               />
               <Field.Text
                 name="FooterTitleLine2"
@@ -182,13 +183,9 @@ const Footer: FC = () => {
               mr="auto"
               ml={{ base: 'auto', lg: 'initial' }}
               mb={3}
-              href="/signup"
+              href={isAuthenticated ? '/docs/community/new-post' : '/signup'}
             >
-              <Field.Text
-                as="span"
-                name="FooterButtonText"
-                defaultValue="Register Now"
-              />
+              {isAuthenticated ? 'Create a Post' : 'Register Now'}
             </Button>
           </Flex>
           <Field.Text
