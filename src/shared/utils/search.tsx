@@ -1,4 +1,5 @@
 const FlexSearch = require('flexsearch');
+import { sq } from '@snek-functions/origin';
 import { UseSearchResult, useSearch } from '../../search/use-search';
 import {
   TSearchMetadata,
@@ -16,7 +17,6 @@ export async function searchDocs(
   query: string,
   data: UseSearchResult['searchIndex']
 ): Promise<TSearchResultSection[]> {
-  console.log('search data: ', data);
   // This indexes a whole page by its content and stores the title.
   const pageIndex = new FlexSearch.Document({
     cache: 100,
@@ -106,8 +106,6 @@ export async function searchDocs(
       suggest: true
     })[0]?.result ?? [];
 
-  // console.log('pageResuts', pageResults, 'pageIndex', pageIndex);
-
   const searchResults: Array<TSearchResultSection & TSearchMetadata> = [];
   const pageTitleMatches: Record<number, number> = {};
   //TODO: We need to provide a search data record for the first page title and the first paragraph. Otherwise, the page itself will never be shown, but only it's sections.
@@ -178,4 +176,34 @@ export async function searchDocs(
       : b._section_matches - a._section_matches;
   });
   return res;
+}
+
+/**
+ * Search the community posts for the given query.
+ * @param query The query to search for
+ * @returns  The search results
+ */
+export async function searchSocialPosts(
+  query: string
+): Promise<TSearchResultSection[]> {
+  const [searchResult, error] = await sq.query(q => {
+    const posts = q.allSocialPost({ filters: { query } });
+
+    const sections: TSearchResultSection[] = [];
+    posts.nodes.map(post => {
+      sections.push({
+        title: post.title,
+        results: [
+          {
+            description: post.summary ?? post.title,
+            href: `/social/posts/${post.id}`,
+            title: post.title
+          }
+        ]
+      });
+    });
+    return sections;
+  });
+
+  return searchResult;
 }

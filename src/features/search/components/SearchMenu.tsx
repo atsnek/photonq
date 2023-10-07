@@ -28,7 +28,7 @@ import Link from '../../../shared/components/Link';
 import Highlighter from 'react-highlight-words';
 import { useLocation, navigate } from '@reach/router';
 // import { SearchProvider, useSearch } from '@atsnek/jaen';
-import { searchDocs } from '../../../shared/utils/search';
+import { searchDocs, searchSocialPosts } from '../../../shared/utils/search';
 import { SearchProvider } from '../../../search/search-provider';
 import { useSearch } from '../../../search/use-search';
 import theme from '../../../styles/theme/theme';
@@ -223,9 +223,16 @@ const SearchMenu: FC<SearchMenuProps> = ({
   useEffect(() => {
     if (searchQuery.length > 0) {
       // Retrieve the search data
-      searchDocs(searchQuery, search.searchIndex).then(setSearchResultData);
+      fetchSearchResults();
     } else setSearchResultData([]);
   }, [searchQuery]);
+
+  const fetchSearchResults = async () => {
+    const docsResults = await searchDocs(searchQuery, search.searchIndex);
+    const socialPostResults = await searchSocialPosts(searchQuery);
+
+    setSearchResultData([...docsResults, ...socialPostResults]);
+  };
 
   return (
     <ThemeProvider theme={theme}>
