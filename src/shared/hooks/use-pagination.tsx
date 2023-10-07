@@ -44,7 +44,7 @@ const usePagination = <T,>({
         currentPage * itemsPerPage - itemsPerPage,
         currentPage * itemsPerPage
       )
-    : items?.slice(0, currentPage * itemsPerPage);
+    : items;
 
   useEffect(() => {
     if (currentPage > totalPages) {
