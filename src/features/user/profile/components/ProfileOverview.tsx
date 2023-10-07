@@ -10,7 +10,7 @@ interface IProfileOverviewProps {
   togglePostPrivacy: (
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
-  ) => void;
+  ) => Promise<boolean>;
 }
 
 /**
