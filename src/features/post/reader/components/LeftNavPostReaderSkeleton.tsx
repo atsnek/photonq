@@ -11,7 +11,7 @@ const LeftNavPostReaderSkeleton: FC = () => {
   return (
     <LeftNav w="full" isExpanded textAlign="center">
       <VStack spacing={2}>
-        <Skeleton {...leftNavPostReaderStyling.avatar} borderRadius="md" />
+        <Skeleton {...leftNavPostReaderStyling.avatar} borderRadius="full" />
         <Skeleton h="20px" w="50%" />
         {/* <Skeleton h="20px" w="25%" minW="50px" /> */}
       </VStack>
