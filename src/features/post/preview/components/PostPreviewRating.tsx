@@ -11,7 +11,7 @@ interface IPostPreviewRatingProps {
   isRating?: boolean;
   isAuthor?: boolean;
   toggleRating: (id: TPostPreview['id']) => void;
-  isPostManagable?: boolean;
+  canRate?: boolean;
   useHighContrast?: boolean;
 }
 
@@ -25,10 +25,10 @@ const PostPreviewRating: FC<IPostPreviewRatingProps> = ({
   isRating,
   isAuthor,
   toggleRating,
-  isPostManagable,
+  canRate,
   useHighContrast
 }) => {
-  if (!isPostManagable) {
+  if (canRate) {
     return (
       <Button
         display="flex"

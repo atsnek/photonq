@@ -53,6 +53,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   isTogglingPostPrivacy,
   wrapperProps
 }) => {
+  const isAuthenticated = useAuthenticationContext().user !== null;
   const isAuthor = useAuthenticationContext().user?.id === post.profile.id;
   const [isRating, setIsRating] = useState(false);
 
@@ -70,7 +71,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
       toggleRating={handleRating}
       isRating={isRating}
       hasRated={post.hasRated}
-      isPostManagable={post.canManage}
+      canRate={!post.canManage && isAuthenticated}
       isAuthor={isAuthor}
     />
   );

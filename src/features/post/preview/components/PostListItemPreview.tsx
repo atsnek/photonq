@@ -58,6 +58,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
 }) => {
   const [isRating, setIsRating] = useState(false);
 
+  const isAuthenticated = useAuthenticationContext().user !== null;
   const isAuthor = useAuthenticationContext().user?.id === post.profile.id;
 
   const handleRating = async () => {
@@ -131,6 +132,8 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
               minW="fit-content"
               postPrivacy={post.privacy}
               togglePostPrivacy={() => {}}
+              isTogglingPostPrivacy={false}
+              postId={post.id}
             />
           )}
         </HStack>
@@ -156,7 +159,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             likes={post.stars}
             toggleRating={handleRating}
             hasRated={post.hasRated}
-            isPostManagable={post.canManage}
+            canRate={!post.canManage && isAuthenticated}
             isAuthor={isAuthor}
             useHighContrast
           />
