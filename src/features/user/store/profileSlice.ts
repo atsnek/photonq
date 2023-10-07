@@ -294,7 +294,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       set(
         produce((state: TStoreState): void => {
           state.profile.isFollowing = !get().profile.isFollowing;
-          if (!state.profile.profile) return;
+          if (!state.profile.profile || !state.profile.profile.stats?.followers) return;
           state.profile.profile.stats.followers += get().profile.isFollowing ? -1 : 1;
         })
       );
