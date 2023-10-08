@@ -61,6 +61,7 @@ const ActionToolbar: FC<IActionTOolbarProps> = ({
       // Otherwise, it's a divider
       return (
         <Divider
+          key={index}
           orientation="vertical"
           h={5}
           borderColor="components.actionToolbar.divider.borderColor"
