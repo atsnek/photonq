@@ -2,6 +2,7 @@ import {
   Box,
   Center,
   Heading,
+  HeadingProps,
   InputProps,
   LinkBox,
   LinkOverlay,
@@ -128,10 +129,12 @@ export const SearchResultItem: FC<{
 /**
  * The search menu section title component for displaying a search result section title.
  */
-export const SearchResultSectionTitle: FC<{
-  title: string;
-  idx: number;
-}> = ({ title, idx }) => {
+export const SearchResultSectionTitle: FC<
+  HeadingProps & {
+    title: string;
+    idx: number;
+  }
+> = ({ title, idx, ...props }) => {
   return (
     <Heading
       key={-1}
@@ -140,6 +143,7 @@ export const SearchResultSectionTitle: FC<{
       mt={idx === 0 ? 2 : 5}
       textTransform="uppercase"
       color="components.menu.groupTitle.color"
+      {...props}
     >
       {title}
     </Heading>
@@ -219,7 +223,11 @@ const SearchMenu: FC<SearchMenuProps> = ({
     }
     if (searchResultData.community.length > 0) {
       output.push(
-        <SearchResultSectionTitle title="Community Posts" idx={itemIdx++} />,
+        <SearchResultSectionTitle
+          title="Community Posts"
+          idx={itemIdx++}
+          color="theme.500"
+        />,
         searchResultData.community.map(section => (
           <SearchResultSection
             section={section}
