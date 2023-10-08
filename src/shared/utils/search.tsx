@@ -196,7 +196,7 @@ export async function searchSocialPosts(
         results: [
           {
             description: post.summary ?? post.title,
-            href: `/social/posts/${post.id}`,
+            href: `/post/${post.slug}`,
             title: post.title
           }
         ]
