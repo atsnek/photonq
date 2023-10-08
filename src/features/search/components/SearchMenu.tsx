@@ -126,6 +126,27 @@ export const SearchResultItem: FC<{
 };
 
 /**
+ * The search menu section title component for displaying a search result section title.
+ */
+export const SearchResultSectionTitle: FC<{
+  title: string;
+  idx: number;
+}> = ({ title, idx }) => {
+  return (
+    <Heading
+      key={-1}
+      fontSize="12px"
+      mb={2}
+      mt={idx === 0 ? 2 : 5}
+      textTransform="uppercase"
+      color="components.menu.groupTitle.color"
+    >
+      {title}
+    </Heading>
+  );
+};
+
+/**
  * The search menu section component for displaying a search result section containing multiple search result items.
  */
 export const SearchResultSection: FC<{
@@ -137,16 +158,7 @@ export const SearchResultSection: FC<{
 }> = ({ section, idx, query, defaultHighlight, onItemClickCapture }) => {
   return (
     <MenuGroup key={idx}>
-      <Heading
-        key={-1}
-        fontSize="12px"
-        mb={2}
-        mt={idx === 0 ? 2 : 5}
-        textTransform="uppercase"
-        color="components.menu.groupTitle.color"
-      >
-        {section.title}
-      </Heading>
+      <SearchResultSectionTitle title={section.title} idx={idx} />
       <MenuDivider />
       {section.results.map((result, i) => (
         <SearchResultItem
@@ -207,6 +219,7 @@ const SearchMenu: FC<SearchMenuProps> = ({
     }
     if (searchResultData.community.length > 0) {
       output.push(
+        <SearchResultSectionTitle title="Community Posts" idx={itemIdx++} />,
         searchResultData.community.map(section => (
           <SearchResultSection
             section={section}
@@ -311,28 +324,28 @@ const SearchMenu: FC<SearchMenuProps> = ({
               {...styleProps?.menuList}
               onFocusCapture={e => {
                 // If the user focuses on any result item for the first time, set the isAnyItemFocused state to true
-                console.log(e.target, isAnyItemFocused);
                 if (
                   !isAnyItemFocused &&
                   e.target.classList.contains('chakra-menu__menuitem')
                 ) {
                   setIsAnyItemFocused(true);
                 }
+                //TODO: This 1) scrolls the page too for some reason and 2) scrolls too if the user uses only the mouse for navigating the menu
                 // This looks for the first parent element that is the menu group and scrolls to it
-                let currentParent: HTMLElement | null = e.target.parentElement;
-                let safetyIdx = 0;
-                while (
-                  !currentParent?.classList.contains('chakra-portal') &&
-                  safetyIdx < 10
-                ) {
-                  if (currentParent?.classList.contains('chakra-menu__group')) {
-                    currentParent.scrollIntoView({
-                      behavior: 'smooth'
-                    });
-                    break;
-                  }
-                  safetyIdx++; // Prevent infinite loops
-                }
+                // let currentParent: HTMLElement | null = e.target.parentElement;
+                // let safetyIdx = 0;
+                // while (
+                //   !currentParent?.classList.contains('chakra-portal') &&
+                //   safetyIdx < 10
+                // ) {
+                //   if (currentParent?.classList.contains('chakra-menu__group')) {
+                //     currentParent.scrollIntoView({
+                //       behavior: 'smooth'
+                //     });
+                //     break;
+                //   }
+                //   safetyIdx++; // Prevent infinite loops
+                // }
               }}
             >
               {resultItems}
