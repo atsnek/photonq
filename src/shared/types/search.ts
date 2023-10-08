@@ -2,6 +2,15 @@ export type TSearchMetadata = {
   _page_matches: number;
   _section_matches: number;
 };
+
+/**
+ * The combined search results.
+ */
+export type TSearchResults = {
+  docs: TSearchResultSection[];
+  community: TSearchResultSection[];
+}
+
 /**
  * A single search result section.
  */

@@ -17,11 +17,12 @@ import {
   Text,
   ThemeProvider
 } from '@chakra-ui/react';
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   TSearchResult,
-  TSearchResultSection
+  TSearchResultSection,
+  TSearchResults
 } from '../../../shared/types/search';
 import SearchInput, { TSearchInputStyleProps } from './SearchInput';
 import Link from '../../../shared/components/Link';
@@ -182,23 +183,45 @@ const SearchMenu: FC<SearchMenuProps> = ({
   const r = useRef(null);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResultData, setSearchResultData] = useState<
-    TSearchResultSection[]
-  >([]);
+  const [searchResultData, setSearchResultData] = useState<TSearchResults>({
+    docs: [],
+    community: []
+  });
   const [isAnyItemFocused, setIsAnyItemFocused] = useState(false);
   const resultItems = useMemo(() => {
-    if (searchResultData.length > 0) {
-      return searchResultData.map((section, idx) => (
-        <SearchResultSection
-          section={section}
-          idx={idx}
-          query={searchQuery}
-          key={idx}
-          defaultHighlight={idx === 0 && !isAnyItemFocused}
-          onItemClickCapture={onItemClickCapture}
-        />
-      ));
+    const output: ReactNode[] = [];
+    let itemIdx = 0;
+    if (searchResultData.docs.length > 0) {
+      output.push(
+        searchResultData.docs.map(section => (
+          <SearchResultSection
+            section={section}
+            idx={itemIdx}
+            query={searchQuery}
+            key={itemIdx}
+            defaultHighlight={itemIdx++ === 0 && !isAnyItemFocused}
+            onItemClickCapture={onItemClickCapture}
+          />
+        ))
+      );
     }
+    if (searchResultData.community.length > 0) {
+      output.push(
+        searchResultData.community.map(section => (
+          <SearchResultSection
+            section={section}
+            idx={itemIdx}
+            query={searchQuery}
+            key={itemIdx}
+            defaultHighlight={itemIdx++ === 0 && !isAnyItemFocused}
+            onItemClickCapture={onItemClickCapture}
+          />
+        ))
+      );
+    }
+
+    if (output.length > 0) return output;
+
     return (
       <Center my={5} color="components.menu.noResults.color">
         No results found.
@@ -209,10 +232,13 @@ const SearchMenu: FC<SearchMenuProps> = ({
   // Open the first link if the user presses enter (the search input is not focused at this point)
   const openFirstLink = () => {
     if (
-      searchResultData.length > 0 &&
-      searchResultData[0]?.results.length > 0
+      (searchResultData.docs.length > 0 ||
+        searchResultData.community.length > 0) &&
+      (searchResultData.docs[0]?.results.length > 0 ||
+        searchResultData.community[0]?.results.length > 0)
     ) {
-      const href = searchResultData[0].results[0].href;
+      const href = (searchResultData.docs[0] ?? searchResultData.community[0])
+        .results[0].href;
       navigate(href);
       setIsAnyItemFocused(false);
     }
@@ -224,14 +250,14 @@ const SearchMenu: FC<SearchMenuProps> = ({
     if (searchQuery.length > 0) {
       // Retrieve the search data
       fetchSearchResults();
-    } else setSearchResultData([]);
+    } else setSearchResultData({ docs: [], community: [] });
   }, [searchQuery]);
 
   const fetchSearchResults = async () => {
     const docsResults = await searchDocs(searchQuery, search.searchIndex);
     const socialPostResults = await searchSocialPosts(searchQuery);
 
-    setSearchResultData([...docsResults, ...socialPostResults]);
+    setSearchResultData({ docs: docsResults, community: socialPostResults });
   };
 
   return (
@@ -285,8 +311,28 @@ const SearchMenu: FC<SearchMenuProps> = ({
               {...styleProps?.menuList}
               onFocusCapture={e => {
                 // If the user focuses on any result item for the first time, set the isAnyItemFocused state to true
-                if (!isAnyItemFocused && e.target instanceof HTMLButtonElement)
+                console.log(e.target, isAnyItemFocused);
+                if (
+                  !isAnyItemFocused &&
+                  e.target.classList.contains('chakra-menu__menuitem')
+                ) {
                   setIsAnyItemFocused(true);
+                }
+                // This looks for the first parent element that is the menu group and scrolls to it
+                let currentParent: HTMLElement | null = e.target.parentElement;
+                let safetyIdx = 0;
+                while (
+                  !currentParent?.classList.contains('chakra-portal') &&
+                  safetyIdx < 10
+                ) {
+                  if (currentParent?.classList.contains('chakra-menu__group')) {
+                    currentParent.scrollIntoView({
+                      behavior: 'smooth'
+                    });
+                    break;
+                  }
+                  safetyIdx++; // Prevent infinite loops
+                }
               }}
             >
               {resultItems}
