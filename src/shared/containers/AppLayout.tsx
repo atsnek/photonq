@@ -91,7 +91,7 @@ const AppLayout: FC<AppLayoutProps> = ({
           </Box>
         </Flex>
       </MenuContext.Provider>
-      {!isDocs && <FooterComp />}
+      <FooterComp />
     </>
   );
 };
