@@ -7,8 +7,8 @@ const smtUserProfilePage = {
           _dark: 'gray.500'
         },
         hover: {
-          default: 'theme.700',
-          _dark: 'theme.400'
+          default: 'brand.700',
+          _dark: 'brand.400'
         }
       }
     },
@@ -22,8 +22,8 @@ const smtUserProfilePage = {
       text: {
         hover: {
           color: {
-            default: 'theme.700',
-            _dark: 'theme.400'
+            default: 'brand.700',
+            _dark: 'brand.400'
           }
         }
       }
@@ -35,8 +35,8 @@ const smtUserProfilePage = {
       },
       editor: {
         borderColor: {
-          default: 'theme.500',
-          _dark: 'theme.500'
+          default: 'brand.500',
+          _dark: 'brand.500'
         }
       }
     },
@@ -58,8 +58,8 @@ const smtUserProfilePage = {
   topNav: {
     tabs: {
       borderColor: {
-        default: 'theme.500',
-        _dark: 'theme.500'
+        default: 'brand.500',
+        _dark: 'brand.500'
       }
     }
   },
@@ -67,8 +67,8 @@ const smtUserProfilePage = {
     tabs: {
       active: {
         color: {
-          default: 'theme.700',
-          _dark: 'theme.400'
+          default: 'brand.700',
+          _dark: 'brand.400'
         }
       }
     }

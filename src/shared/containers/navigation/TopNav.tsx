@@ -19,9 +19,7 @@ import {
 import { useLocation } from '@reach/router';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import SnekIcon from '../../../assets/icons/brand.svg';
-import SearchMenu, {
-  TSearchMenuStyleProps
-} from '../../../features/search/components/SearchMenu';
+import SearchMenu, { TSearchMenuStyleProps } from '../../../features/search/components/SearchMenu';
 import HamburgerMenuIcon, {
   THamburgerMenuIconStylerProps
 } from '../../components/HamburgerMenuIcon';
@@ -36,6 +34,7 @@ import { useAuthenticationContext } from '@atsnek/jaen';
 import Logo from '../../../gatsby-plugin-jaen/components/Logo';
 import useScrollPosition from '../../hooks/use-scroll-position';
 import { transferableAbortSignal } from 'util';
+import useMobileDetection from '../../hooks/use-mobile-detection';
 
 const navLinkProps = {
   display: { base: 'none', md: 'initial' },
@@ -90,6 +89,8 @@ const TopNav: FC<ITopNavProps> = ({
   const location = useLocation();
   const windowSize = useWindowSize();
   const scrollPosition = useScrollPosition();
+  const isMobile = useMemo(() => useMobileDetection(), []);
+  const isAuthenticated = useAuthenticationContext().user !== null;
 
   const stateRef = useRef<{
     prevScrollPosition: number;
@@ -146,6 +147,7 @@ const TopNav: FC<ITopNavProps> = ({
   }, [windowSize.width]);
 
   useEffect(() => {
+    if (isMobile || isAuthenticated) return;
     if (scrollPosition > stateRef.current.prevScrollPosition) {
       const translateValue =
         Math.min(

@@ -9,7 +9,6 @@ import {
   Spacer,
   Text,
   VStack,
-  useColorMode,
   useColorModeValue
 } from '@chakra-ui/react';
 import { FC } from 'react';
