@@ -12,10 +12,7 @@ import { useLocation } from '@reach/router';
 import { TSearchMenuStyleProps } from '../../features/search/components/SearchMenu';
 import { THamburgerMenuIconStylerProps } from '../components/HamburgerMenuIcon';
 import { MenuContext } from '../contexts/menu';
-import {
-  useAuthenticationContext,
-  useCMSManagementContext
-} from '@atsnek/jaen';
+import { useAuthenticationContext, useCMSManagementContext } from '@atsnek/jaen';
 import { createPageTree } from '../utils/navigation';
 
 interface AppLayoutProps {
@@ -70,13 +67,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   return (
     <>
       <MenuContext.Provider value={{ menuStructure }}>
-        <Flex
-          minW="210px"
-          h="max(100%, 100vh)"
-          minH="100vh"
-          direction="column"
-          pb={5}
-        >
+        <Flex minW="210px" h="max(100%, 100vh)" minH="100vh" direction="column" pb={5}>
           {!isAuthenticated && topNavProps?.isVisible && (
             <TopNav
               drawerDisclosure={customTopNavDisclosure ?? topNavDisclosure}
@@ -89,7 +80,6 @@ const AppLayout: FC<AppLayoutProps> = ({
               branding={branding}
             />
           )}
-          {/*`mt={navTopOffset} */}
           <Box flex="1">
             {isDocs ? (
               <DocsLayout path={path} isCommunity={isCommunity}>
@@ -101,7 +91,7 @@ const AppLayout: FC<AppLayoutProps> = ({
           </Box>
         </Flex>
       </MenuContext.Provider>
-      <FooterComp />
+      {!isDocs && <FooterComp />}
     </>
   );
 };
