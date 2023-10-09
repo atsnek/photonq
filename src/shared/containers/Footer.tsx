@@ -9,9 +9,10 @@ import {
   Spacer,
   Text,
   VStack,
-  useColorMode
+  useColorMode,
+  useColorModeValue
 } from '@chakra-ui/react';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import JaenLogoLight from '../../assets/icons/jaen_light.svg';
 import JaenLogoDark from '../../assets/icons/jaen_dark.svg';
 import Link from '../components/Link';
@@ -22,7 +23,7 @@ const year = new Date().getFullYear();
  * Footer component.
  */
 const Footer: FC = () => {
-  const { colorMode } = useColorMode();
+  const jaenImg = useColorModeValue(JaenLogoLight, JaenLogoDark);
 
   return (
     <Center as="footer" bgColor="footer.bgColor" color="footer.textColor">
@@ -34,7 +35,7 @@ const Footer: FC = () => {
               <Image
                 display="inherit"
                 h="30px"
-                src={colorMode === 'light' ? JaenLogoLight : JaenLogoDark}
+                src={jaenImg}
                 alt="Jaen Logo"
                 _hover={{
                   transform: 'scale(1.1)'
@@ -52,13 +53,13 @@ const Footer: FC = () => {
         <Spacer />
         <Box>
           <VStack spacing={1} alignItems="end">
-            <Link href="/imprint" fontSize="xs" variant="hover-opacity">
+            <Link href="/imprint" fontSize="xs" variant="hover-theme">
               Imprint
             </Link>
-            <Link href="/contact" fontSize="xs" variant="hover-opacity">
+            <Link href="/contact" fontSize="xs" variant="hover-theme">
               Contact
             </Link>
-            <Link href="/about" fontSize="xs" variant="hover-opacity">
+            <Link href="/about" fontSize="xs" variant="hover-theme">
               About Us
             </Link>
           </VStack>

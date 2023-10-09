@@ -40,12 +40,17 @@ import smtPqFeaturesSection from '../photonq/semanticTokens/sections/features';
 import smtPqPhotonQSection from '../photonq/semanticTokens/sections/photonQ';
 import smtPqAboutUsSection from '../photonq/semanticTokens/sections/aboutUs';
 import smtPageDirectoryComponent from '../components/pageDirectory';
+import smtUserAvatarComponent from '../../../features/user/avatar/styles/userAvatar';
+import smtLinkComponent from './components/link';
 
 const themeSemanticTokens = {
   colors: {
     components: {
       separator: smtpSeparatorComponent,
       button: smtButtonComponent,
+      link: smtLinkComponent,
+      input: smtInputComponent,
+      textarea: smtTextareaComponent,
       drawer: smtDrawerComponent,
       menu: smtMenuComponent,
       codeSnippet: smtCodeSnippetComponent,
@@ -60,13 +65,12 @@ const themeSemanticTokens = {
       postEditor: smtPostEditorComponent,
       userActivity: smtUserActivityComponent,
       stepper: smtStepperComponent,
-      input: smtInputComponent,
-      textarea: smtTextareaComponent,
       toast: smtToastComponent,
       actionToolbar: smtActionToolbarComponent,
       tooltip: smtTooltipComponent,
       image: smtImageComponent,
-      badge: smtBadgeComponent
+      badge: smtBadgeComponent,
+      userAvatar: smtUserAvatarComponent,
     },
     modals: {
       // Add styles for modals here

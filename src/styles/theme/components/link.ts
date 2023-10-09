@@ -14,7 +14,7 @@ const themeLinkComponent = {
     },
     'hover-theme': {
       _hover: {
-        color: 'theme.500'
+        color: 'components.link._hover.color'
       },
       transition: 'color 0.1s ease-in-out'
     },

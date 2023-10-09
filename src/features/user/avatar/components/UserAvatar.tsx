@@ -71,7 +71,11 @@ const UserAvatar: FC<IUserAvatarProps> = ({
           <LinkOverlay href={link} />
         </LinkBox>
         {showName && (
-          <Link href={link} {...nameProps} _hover={{ color: 'brand.500' }}>
+          <Link
+            href={link}
+            {...nameProps}
+            _hover={{ color: 'components.userAvatar.username._hover.color' }}
+          >
             {user.displayName}
           </Link>
         )}
