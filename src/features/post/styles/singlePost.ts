@@ -3,6 +3,18 @@ const smtSinglePostPage = {
     bgColor: {
       default: 'gray.100',
       _dark: 'gray.700'
+    },
+    rating: {
+      bgColor: {
+        default: 'gray.200',
+        _dark: 'gray.600'
+      },
+      _hover: {
+        bgColor: {
+          default: 'gray.300',
+          _dark: 'gray.550'
+        }
+      }
     }
   },
   leftNav: {

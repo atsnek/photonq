@@ -1,16 +1,7 @@
 import { ChangeEvent, FC, useRef } from 'react';
 import { TPost, EnPostLanguage } from '../types/post';
 import { TUser } from '../../user/types/user';
-import {
-  Box,
-  Center,
-  HStack,
-  Spacer,
-  Input,
-  Button,
-  Menu,
-  MenuButton
-} from '@chakra-ui/react';
+import { Box, Center, HStack, Spacer, Input, Button, Menu, MenuButton } from '@chakra-ui/react';
 import UserAvatar from '../../user/avatar/components/UserAvatar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
@@ -99,6 +90,12 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                   isRating={isRating ?? false}
                   toggleRating={handleRatePost}
                   stars={post?.stars ?? 0}
+                  buttonProps={{
+                    bgColor: 'pages.singlePost.topNav.rating.bgColor',
+                    _hover: {
+                      bgColor: 'pages.singlePost.topNav.rating._hover.bgColor'
+                    }
+                  }}
                 />
               )}
               <Input
@@ -121,12 +118,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                     Image
                   </Button>
                   <Menu>
-                    <MenuButton
-                      as={Button}
-                      colorScheme="gray"
-                      size="sm"
-                      leftIcon={<TbLanguage />}
-                    >
+                    <MenuButton as={Button} colorScheme="gray" size="sm" leftIcon={<TbLanguage />}>
                       Language
                     </MenuButton>
                     <PostLanguageMenuList
@@ -148,9 +140,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                     <Button
                       colorScheme="gray"
                       size="sm"
-                      leftIcon={
-                        isPublic ? <TbBookDownload /> : <TbBookUpload />
-                      }
+                      leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
                       onClick={handleTogglePrivacy}
                       isDisabled={isUpdatingPrivacy}
                     >
