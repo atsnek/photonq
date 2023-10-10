@@ -12,6 +12,7 @@ import SectionTitle from '../../features/photonq/SectionTitle';
 import { Field } from '@atsnek/jaen';
 import { TextFieldProps } from '@atsnek/jaen/dist/fields/TextField/TextField';
 import Link from '../../shared/components/Link';
+import CodePlayground from '../../features/main-content/code-playground/components/CodePlayground';
 
 const Features: FC = () => {
   const cardProps: BoxProps = {
@@ -108,6 +109,44 @@ const Features: FC = () => {
                 </Box>
               </Box>
             </HStack>
+            <Box {...cardProps} w="100%" mt={7}>
+              <Center>
+                <Field.Text
+                  {...cardTitleProps}
+                  name="codeCardTitle"
+                  defaultValue="Quantum Code Playground"
+                />
+              </Center>
+              <Center>
+                <Field.Text
+                  name="CodeCardText"
+                  defaultValue="Dive into the world of quantum computing with our interactive platform. Write and run quantum code, experiment with quantum algorithms, and unlock the potential of this cutting-edge technology"
+                  mt={3}
+                  maxW={{ base: 'full', md: '50%' }}
+                  textAlign="center"
+                />
+              </Center>
+              <CodePlayground
+                codeEditorProps={{}}
+                executeCode={async code => {
+                  await new Promise(resolve => setTimeout(resolve, 3000));
+
+                  // Fetch some random data from the internet
+                  const res = await fetch(
+                    'https://jsonplaceholder.typicode.com/todos/1'
+                  );
+                  const data = await res.json();
+
+                  return (
+                    <Box>
+                      <h1>How cool is that?</h1>
+                      <pre>{JSON.stringify(data, null, 2)}</pre>
+                    </Box>
+                  );
+                }}
+                children={"Isn't that cool?"}
+              ></CodePlayground>
+            </Box>
             <Box {...cardProps} w="100%" mt={7}>
               <Box w="30%" minW={{ base: '100px', md: '300px' }} m="auto">
                 <Field.Image name="BottomCardImage" />
