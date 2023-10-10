@@ -1,11 +1,4 @@
-import {
-  Stack,
-  Heading,
-  IconButton,
-  VStack,
-  Box,
-  Text
-} from '@chakra-ui/react';
+import { Stack, Heading, IconButton, VStack, Box, Text } from '@chakra-ui/react';
 import { FC, useMemo } from 'react';
 import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import RightNavPostReader from '../reader/components/RightNavPostReader';
@@ -21,18 +14,10 @@ interface IPostReaderProps {
   isRating?: boolean;
 }
 
-const PostReader: FC<IPostReaderProps> = ({
-  post,
-  isAuthor,
-  handleRatePost,
-  isRating
-}) => {
+const PostReader: FC<IPostReaderProps> = ({ post, isAuthor, handleRatePost, isRating }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
 
-  const postDate = useMemo(
-    () => formatPostDate(post?.createdAt, 'l'),
-    [post?.createdAt]
-  );
+  const postDate = useMemo(() => formatPostDate(post?.createdAt, 'l'), [post?.createdAt]);
 
   return (
     <Stack spacing={{ base: 0, xl: 12 }} direction="row" mb={10}>
@@ -46,16 +31,8 @@ const PostReader: FC<IPostReaderProps> = ({
             <IconButton
               icon={
                 <TbStar
-                  fill={
-                    post?.hasRated
-                      ? 'features.rating.rated.color'
-                      : 'transparent'
-                  }
-                  stroke={
-                    post?.hasRated
-                      ? 'features.rating.rated.color'
-                      : 'currentColor'
-                  }
+                  fill={post?.hasRated ? 'features.rating.rated.color' : 'transparent'}
+                  stroke={post?.hasRated ? 'features.rating.rated.color' : 'currentColor'}
                 />
               }
               aria-label="Rate post"
@@ -76,14 +53,13 @@ const PostReader: FC<IPostReaderProps> = ({
           __css={{
             pre: {
               w: 'full'
+            },
+            'p, h2, h1, h3, h4, h5, h6': {
+              wordBreak: 'break-word'
             }
           }}
         >
-          <UncontrolledMdxEditor
-            value={post?.content}
-            isEditing={false}
-            onUpdateValue={() => {}}
-          />
+          <UncontrolledMdxEditor value={post?.content} isEditing={false} onUpdateValue={() => {}} />
         </VStack>
       </Box>
       <RightNavPostReader postContent={post?.content} />
