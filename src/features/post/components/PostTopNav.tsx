@@ -84,7 +84,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
               />
             )}
             <Spacer display={{ base: 'none', sm: 'initial' }} />
-            <HStack spacing={3} display={{ base: 'none', sm: 'initial' }}>
+            <HStack spacing={3} display={{ base: 'none', sm: 'flex' }}>
               {!canEdit && (
                 <PostRatingButton
                   hasRated={post?.hasRated ?? false}
