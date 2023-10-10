@@ -59,7 +59,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
           for (const key in pn) {
             pn[key as keyof typeof pn];
           }
-        } catch {}
+        } catch { }
       });
       return postComm?.nodes ?? [];
     });
@@ -140,7 +140,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
           for (const key in pn) {
             pn[key as keyof typeof pn];
           }
-        } catch {}
+        } catch { }
       });
       return postComm;
     });
@@ -165,12 +165,12 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
           totalCount: posts.length,
           nextCursor:
             postConnection?.pageInfo?.hasNextPage &&
-            postConnection.pageInfo.endCursor
+              postConnection.pageInfo.endCursor
               ? postConnection?.pageInfo.endCursor
               : undefined,
           prevCursor:
             postConnection?.pageInfo?.hasPreviousPage &&
-            postConnection.pageInfo.startCursor
+              postConnection.pageInfo.startCursor
               ? postConnection?.pageInfo.startCursor
               : undefined,
           hasMore: postConnection?.pageInfo?.hasNextPage ?? false
@@ -253,11 +253,17 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
         const featuredPost = state.communityPosts.featuredPosts.items.find(
           post => post.id === postId
         );
-        if (featuredPost) featuredPost.hasRated = !hasRated;
+        if (featuredPost) {
+          featuredPost.hasRated = !hasRated;
+          featuredPost.stars += hasRated ? -1 : 1;
+        }
         const latestPost = state.communityPosts.latestPosts.items.find(
           post => post.id === postId
         );
-        if (latestPost) latestPost.hasRated = !hasRated;
+        if (latestPost) {
+          latestPost.hasRated = !hasRated;
+          latestPost.stars += hasRated ? -1 : 1;
+        }
       })
     );
 
@@ -283,7 +289,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
     if (
       get().communityPosts.searchPosts.items[postIdx[0]]?.privacy === privacy ||
       get().communityPosts.featuredPosts.items[postIdx[1]]?.privacy ===
-        privacy ||
+      privacy ||
       get().communityPosts.latestPosts.items[postIdx[2]]?.privacy === privacy
     )
       return true;
