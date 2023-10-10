@@ -1,35 +1,24 @@
-import {
-  Box,
-  BoxProps,
-  Button,
-  Flex,
-  IconButton,
-  Spacer,
-  Text,
-  transition,
-  useColorModeValue
-} from '@chakra-ui/react';
-import React, { Dispatch, FC, SetStateAction } from 'react';
+import { Box, BoxProps, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
+import React, { FC } from 'react';
 import 'highlight.js/styles/atom-one-dark.css';
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import {
-  oneDark,
-  oneLight
-} from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs';
+import '../styles/prism-one-dark.css';
 
 export interface ICodeSnippetProps extends IMainContentComponentBaseProps {
   children?: string;
   language?: string;
   headerText?: string;
-  startingLineNumber?: number;
   isStandalone?: boolean;
   isExecutable?: boolean;
   isExecuting?: boolean;
   executeCode?: (code: string) => void;
   containerProps?: BoxProps;
+  isEditable?: boolean;
+  onChange?: (code: string) => void;
 }
 
 let timeout: NodeJS.Timeout;
@@ -38,18 +27,18 @@ let timeout: NodeJS.Timeout;
  * Code snippet component for displaying code examples.
  */
 const CodeSnippet: FC<ICodeSnippetProps> = ({
-  children,
-  language,
+  children = '',
+  language = 'js',
   headerText,
   containerProps,
   isStandalone = true,
   isExecutable,
   isExecuting,
   executeCode,
-  startingLineNumber = 1
+  isEditable,
+  onChange
 }) => {
   const [buttonIcon, setButtonIcon] = React.useState<'copy' | 'check'>('copy');
-  const theme = useColorModeValue(oneLight, oneDark);
 
   /**
    * Copy code to clipboard.
@@ -57,12 +46,14 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   const copyToClipboard = () => {
     setButtonIcon('check');
     clearTimeout(timeout);
-    if (children) navigator.clipboard.writeText(children);
+    navigator.clipboard.writeText(children);
     timeout = setTimeout(() => setButtonIcon('copy'), 2000);
   };
 
   let baseProps = {};
   if (isStandalone) baseProps = mainComponentBaseStyle.baseProps;
+
+  console.log('syntax children', children, isEditable);
 
   return (
     <Box
@@ -83,19 +74,23 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
         borderRadius="md"
         overflowX="auto"
         __css={{
-          '& pre': {
+          '& .cm-gutters': {
             backgroundColor: 'components.codeSnippet.body.bgColor !important',
-            fontFamily:
-              'ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace',
-            fontWeight: 500,
-            fontSize: '12.96px',
-            padding: 3,
-            pt: 0,
-            pb: 5,
-            my: '0 !important',
-            minH: '100px'
+            border: 'none'
           },
-          '& code': {
+          // '& pre': {
+          //   backgroundColor: 'components.codeSnippet.body.bgColor !important',
+          //   fontFamily:
+          //     'ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace',
+          //   fontWeight: 500,
+          //   fontSize: '12.96px',
+          //   padding: 3,
+          //   pt: 0,
+          //   pb: 5,
+          //   my: '0 !important',
+          //   minH: '100px'
+          // },
+          '& code, & pre': {
             bgColor: 'transparent !important',
             w: 'max-content',
             display: 'block'
@@ -137,11 +132,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
                   }}
                   transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
                   isLoading={isExecuting}
-                  onClick={
-                    executeCode && children
-                      ? () => executeCode(children)
-                      : undefined
-                  }
+                  onClick={executeCode && children ? () => executeCode(children) : undefined}
                 >
                   Execute
                 </Button>
@@ -150,15 +141,20 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
           </Flex>
         )}
         <Box position="relative">
-          <SyntaxHighlighter
-            language={language}
-            style={theme}
-            startingLineNumber={startingLineNumber}
-            showLineNumbers
-            wrapLongLines
-          >
-            {children ?? ''}
-          </SyntaxHighlighter>
+          <Editor
+            value={children}
+            highlight={code => highlight(code, languages[language], language)}
+            onValueChange={code => {
+              if (onChange) onChange(code);
+            }}
+            padding={5}
+            style={{
+              fontFamily:
+                '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"',
+              minHeight: '100px',
+              margin: '10px'
+            }}
+          />
           <IconButton
             position="absolute"
             top={5}
@@ -178,8 +174,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
 };
 CodeSnippet.defaultProps = {
   children: '',
-  headerText: undefined,
-  startingLineNumber: 1
+  headerText: undefined
 };
 
 export default CodeSnippet;

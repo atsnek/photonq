@@ -1,8 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { FC, ReactNode, useEffect, useState } from 'react';
-import CodeSnippet, {
-  ICodeSnippetProps
-} from '../../code-snippet/components/CodeSnippet';
+import CodeSnippet, { ICodeSnippetProps } from '../../code-snippet/components/CodeSnippet';
 import CodeResultPreview from '../../code-result-preview/components/CodeResultPreview';
 import ReactDOM from 'react-dom/server';
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
@@ -16,25 +14,18 @@ interface ICodePlaygroundProps {
  * Component for showing a code editor and (live) preview.
  * This component uses the CodeSnippet component to display and edit the code.
  */
-const CodePlayground: FC<ICodePlaygroundProps> = ({
-  children,
-  codeEditorProps,
-  executeCode
-}) => {
+const CodePlayground: FC<ICodePlaygroundProps> = ({ children, codeEditorProps, executeCode }) => {
+  const [code, setCode] = useState<string>(children);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [result, setResult] =
-    useState<Awaited<ReturnType<typeof executeCode>>>();
+  const [result, setResult] = useState<Awaited<ReturnType<typeof executeCode>>>();
 
   const handleExecuteCode = async (code: string) => {
     try {
       setIsExecuting(true);
 
-      //TODO: Replace the placeholder with this actual function call:
       setResult(await executeCode(code));
     } finally {
-      setTimeout(() => {
-        setIsExecuting(false);
-      }, 3000);
+      setIsExecuting(false);
     }
   };
 
@@ -49,7 +40,7 @@ const CodePlayground: FC<ICodePlaygroundProps> = ({
         overflow="hidden"
       >
         <CodeSnippet
-          children={children}
+          children={code}
           {...codeEditorProps}
           containerProps={{
             border: 'none',
@@ -59,6 +50,8 @@ const CodePlayground: FC<ICodePlaygroundProps> = ({
           isExecutable
           isExecuting={isExecuting}
           executeCode={code => handleExecuteCode(code)}
+          onChange={setCode}
+          isEditable={true}
         />
       </Box>
       <CodeResultPreview
@@ -75,7 +68,6 @@ CodePlayground.defaultProps = {
   children: 'This is a code playground',
   codeEditorProps: {
     headerText: 'Editable Code',
-    startingLineNumber: 1,
     language: 'javascript'
   }
 };

@@ -68,7 +68,6 @@ const PostTopNav: FC<IPostTopNavProps> = ({
         px={5}
         my={5}
         mx={5}
-        // display={{ base: 'none', md: 'block' }}
         overflow="hidden"
       >
         <Center>
