@@ -1,7 +1,7 @@
 const smtSinglePostPage = {
   topNav: {
     bgColor: {
-      default: 'gray.100',
+      default: 'gray.50',
       _dark: 'gray.700'
     },
     rating: {
