@@ -1,5 +1,5 @@
 import { Box, BoxProps, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import 'highlight.js/styles/atom-one-dark.css';
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
@@ -38,7 +38,23 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   isEditable,
   onChange
 }) => {
+  const [code, setCode] = useState(children);
   const [buttonIcon, setButtonIcon] = React.useState<'copy' | 'check'>('copy');
+
+  const grammar = useMemo(() => {
+    try {
+      highlight('', languages[language], language);
+      return languages[language];
+    } catch {
+      return languages.js;
+    }
+  }, [language]);
+
+  useEffect(() => {
+    if (children !== code) setCode(children);
+  }, [children]);
+
+  console.log('language: ', language, 'grammar: ', grammar);
 
   /**
    * Copy code to clipboard.
@@ -52,8 +68,6 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
 
   let baseProps = {};
   if (isStandalone) baseProps = mainComponentBaseStyle.baseProps;
-
-  console.log('syntax children', children, isEditable);
 
   return (
     <Box
@@ -142,9 +156,10 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
         )}
         <Box position="relative">
           <Editor
-            value={children}
-            highlight={code => highlight(code, languages[language], language)}
+            value={code}
+            highlight={code => highlight(code, grammar, language)}
             onValueChange={code => {
+              setCode(code);
               if (onChange) onChange(code);
             }}
             padding={5}
