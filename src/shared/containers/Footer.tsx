@@ -12,8 +12,8 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { FC } from 'react';
-import JaenLogoLight from '../../assets/icons/jaen_light.svg';
-import JaenLogoDark from '../../assets/icons/jaen_dark.svg';
+import GrayedUniWienLogo from '../../photonq/assets/icons/uni-wien-logo-gray.svg';
+import ColorizedUniWienLogo from '../../photonq/assets/icons/uni-wien-logo-colorized.svg';
 import Link from '../components/Link';
 
 const year = new Date().getFullYear();
@@ -22,7 +22,7 @@ const year = new Date().getFullYear();
  * Footer component.
  */
 const Footer: FC = () => {
-  const jaenImg = useColorModeValue(JaenLogoLight, JaenLogoDark);
+  const branding = useColorModeValue(ColorizedUniWienLogo, GrayedUniWienLogo);
 
   return (
     <Center as="footer" bgColor="footer.bgColor" color="footer.textColor">
@@ -30,18 +30,21 @@ const Footer: FC = () => {
         <VStack alignItems="start">
           <HStack>
             <Text>Powered by</Text>
-            <LinkBox>
+            <LinkBox
+              _hover={{
+                img: {
+                  transform: 'scale(1.1)'
+                }
+              }}
+            >
               <Image
                 display="inherit"
-                h="30px"
-                src={jaenImg}
-                alt="Jaen Logo"
-                _hover={{
-                  transform: 'scale(1.1)'
-                }}
+                h="40px"
+                src={branding}
+                alt="University of Vienna"
                 transition="transform 0.2s ease-in-out"
               />
-              <LinkOverlay href="/" />
+              <LinkOverlay href="https://www.univie.ac.at/" />
             </LinkBox>
           </HStack>
           <Spacer />
