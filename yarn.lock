@@ -38,10 +38,10 @@
     signedsource "^1.0.0"
     yargs "^15.3.1"
 
-"@atsnek/jaen-fields-mdx@^1.0.0-rc.3":
-  version "1.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.3.tgz#80146c0e42a886cbdf5a055e610772685ee2aec4"
-  integrity sha512-mCUWOJjZCWuP5TvctAvxxrbcb6u4YnzSlF4+gFrZJu8o4PR4pe44ywHzk2K2CncA2H2efn9YgnZ3fZWfw/6nyA==
+"@atsnek/jaen-fields-mdx@^1.0.0-rc.4":
+  version "1.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.4.tgz#853896219f6c8f471c941e5b16fc29c92df35b55"
+  integrity sha512-dj194ya1VhSwOC9Fsc6a6xLjXfvzWtkSiPykx5lp9RkcEmhYziXWnSfmZhPkER+w50NamyHbmA/Qr4C9a+XGxQ==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
@@ -70,10 +70,10 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.31":
-  version "1.0.0-rc.31"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.31.tgz#5647510a6c68373ec6e88b04cc216b9ef815d13a"
-  integrity sha512-DVAf3yZw1lTKAskpxvvBVUv1FD0DsbcrZCXUcoMunBfUTOnSv8uQaNzbh1aRERonY7yIN3rjzhaR8yBpbgNAjg==
+"@atsnek/jaen@^1.0.0-rc.32":
+  version "1.0.0-rc.32"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.32.tgz#0e42d62f1bddef30c3134d3ec9f609b831b9d0d1"
+  integrity sha512-cxFDJUFoeiwVY3K4ioa1NQMwwTw2AQLqmsomlib9vd37ZNaehwjUYlJfzKgIGDHSa0ffd5aG2eUJzqQSrS+ZHg==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
