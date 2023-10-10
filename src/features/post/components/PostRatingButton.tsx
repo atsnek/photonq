@@ -10,7 +10,6 @@ interface IPostRatingButtonProps extends ButtonProps {
   toggleRating: () => void;
   stars: number;
   showTooltip?: boolean;
-  buttonProps?: ButtonProps;
 }
 
 /**
@@ -23,7 +22,7 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
   toggleRating,
   stars,
   showTooltip = true,
-  buttonProps
+  ...props
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
 
@@ -40,9 +39,9 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
           stroke={hasRated ? 'features.rating.rated.color' : 'currentColor'}
         />
       }
-      {...buttonProps}
       onClick={toggleRating}
       isDisabled={isRating}
+      {...props}
     >
       {stars}
     </Button>

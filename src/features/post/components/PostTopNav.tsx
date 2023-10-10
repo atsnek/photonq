@@ -60,17 +60,19 @@ const PostTopNav: FC<IPostTopNavProps> = ({
       <Box
         position="relative"
         w="full"
+        minW="fit-content"
         maxW="7xl"
         bgColor="pages.singlePost.topNav.bgColor"
         borderRadius="xl"
         py={3}
         px={5}
         my={5}
-        display={{ base: 'none', md: 'block' }}
+        mx={5}
+        // display={{ base: 'none', md: 'block' }}
         overflow="hidden"
       >
         <Center>
-          <HStack w="full" maxW="7xl">
+          <HStack w="full" maxW="7xl" justifyContent={{ base: 'center', sm: undefined }}>
             {author && (
               <UserAvatar
                 user={author}
@@ -82,19 +84,17 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                 scaleOnHover
               />
             )}
-            <Spacer />
-            <HStack spacing={3}>
+            <Spacer display={{ base: 'none', sm: 'initial' }} />
+            <HStack spacing={3} display={{ base: 'none', sm: 'initial' }}>
               {!canEdit && (
                 <PostRatingButton
                   hasRated={post?.hasRated ?? false}
                   isRating={isRating ?? false}
                   toggleRating={handleRatePost}
                   stars={post?.stars ?? 0}
-                  buttonProps={{
-                    bgColor: 'pages.singlePost.topNav.rating.bgColor',
-                    _hover: {
-                      bgColor: 'pages.singlePost.topNav.rating._hover.bgColor'
-                    }
+                  bgColor="pages.singlePost.topNav.rating.bgColor"
+                  _hover={{
+                    bgColor: 'pages.singlePost.topNav.rating._hover.bgColor'
                   }}
                 />
               )}
