@@ -13,10 +13,7 @@ interface ITableOfContentProps {
 /**
  * Component for the table of content.
  */
-const TableOfContent: FC<ITableOfContentProps> = ({
-  mdxFieldName,
-  fieldContent
-}) => {
+const TableOfContent: FC<ITableOfContentProps> = ({ mdxFieldName, fieldContent }) => {
   const data = useTocNavigation(
     mdxFieldName ? mdxFieldName : fieldContent ? undefined : 'documentation',
     !mdxFieldName ? fieldContent : undefined
@@ -38,9 +35,10 @@ const TableOfContent: FC<ITableOfContentProps> = ({
             fontWeight={isActive || item.level === 1 ? 'semibold' : 'normal'}
             _hover={{
               textDecoration: 'none',
-              opacity: 1
+              opacity: 1,
+              color: 'rightNav.link.active.color'
             }}
-            transition="opacity 0.1s ease-in-out"
+            transition="opacity 0.1s ease-in-out, color 0.1s ease-in-out"
           >
             {item.text}
           </Link>

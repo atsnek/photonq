@@ -8,8 +8,8 @@ const smtRightNav = {
   link: {
     active: {
       color: {
-        default: 'theme.800',
-        _dark: 'theme.300'
+        default: 'brand.500',
+        _dark: 'brand.300'
       }
     },
     inactive: {
