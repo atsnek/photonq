@@ -23,7 +23,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
     return [
       {
         name: 'Documentation',
-        isDisabled: true,
+        isDisabled: path === '/docs/',
         href: '/docs'
       },
       ...createBreadCrumbParts(menuStructure)
