@@ -1,7 +1,11 @@
 const FlexSearch = require('flexsearch');
 import { sq } from '@snek-functions/origin';
 import { UseSearchResult, useSearch } from '../../search/use-search';
-import { TSearchMetadata, TSearchResult, TSearchResultSection } from '../types/search';
+import {
+  TSearchMetadata,
+  TSearchResult,
+  TSearchResultSection
+} from '../types/search';
 import { filterWhitespaceItems } from './utils';
 
 /**
@@ -82,7 +86,12 @@ export async function searchDocs(
         });
       }
 
-      pageContent += ` ${title} ${content}`;
+      if (title) {
+        pageContent += ` ${title}`;
+      }
+      if (content) {
+        pageContent += ` ${content}`;
+      }
     }
 
     // Add the page to the page index.
@@ -94,6 +103,7 @@ export async function searchDocs(
     });
     pageId++;
   }
+
   // Search for hits in the whole pages.
   const pageResults =
     pageIndex.search(query, {
@@ -130,7 +140,9 @@ export async function searchDocs(
       }
 
       const key =
-        sectionResult.doc.url + '@' + (sectionResult.doc.display ?? sectionResult.doc.content);
+        sectionResult.doc.url +
+        '@' +
+        (sectionResult.doc.display ?? sectionResult.doc.content);
 
       if (occured[key]) {
         continue;
@@ -165,7 +177,9 @@ export async function searchDocs(
     if (a._page_matches !== b._page_matches) {
       return b._page_matches - a._page_matches;
     }
-    return a._section_matches === b._section_matches ? 0 : b._section_matches - a._section_matches;
+    return a._section_matches === b._section_matches
+      ? 0
+      : b._section_matches - a._section_matches;
   });
   return res;
 }
@@ -175,7 +189,9 @@ export async function searchDocs(
  * @param query The query to search for
  * @returns  The search results
  */
-export async function searchSocialPosts(query: string): Promise<TSearchResultSection[]> {
+export async function searchSocialPosts(
+  query: string
+): Promise<TSearchResultSection[]> {
   const [searchResult, error] = await sq.query(q => {
     const posts = q.allSocialPost({ filters: { query } });
 
