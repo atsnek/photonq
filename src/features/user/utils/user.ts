@@ -1,4 +1,5 @@
 import {
+  Connection_1_2_3_4_5_6,
   Edge_1_2_3_4_5_6,
   ObjectAndUser,
   Privacy,
@@ -41,15 +42,14 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
  * @param activities  The activities to build the section from
  * @returns One or more activity sections
  */
-export const buildUserActivities = (
-  q: Query,
-  activityEdges: Edge_1_2_3_4_5_6[],
+export const buildUserActivities = async (
+  activityConnection: Connection_1_2_3_4_5_6,
   currentUser: t.Nullable<User>
-): TPaginationData<TActivity[]> => {
+): Promise<TPaginationData<TActivity[]>> => {
   // Only show the most recent rating for a post
   const activityRatingPostIds: Array<{ createdAt: string; id: string }> = [];
-  activityEdges
-    .filter(ae => ae.node.type.startsWith('star'))
+  activityConnection.edges
+    .filter(ae => ae.node.type?.startsWith('star'))
     .sort((a, b) => {
       if (!a.node.createdAt || !b.node.createdAt) return 0;
       return (
@@ -78,18 +78,16 @@ export const buildUserActivities = (
 
   const activityList: TPaginationData<TActivity[]> = {
     items: [],
-    totalCount: activityEdges.length
+    totalCount: activityConnection.totalCount,
+    hasMore: activityConnection.pageInfo.hasNextPage,
+    nextCursor: activityConnection.pageInfo.endCursor ?? undefined,
+    prevCursor: activityConnection.pageInfo.startCursor ?? undefined
   };
 
-  activityEdges
+  const items = activityConnection.edges
     .filter(fe => fe.node.type !== 'blog_create' || fe.node.post !== null)
-    .forEach(async ae => {
+    .map(async ae => {
       const { createdAt, post, type, follow } = ae.node;
-      //! Because of snek-query, we must access all post props we need here, otherwise it won't be fetched
-      post?.slug;
-      post?.title;
-      post?.privacy;
-      post?.profileId;
       if (
         !createdAt ||
         (type.startsWith('star_') &&
@@ -111,9 +109,8 @@ export const buildUserActivities = (
           title = 'Created a private blog post';
           href = '#';
         } else {
-          title = `Created a blog post \"${post.title?.substring(0, 20)}${
-            post.title?.length > 20 ? '...' : ''
-          }\"`;
+          title = `Created a blog post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+            }\"`;
           href = '/post/' + post.slug;
         }
       } else if (type === 'profile_create') {
@@ -121,26 +118,30 @@ export const buildUserActivities = (
         href = '#';
       } else if (type === 'follow_follow') {
         if (!follow || !follow.followed) return;
-        const followedUser = q.user({ id: follow.followed.id });
-        if (!followedUser) return;
+        const [followedUser, followedUserError] = await sq.query(q => q.user({ id: follow.followed.id }));
+        if (!followedUser || (followedUserError && followedUserError.length > 0)) return;
         title = `Followed ${getUserDisplayname(followedUser)}`;
-        href = follow.followed?.id ? '/user/' + follow.followed?.id : '#';
+        href = follow.followed?.id ? '/user/' + followedUser.username : '#';
       } else if (type === 'star_star' && post) {
-        title = `Starred a post \"${post.title?.substring(0, 20)}${
-          post.title?.length > 20 ? '...' : ''
-        }\"`;
+        title = `Starred a post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+          }\"`;
         href = '/post/' + post.slug;
       }
 
-      activityList.items.push({
+      if (Object.isSealed(activityList.items)) {
+        activityList.items = [...activityList.items];
+      }
+
+      return {
         type: type as TActivityType,
         timestamp: createdAt,
         title: {
           name: title,
           href
         }
-      });
+      };
     });
+  activityList.items = (await Promise.all(items)).filter(Boolean) as TActivity[];
   return activityList;
 };
 

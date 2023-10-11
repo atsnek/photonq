@@ -137,43 +137,55 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const [currentUser] = await sq.query(q => q.userMe);
 
-    const [, error] = await sq.query(q => {
-      const user = q.user({
-        resourceId: __SNEK_RESOURCE_ID__,
-        login: get().profile.profile?.username
-      });
-      const profile = user.profile;
+    const [activityData, activityDataError] = await sq.query(q => {
+      const profile = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username }).profile;
+      if (!profile) return undefined;
 
-      const activityList = buildUserActivities(
-        q,
-        profile?.activity({
-          first: 10,
-          after: get().profile.activity.nextCursor
-        }).edges ?? [],
-        currentUser
-      );
-      activityList.nextCursor =
-        profile?.activity().pageInfo.endCursor ?? undefined;
-      activityList.hasMore = profile?.activity().pageInfo.hasNextPage ?? false;
-      set(
-        produce((state: TStoreState): void => {
-          state.profile.activity =
-            state.profile.activity.totalCount === 0
-              ? activityList
-              : {
-                items: [
-                  ...state.profile.activity.items,
-                  ...activityList.items
-                ],
-                totalCount: state.profile.activity.totalCount,
-                nextCursor: activityList.nextCursor,
-                hasMore: activityList.hasMore
-              };
-        })
-      );
+      const activity = profile.activity({ first: 10, after: get().profile.activity.nextCursor });
+
+      activity.pageInfo.endCursor;
+      activity.pageInfo.hasNextPage;
+      activity.pageInfo.startCursor;
+
+      activity.edges.map(ae => {
+        ae.node.type;
+        for (const key in ae) {
+          ae[key as keyof typeof ae];
+        }
+
+        for (const key in ae.node) {
+          ae.node[key as keyof typeof ae.node];
+        }
+
+        if (ae.node.post !== null && 'id' in ae.node.post)
+          for (const key in ae.node.post) {
+            ae.node.post[key as keyof typeof ae.node.post];
+          }
+
+        ae.node.follow?.followed.id;
+      })
+      return activity;
     });
+    if (!activityData || (activityDataError && activityDataError.length > 0)) return false;
 
-    return !!error;
+    const activities = await buildUserActivities(activityData, currentUser);
+    set(
+      produce((state: TStoreState): void => {
+        state.profile.activity =
+          state.profile.activity.totalCount === 0
+            ? activities
+            : {
+              items: [
+                ...state.profile.activity.items,
+                ...activities.items
+              ],
+              totalCount: state.profile.activity.totalCount,
+              nextCursor: activities.nextCursor,
+              hasMore: activities.hasMore
+            };
+      }));
+
+    return true;
   },
   fetchSearchPosts: async (query, limit, offset, language, dateRange) => {
     set(
