@@ -18,12 +18,7 @@ interface ImageProps extends ChImageProps {
 /**
  * (Static) Image component that can not be edited using Jaen but with the os-native file selector.
  */
-const Image: FC<ImageProps> = ({
-  editable,
-  handleImageChange,
-  isUploading,
-  ...props
-}) => {
+const Image: FC<ImageProps> = ({ editable, handleImageChange, isUploading, ...props }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   // const [imageSrc, setImageSrc] = useState<ImageProps['src']>(props.src);
 
@@ -61,6 +56,8 @@ const Image: FC<ImageProps> = ({
       }
       cursor={editable ? 'pointer' : 'default'}
       onClick={() => inputRef.current?.click()}
+      borderRadius="full"
+      overflow="hidden"
     >
       <Input
         ref={inputRef}
@@ -74,13 +71,7 @@ const Image: FC<ImageProps> = ({
       />
       {image}
       {isUploading && (
-        <Center
-          position="absolute"
-          top={0}
-          w="100%"
-          h="100%"
-          backdropFilter="blur(5px)"
-        >
+        <Center position="absolute" top={0} w="100%" h="100%" backdropFilter="blur(5px)">
           <Spinner color="brand.300" />
         </Center>
       )}
