@@ -1,5 +1,5 @@
 import { PageConfig } from '@atsnek/jaen';
-import { PageProps } from 'gatsby';
+import { PageProps, graphql } from 'gatsby';
 import * as React from 'react';
 import { DocContent } from '../contents/DocContent';
 
@@ -15,3 +15,17 @@ export const pageConfig: PageConfig = {
   label: 'DocPage',
   childTemplates: ['DocPage']
 };
+
+export const query = graphql`
+  query ($jaenPageId: String!) {
+    ...JaenPageQuery
+    allJaenPage {
+      nodes {
+        ...JaenPageData
+        children {
+          ...JaenPageData
+        }
+      }
+    }
+  }
+`;
