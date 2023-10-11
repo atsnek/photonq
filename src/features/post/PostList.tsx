@@ -239,6 +239,7 @@ const PostList: FC<IPostListProps> = ({
           setFilterLanguage={handleToggleLanguage}
           dateRange={dateRange}
           setDateRange={setDateRange}
+          showCreatePostButton
         />
       )}
       {postData.state !== 'inactive' &&
