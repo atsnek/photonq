@@ -42,6 +42,7 @@ import smtPqAboutUsSection from '../photonq/semanticTokens/sections/aboutUs';
 import smtPageDirectoryComponent from '../components/pageDirectory';
 import smtUserAvatarComponent from '../../../features/user/avatar/styles/userAvatar';
 import smtLinkComponent from './components/link';
+import smtPqSectionTitle from '../photonq/semanticTokens/components/sectionTitle';
 
 const themeSemanticTokens = {
   colors: {
@@ -104,6 +105,7 @@ const themeSemanticTokens = {
       },
       components: {
         sectionLabel: smtPqSectionLabel,
+        sectionTitle: smtPqSectionTitle,
         featureCard: smtPqFeatureCard
       },
       sections: {

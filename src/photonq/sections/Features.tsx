@@ -1,12 +1,4 @@
-import {
-  Box,
-  BoxProps,
-  Button,
-  Center,
-  Container,
-  HStack,
-  VStack
-} from '@chakra-ui/react';
+import { Box, BoxProps, Button, Center, Container, HStack, VStack } from '@chakra-ui/react';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
 import { Field } from '@atsnek/jaen';
@@ -33,7 +25,7 @@ const Features: FC = () => {
     fontSize: 'xl',
     fontWeight: 500,
     mt: 10,
-    color: 'pq.sections.features.title.color'
+    color: 'pq.components.featureCard.title.color'
   };
 
   //! Causes hydration issue
@@ -51,6 +43,9 @@ const Features: FC = () => {
           labelFieldname="featuresLabel"
           title="Explore Quantum Computing"
           alignItems
+          titleProps={{
+            color: 'pq.components.sectionTitle.color'
+          }}
         />
         <Box mt={10}>
           <VStack>
@@ -99,12 +94,7 @@ const Features: FC = () => {
                     ></Field.Text>
                   </Button>
                 </Box>
-                <Box
-                  w="90%"
-                  ml="auto"
-                  borderTopLeftRadius="lg"
-                  overflow="hidden"
-                >
+                <Box w="90%" ml="auto" borderTopLeftRadius="lg" overflow="hidden">
                   <Field.Image name="RightCardImage" />
                 </Box>
               </Box>
@@ -132,9 +122,7 @@ const Features: FC = () => {
                   await new Promise(resolve => setTimeout(resolve, 3000));
 
                   // Fetch some random data from the internet
-                  const res = await fetch(
-                    'https://jsonplaceholder.typicode.com/todos/1'
-                  );
+                  const res = await fetch('https://jsonplaceholder.typicode.com/todos/1');
                   const data = await res.json();
 
                   return (
