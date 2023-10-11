@@ -1,7 +1,18 @@
 import { ChangeEvent, FC, useRef } from 'react';
 import { TPost, EnPostLanguage } from '../types/post';
 import { TUser } from '../../user/types/user';
-import { Box, Center, HStack, Spacer, Input, Button, Menu, MenuButton } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  HStack,
+  Spacer,
+  Input,
+  Button,
+  Menu,
+  MenuButton,
+  IconButton,
+  Tooltip
+} from '@chakra-ui/react';
 import UserAvatar from '../../user/avatar/components/UserAvatar';
 import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
 import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
@@ -10,6 +21,7 @@ import PostRatingButton from './PostRatingButton';
 import TbLanguage from '../../../shared/components/icons/tabler/TbLanguage';
 import PostLanguageMenuList from './PostLanguageMenuList';
 import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
+import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
 
 interface IPostTopNavProps {
   post?: TPost;
@@ -25,6 +37,7 @@ interface IPostTopNavProps {
   isNewPost: boolean;
   createNewPost: () => void;
   isCreatingNewPost: boolean;
+  isSavingPost: boolean;
 }
 
 /**
@@ -43,7 +56,8 @@ const PostTopNav: FC<IPostTopNavProps> = ({
   handleLanguageChange,
   isNewPost,
   createNewPost,
-  isCreatingNewPost
+  isCreatingNewPost,
+  isSavingPost
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -91,10 +105,14 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                   isRating={isRating ?? false}
                   toggleRating={handleRatePost}
                   stars={post?.stars ?? 0}
-                  bgColor="pages.singlePost.topNav.rating.bgColor"
-                  _hover={{
-                    bgColor: 'pages.singlePost.topNav.rating._hover.bgColor'
-                  }}
+                  bgColor={!isAuthor ? 'pages.singlePost.topNav.rating.bgColor' : undefined}
+                  _hover={
+                    !isAuthor
+                      ? {
+                          bgColor: 'pages.singlePost.topNav.rating._hover.bgColor'
+                        }
+                      : undefined
+                  }
                 />
               )}
               <Input
@@ -136,17 +154,33 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                       Create post
                     </Button>
                   ) : (
-                    <Button
-                      colorScheme="gray"
-                      size="sm"
-                      leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
-                      onClick={handleTogglePrivacy}
-                      isDisabled={isUpdatingPrivacy}
-                    >
-                      {isPublic ? 'Unpublish' : 'Publish'}
-                    </Button>
+                    <>
+                      <Button
+                        colorScheme="gray"
+                        size="sm"
+                        leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
+                        onClick={handleTogglePrivacy}
+                        isDisabled={isUpdatingPrivacy}
+                      >
+                        {isPublic ? 'Unpublish' : 'Publish'}
+                      </Button>
+                    </>
                   )}
                 </>
+              )}
+              {isAuthor && !isNewPost && (
+                <Tooltip label="Posts are saved automatically">
+                  <Button
+                    colorScheme="gray"
+                    bgColor=""
+                    size="sm"
+                    leftIcon={<TbDeviceFloppy />}
+                    isLoading={isSavingPost}
+                    loadingText="Saving..."
+                  >
+                    Save
+                  </Button>
+                </Tooltip>
               )}
             </HStack>
           </HStack>

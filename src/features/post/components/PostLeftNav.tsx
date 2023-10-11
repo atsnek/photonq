@@ -179,13 +179,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           </>
         )}
         {post.summary && canEdit && (
-          <Heading
-            as="h6"
-            fontSize="sm"
-            color="gray.500"
-            mb={1}
-            fontWeight="medium"
-          >
+          <Heading as="h6" fontSize="sm" color="brand.500" fontWeight="medium">
             Post Summary
           </Heading>
         )}
@@ -201,11 +195,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             onBlur={e => handleSummaryChange(e.target.value)}
           />
         ) : (
-          <Text
-            size="sm"
-            color="pages.singlePost.leftNav.summary.color"
-            textAlign="justify"
-          >
+          <Text size="sm" color="pages.singlePost.leftNav.summary.color" textAlign="justify">
             {post.summary}
           </Text>
         )}

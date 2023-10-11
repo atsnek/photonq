@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
 import { TPost } from '../types/post';
 import { Stack, Box, useDisclosure, useToast } from '@chakra-ui/react';
 import MdxEditor from '../../../shared/components/mdx-editor/MdxEditor';
@@ -26,9 +26,10 @@ const alertText = {
 
 interface IPostEditorProps {
   post?: TPost;
+  setIsSavingPost: Dispatch<SetStateAction<boolean>>;
 }
 
-const PostEditor: FC<IPostEditorProps> = ({ post }) => {
+const PostEditor: FC<IPostEditorProps> = ({ post, setIsSavingPost }) => {
   const isPublic = post?.privacy === 'PUBLIC';
 
   const visibilityAlertDisclosure = useDisclosure({
@@ -73,9 +74,11 @@ const PostEditor: FC<IPostEditorProps> = ({ post }) => {
 
   const handleEditorChange = (value: MdastRoot) => {
     clearTimeout(stateRef.current.timeout);
-    stateRef.current.timeout = setTimeout(() => {
-      updatePostContent(value);
-    }, 300);
+    stateRef.current.timeout = setTimeout(async () => {
+      setIsSavingPost(true);
+      await updatePostContent(value);
+      setIsSavingPost(false);
+    }, 1500);
   };
 
   return (
