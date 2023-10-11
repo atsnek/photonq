@@ -29,7 +29,6 @@ const Footer: FC = () => {
       <Flex w="100%" maxW="7xl" px={6} py={12}>
         <VStack alignItems="start">
           <HStack>
-            <Text>Powered by</Text>
             <LinkBox
               _hover={{
                 img: {
@@ -49,7 +48,7 @@ const Footer: FC = () => {
           </HStack>
           <Spacer />
           <Text mt={1} fontSize="xs">
-            © {year} Snek.
+            © {year} atsnek.
           </Text>
         </VStack>
         <Spacer />
