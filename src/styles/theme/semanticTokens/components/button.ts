@@ -3,8 +3,8 @@ const smtButtonComponent = {
     hover: {
       outline: {
         color: {
-          default: 'theme.500',
-          _dark: 'theme.500'
+          default: 'brand.500',
+          _dark: 'brand.500'
         }
       },
       bgColor: {
@@ -16,32 +16,32 @@ const smtButtonComponent = {
   ghostHoverOpacity: {
     active: {
       color: {
-        default: 'theme.500',
-        _dark: 'theme.500'
+        default: 'brand.500',
+        _dark: 'brand.500'
       }
     }
   },
   outline: {
     color: {
-      default: 'theme.500',
-      _dark: 'theme.500'
+      default: 'brand.500',
+      _dark: 'brand.500'
     },
     borderColor: {
-      default: 'theme.500',
-      _dark: 'theme.800'
+      default: 'brand.500',
+      _dark: 'brand.800'
     },
     hover: {
       borderColor: {
-        default: 'theme.500',
-        _dark: 'theme.800'
+        default: 'brand.500',
+        _dark: 'brand.800'
       },
       color: {
         default: 'white',
         _dark: 'gray.200'
       },
       bgColor: {
-        default: 'theme.500',
-        _dark: 'theme.800'
+        default: 'brand.500',
+        _dark: 'brand.800'
       }
     }
   },
