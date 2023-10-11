@@ -30,7 +30,7 @@ export const TestimonialContent = (props: Props) => {
   return (
     <Stack
       bg={useColorModeValue('white', 'gray.800')}
-      boxShadow={'lg'}
+      boxShadow="4px 2px 16px -12px rgba(0,0,0,0.25)"
       p={8}
       rounded={'xl'}
       align={'center'}
