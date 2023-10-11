@@ -1,0 +1,62 @@
+# Workflow that receives a migrationUrl via a dispatch event
+
+name: Publish
+
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions#on
+on:
+  # https://help.github.com/en/articles/workflow-syntax-for-github-actions
+  repository_dispatch:
+    types: [UPDATE_JAEN_RESOURCE]
+
+jobs:
+  migrate:
+    # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#
+        working-directory: ${{github.event.client_payload.cwd}}
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
+        with:
+          # Relative path under $GITHUB_WORKSPACE to place the repository
+          path: '.'
+
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsid
+      - name: Configure GitHub Authentication 🔧
+        # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+        run: |
+          # Git: set identity
+          git config user.name "snekmin"
+          git config user.email "noreply.snek.at@gmail.com"
+
+          # Git: set remote  
+          # https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#http-based-git-access-by-an-installation
+          git remote set-url origin "https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
+
+      - name: Migrate Jaen Data 📝
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#
+        working-directory: ${{github.event.client_payload.cwd}}
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsif
+        if: ${{github.event.client_payload.migrationURL}}
+        # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+        run: |
+          # Create gh-pages branch without history
+          #git checkout --orphan gh-pages
+          git checkout main
+
+          echo "${{github.event.client_payload.migrationURL}}" >> ./jaen-data/patches.txt
+
+          # Git: add, commit, and push changes
+          git add .
+          git commit -m "jaen-publish: migrate jaen-data" || echo "Nothing to commit, working tree clean."
+          GIT_TRACE=1 git push -f --verbose origin main
+
+  build:
+    needs: migrate
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
