@@ -31,7 +31,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({
   scaleOnHover,
   ...props
 }) => {
-  const imgSrc = user.avatarUrl ?? 'https://api.dicebear.com/6.x/thumbs/svg';
+  const imgSrc = user.avatarUrl || undefined;
   let avatarProps: AvatarProps = {
     overflow: 'hidden'
   };
@@ -67,7 +67,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({
     avatar = (
       <HStack spacing={3}>
         <LinkBox {...linkBoxProps}>
-          <Avatar src={imgSrc} {...avatarProps} />
+          <Avatar name={user.username} src={imgSrc} {...avatarProps} />
           <LinkOverlay href={link} />
         </LinkBox>
         {showName && (
