@@ -85,19 +85,8 @@ const Footer: FC = () => {
             );
           }
           return (
-            <Link
-              key={i}
-              href={link.href}
-              color="white"
-              opacity={0.7}
-              _hover={{
-                opacity: 1
-              }}
-            >
-              <Field.Text
-                name={'FooterLink' + link.label}
-                defaultValue={link.label}
-              />
+            <Link key={i} href={link.href} variant="hover-theme" opacity={0.7}>
+              <Field.Text name={'FooterLink' + link.label} defaultValue={link.label} />
             </Link>
           );
         })}
@@ -145,10 +134,7 @@ const Footer: FC = () => {
       /> */}
       <Container maxW="7xl" h="100%">
         <Box mt="20vh" color="white">
-          <Flex
-            maxW={{ base: 'full', lg: '75%' }}
-            wrap={{ base: 'wrap', lg: 'nowrap' }}
-          >
+          <Flex maxW={{ base: 'full', lg: '75%' }} wrap={{ base: 'wrap', lg: 'nowrap' }}>
             <Box
               w={{ base: 'full', lg: 'fit-content' }}
               textAlign={{ base: 'center', lg: 'initial' }}
