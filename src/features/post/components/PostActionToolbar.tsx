@@ -13,6 +13,7 @@ import TbStar from '../../../shared/components/icons/tabler/TbStar';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
 import TbSquareRoundedX from '../../../shared/components/icons/tabler/TbSquareRoundedX';
+import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
 
 interface IPostActionToolbarProps {
   viewMode?: TPostViewMode;
@@ -57,11 +58,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   const previewImageInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (
-      !e.currentTarget?.files ||
-      e.currentTarget.files?.length === 0 ||
-      !setPostPreviewImage
-    )
+    if (!e.currentTarget?.files || e.currentTarget.files?.length === 0 || !setPostPreviewImage)
       return;
     const file = e.currentTarget.files[0];
     setPostPreviewImage(file);
@@ -103,15 +100,15 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
             onClick: handleDeletePost,
             disabled: isDeletingPost || areActionsDisabled,
             hoverColor: 'components.postEditor.delete.hover.color'
+          },
+          {
+            order: 2,
+            icon: <TbDeviceFloppy />,
+            ariaLabel: 'Save this post',
+            tooltip: 'Posts are saved automatically.',
+            onClick: () => {},
+            hoverColor: 'components.postEditor.save.hover.color'
           }
-          // {
-          //   order: 1,
-          //   icon: <TbDeviceFloppy />,
-          //   ariaLabel: 'Save this post',
-          //   tooltip: 'Save this post',
-          //   onClick: () => console.log('Save'),
-          //   hoverColor: 'components.postEditor.save.hover.color'
-          // }
         );
       } else {
         actionToolbarItems.push({
