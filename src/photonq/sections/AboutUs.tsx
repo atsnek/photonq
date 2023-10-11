@@ -1,11 +1,4 @@
-import {
-  Button,
-  Box,
-  Container,
-  Center,
-  Wrap,
-  WrapItem
-} from '@chakra-ui/react';
+import { Button, Box, Container, Center, Wrap, WrapItem } from '@chakra-ui/react';
 import { Field } from '@atsnek/jaen';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
@@ -14,8 +7,7 @@ import {
   TestimonialAvatar,
   TestimonialContent,
   TestimonialHeading,
-  TestimonialText,
-  Testimonials
+  TestimonialText
 } from '../../features/photonq/Testimonials';
 
 const AboutUs: FC = () => {
@@ -88,7 +80,7 @@ const AboutUs: FC = () => {
           />
         </Center>
 
-        <Wrap justify="center" mt={10} shouldWrapChildren>
+        <Wrap justify="center" mt={10} spacing={10} shouldWrapChildren>
           {testamonialsDefaults.map((testimonial, index) => (
             <Testimonial>
               <TestimonialContent>
@@ -96,13 +88,11 @@ const AboutUs: FC = () => {
                   <Field.Text
                     name={`TestimonialHeading${index}`}
                     defaultValue={testimonial.heading}
+                    color="pq.sections.aboutUs.testimonial.heading.color"
                   />
                 </TestimonialHeading>
                 <TestimonialText>
-                  <Field.Text
-                    name={`TestimonialText${index}`}
-                    defaultValue={testimonial.text}
-                  />
+                  <Field.Text name={`TestimonialText${index}`} defaultValue={testimonial.text} />
                 </TestimonialText>
               </TestimonialContent>
               <TestimonialAvatar

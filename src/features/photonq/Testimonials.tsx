@@ -84,12 +84,7 @@ export interface TestimonialAvatarProps {
   to: string;
 }
 
-export const TestimonialAvatar: React.FC<TestimonialAvatarProps> = ({
-  src,
-  name,
-  title,
-  to
-}) => {
+export const TestimonialAvatar: React.FC<TestimonialAvatarProps> = ({ src, name, title, to }) => {
   return (
     <LinkBox as={Flex} align={'center'} mt={8} direction={'column'}>
       <Avatar src={src} mb={2} />
