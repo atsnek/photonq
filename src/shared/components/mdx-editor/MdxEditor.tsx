@@ -22,6 +22,8 @@ import CodeSnippet from '../../../features/main-content/code-snippet/components/
 import Filesystem from '../../../features/main-content/filesystem/components/Filesystem';
 import IconCard from '../../../features/main-content/icon-card/components/IconCard';
 import ImageCard from '../../../features/main-content/image-card/components/ImageCard';
+import DocsIndex from '../../../features/main-content/docs-index/components/DocsIndex';
+
 import { MdxField, MdxFieldProps } from '@atsnek/jaen-fields-mdx';
 
 interface IMdxEditorProps {
@@ -90,7 +92,8 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   Filesystem,
   ImageCard,
   Callout,
-  IconCard
+  IconCard,
+  DocsIndex
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
