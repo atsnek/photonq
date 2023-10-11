@@ -118,7 +118,13 @@ export const buildUserActivities = async (
         href = '#';
       } else if (type === 'follow_follow') {
         if (!follow || !follow.followed) return;
-        const [followedUser, followedUserError] = await sq.query(q => q.user({ id: follow.followed.id }));
+        const [followedUser, followedUserError] = await sq.query(q => {
+          const user = q.user({ id: follow.followed.id });
+          user.username;
+          user.details?.firstName;
+          user.details?.lastName;
+          return user;
+        });
         if (!followedUser || (followedUserError && followedUserError.length > 0)) return;
         title = `Followed ${getUserDisplayname(followedUser)}`;
         href = follow.followed?.id ? '/user/' + followedUser.username : '#';
