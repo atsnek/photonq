@@ -3,8 +3,8 @@ import AppLayout from '../../shared/containers/AppLayout';
 import { useLocation } from '@reach/router';
 import { CMSManagement, useJaenFrameMenuContext } from 'gatsby-plugin-jaen';
 import { useEffect } from 'react';
-import { FaCogs } from 'react-icons/fa';
 import { useAppStore } from '../../shared/store/store';
+import TbBook from '../../shared/components/icons/tabler/TbBook';
 
 const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   const path = useLocation().pathname;
@@ -19,7 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
     jaenFrame.extendAddMenu({
       test: {
         label: 'New post',
-        icon: FaCogs,
+        icon: TbBook,
         path: '/docs/community/new-post/'
       }
     });
