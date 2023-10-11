@@ -48,7 +48,8 @@ const Footer: FC = () => {
           </HStack>
           <Spacer />
           <Text mt={1} fontSize="xs">
-            © {year} atsnek.
+            Copyright © {year} Walther Group, Faculty of Physics, University of
+            Vienna. All rights reserved.
           </Text>
         </VStack>
         <Spacer />
