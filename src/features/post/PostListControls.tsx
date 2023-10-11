@@ -142,8 +142,9 @@ const PostListControls: FC<IPostListControlsProps> = ({
 
   return (
     <VStack w="full">
-      <HStack spacing={3} w="75%" {...props}>
+      <HStack spacing={3} w="full" {...props}>
         <Input
+          flex="1"
           placeholder="Find a post..."
           size="sm"
           borderRadius="lg"
@@ -187,17 +188,15 @@ const PostListControls: FC<IPostListControlsProps> = ({
           />
         )}
         {showCreatePostButton && isAuthenticated && (
-          <Tooltip openDelay={500} label="Create a new post">
-            <IconButton
-              as={Link}
-              colorScheme="gray"
-              size="sm"
-              variant="outline"
-              icon={<TbPlus />}
-              aria-label="Create new post"
-              href="/docs/community/new-post"
-            />
-          </Tooltip>
+          <Button
+            aria-label="Create new post"
+            as={Link}
+            href="/docs/community/new-post"
+            size="sm"
+            leftIcon={<TbPlus />}
+          >
+            New
+          </Button>
         )}
       </HStack>
       <Collapse
