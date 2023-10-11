@@ -8,7 +8,8 @@ import {
   LinkBoxProps,
   LinkOverlay,
   Spacer,
-  Text
+  Text,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import { FC, ReactNode, useState } from 'react';
 import { IPostPreviewProps } from '../../types/post';
@@ -55,6 +56,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
   const isAuthor = useAuthenticationContext().user?.id === post.profile.id;
+  const manageBtnDisplay = useBreakpointValue({ base: 'none', md: 'initial' });
   const [isRating, setIsRating] = useState(false);
 
   const handleRating = async () => {
@@ -135,12 +137,10 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             postId={post.id}
             postPrivacy={post.privacy}
             togglePostPrivacy={id =>
-              togglePostPrivacy(
-                id,
-                post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC'
-              )
+              togglePostPrivacy(id, post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC')
             }
             isTogglingPostPrivacy={isTogglingPostPrivacy}
+            display={manageBtnDisplay}
           />
         )}
       </HStack>
