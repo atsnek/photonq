@@ -1,5 +1,12 @@
 import { FC } from 'react';
-import { Box, Card, CardProps, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Card,
+  CardProps,
+  LinkBox,
+  LinkOverlay,
+  Text
+} from '@chakra-ui/react';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
 import Link from '../../../../shared/components/Link';
 import { TLinkData } from '../../../../shared/types/navigation';
@@ -27,46 +34,53 @@ const ImageCard: FC<IImageCardProps> = ({
   size = 'md'
 }) => {
   return (
-    <Card
-      {...baseProps}
-      w="fit-content"
-      maxW={size}
-      bgColor="components.imageCard.bgColor"
-      border="1px solid"
-      borderColor="components.imageCard.borderColor"
-      _hover={{
-        bgColor: 'components.imageCard.hover.bgColor',
-        boxShadow: 'components.imageCard.hover.boxShadow',
-        borderColor: 'components.imageCard.hover.borderColor',
-        '& .sd-cmp-image-card-link-icon': {
-          marginLeft: 3
-        }
-      }}
-      overflow="hidden"
-      transition="border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out"
-    >
-      <Link href={link.href}>
+    <LinkBox>
+      <Card
+        {...baseProps}
+        maxW={size}
+        bgColor="components.imageCard.bgColor"
+        border="1px solid"
+        borderColor="components.imageCard.borderColor"
+        _hover={{
+          bgColor: 'components.imageCard.hover.bgColor',
+          boxShadow: 'components.imageCard.hover.boxShadow',
+          borderColor: 'components.imageCard.hover.borderColor',
+          '& .sd-cmp-image-card-link-icon': {
+            marginLeft: 3
+          }
+        }}
+        overflow="hidden"
+        transition="border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out"
+        w="full"
+        display="flex"
+      >
         <JaenImage
           name={id + '-image'}
           defaultValue={image.src}
           alt={image.alt}
           style={{
             width: '100%',
+            height: 'var(--chakra-sizes-xs)',
             objectFit: 'cover'
           }}
         />
         <Box p={4}>
-          <Text fontSize="16px" fontWeight="semibold">
+          <LinkOverlay
+            as={Link}
+            fontSize="16px"
+            fontWeight="semibold"
+            href={link.href}
+          >
             {link.name}
             <ArrowForwardIcon
               className="sd-cmp-image-card-link-icon"
               ml={2}
               transition="margin .15s ease-in-out"
             />
-          </Text>
+          </LinkOverlay>
         </Box>
-      </Link>
-    </Card>
+      </Card>
+    </LinkBox>
   );
 };
 
