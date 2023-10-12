@@ -1,10 +1,10 @@
 import { PageConfig, PageProps, useAuthenticationContext } from '@atsnek/jaen';
 import { graphql } from 'gatsby';
-import BlogPostContent from '../../../contents/BlogPostContent';
-import useAuth from '../../../shared/hooks/use-auth';
+import BlogPostContent from '../../contents/BlogPostContent';
+import useAuth from '../../shared/hooks/use-auth';
 import { navigate } from '@reach/router';
 import { useEffect } from 'react';
-import { useAppStore } from '../../../shared/store/store';
+import { useAppStore } from '../../shared/store/store';
 import { sq } from '@snek-functions/origin';
 
 const NewPostPage: React.FC<PageProps> = () => {
@@ -37,7 +37,7 @@ export const pageConfig: PageConfig = {
     // },
     {
       label: 'New post',
-      path: '/docs/community/new-post/'
+      path: '/community/new-post/'
     }
   ],
   menu: {

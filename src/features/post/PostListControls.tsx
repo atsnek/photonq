@@ -183,7 +183,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
           <Button
             aria-label="Create new post"
             as={Link}
-            href="/docs/community/new-post"
+            href="/community/new-post"
             size="sm"
             leftIcon={<TbPlus />}
           >

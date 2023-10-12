@@ -86,7 +86,10 @@ const Footer: FC = () => {
           }
           return (
             <Link key={i} href={link.href} variant="hover-theme" opacity={0.7}>
-              <Field.Text name={'FooterLink' + link.label} defaultValue={link.label} />
+              <Field.Text
+                name={'FooterLink' + link.label}
+                defaultValue={link.label}
+              />
             </Link>
           );
         })}
@@ -134,7 +137,10 @@ const Footer: FC = () => {
       /> */}
       <Container maxW="7xl" h="100%">
         <Box mt="20vh" color="white">
-          <Flex maxW={{ base: 'full', lg: '75%' }} wrap={{ base: 'wrap', lg: 'nowrap' }}>
+          <Flex
+            maxW={{ base: 'full', lg: '75%' }}
+            wrap={{ base: 'wrap', lg: 'nowrap' }}
+          >
             <Box
               w={{ base: 'full', lg: 'fit-content' }}
               textAlign={{ base: 'center', lg: 'initial' }}
@@ -169,7 +175,7 @@ const Footer: FC = () => {
               mr="auto"
               ml={{ base: 'auto', lg: 'initial' }}
               mb={3}
-              href={isAuthenticated ? '/docs/community/new-post' : '/signup'}
+              href={isAuthenticated ? '/community/new-post' : '/signup'}
             >
               {isAuthenticated ? 'Create a Post' : 'Register Now'}
             </Button>

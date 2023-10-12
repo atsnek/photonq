@@ -11,7 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   const hiddenTopNavPaths = ['/profile', '/blog-post'];
   const fetchUser = useAppStore(state => state.currentUser.fetchUser);
 
-  const docsPaths = ['/docs', '/docs/community', '/docs/new-post/'];
+  const docsPaths = ['/docs', '/community', '/docs/new-post/'];
 
   const jaenFrame = useJaenFrameMenuContext();
 
@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
       test: {
         label: 'New post',
         icon: TbBook,
-        path: '/docs/community/new-post/'
+        path: '/community/new-post/'
       }
     });
 
@@ -35,7 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
     <CMSManagement>
       <AppLayout
         isDocs={docsPaths.some(docsPath => path.startsWith(docsPath))}
-        isCommunity={path.startsWith('/docs/community')}
+        isCommunity={path.startsWith('/community')}
         path={path}
         topNavProps={{
           isVisible: !hiddenTopNavPaths.some(hiddenPath =>

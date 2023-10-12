@@ -38,7 +38,7 @@ const PhotonQ: FC = () => {
             mt={7}
             variant="pq-solid"
             mx={{ base: 'auto', sm: 0 }}
-            href={isAuthenticated ? '/docs/community/new-post' : '/signup'}
+            href={isAuthenticated ? '/community/new-post' : '/signup'}
           >
             {isAuthenticated ? 'Create a Post' : 'Register Now'}
           </Button>
