@@ -16,10 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { FC, Fragment, MouseEvent, createRef, useMemo, useState } from 'react';
 import { NavMenuSection, NavMenuItem } from '../../../types/navigation';
-import {
-  createPageTree,
-  getExpandedMenuItemIndices
-} from '../../../utils/navigation';
+import { createPageTree, getExpandedMenuItemIndices } from '../../../utils/navigation';
 import Link from '../../../components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import TbBook from '../../../components/icons/tabler/TbBook';
@@ -76,18 +73,14 @@ const generateMenuItem = (
 
   const accordionItemRef = createRef<HTMLDivElement>();
 
-  const externalLinkIcon = (
-    <ArrowForwardIcon transform={`rotate(-45deg)`} ml={2} />
-  );
+  const externalLinkIcon = <ArrowForwardIcon transform={`rotate(-45deg)`} ml={2} />;
 
   const styleProps: CenterProps & AccordionButtonProps & LinkProps = {
     _hover: { opacity: 1 }
   };
-  if (item.isActive)
-    styleProps.backgroundColor = 'leftNav.accordion.activeItem.bgColor';
+  if (item.isActive) styleProps.backgroundColor = 'leftNav.accordion.activeItem.bgColor';
   else if (styleProps._hover)
-    styleProps._hover.backgroundColor =
-      'leftNav.accordion.inactiveItem.hoverBgColor';
+    styleProps._hover.backgroundColor = 'leftNav.accordion.inactiveItem.hoverBgColor';
 
   // Check if the item has children and is not a section (except on mobile)
   const hasChildren =
@@ -112,9 +105,7 @@ const generateMenuItem = (
       resultObj.idx = res.idx;
       return res;
     });
-    const semanticPath = `leftNav.accordion.${
-      item.isActive ? '' : 'in'
-    }activeItem.`;
+    const semanticPath = `leftNav.accordion.${item.isActive ? '' : 'in'}activeItem.`;
     resultObj.item = (
       <AccordionItem
         ref={accordionItemRef}
@@ -137,12 +128,8 @@ const generateMenuItem = (
               onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                 const target = e.target as HTMLElement;
                 const hasClickedOnArrow =
-                  target instanceof SVGElement ||
-                  target instanceof SVGPathElement;
-                updateExpandedIdx(
-                  expandedIdx,
-                  hasClickedOnArrow ? 'toggle' : 'set'
-                );
+                  target instanceof SVGElement || target instanceof SVGPathElement;
+                updateExpandedIdx(expandedIdx, hasClickedOnArrow ? 'toggle' : 'set');
                 linkClickHandler(e);
                 if (!hasClickedOnArrow && closeMobileDrawer) {
                   closeMobileDrawer();
@@ -150,15 +137,11 @@ const generateMenuItem = (
               }}
             >
               <AccordionButton
-                {...(item.isActive
-                  ? activeMenuItemProps
-                  : inactiveMenuItemProps)}
+                {...(item.isActive ? activeMenuItemProps : inactiveMenuItemProps)}
                 {...styleProps}
                 borderRadius="md"
                 py={1.5}
-                backgroundColor={
-                  item.isActive ? semanticPath + 'bgColor' : undefined
-                }
+                backgroundColor={item.isActive ? semanticPath + 'bgColor' : undefined}
               >
                 <Box as="span" flex="1" wordBreak="break-all">
                   {item.name}
@@ -257,9 +240,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
   const { isAuthenticated, openLoginModal } = useAuthenticationContext();
   const isSmallScreen =
-    typeof window === 'undefined'
-      ? false
-      : useBreakpointValue({ base: true, md: false });
+    typeof window === 'undefined' ? false : useBreakpointValue({ base: true, md: false });
 
   const updateExpandedIdx = (idx: number, mode: 'toggle' | 'set') => {
     const isIncluded = expandedIdx.includes(idx);
