@@ -29,9 +29,7 @@ export interface IBlogPostContentProps {
  * Content for the blog post page (reading and editing).
  */
 const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
-  const [viewMode, setViewMode] = useState<TPostViewMode>(
-    isNewPost ? 'edit' : 'read'
-  );
+  const [viewMode, setViewMode] = useState<TPostViewMode>(isNewPost ? 'edit' : 'read');
   const [madeChanges, setMadeChanges] = useState(false);
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
@@ -44,21 +42,16 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const post = useAppStore(state => state.singlePost.post);
-  const togglePostRating = useAppStore(
-    state => state.singlePost.togglePostRating
-  );
-  const togglePostPrivacy = useAppStore(
-    state => state.singlePost.togglePrivacy
-  );
+  const togglePostRating = useAppStore(state => state.singlePost.togglePostRating);
+  const togglePostPrivacy = useAppStore(state => state.singlePost.togglePrivacy);
   const editSummary = useAppStore(state => state.singlePost.editSummary);
   const editTitle = useAppStore(state => state.singlePost.editTitle);
-  const updatePreviewImage = useAppStore(
-    state => state.singlePost.updatePreviewImage
-  );
+  const updatePreviewImage = useAppStore(state => state.singlePost.updatePreviewImage);
   const changeLanguage = useAppStore(state => state.singlePost.changeLanguage);
   const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
   const createNewPost = useAppStore(state => state.singlePost.createNewPost);
   const [isCreatingNewPost, setIsCreatingNewPost] = useState(false);
+  const [isSavingPost, setIsSavingPost] = useState(false);
   const [newPostPreviewImage, setNewPostPreviewImage] = useState<File>();
 
   const deletePost = useAppStore(state => state.singlePost.deletePost);
@@ -101,13 +94,17 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   };
 
   const handleSummaryChange = async (summary: string) => {
+    setIsSavingPost(true);
     await editSummary(summary);
     if (!madeChanges) setMadeChanges(true);
+    setIsSavingPost(false);
   };
 
   const handleTitleChange = async (title: string) => {
+    setIsSavingPost(true);
     await editTitle(title);
     if (!madeChanges) setMadeChanges(true);
+    setIsSavingPost(false);
   };
 
   const handleRatePost = async () => {
@@ -145,8 +142,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     setIsDeletingPost(false);
   };
 
-  const isPostAuthor =
-    isNewPost || (!!currentUser && currentUser?.id === author?.id);
+  const isPostAuthor = isNewPost || (!!currentUser && currentUser?.id === author?.id);
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
   const isPostPublic = post?.privacy === 'PUBLIC';
 
@@ -168,6 +164,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         isNewPost={isNewPost ?? false}
         createNewPost={handleCreateNewPost}
         isCreatingNewPost={isCreatingNewPost}
+        isSavingPost={isSavingPost}
       />
       <MainWrapper>
         <PostLeftNav
@@ -183,7 +180,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
           isUpdatingPrivacy={isUpdatingPrivacy}
         />
         {canEditPost ? (
-          <PostEditor post={post} />
+          <PostEditor post={post} setIsSavingPost={setIsSavingPost} />
         ) : (
           <PostReader
             isAuthor={isPostAuthor}
@@ -216,9 +213,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         confirmationLabel={isPostPublic ? 'Unpublish' : 'Publish'}
         confirmationProps={{
           variant:
-            (ref.current.oldPrivacy ?? post?.privacy) === 'PUBLIC'
-              ? 'filledYellow'
-              : 'filledGreen'
+            (ref.current.oldPrivacy ?? post?.privacy) === 'PUBLIC' ? 'filledYellow' : 'filledGreen'
         }}
         body={
           isPostPublic
