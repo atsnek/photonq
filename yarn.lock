@@ -70,7 +70,7 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.33":
+"@atsnek/jaen@^1.0.0-rc.32":
   version "1.0.0-rc.33"
   resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.33.tgz#268fb4938f8cecf2cbbdc41c8cb99e6597f70b4c"
   integrity sha512-tlI2Vk9/kgCX4SbmO55vMCsyGKteE9nP3AzZsCB+kSRoV8yWRy5d4x4C6T8QuVn8mlGr3SpYHwe3YKFAsYH3cQ==

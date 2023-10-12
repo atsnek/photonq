@@ -114,15 +114,10 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
               <PostPreviewLanguage language={post.language} />
             </HStack>
             <HStack>
-              <Text
-                color="components.postPreview.listItem.initial.date.color"
-                fontSize="sm"
-              >
+              <Text color="components.postPreview.listItem.initial.date.color" fontSize="sm">
                 {post.createdAt}
               </Text>
-              {showPrivacy && (
-                <PostPreviewPrivacy privacy={post.privacy} opacity={0.8} />
-              )}
+              {showPrivacy && <PostPreviewPrivacy privacy={post.privacy} opacity={0.8} />}
             </HStack>
           </VStack>
           <Spacer />
@@ -137,10 +132,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             />
           )}
         </HStack>
-        <Text
-          maxW="75%"
-          color="components.postPreview.listItem.initial.summary.color"
-        >
+        <Text maxW="75%" color="components.postPreview.listItem.initial.summary.color">
           {post.summary}
         </Text>
         <HStack {...postListItemPreviewStyling.bottomHStack}>
