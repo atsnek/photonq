@@ -1,5 +1,5 @@
 import { Box, Button, HStack, Stack } from '@chakra-ui/react';
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
 import MainGrid from '../shared/containers/components/MainGrid';
 import LeftNavProfile from '../features/user/profile/components/LeftNavProfile';
 import PostList from '../features/post/PostList';
@@ -10,8 +10,10 @@ import TbBook from '../shared/components/icons/tabler/TbBook';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../shared/store/store';
 import { POST_FETCH_LIMIT } from './PostsContent';
+import TbStar from '../shared/components/icons/tabler/TbStar';
+import { TProfileTab } from '../features/user/types/user';
 
-const tabNavItems = [
+const tabNavItems: Array<{ label: string; value: TProfileTab; icon: ReactElement }> = [
   {
     label: 'Overview',
     value: 'overview',
@@ -21,8 +23,13 @@ const tabNavItems = [
     label: 'Posts',
     value: 'posts',
     icon: <TbBook />
+  },
+  {
+    label: 'Stars',
+    value: 'stars',
+    icon: <TbStar />
   }
-] as const;
+];
 
 interface IUserProfileContent {
   username: string;
@@ -33,43 +40,44 @@ interface IUserProfileContent {
  */
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { hash } = useLocation();
+  const [postFilterQuery, setPostFilterQuery] = useState<string>();
+  const [activeTab, setActiveTab] = useState<(typeof tabNavItems)[number]['value']>('posts');
+  const { user } = useAuthenticationContext();
 
   const resetProfile = useAppStore(state => state.profile.reset);
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
-  const fetchOverviewPosts = useAppStore(
-    state => state.profile.fetchOverviewPosts
-  );
+  const fetchOverviewPosts = useAppStore(state => state.profile.fetchOverviewPosts);
   const fetchActivitiy = useAppStore(state => state.profile.fetchActivity);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const searchPosts = useAppStore(state => state.profile.searchPosts);
   const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
-  const searchPostLanguage = useAppStore(
-    state => state.profile.searchPostLanguage
-  );
-  const setSearchPostLanguage = useAppStore(
-    state => state.profile.setSearchPostLanguage
-  );
+  const searchPostLanguage = useAppStore(state => state.profile.searchPostLanguage);
+  const setSearchPostLanguage = useAppStore(state => state.profile.setSearchPostLanguage);
   const togglePostRating = useAppStore(state => state.profile.togglePostRating);
-  const togglePostPrivacy = useAppStore(
-    state => state.profile.togglePostPrivacy
-  );
-
-  const [postFilterQuery, setPostFilterQuery] = useState<string>();
-  const searchPostDateRange = useAppStore(
-    state => state.profile.searchPostsDateRange
-  );
-  const setSearchPostDateRange = useAppStore(
-    state => state.profile.setSearchPostsDateRange
-  );
-  const [activeTab, setActiveTab] =
-    useState<(typeof tabNavItems)[number]['value']>('posts');
-  const { user } = useAuthenticationContext();
+  const togglePostPrivacy = useAppStore(state => state.profile.togglePostPrivacy);
+  const searchPostDateRange = useAppStore(state => state.profile.searchPostsDateRange);
+  const setSearchPostDateRange = useAppStore(state => state.profile.setSearchPostsDateRange);
+  const starredPosts = useAppStore(state => state.profile.starredPosts);
+  const fetchStarredPosts = useAppStore(state => state.profile.fetchStarredPosts);
 
   useEffect(() => {
     resetProfile();
     setPostFilterQuery(undefined);
-    setActiveTab(hash === '#posts' ? 'posts' : 'overview');
+
+    let tab: TProfileTab = 'overview';
+    switch (hash) {
+      case '#posts':
+      case '#post':
+        tab = 'posts';
+        break;
+      case '#stars':
+      case '#star':
+        tab = 'stars';
+        break;
+    }
+    setActiveTab(tab);
+
     fetchProfile(username, user?.id).then(async succeed => {
       if (!succeed) navigate('/docs/');
       fetchOverviewPosts();
@@ -78,14 +86,16 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   }, [username]);
 
   useEffect(() => {
-    if (
-      activeTab === 'posts' &&
-      searchPosts.items.length === 0 &&
-      searchPosts.query.length === 0
-    ) {
+    if (activeTab === 'posts' && searchPosts.items.length === 0 && searchPosts.query.length === 0) {
       fetchSearchPosts('', POST_FETCH_LIMIT, 0);
+    } else if (
+      activeTab === 'stars' &&
+      starredPosts.items.length === 0 &&
+      starredPosts.query.length === 0
+    ) {
+      fetchStarredPosts('', POST_FETCH_LIMIT, 0);
     }
-  }, [activeTab]);
+  }, [activeTab, profile]);
 
   const isOwnProfile = useMemo(
     () => profile?.username === currentUser?.username,
@@ -127,39 +137,54 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   );
 
   let mainContent: ReactNode;
-  if (activeTab === 'overview') {
-    mainContent = (
-      <ProfileOverview
-        isOwnProfile={isOwnProfile}
-        togglePostPrivacy={togglePostPrivacy}
-      />
-    );
-  } else {
-    mainContent = (
-      <PostList
-        fetchPosts={(query, limit, offset, language) =>
-          fetchSearchPosts(query, POST_FETCH_LIMIT, offset, language)
-        }
-        postData={searchPosts}
-        previewType="list"
-        paginationType="load-more"
-        defaultFilterQuery={postFilterQuery}
-        setFilterQuery={setPostFilterQuery}
-        currentQuery={postFilterQuery}
-        toggleRating={id => togglePostRating(id, 'search')}
-        hidePostAuthor
-        showControls
-        maxItems={POST_FETCH_LIMIT}
-        showPostPrivacy={isOwnProfile}
-        togglePostPrivacy={togglePostPrivacy}
-        filterLanguage={searchPostLanguage}
-        setFilterLanguage={setSearchPostLanguage}
-        dateRange={searchPostDateRange}
-        setDateRange={setSearchPostDateRange}
-      />
-    );
+  switch (activeTab) {
+    case 'overview':
+      mainContent = (
+        <ProfileOverview isOwnProfile={isOwnProfile} togglePostPrivacy={togglePostPrivacy} />
+      );
+      break;
+    case 'posts':
+      mainContent = (
+        <PostList
+          fetchPosts={(query, limit, offset, language) =>
+            fetchSearchPosts(query, POST_FETCH_LIMIT, offset, language)
+          }
+          postData={searchPosts}
+          previewType="list"
+          paginationType="load-more"
+          defaultFilterQuery={postFilterQuery}
+          setFilterQuery={setPostFilterQuery}
+          currentQuery={postFilterQuery}
+          toggleRating={id => togglePostRating(id, 'posts')}
+          hidePostAuthor
+          showControls
+          maxItems={POST_FETCH_LIMIT}
+          showPostPrivacy={isOwnProfile}
+          togglePostPrivacy={togglePostPrivacy}
+          filterLanguage={searchPostLanguage}
+          setFilterLanguage={setSearchPostLanguage}
+          dateRange={searchPostDateRange}
+          setDateRange={setSearchPostDateRange}
+        />
+      );
+      break;
+    case 'stars':
+      mainContent = (
+        <PostList
+          postData={starredPosts}
+          fetchPosts={(query, limit, offset, language) =>
+            fetchStarredPosts(query, limit, offset, language)
+          }
+          toggleRating={id => togglePostRating(id, 'stars')}
+          showControls
+          previewType="list"
+          paginationType="load-more"
+          maxItems={POST_FETCH_LIMIT}
+        />
+      );
+      break;
   }
-  //TODO: Fix hydration issue
+
   return (
     <>
       <HStack justifyContent="center" p={3} position="sticky">
@@ -169,11 +194,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         <Box>
           <LeftNavProfile isOwnProfile={isOwnProfile} />
         </Box>
-        <Stack
-          verticalAlign="top"
-          spacing={{ base: 0, xl: 12 }}
-          direction="row"
-        >
+        <Stack verticalAlign="top" spacing={{ base: 0, xl: 12 }} direction="row">
           <Box w="full">{mainContent}</Box>
         </Stack>
       </MainGrid>

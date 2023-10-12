@@ -4,7 +4,6 @@ import { produce } from 'immer';
 import { TStoreSlice, TStoreState } from '../../../shared/types/store';
 import { IProfileStateDefinition, TProfileSlice } from '../types/profileState';
 import { buildUserActivities, changeUserFollowingState } from '../utils/user';
-import { useAppStore } from '../../../shared/store/store';
 import {
   buildPostPreview,
   searchPosts,
@@ -21,6 +20,7 @@ const initState: IProfileStateDefinition = {
   searchPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
   searchPostLanguage: undefined,
   searchPostsDateRange: { from: undefined, to: undefined },
+  starredPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
   isFollowing: undefined,
   profile: undefined
 };
@@ -31,8 +31,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     let isFollowing: boolean | undefined = undefined;
     const stats: { [key in TProfileStatType]: number } = {
       followers: 0,
+      following: 0,
       views: 0,
-      stars: 0,
       posts: 0,
     };
 
@@ -56,8 +56,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         if (profile) {
           stats.followers = profile.followers().totalCount;
+          stats.following = profile.following().totalCount;
           stats.views = profile.views;
-          stats.stars = profile.stars().totalCount;
           stats.posts = profile.posts().totalCount;
         }
 
@@ -69,8 +69,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             }`,
           stats: {
             followers: profile?.followers().totalCount ?? 0,
+            following: profile?.following().totalCount ?? 0,
             views: profile?.views ?? 0,
-            stars: profile?.stars().totalCount ?? 0,
             posts: profile?.posts().totalCount ?? 0,
           },
           username: username
@@ -206,7 +206,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     );
 
     const [currentUser] = await sq.query(q => q.userMe);
-    const currentProfile = useAppStore.getState().profile.profile;
+    const currentProfile = get().profile.profile;
     if (!currentProfile) return;
     const isOwnProfile = !!currentUser && currentUser.id === currentProfile.id;
 
@@ -279,6 +279,40 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       })
     );
   },
+  fetchStarredPosts: async (query, limit, offset, language, dateRange) => {
+    set(
+      produce((state: TStoreState) => {
+        if (query !== state.profile.starredPosts.query) {
+          // Reset the state if the query changed
+          state.profile.starredPosts = {
+            query,
+            state: 'loading',
+            items: [],
+            hasMore: false,
+            totalCount: 0,
+          };
+        } else {
+          state.profile.starredPosts.state = 'loading';
+        }
+      })
+    );
+
+    const profile = get().profile.profile;
+    if (!profile) return false;
+
+    const [currentUser] = await sq.query(q => q.userMe);
+
+    const [rawPosts, rawPostsError] = await sq.query(q => {
+      const posts = q.user({ id: profile.id }).profile?.starredPosts({
+        first: limit,
+        after: offset === 0 ? undefined : get().profile.starredPosts.nextCursor
+      });
+    })
+
+    console.log("rawPosts: ", rawPosts);
+
+    return true;
+  },
   toggleFollow: async () => {
     const [currentUserId] = await sq.query(q => q.userMe.id);
     const [currentProfileId, profileError] = await sq.query(
@@ -334,10 +368,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     return succeed;
   },
   togglePostRating: async (id, source) => {
-    const hasRated =
-      source === 'overview'
-        ? get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated
-        : get().profile.searchPosts.items.find(p => p.id === id)?.hasRated;
+    let hasRated = false;
+
+    if (source === 'overview') {
+      hasRated = get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated ?? false;
+    } else if (source === 'posts') {
+      hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+    } else {
+      hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+    }
 
     if (hasRated === undefined) return false;
 
@@ -350,6 +389,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             const post = state.profile.overviewPosts.items.find(
               p => p.id === id
             );
+            if (post) {
+              post.hasRated = !post.hasRated;
+              post.stars += post.hasRated ? 1 : -1;
+            }
+          } else if (source === 'posts') {
+            const post = state.profile.searchPosts.items.find(p => p.id === id);
             if (post) {
               post.hasRated = !post.hasRated;
               post.stars += post.hasRated ? 1 : -1;
@@ -453,6 +498,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         state.profile.searchPosts = initState.searchPosts;
         state.profile.searchPostLanguage = initState.searchPostLanguage;
         state.profile.searchPostsDateRange = initState.searchPostsDateRange;
+        state.profile.starredPosts = initState.starredPosts;
         state.profile.isFollowing = initState.isFollowing;
       })
     );

@@ -1,11 +1,4 @@
-import {
-  FC,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   EnPostLanguage,
   IPostPreviewProps,
@@ -57,17 +50,14 @@ interface IPostListProps extends StackProps {
   showNoListResult?: boolean;
   showPostPrivacy?: boolean;
   toggleRating: (id: TPostPreview['id']) => void;
-  togglePostPrivacy: (
+  togglePostPrivacy?: (
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => Promise<boolean>;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
   dateRange?: { from: Date | undefined; to: Date | undefined };
-  setDateRange?: (
-    from: Date | null | undefined,
-    to: Date | null | undefined
-  ) => void;
+  setDateRange?: (from: Date | null | undefined, to: Date | null | undefined) => void;
 }
 
 /**
@@ -112,6 +102,7 @@ const PostList: FC<IPostListProps> = ({
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => {
+    if (!togglePostPrivacy) return;
     setIsTogglingPostPrivacy(true);
     await togglePostPrivacy(id, privacy);
     setIsTogglingPostPrivacy(false);
@@ -119,9 +110,7 @@ const PostList: FC<IPostListProps> = ({
 
   const memoizedPostPreviews = useMemo(() => {
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
-    let PreviewSkeletonComp:
-      | typeof PostCardPreviewSkeleton
-      | typeof PostListItemPreviewSkeleton;
+    let PreviewSkeletonComp: typeof PostCardPreviewSkeleton | typeof PostListItemPreviewSkeleton;
     type ExtractProps<T> = T extends FC<IPostPreviewProps<infer P>> ? P : never;
     let previewCompProps:
       | ExtractProps<typeof PostCardPreview>
@@ -137,15 +126,9 @@ const PostList: FC<IPostListProps> = ({
 
     let previewSkeletons: ReactElement[] = [];
     if (postData.state === 'loading') {
-      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map(
-        (_, i) => (
-          <PreviewSkeletonComp
-            key={i}
-            {...skeletonProps}
-            hideAuthor={hidePostAuthor}
-          />
-        )
-      );
+      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map((_, i) => (
+        <PreviewSkeletonComp key={i} {...skeletonProps} hideAuthor={hidePostAuthor} />
+      ));
     }
 
     let postPreviews: JSX.Element[] = [];
@@ -188,11 +171,7 @@ const PostList: FC<IPostListProps> = ({
     }
   }
 
-  const handleFetchPosts = (
-    query: string,
-    offset?: number,
-    language?: EnPostLanguage | null
-  ) => {
+  const handleFetchPosts = (query: string, offset?: number, language?: EnPostLanguage | null) => {
     if (query === currentQuery && postData.state === 'inactive') return; // This prevents the posts from being fetched because only the language has changed wile the feature is inactive
     if (query.length === 0) pagination.setCurrentPage(1);
     if (fetchPosts)
@@ -243,15 +222,10 @@ const PostList: FC<IPostListProps> = ({
         />
       )}
       {postData.state !== 'inactive' &&
-        (postPreviews || showNoListResult ? (
-          postPreviews
-        ) : (
-          <PostListNoResults mt={10} />
-        ))}
+        (postPreviews || showNoListResult ? postPreviews : <PostListNoResults mt={10} />)}
       {paginationType === 'pages' ||
         (paginationType === 'async-pages' &&
-          (pagination.currentPage > 1 ||
-            pagination.currentPage < pagination.totalPages) && (
+          (pagination.currentPage > 1 || pagination.currentPage < pagination.totalPages) && (
             <HStack alignContent="space-around">
               <Button
                 variant="ghost-hover-outline"
@@ -268,41 +242,36 @@ const PostList: FC<IPostListProps> = ({
                 size="sm"
                 borderRadius="lg"
                 rightIcon={<ChevronRightIcon />}
-                isDisabled={
-                  !postData?.hasMore &&
-                  pagination.currentPage === pagination.totalPages
-                }
+                isDisabled={!postData?.hasMore && pagination.currentPage === pagination.totalPages}
                 onClick={handleNextPage}
               >
                 Next
               </Button>
             </HStack>
           ))}
-      {paginationType === 'load-more' &&
-        postData.state !== 'inactive' &&
-        postData.hasMore && (
-          <Button
-            variant="ghost-hover-outline"
-            size="sm"
-            borderRadius="lg"
-            rightIcon={<ChevronRightIcon />}
-            isDisabled={postData.state === 'loading'}
-            onClick={
-              !!fetchPosts
-                ? () => {
-                    fetchPosts(
-                      currentQuery ?? defaultFilterQuery ?? '',
-                      POST_FETCH_LIMIT,
-                      pagination.currentItems.length,
-                      filterLanguage
-                    );
-                  }
-                : undefined
-            }
-          >
-            Load more
-          </Button>
-        )}
+      {paginationType === 'load-more' && postData.state !== 'inactive' && postData.hasMore && (
+        <Button
+          variant="ghost-hover-outline"
+          size="sm"
+          borderRadius="lg"
+          rightIcon={<ChevronRightIcon />}
+          isDisabled={postData.state === 'loading'}
+          onClick={
+            !!fetchPosts
+              ? () => {
+                  fetchPosts(
+                    currentQuery ?? defaultFilterQuery ?? '',
+                    POST_FETCH_LIMIT,
+                    pagination.currentItems.length,
+                    filterLanguage
+                  );
+                }
+              : undefined
+          }
+        >
+          Load more
+        </Button>
+      )}
     </VStack>
   );
 };

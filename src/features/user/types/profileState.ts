@@ -7,7 +7,7 @@ import {
   TSearchPostListData
 } from '../../post/types/post';
 import { TActivity } from '../activity/types/activity';
-import { TUser } from './user';
+import { TProfileTab, TUser } from './user';
 
 export interface IProfileStateDefinition {
   profile?: TUser;
@@ -15,6 +15,7 @@ export interface IProfileStateDefinition {
   searchPosts: TSearchPostListData;
   searchPostLanguage: EnPostLanguage | undefined;
   searchPostsDateRange: TPostDateRange;
+  starredPosts: TSearchPostListData;
   activity: TPaginationData<TActivity[]>;
   isFollowing?: boolean;
 }
@@ -35,11 +36,12 @@ export interface IProfileStateActions {
     from: Date | null | undefined,
     to: Date | null | undefined
   ) => void;
+  fetchStarredPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => Promise<boolean>;
   toggleFollow: () => Promise<boolean>;
   changeBio: (bio: string) => Promise<boolean>;
   togglePostRating: (
     id: TPostPreview['id'],
-    source: 'overview' | 'search'
+    source: Extract<TProfileTab, 'posts' | 'overview' | 'stars'>,
   ) => Promise<boolean>;
   togglePostPrivacy: (
     id: TPostPreview['id'],

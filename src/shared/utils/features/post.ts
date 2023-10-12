@@ -94,7 +94,8 @@ export const searchPosts = async (
   currentUser?: t.Nullable<User>,
   userId?: string,
   language?: EnPostLanguage,
-  dateRange?: TPostDateRange
+  dateRange?: TPostDateRange,
+  dataSource: 'all-social' | 'starred' = 'all-social'
 ): Promise<TPaginatedPostListData> => {
   const [postConnection] = await sq.query(q => {
     const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
@@ -116,14 +117,12 @@ export const searchPosts = async (
       }
 
       if (dateRange?.from) {
-        requestArgs.filters.from = `${dateRange.from.getFullYear()}-${
-          dateRange.from.getMonth() + 1
-        }-${dateRange.from.getDate()}`;
+        requestArgs.filters.from = `${dateRange.from.getFullYear()}-${dateRange.from.getMonth() + 1
+          }-${dateRange.from.getDate()}`;
       }
       if (dateRange?.to) {
-        requestArgs.filters.to = `${dateRange.to.getFullYear()}-${
-          dateRange.to.getMonth() + 1
-        }-${dateRange.to.getDate()}`;
+        requestArgs.filters.to = `${dateRange.to.getFullYear()}-${dateRange.to.getMonth() + 1
+          }-${dateRange.to.getDate()}`;
       }
     }
 
@@ -142,7 +141,7 @@ export const searchPosts = async (
         for (const key in pe.node) {
           pe.node[key as keyof typeof pe.node];
         }
-      } catch {}
+      } catch { }
     });
     return posts;
   });

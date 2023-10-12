@@ -19,9 +19,7 @@ import {
 } from '@chakra-ui/react';
 import { FC, Fragment, ReactNode, useMemo, useRef, useState } from 'react';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
-import LeftNav, {
-  ILeftNavProps
-} from '../../../../shared/containers/navigation/LeftNav';
+import LeftNav, { ILeftNavProps } from '../../../../shared/containers/navigation/LeftNav';
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
 import { useAppStore } from '../../../../shared/store/store';
 import ProfileFollowButton from './ProfileFollowButton';
@@ -35,6 +33,7 @@ import TbEye from '../../../../shared/components/icons/tabler/TbEye';
 import TbStar from '../../../../shared/components/icons/tabler/TbStar';
 import { TProfileStatType } from '../../types/user';
 import TbBooks from '../../../../shared/components/icons/tabler/TbBooks';
+import TbUserShare from '../../../../shared/components/icons/tabler/TbUserShare';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -97,8 +96,8 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   // };
   const statIcons: { [key in TProfileStatType]: FC<IconProps> } = {
     followers: TbUsers,
+    following: TbUserShare,
     views: TbEye,
-    stars: TbStar,
     posts: TbBooks
   };
 
@@ -219,11 +218,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
         />
         <VStack {...leftNavProfileStyling.userData.stack}>
-          <Heading
-            as="h6"
-            fontSize="24px"
-            {...leftNavProfileStyling.userData.displayName}
-          >
+          <Heading as="h6" fontSize="24px" {...leftNavProfileStyling.userData.displayName}>
             {userData.displayName}
           </Heading>
           <Text
@@ -243,9 +238,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           {userData.bio && (
             <>
               <Divider {...leftNavProfileStyling.bioDividers} />
-              {!isEditing && (
-                <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>
-              )}
+              {!isEditing && <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>}
             </>
           )}
           {isEditing && (
@@ -297,10 +290,9 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
             </Flex>
           )}
         </VStack>
-        {userData.stats &&
-          Object.values(userData.stats).some(value => value > 0) && (
-            <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
-          )}
+        {userData.stats && Object.values(userData.stats).some(value => value > 0) && (
+          <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
+        )}
         <Grid {...leftNavProfileStyling.stats.grid}>{statElements}</Grid>
       </VStack>
     </LeftNav>
