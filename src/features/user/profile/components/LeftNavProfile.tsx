@@ -153,33 +153,39 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
 
       if (!IconComp) continue; // If this doesnt exist, we dont want to show it
 
-      const coreElements = (
-        <>
-          <IconComp
-            strokeWidth={2.2}
-            h="full"
-            color="pages.userProfile.leftNav.socialLinks.icon.color"
-          />
-          <Text cursor="default">
-            <Text
-              as="span"
-              color="pages.userProfile.leftNav.stats.count.color"
-              fontWeight="semibold"
-              mr={1}
-            >
-              {formatNumber(userData.stats[key as TProfileStatType])}
-            </Text>
-            {key}
-          </Text>
-        </>
+      const icon = (
+        <IconComp
+          strokeWidth={2.2}
+          h="full"
+          color="pages.userProfile.leftNav.socialLinks.icon.color"
+        />
+      );
+      const statValue = (
+        <Text
+          as="span"
+          color="pages.userProfile.leftNav.stats.count.color"
+          fontWeight="semibold"
+          mr={1}
+        >
+          {formatNumber(userData.stats[key as TProfileStatType])}
+        </Text>
       );
 
       if (key === 'followers') {
         output.push(
           <Fragment key={key}>
             <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
-              <LinkBox>
-                {coreElements}
+              {icon}
+              <LinkBox
+                as={HStack}
+                spacing={0}
+                _hover={{
+                  '& *': {
+                    color: 'pages.userProfile.leftNav.stats.link._hover.color'
+                  }
+                }}
+              >
+                {statValue}
                 <LinkOverlay href="#">Followers</LinkOverlay>
               </LinkBox>
             </GridItem>
@@ -189,7 +195,11 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
         output.push(
           <Fragment key={key}>
             <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
-              {coreElements}
+              {icon}
+              <Text cursor="default">
+                {statValue}
+                {key}
+              </Text>
             </GridItem>
           </Fragment>
         );
