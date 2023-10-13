@@ -94,6 +94,8 @@ export type TPaginatedPostListData = TPaginationData<
  */
 export type TSearchPostListData = TPaginatedPostListData & {
   query: string;
+  language?: Language;
+  dateRange?: TPostDateRange;
   publicPageInfo?: Partial<TPaginationPageInfo>;
   privatePageInfo?: Partial<TPaginationPageInfo>;
 };

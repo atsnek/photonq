@@ -7,14 +7,14 @@ import {
   TSearchPostListData
 } from '../../post/types/post';
 import { TActivity } from '../activity/types/activity';
-import { TProfileTab, TUser } from './user';
+import { TProfilePostLists, TProfileTab, TUser } from './user';
 
 export interface IProfileStateDefinition {
   profile?: TUser;
   overviewPosts: TPaginatedPostListData;
   searchPosts: TSearchPostListData;
-  searchPostLanguage: EnPostLanguage | undefined;
-  searchPostsDateRange: TPostDateRange;
+  // searchPostLanguage: EnPostLanguage | undefined; //TODO: Move this to the belonging post list data
+  // searchPostsDateRange: TPostDateRange; //TODO: Move this to the belonging post list data
   starredPosts: TSearchPostListData;
   followers: TPaginationData<TUser[]>;
   followingUsers: TPaginationData<TUser[]>;
@@ -33,10 +33,11 @@ export interface IProfileStateActions {
     language?: EnPostLanguage,
     dateRange?: TPostDateRange
   ) => Promise<void>;
-  setSearchPostLanguage: (language?: EnPostLanguage) => void;
-  setSearchPostsDateRange: (
+  setPostListLanguage: (postList?: TProfilePostLists, language?: EnPostLanguage) => void;
+  setPostListDateRange: (
     from: Date | null | undefined,
-    to: Date | null | undefined
+    to: Date | null | undefined,
+    postList?: TProfilePostLists,
   ) => void;
   fetchStarredPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => Promise<boolean>;
   fetchFollowers: () => Promise<boolean>;

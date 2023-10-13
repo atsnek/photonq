@@ -18,8 +18,6 @@ const initState: IProfileStateDefinition = {
   activity: { items: [], totalCount: 0 },
   overviewPosts: { state: 'loading', items: [], totalCount: 0 },
   searchPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
-  searchPostLanguage: undefined,
-  searchPostsDateRange: { from: undefined, to: undefined },
   starredPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
   followers: { items: [], totalCount: 0 },
   followingUsers: { items: [], totalCount: 0 },
@@ -231,8 +229,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           : get().profile.searchPosts.publicPageInfo?.nextCursor,
         currentUser,
         currentProfile?.id,
-        language ?? get().profile.searchPostLanguage,
-        dateRange ?? get().profile.searchPostsDateRange
+        language ?? get().profile.searchPosts.language,
+        dateRange ?? get().profile.searchPosts.dateRange
       );
     }
 
@@ -252,8 +250,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           : get().profile.searchPosts.privatePageInfo?.nextCursor,
         currentUser,
         currentProfile?.id,
-        language ?? get().profile.searchPostLanguage,
-        dateRange ?? get().profile.searchPostsDateRange
+        language ?? get().profile.searchPosts.language,
+        dateRange ?? get().profile.searchPosts.dateRange
       );
     }
 
@@ -306,15 +304,21 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const [currentUser] = await sq.query(q => q.userMe);
 
-    const [rawPosts, rawPostsError] = await sq.query(q => {
-      const posts = q.user({ id: profile.id }).profile?.starredPosts({
-        first: limit,
-        after: offset === 0 ? undefined : get().profile.starredPosts.nextCursor
-      });
-    })
+    const posts = await searchPosts(query, limit, 'PUBLIC', offset === 0 ? undefined : get().profile.starredPosts.nextCursor, currentUser, profile.id, language ?? get().profile.searchPosts.language, dateRange ?? get().profile.searchPosts.dateRange, 'starred');
 
-    console.log("rawPosts: ", rawPosts)
-
+    console.log("result:", posts);
+    set(produce((state: TStoreState) => {
+      state.profile.starredPosts = {
+        query,
+        state: 'success',
+        items: offset === 0 ? posts.items : [...state.profile.starredPosts.items, ...posts.items],
+        hasMore: posts.hasMore,
+        totalCount: posts.totalCount,
+        nextCursor: posts.nextCursor,
+        dateRange: dateRange ?? get().profile.starredPosts.dateRange,
+        language: language ?? get().profile.starredPosts.language,
+      };
+    }))
     return true;
   },
   fetchFollowers: async () => {
@@ -422,39 +426,93 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return succeed;
   },
-  setSearchPostLanguage: language => {
+  setPostListLanguage: (postList = 'all-posts', language) => {
+    const isDefaultPostsList = postList === 'all-posts'; // Temporary until we have more than 2 different post lists
     set(
       produce((state: TStoreState) => {
-        state.profile.searchPostLanguage = language;
-        state.profile.searchPosts.nextCursor = undefined;
+        if (isDefaultPostsList) {
+          state.profile.searchPosts.language = language;
+          state.profile.searchPosts.nextCursor = undefined;
+        } else {
+          state.profile.starredPosts.language = language;
+          state.profile.starredPosts.nextCursor = undefined;
+        }
       })
     );
 
-    get().profile.fetchSearchPosts(
-      get().profile.searchPosts.query,
-      POST_FETCH_LIMIT,
-      0,
-      language
-    );
+    if (isDefaultPostsList) {
+      get().profile.fetchSearchPosts(
+        get().profile.searchPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        language
+      );
+    } else {
+      get().profile.fetchStarredPosts(
+        get().profile.starredPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        language
+      );
+    }
   },
-  setSearchPostsDateRange: (from, to) => {
+  setPostListDateRange: (from, to, postList) => {
+    const isAllPosts = postList === 'all-posts'; // Temporary until we have more than 2 different post lists
     set(
       produce((state: TStoreState) => {
         // null is only used to reset the date
         // undefined is used to keep the current value
         // a date value is used to set the date
-        if (from !== undefined)
-          state.profile.searchPostsDateRange.from = from ?? undefined;
-        if (to !== undefined)
-          state.profile.searchPostsDateRange.to = to ?? undefined;
+        if (from !== undefined) {
+          if (isAllPosts) {
+            if (!state.profile.searchPosts.dateRange) {
+              state.profile.searchPosts.dateRange = {
+                from: from ?? undefined,
+                to: undefined
+              };
+            }
+            state.profile.searchPosts.dateRange.from = from ?? undefined;
+          } else if (!isAllPosts) {
+            if (!state.profile.starredPosts.dateRange) {
+              state.profile.starredPosts.dateRange = {
+                from: from ?? undefined,
+                to: undefined
+              };
+            } else {
+              state.profile.starredPosts.dateRange.from = from ?? undefined;
+            }
+          }
+        }
 
+        if (to !== undefined) {
+          if (isAllPosts) {
+            if (!state.profile.searchPosts.dateRange) {
+              state.profile.searchPosts.dateRange = {
+                from: undefined,
+                to: to ?? undefined
+              };
+            } else {
+              state.profile.searchPosts.dateRange.to = to ?? undefined;
+            }
+            state.profile.searchPosts.dateRange.to = to ?? undefined;
+          } else if (!isAllPosts) {
+            if (!state.profile.starredPosts.dateRange) {
+              state.profile.starredPosts.dateRange = {
+                from: undefined,
+                to: to ?? undefined
+              };
+            } else {
+              state.profile.starredPosts.dateRange.to = to ?? undefined;
+            }
+          }
+        }
         state.profile.searchPosts.nextCursor = undefined;
       })
     );
 
     const searchPostsDateRange = {
-      from: from ?? get().profile.searchPostsDateRange.from,
-      to: to ?? get().profile.searchPostsDateRange.to
+      from: from ?? isAllPosts ? get().profile.searchPosts.dateRange?.from : get().profile.starredPosts.dateRange?.from,
+      to: to ?? isAllPosts ? get().profile.searchPosts.dateRange?.to : get().profile.starredPosts.dateRange?.to
     };
 
     get().profile.fetchSearchPosts(
@@ -506,8 +564,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         state.profile.overviewPosts = initState.overviewPosts;
         state.profile.profile = initState.profile;
         state.profile.searchPosts = initState.searchPosts;
-        state.profile.searchPostLanguage = initState.searchPostLanguage;
-        state.profile.searchPostsDateRange = initState.searchPostsDateRange;
         state.profile.starredPosts = initState.starredPosts;
         state.profile.isFollowing = initState.isFollowing;
       })

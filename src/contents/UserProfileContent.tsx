@@ -1,5 +1,5 @@
 import { Box, Button, HStack, Stack, Tag } from '@chakra-ui/react';
-import { FC, ReactElement, ReactNode, ReactNodeArray, useEffect, useMemo, useState } from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
 import MainGrid from '../shared/containers/components/MainGrid';
 import LeftNavProfile from '../features/user/profile/components/LeftNavProfile';
 import PostList from '../features/post/PostList';
@@ -53,12 +53,10 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const searchPosts = useAppStore(state => state.profile.searchPosts);
   const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
-  const searchPostLanguage = useAppStore(state => state.profile.searchPostLanguage);
-  const setSearchPostLanguage = useAppStore(state => state.profile.setSearchPostLanguage);
+  const setPostListLanguage = useAppStore(state => state.profile.setPostListLanguage);
   const togglePostRating = useAppStore(state => state.profile.togglePostRating);
   const togglePostPrivacy = useAppStore(state => state.profile.togglePostPrivacy);
-  const searchPostDateRange = useAppStore(state => state.profile.searchPostsDateRange);
-  const setSearchPostDateRange = useAppStore(state => state.profile.setSearchPostsDateRange);
+  const setPostListDateRange = useAppStore(state => state.profile.setPostListDateRange);
   const starredPosts = useAppStore(state => state.profile.starredPosts);
   const fetchStarredPosts = useAppStore(state => state.profile.fetchStarredPosts);
 
@@ -109,14 +107,14 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         const isActive = item.value === activeTab;
         let label: ReactNode = item.label;
 
-        if (item.value === 'stars') {
-          const starred = profile?.stats?.starred ?? 0;
-          if (starred > 0) {
+        if (item.value === 'stars' || item.value === 'posts') {
+          const count = profile?.stats?.[item.value === 'stars' ? 'starred' : 'posts'] ?? 0;
+          if (count > 0) {
             label = (
               <>
                 {item.label}
                 <Tag ml={2} size="sm" colorScheme="gray">
-                  {formatNumber(starred)}
+                  {formatNumber(count)}
                 </Tag>
               </>
             );
@@ -150,7 +148,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           </Button>
         );
       }),
-    [tabNavItems, activeTab]
+    [tabNavItems, activeTab, profile]
   );
 
   let mainContent: ReactNode;
@@ -178,10 +176,10 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           maxItems={POST_FETCH_LIMIT}
           showPostPrivacy={isOwnProfile}
           togglePostPrivacy={togglePostPrivacy}
-          filterLanguage={searchPostLanguage}
-          setFilterLanguage={setSearchPostLanguage}
-          dateRange={searchPostDateRange}
-          setDateRange={setSearchPostDateRange}
+          filterLanguage={searchPosts.language}
+          setFilterLanguage={language => setPostListLanguage('all-posts', language)}
+          dateRange={searchPosts.dateRange}
+          setDateRange={(from, to) => setPostListDateRange(from, to, 'all-posts')}
         />
       );
       break;
@@ -197,6 +195,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           previewType="list"
           paginationType="load-more"
           maxItems={POST_FETCH_LIMIT}
+          filterLanguage={starredPosts.language}
+          setFilterLanguage={language => setPostListLanguage('starred-posts', language)}
+          dateRange={starredPosts.dateRange}
+          setDateRange={(from, to) => setPostListDateRange(from, to, 'starred-posts')}
+          defaultFilterQuery={starredPosts.query}
         />
       );
       break;
