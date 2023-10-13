@@ -146,13 +146,8 @@ export const searchPosts = async (
       try {
         const node = dataSource === 'all-social' ? pe.node as Post : (pe as Edge_1_2).node.post;
         if (dataSource === 'starred') {
-          (pe as Edge_1_2).node.post.stars().edges.map(se => se.node.profile.id);
           (pe as Edge_1_2).node.post.stars().totalCount;
-          // (pe as Edge_1_2).node.post.content;
-
-          node.stars().edges.map(se => se.node.profile.id);
           node.stars().totalCount;
-          node.content;
         }
         node.stars().edges.map(se => se.node.profile.id);
         node.stars().totalCount;

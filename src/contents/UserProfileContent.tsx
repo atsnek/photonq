@@ -126,6 +126,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
             key={item.value}
             variant="ghost-hover-opacity"
             size="sm"
+            px={5}
             borderRadius="none"
             borderBottom="2px solid"
             borderColor="transparent"
