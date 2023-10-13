@@ -1,4 +1,7 @@
 import {
+  Connection_1,
+  Connection_1_2,
+  Edge_1_2,
   LanguageInputInput,
   Post,
   PrivacyInputInput,
@@ -116,28 +119,33 @@ export const searchPosts = async (
         requestArgs.filters.language = asEnumKey(LanguageInputInput, language);
       }
 
-      if (dateRange?.from) {
-        requestArgs.filters.from = `${dateRange.from.getFullYear()}-${dateRange.from.getMonth() + 1
-          }-${dateRange.from.getDate()}`;
+      if (dataSource !== 'starred') {
+        if (dateRange?.from) {
+          requestArgs.filters.from = `${dateRange.from.getFullYear()}-${dateRange.from.getMonth() + 1
+            }-${dateRange.from.getDate()}`;
+        }
+        if (dateRange?.to) {
+          requestArgs.filters.to = `${dateRange.to.getFullYear()}-${dateRange.to.getMonth() + 1
+            }-${dateRange.to.getDate()}`;
+        }
       }
-      if (dateRange?.to) {
-        requestArgs.filters.to = `${dateRange.to.getFullYear()}-${dateRange.to.getMonth() + 1
-          }-${dateRange.to.getDate()}`;
-      }
+
     }
 
     if (cursor) {
       requestArgs.after = cursor;
     }
 
-    const posts = q.allSocialPost(requestArgs);
+    const posts = dataSource === 'all-social' ? q.allSocialPost(requestArgs) : q.user({ id: userId })?.profile?.starredPosts(requestArgs);
+    if (!posts) return;
     //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
     posts?.pageInfo.hasNextPage;
     posts?.pageInfo.endCursor;
     posts?.edges.forEach(pe => {
       try {
-        pe.node.stars().edges.map(se => se.node.profile.id);
-        pe.node.stars().totalCount;
+        const node = dataSource === 'all-social' ? pe.node as Post : (pe as Edge_1_2).node.post;
+        node.stars().edges.map(se => se.node.profile.id);
+        node.stars().totalCount;
         for (const key in pe.node) {
           pe.node[key as keyof typeof pe.node];
         }
@@ -160,7 +168,7 @@ export const searchPosts = async (
     state: 'success',
     items: postPreviews ?? [],
     hasMore: postConnection?.pageInfo?.hasNextPage ?? false,
-    totalCount: postConnection?.totalCount,
+    totalCount: postConnection?.totalCount ?? 0,
     nextCursor: postConnection?.pageInfo.hasNextPage
       ? postConnection?.pageInfo?.endCursor ?? ''
       : undefined,
