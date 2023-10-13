@@ -59,6 +59,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const setPostListDateRange = useAppStore(state => state.profile.setPostListDateRange);
   const starredPosts = useAppStore(state => state.profile.starredPosts);
   const fetchStarredPosts = useAppStore(state => state.profile.fetchStarredPosts);
+  const fetchFollowers = useAppStore(state => state.profile.fetchFollowers);
 
   useEffect(() => {
     resetProfile();
@@ -73,6 +74,10 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       case '#stars':
       case '#star':
         tab = 'stars';
+        break;
+      case '#followers':
+      case '#follower':
+        tab = 'followers';
         break;
     }
     setActiveTab(tab);
@@ -154,11 +159,6 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   let mainContent: ReactNode;
   switch (activeTab) {
-    case 'overview':
-      mainContent = (
-        <ProfileOverview isOwnProfile={isOwnProfile} togglePostPrivacy={togglePostPrivacy} />
-      );
-      break;
     case 'posts':
       mainContent = (
         <PostList
@@ -202,6 +202,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           setDateRange={(from, to) => setPostListDateRange(from, to, 'starred-posts')}
           defaultFilterQuery={starredPosts.query}
         />
+      );
+      break;
+    default:
+      mainContent = (
+        <ProfileOverview isOwnProfile={isOwnProfile} togglePostPrivacy={togglePostPrivacy} />
       );
       break;
   }
