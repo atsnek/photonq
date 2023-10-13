@@ -1,10 +1,19 @@
-import { Box, BoxProps, Button, Center, Container, HStack, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Button,
+  Center,
+  Container,
+  HStack,
+  VStack
+} from '@chakra-ui/react';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
 import { Field } from '@atsnek/jaen';
 import { TextFieldProps } from '@atsnek/jaen/dist/fields/TextField/TextField';
 import Link from '../../shared/components/Link';
 import CodePlayground from '../../features/main-content/code-playground/components/CodePlayground';
+import { QASMPlayground } from '../../features/main-content/qasm-playground/components/qasm-plaground';
 
 const Features: FC = () => {
   const cardProps: BoxProps = {
@@ -94,7 +103,12 @@ const Features: FC = () => {
                     ></Field.Text>
                   </Button>
                 </Box>
-                <Box w="90%" ml="auto" borderTopLeftRadius="lg" overflow="hidden">
+                <Box
+                  w="90%"
+                  ml="auto"
+                  borderTopLeftRadius="lg"
+                  overflow="hidden"
+                >
                   <Field.Image name="RightCardImage" />
                 </Box>
               </Box>
@@ -116,24 +130,7 @@ const Features: FC = () => {
                   textAlign="center"
                 />
               </Center>
-              <CodePlayground
-                codeEditorProps={{}}
-                executeCode={async code => {
-                  await new Promise(resolve => setTimeout(resolve, 3000));
-
-                  // Fetch some random data from the internet
-                  const res = await fetch('https://jsonplaceholder.typicode.com/todos/1');
-                  const data = await res.json();
-
-                  return (
-                    <Box>
-                      <h1>How cool is that?</h1>
-                      <pre>{JSON.stringify(data, null, 2)}</pre>
-                    </Box>
-                  );
-                }}
-                children={"Isn't that cool?"}
-              ></CodePlayground>
+              <QASMPlayground />
             </Box>
             <Box {...cardProps} w="100%" mt={7}>
               <Box w="30%" minW={{ base: '100px', md: '300px' }} m="auto">

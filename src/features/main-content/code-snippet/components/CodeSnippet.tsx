@@ -1,4 +1,12 @@
-import { Box, BoxProps, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Button,
+  Flex,
+  IconButton,
+  Spacer,
+  Text
+} from '@chakra-ui/react';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import 'highlight.js/styles/atom-one-dark.css';
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
@@ -14,8 +22,8 @@ export interface ICodeSnippetProps extends IMainContentComponentBaseProps {
   headerText?: string;
   isStandalone?: boolean;
   isExecutable?: boolean;
-  isExecuting?: boolean;
-  executeCode?: (code: string) => void;
+  toolbar?: React.ReactNode;
+
   containerProps?: BoxProps;
   isEditable?: boolean;
   onChange?: (code: string) => void;
@@ -32,9 +40,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   headerText,
   containerProps,
   isStandalone = true,
-  isExecutable,
-  isExecuting,
-  executeCode,
+  toolbar = <></>,
   isEditable,
   onChange
 }) => {
@@ -72,7 +78,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   return (
     <Box
       {...baseProps}
-      w={{ base: 'calc(100vw - 3.5rem)', md: 'auto' }}
+      w={'auto'}
       overflow="hidden"
       border="1px solid"
       borderColor="components.codeSnippet.borderColor"
@@ -119,7 +125,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
         }}
         transition="box-shadow 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
       >
-        {(headerText || isExecutable) && (
+        {(headerText || toolbar) && (
           <Flex
             bgColor="components.codeSnippet.header.bgColor"
             color="components.codeSnippet.header.text.color"
@@ -128,30 +134,14 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
             }}
             transition="color 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
             p={3}
+            flexDir={{ base: 'column', md: 'row' }}
           >
             {headerText && (
               <Text fontSize="xs" my="auto">
                 {headerText}
               </Text>
             )}
-            {isExecutable && (
-              <>
-                <Spacer />
-                <Button
-                  size="sm"
-                  colorScheme="theme"
-                  my="auto"
-                  _hover={{
-                    transform: 'scale(1.05)'
-                  }}
-                  transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                  isLoading={isExecuting}
-                  onClick={executeCode && children ? () => executeCode(children) : undefined}
-                >
-                  Execute
-                </Button>
-              </>
-            )}
+            {toolbar}
           </Flex>
         )}
         <Box position="relative">

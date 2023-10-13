@@ -3,17 +3,16 @@ import { FC, ReactNode } from 'react';
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
 
 interface ICodeResultPreviewProps {
-  result?: ReactNode;
   isStandalone?: boolean;
   headerText?: string;
-  isExecuting?: boolean;
+  isLoading?: boolean;
+  children?: ReactNode;
 }
 
-const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
-  result,
+const DiagramPreview: FC<ICodeResultPreviewProps> = ({
   isStandalone,
   headerText,
-  isExecuting
+  children
 }) => {
   let baseProps = {};
 
@@ -43,33 +42,9 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
           {headerText}
         </Text>
       )}
-      <Box p={3}>
-        {isExecuting ? (
-          <Center my={5}>
-            <ButtonSpinner
-              boxSize="20px"
-              color="components.codeResultPreview.loadingSpinner.color"
-            />
-          </Center>
-        ) : (
-          <>
-            {result ? (
-              result
-            ) : (
-              <Center my={5}>
-                <Text
-                  fontSize="sm"
-                  color="components.codeResultPreview.noResult.text.color"
-                >
-                  Not run yet
-                </Text>
-              </Center>
-            )}
-          </>
-        )}
-      </Box>
+      <Box p={3}>{children}</Box>
     </Box>
   );
 };
 
-export default CodeResultPreview;
+export default DiagramPreview;
