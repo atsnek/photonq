@@ -13,8 +13,6 @@ export interface IProfileStateDefinition {
   profile?: TUser;
   overviewPosts: TPaginatedPostListData;
   searchPosts: TSearchPostListData;
-  // searchPostLanguage: EnPostLanguage | undefined; //TODO: Move this to the belonging post list data
-  // searchPostsDateRange: TPostDateRange; //TODO: Move this to the belonging post list data
   starredPosts: TSearchPostListData;
   followers: TPaginationData<TUser[]>;
   followingUsers: TPaginationData<TUser[]>;

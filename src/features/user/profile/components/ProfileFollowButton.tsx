@@ -1,9 +1,9 @@
-import { Button } from '@chakra-ui/react';
+import { Button, ButtonProps } from '@chakra-ui/react';
 import { FC } from 'react';
 import TbUserPlus from '../../../../shared/components/icons/tabler/TbUserPlus';
 import TbUserMinus from '../../../../shared/components/icons/tabler/TbUserMinus';
 
-interface IProfileFollowButtonProps {
+interface IProfileFollowButtonProps extends ButtonProps {
   isFollowing: boolean;
   toggleFollowState: () => void;
   isLoading: boolean;
@@ -12,7 +12,8 @@ interface IProfileFollowButtonProps {
 const ProfileFollowButton: FC<IProfileFollowButtonProps> = ({
   isFollowing,
   toggleFollowState,
-  isLoading
+  isLoading,
+  ...props
 }) => {
   return (
     <Button
@@ -23,6 +24,7 @@ const ProfileFollowButton: FC<IProfileFollowButtonProps> = ({
       isLoading={isLoading}
       leftIcon={isFollowing ? <TbUserMinus /> : <TbUserPlus />}
       onClick={toggleFollowState}
+      {...props}
     >
       {isFollowing ? 'Unfollow' : 'Follow'}
     </Button>

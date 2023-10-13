@@ -12,6 +12,8 @@ export type TUser = {
   avatarUrl?: string;
   stats?: TProfileStat;
   location?: string;
+  isFollowing?: boolean;
+  isOwnProfile?: boolean;
 };
 
 /**

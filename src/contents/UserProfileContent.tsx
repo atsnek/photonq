@@ -13,6 +13,7 @@ import { POST_FETCH_LIMIT } from './PostsContent';
 import TbStar from '../shared/components/icons/tabler/TbStar';
 import { TProfileTab } from '../features/user/types/user';
 import { formatNumber } from '../shared/utils/utils';
+import UserList from '../features/user/user-list/components/UserList';
 
 const tabNavItems: Array<{ label: string; value: TProfileTab; icon: ReactElement }> = [
   {
@@ -67,6 +68,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     setPostFilterQuery(undefined);
 
     let tab: TProfileTab = 'overview';
+    console.log('hash', hash);
     switch (hash) {
       case '#posts':
       case '#post':
@@ -206,6 +208,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           defaultFilterQuery={starredPosts.query}
         />
       );
+      break;
+    case 'followers':
+      mainContent = <UserList listData={followers} />;
       break;
     default:
       mainContent = (

@@ -324,6 +324,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   },
   fetchFollowers: async () => {
 
+    const [currentUser] = await sq.query(q => q.userMe);
+
     const profile = get().profile.profile;
 
     if (!profile) return false;
@@ -347,6 +349,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         user.profile?.bio;
         user.username;
         user.profile?.followers().edges.map(fe => fe.node.follower.id);
+        user.profile?.views;
+        user.profile?.posts().totalCount;
+        user.profile?.stars().totalCount;
+        user.profile?.followers().totalCount;
+        user.profile?.following().nodes.map(n => n.id);
 
         return user;
       });
@@ -359,6 +366,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         bio: user.profile?.bio ?? null,
         displayName: getUserDisplayname(user),
         username: user.username,
+        stats: {
+          followers: user.profile?.followers().totalCount ?? 0,
+          following: 0,
+          posts: user.profile?.posts().totalCount ?? 0,
+          starred: 0,
+          views: user.profile?.views ?? 0,
+        },
+        isFollowing: currentUser && !!user.profile?.followers().edges.find(fe => fe.node.follower.id === currentUser.id),
+        isOwnProfile: currentUser?.id === user.id,
       }
     }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
 

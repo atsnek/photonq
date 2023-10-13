@@ -37,13 +37,10 @@ import ProfileFollowButton from './ProfileFollowButton';
 import TbUserEdit from '../../../../shared/components/icons/tabler/TbUserEdit';
 import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck';
 import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
-import TbUsers from '../../../../shared/components/icons/tabler/TbUsers';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { formatNumber } from '../../../../shared/utils/utils';
-import TbEye from '../../../../shared/components/icons/tabler/TbEye';
 import { TProfileStatType, TProfileTab } from '../../types/user';
-import TbBooks from '../../../../shared/components/icons/tabler/TbBooks';
-import TbUserShare from '../../../../shared/components/icons/tabler/TbUserShare';
+import { userStatIcons } from '../../../../shared/vars/user';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -99,13 +96,6 @@ interface LeftNavProfileProps {
  * Sub-component of the profile page that displays the key information about the user.
  */
 const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab }) => {
-  const statIcons: Partial<{ [key in TProfileStatType]: FC<IconProps> }> = {
-    followers: TbUsers,
-    following: TbUserShare,
-    views: TbEye,
-    posts: TbBooks
-  };
-
   const navTopOffset = useNavOffset();
   const isAuthenticated = useAuthenticationContext().user !== null;
   const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
@@ -149,7 +139,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
   const statElements = useMemo(() => {
     const output: ReactNode[] = [];
     for (const key in userData?.stats) {
-      const IconComp = statIcons[key as TProfileStatType];
+      const IconComp = userStatIcons[key as TProfileStatType];
 
       if (!IconComp) continue; // If this doesnt exist, we dont want to show it
 
@@ -173,35 +163,32 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
 
       if (key === 'followers') {
         output.push(
-          <Fragment key={key}>
-            <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
-              {icon}
-              <LinkBox
-                as={HStack}
-                spacing={0}
-                _hover={{
-                  '& *': {
-                    color: 'pages.userProfile.leftNav.stats.link._hover.color'
-                  }
-                }}
-              >
-                {statValue}
-                <LinkOverlay href="#">Followers</LinkOverlay>
-              </LinkBox>
-            </GridItem>
-          </Fragment>
+          <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
+            {icon}
+            <LinkBox
+              as={HStack}
+              spacing={0}
+              _hover={{
+                '& *': {
+                  color: 'pages.userProfile.leftNav.stats.link._hover.color'
+                }
+              }}
+              onClick={() => setActiveTab('followers')}
+            >
+              {statValue}
+              <LinkOverlay href="#followers">Followers</LinkOverlay>
+            </LinkBox>
+          </GridItem>
         );
       } else {
         output.push(
-          <Fragment key={key}>
-            <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
-              {icon}
-              <Text cursor="default">
-                {statValue}
-                {key}
-              </Text>
-            </GridItem>
-          </Fragment>
+          <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
+            {icon}
+            <Text cursor="default">
+              {statValue}
+              {key}
+            </Text>
+          </GridItem>
         );
       }
     }
