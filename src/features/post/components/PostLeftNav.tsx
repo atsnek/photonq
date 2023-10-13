@@ -20,7 +20,6 @@ import { useNavOffset } from '../../../shared/hooks/use-nav-offset';
 import Image from '../../../shared/components/image/Image';
 import LeftNavPostReaderSkeleton from '../reader/components/LeftNavPostReaderSkeleton';
 import { useAuthenticationContext } from '@atsnek/jaen';
-import PostLanguageMenuList from './PostLanguageMenuList';
 
 interface IPostLeftNavProps {
   post?: TPost;
@@ -168,11 +167,6 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 >
                   {post.language === 'EN' ? '🇺🇸' : '🇦🇹'}
                 </MenuButton>
-                <PostLanguageMenuList
-                  changeLanguage={handleLanguageChange}
-                  currentLanguage={post.language}
-                  compactMode
-                />
               </Menu>
             </HStack>
             <Divider mt={8} mb={3} />
@@ -195,7 +189,11 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             onBlur={e => handleSummaryChange(e.target.value)}
           />
         ) : (
-          <Text size="sm" color="pages.singlePost.leftNav.summary.color" textAlign="justify">
+          <Text
+            size="sm"
+            color="pages.singlePost.leftNav.summary.color"
+            textAlign="justify"
+          >
             {post.summary}
           </Text>
         )}
