@@ -284,7 +284,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   fetchStarredPosts: async (query, limit, offset, language, dateRange) => {
     set(
       produce((state: TStoreState) => {
-        if (query !== state.profile.starredPosts.query) {
+        if (query !== state.profile.starredPosts.query || (dateRange && dateRange?.from !== state.profile.starredPosts.dateRange?.from || dateRange?.to !== state.profile.starredPosts.dateRange?.to)) {
           // Reset the state if the query changed
           state.profile.starredPosts = {
             query,
@@ -304,9 +304,10 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const [currentUser] = await sq.query(q => q.userMe);
 
+    console.log("dateRange: ", dateRange ?? get().profile.starredPosts.dateRange);
+
     const posts = await searchPosts(query, limit, 'PUBLIC', offset === 0 ? undefined : get().profile.starredPosts.nextCursor, currentUser, profile.id, language ?? get().profile.searchPosts.language, dateRange ?? get().profile.searchPosts.dateRange, 'starred');
 
-    console.log("result:", posts);
     set(produce((state: TStoreState) => {
       state.profile.starredPosts = {
         query,
@@ -560,18 +561,29 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       })
     );
 
-    const searchPostsDateRange = {
-      from: from ?? isAllPosts ? get().profile.searchPosts.dateRange?.from : get().profile.starredPosts.dateRange?.from,
-      to: to ?? isAllPosts ? get().profile.searchPosts.dateRange?.to : get().profile.starredPosts.dateRange?.to
+    const newDateRange = {
+      from: from ?? (isAllPosts ? get().profile.searchPosts.dateRange?.from : get().profile.starredPosts.dateRange?.from),
+      to: to ?? (isAllPosts ? get().profile.searchPosts.dateRange?.to : get().profile.starredPosts.dateRange?.to)
     };
 
-    get().profile.fetchSearchPosts(
-      get().profile.searchPosts.query,
-      POST_FETCH_LIMIT,
-      0,
-      undefined,
-      searchPostsDateRange
-    );
+    if (isAllPosts) {
+      get().profile.fetchSearchPosts(
+        get().profile.searchPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        undefined,
+        newDateRange
+      );
+    } else {
+      get().profile.fetchStarredPosts(
+        get().profile.starredPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        undefined,
+        newDateRange
+      );
+    }
+
   },
   togglePostPrivacy: async (postId, privacy) => {
     if (!get().profile.profile) return false;
