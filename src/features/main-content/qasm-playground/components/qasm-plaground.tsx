@@ -49,7 +49,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = () => {
 
         <CodeSnippet
           language="qasm"
-          headerText="QASM code"
+          headerText="QASM 2.0"
           onChange={setQasmCode}
           toolbar={
             <Flex flex="1" justifyContent="end">
