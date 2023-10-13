@@ -10,6 +10,8 @@ import {
   Heading,
   IconButton,
   IconProps,
+  LinkBox,
+  LinkOverlay,
   StackProps,
   Text,
   Textarea,
@@ -17,7 +19,16 @@ import {
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { FC, Fragment, ReactNode, useMemo, useRef, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  Fragment,
+  ReactNode,
+  SetStateAction,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
 import LeftNav, { ILeftNavProps } from '../../../../shared/containers/navigation/LeftNav';
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
@@ -30,8 +41,7 @@ import TbUsers from '../../../../shared/components/icons/tabler/TbUsers';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { formatNumber } from '../../../../shared/utils/utils';
 import TbEye from '../../../../shared/components/icons/tabler/TbEye';
-import TbStar from '../../../../shared/components/icons/tabler/TbStar';
-import { TProfileStatType } from '../../types/user';
+import { TProfileStatType, TProfileTab } from '../../types/user';
 import TbBooks from '../../../../shared/components/icons/tabler/TbBooks';
 import TbUserShare from '../../../../shared/components/icons/tabler/TbUserShare';
 
@@ -82,19 +92,14 @@ export const leftNavProfileStyling = {
 
 interface LeftNavProfileProps {
   isOwnProfile: boolean;
+  setActiveTab: Dispatch<SetStateAction<TProfileTab>>;
 }
 
 /**
  * Sub-component of the profile page that displays the key information about the user.
  */
-const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
-  // const socialLinkIcons: { [key in TSocialLink]: FC<IconProps> } = {
-  //   email: FeatherInbox,
-  //   linkedin: TbLinkedIn,
-  //   location: TbMapPin,
-  //   company: TbBuilding
-  // };
-  const statIcons: { [key in TProfileStatType]: FC<IconProps> } = {
+const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab }) => {
+  const statIcons: Partial<{ [key in TProfileStatType]: FC<IconProps> }> = {
     followers: TbUsers,
     following: TbUserShare,
     views: TbEye,
@@ -145,28 +150,50 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
     const output: ReactNode[] = [];
     for (const key in userData?.stats) {
       const IconComp = statIcons[key as TProfileStatType];
-      output.push(
-        <Fragment key={key}>
-          <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
-            <IconComp
-              strokeWidth={2.2}
-              h="full"
-              color="pages.userProfile.leftNav.socialLinks.icon.color"
-            />
-            <Text cursor="default">
-              <Text
-                as="span"
-                color="pages.userProfile.leftNav.stats.count.color"
-                fontWeight="semibold"
-                mr={1}
-              >
-                {formatNumber(userData.stats[key as TProfileStatType])}
-              </Text>
-              {key}
+
+      if (!IconComp) continue; // If this doesnt exist, we dont want to show it
+
+      const coreElements = (
+        <>
+          <IconComp
+            strokeWidth={2.2}
+            h="full"
+            color="pages.userProfile.leftNav.socialLinks.icon.color"
+          />
+          <Text cursor="default">
+            <Text
+              as="span"
+              color="pages.userProfile.leftNav.stats.count.color"
+              fontWeight="semibold"
+              mr={1}
+            >
+              {formatNumber(userData.stats[key as TProfileStatType])}
             </Text>
-          </GridItem>
-        </Fragment>
+            {key}
+          </Text>
+        </>
       );
+
+      if (key === 'followers') {
+        output.push(
+          <Fragment key={key}>
+            <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
+              <LinkBox>
+                {coreElements}
+                <LinkOverlay href="#">Followers</LinkOverlay>
+              </LinkBox>
+            </GridItem>
+          </Fragment>
+        );
+      } else {
+        output.push(
+          <Fragment key={key}>
+            <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
+              {coreElements}
+            </GridItem>
+          </Fragment>
+        );
+      }
     }
     return output;
   }, [userData?.stats]);

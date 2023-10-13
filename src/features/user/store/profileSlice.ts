@@ -21,6 +21,8 @@ const initState: IProfileStateDefinition = {
   searchPostLanguage: undefined,
   searchPostsDateRange: { from: undefined, to: undefined },
   starredPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
+  followers: { items: [], totalCount: 0 },
+  followingUsers: { items: [], totalCount: 0 },
   isFollowing: undefined,
   profile: undefined
 };
@@ -34,6 +36,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       following: 0,
       views: 0,
       posts: 0,
+      starred: 0,
     };
 
     const [currentUser, currentUserError] = await sq.query(q => q.userMe);
@@ -72,6 +75,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             following: profile?.following().totalCount ?? 0,
             views: profile?.views ?? 0,
             posts: profile?.posts().totalCount ?? 0,
+            starred: profile?.starredPosts().totalCount ?? 0,
           },
           username: username
         };
@@ -309,8 +313,14 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       });
     })
 
-    console.log("rawPosts: ", rawPosts);
+    console.log("rawPosts: ", rawPosts)
 
+    return true;
+  },
+  fetchFollowers: async () => {
+    return true;
+  },
+  fetchFollowingUsers: async () => {
     return true;
   },
   toggleFollow: async () => {

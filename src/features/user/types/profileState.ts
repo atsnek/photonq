@@ -16,6 +16,8 @@ export interface IProfileStateDefinition {
   searchPostLanguage: EnPostLanguage | undefined;
   searchPostsDateRange: TPostDateRange;
   starredPosts: TSearchPostListData;
+  followers: TPaginationData<TUser[]>;
+  followingUsers: TPaginationData<TUser[]>;
   activity: TPaginationData<TActivity[]>;
   isFollowing?: boolean;
 }
@@ -37,6 +39,8 @@ export interface IProfileStateActions {
     to: Date | null | undefined
   ) => void;
   fetchStarredPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => Promise<boolean>;
+  fetchFollowers: () => Promise<boolean>;
+  fetchFollowingUsers: () => Promise<boolean>;
   toggleFollow: () => Promise<boolean>;
   changeBio: (bio: string) => Promise<boolean>;
   togglePostRating: (

@@ -31,7 +31,7 @@ export type TProfileTab = 'overview' | 'posts' | 'stars' | 'followers' | 'follow
 /**
  * This represents a single stat of a user.
  */
-export type TProfileStatType = 'following' | 'followers' | 'views' | 'posts';
+export type TProfileStatType = 'following' | 'followers' | 'views' | 'posts' | 'starred';
 
 /**
  * This represents all the stats of a user.

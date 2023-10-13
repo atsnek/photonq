@@ -1,5 +1,5 @@
-import { Box, Button, HStack, Stack } from '@chakra-ui/react';
-import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
+import { Box, Button, HStack, Stack, Tag } from '@chakra-ui/react';
+import { FC, ReactElement, ReactNode, ReactNodeArray, useEffect, useMemo, useState } from 'react';
 import MainGrid from '../shared/containers/components/MainGrid';
 import LeftNavProfile from '../features/user/profile/components/LeftNavProfile';
 import PostList from '../features/post/PostList';
@@ -12,6 +12,7 @@ import { useAppStore } from '../shared/store/store';
 import { POST_FETCH_LIMIT } from './PostsContent';
 import TbStar from '../shared/components/icons/tabler/TbStar';
 import { TProfileTab } from '../features/user/types/user';
+import { formatNumber } from '../shared/utils/utils';
 
 const tabNavItems: Array<{ label: string; value: TProfileTab; icon: ReactElement }> = [
   {
@@ -106,6 +107,22 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     () =>
       tabNavItems.map(item => {
         const isActive = item.value === activeTab;
+        let label: ReactNode = item.label;
+
+        if (item.value === 'stars') {
+          const starred = profile?.stats?.starred ?? 0;
+          if (starred > 0) {
+            label = (
+              <>
+                {item.label}
+                <Tag ml={2} size="sm" colorScheme="gray">
+                  {formatNumber(starred)}
+                </Tag>
+              </>
+            );
+          }
+        }
+
         return (
           <Button
             key={item.value}
@@ -129,7 +146,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
                 : undefined
             }
           >
-            {item.label}
+            {label}
           </Button>
         );
       }),
@@ -192,7 +209,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       </HStack>
       <MainGrid mt={10}>
         <Box>
-          <LeftNavProfile isOwnProfile={isOwnProfile} />
+          <LeftNavProfile isOwnProfile={isOwnProfile} setActiveTab={setActiveTab} />
         </Box>
         <Stack verticalAlign="top" spacing={{ base: 0, xl: 12 }} direction="row">
           <Box w="full">{mainContent}</Box>
