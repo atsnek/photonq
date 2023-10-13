@@ -60,6 +60,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const starredPosts = useAppStore(state => state.profile.starredPosts);
   const fetchStarredPosts = useAppStore(state => state.profile.fetchStarredPosts);
   const fetchFollowers = useAppStore(state => state.profile.fetchFollowers);
+  const followers = useAppStore(state => state.profile.followers);
 
   useEffect(() => {
     resetProfile();
@@ -98,6 +99,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       starredPosts.query.length === 0
     ) {
       fetchStarredPosts('', POST_FETCH_LIMIT, 0);
+    } else if (activeTab === 'followers' && followers.items.length === 0) {
+      fetchFollowers();
     }
   }, [activeTab, profile]);
 

@@ -1,9 +1,9 @@
-import { TProfile, TProfileStatType } from '../types/user';
+import { TProfile, TProfileStatType, TUser } from '../types/user';
 import { sq } from '@snek-functions/origin';
 import { produce } from 'immer';
 import { TStoreSlice, TStoreState } from '../../../shared/types/store';
 import { IProfileStateDefinition, TProfileSlice } from '../types/profileState';
-import { buildUserActivities, changeUserFollowingState } from '../utils/user';
+import { buildUserActivities, changeUserFollowingState, getUserDisplayname } from '../utils/user';
 import {
   buildPostPreview,
   searchPosts,
@@ -322,6 +322,56 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     return true;
   },
   fetchFollowers: async () => {
+
+    const profile = get().profile.profile;
+
+    if (!profile) return false;
+
+    const [followerIds, followerIdsError] = await sq.query(q => {
+      const followers = q.user({ id: profile.id }).profile?.followers({ first: 10, after: get().profile.followers?.nextCursor });
+
+      return followers?.edges.map(fe => fe.node.follower.id);
+    })
+
+    if (followerIdsError?.length > 0) return false;
+
+    const followers = await Promise.all((followerIds ?? []).map(async (id): Promise<TUser | undefined> => {
+      const [user, userError] = await sq.query(q => {
+        const user = q.user({ id });
+
+        user.id;
+        user.details?.firstName;
+        user.details?.lastName;
+        user.details?.avatarURL;
+        user.profile?.bio;
+        user.username;
+        user.profile?.followers().edges.map(fe => fe.node.follower.id);
+
+        return user;
+      });
+
+      if (!user || userError?.length > 0) return undefined;
+
+      return {
+        id: user.id,
+        avatarUrl: user.details?.avatarURL ?? '',
+        bio: user.profile?.bio ?? null,
+        displayName: getUserDisplayname(user),
+        username: user.username,
+      }
+    }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
+
+    if (!followers) return false;
+
+    set(produce((state: TStoreState) => {
+      state.profile.followers = {
+        items: get().profile.followers?.items.concat(followers) ?? followers,
+        totalCount: get().profile.followers?.totalCount ?? followers.length,
+        nextCursor: followers.length === 0 ? undefined : followers[followers.length - 1].id,
+        hasMore: followers.length === 10
+      }
+    }));
+
     return true;
   },
   fetchFollowingUsers: async () => {
