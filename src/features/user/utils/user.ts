@@ -100,7 +100,6 @@ export const buildUserActivities = async (
       )
         return;
 
-      console.log("activity: ", ae.node);
       let title = '';
       let href = '';
       if (type === 'blog_create' && post) {

@@ -37,10 +37,11 @@ import ProfileFollowButton from './ProfileFollowButton';
 import TbUserEdit from '../../../../shared/components/icons/tabler/TbUserEdit';
 import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck';
 import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
-import { useAuthenticationContext } from '@atsnek/jaen';
+import { uploadFile, useAuthenticationContext } from '@atsnek/jaen';
 import { formatNumber } from '../../../../shared/utils/utils';
 import { TProfileStatType, TProfileTab } from '../../types/user';
 import { userStatIcons } from '../../../../shared/vars/user';
+import Image from '../../../../shared/components/image/Image';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -108,6 +109,10 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const isFollowing = useAppStore(state => state.profile.isFollowing);
   const changeBio = useAppStore(state => state.profile.changeBio);
+  const changeProfilePicture = useAppStore(state => state.profile.changeProfilePicture);
+
+  const [isUpdatingProfileImage, setIsUpdatingProfileImage] = useState(false);
+  const updateUserDetails = useAuthenticationContext().updateDetails;
 
   const handleToggleFollow = async () => {
     setIsFollowUpdating(true);
@@ -134,6 +139,15 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
     setViewMode('read');
     if (!bioInputRef.current) return;
     bioInputRef.current.value = userData?.bio ?? '';
+  };
+
+  const handleUpdateProfileImage = async (file: File) => {
+    setIsUpdatingProfileImage(true);
+    const { data, fileUrl } = await uploadFile(file);
+    if (!data) return;
+    await updateUserDetails({ avatarURL: fileUrl });
+    changeProfilePicture(fileUrl);
+    setIsUpdatingProfileImage(false);
   };
 
   const statElements = useMemo(() => {
@@ -230,16 +244,19 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
           }
         }}
       >
-        <Avatar
+        <Image
           {...leftNavProfileStyling.avatar}
-          name={userData.username}
           src={userData.avatarUrl}
           aspectRatio={1}
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
             transform: 'scale(1.02)'
           }}
+          borderRadius="full"
           transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
+          editable={isOwnProfile}
+          handleImageChange={handleUpdateProfileImage}
+          isUploading={isUpdatingProfileImage}
         />
         <VStack {...leftNavProfileStyling.userData.stack}>
           <Heading as="h6" fontSize="24px" {...leftNavProfileStyling.userData.displayName}>

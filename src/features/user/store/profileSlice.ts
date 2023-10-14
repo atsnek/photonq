@@ -477,6 +477,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return succeed;
   },
+  changeProfilePicture: (avatarUrl) => {
+    if (!get().profile.profile) return false;
+    set(
+      produce((state: TStoreState): void => {
+        state.profile.profile!.avatarUrl = avatarUrl;
+      })
+    )
+    return true;
+  },
   togglePostRating: async (id, source) => {
     let hasRated = false;
 

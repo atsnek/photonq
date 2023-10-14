@@ -42,6 +42,7 @@ export interface IProfileStateActions {
   fetchFollowingUsers: () => Promise<boolean>;
   toggleFollow: (id?: string) => Promise<boolean>;
   changeBio: (bio: string) => Promise<boolean>;
+  changeProfilePicture: (avatarUrl: string) => boolean;
   togglePostRating: (
     id: TPostPreview['id'],
     source: Extract<TProfileTab, 'posts' | 'overview' | 'stars'>,
