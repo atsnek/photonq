@@ -62,6 +62,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const fetchStarredPosts = useAppStore(state => state.profile.fetchStarredPosts);
   const fetchFollowers = useAppStore(state => state.profile.fetchFollowers);
   const followers = useAppStore(state => state.profile.followers);
+  const toggleFollow = useAppStore(state => state.profile.toggleFollow);
 
   useEffect(() => {
     resetProfile();
@@ -210,7 +211,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       );
       break;
     case 'followers':
-      mainContent = <UserList listData={followers} />;
+      mainContent = <UserList listData={followers} toggleFollow={toggleFollow} />;
       break;
     default:
       mainContent = (
@@ -218,6 +219,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       );
       break;
   }
+
+  console.log('followers: ', followers);
 
   return (
     <>

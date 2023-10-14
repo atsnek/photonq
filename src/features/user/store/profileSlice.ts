@@ -394,35 +394,64 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   fetchFollowingUsers: async () => {
     return true;
   },
-  toggleFollow: async () => {
+  toggleFollow: async (id) => {
     const [currentUserId] = await sq.query(q => q.userMe.id);
-    const [currentProfileId, profileError] = await sq.query(
-      q =>
-        q.user({
+    const [targetUser, targetUserErro] = await sq.query(
+      q => {
+        const user = q.user({
           resourceId: __SNEK_RESOURCE_ID__,
-          id: get().profile.profile?.id
-        }).id
+          id: id ?? get().profile.profile?.id
+        });
+        user.id;
+        user.details?.lastName;
+        user.profile?.followers().nodes.map(n => n.follower.id);
+        return user;
+      }
     );
+    const isFollowing = targetUser?.profile?.followers().nodes.findIndex(f => f.follower.id === currentUserId) !== -1;
 
     if (
-      profileError ||
+      targetUserErro ||
       !currentUserId ||
-      !currentProfileId ||
-      currentUserId === currentProfileId
+      !targetUser.id ||
+      currentUserId === targetUser.id
     )
       return false;
 
     const succeed = await changeUserFollowingState(
-      currentProfileId,
-      get().profile.isFollowing ?? false
+      targetUser.id,
+      isFollowing
     );
 
     if (succeed) {
       set(
         produce((state: TStoreState): void => {
-          state.profile.isFollowing = !get().profile.isFollowing;
-          if (!state.profile.profile || !state.profile.profile.stats?.followers) return;
-          state.profile.profile.stats.followers += get().profile.isFollowing ? -1 : 1;
+          if (id) {
+            // If id is defined, we are following a different profile than the one being viewed
+            const followerIdx = state.profile.followers.items.findIndex(f => f.id === id);
+            if (followerIdx !== -1) {
+              const item = state.profile.followers.items[followerIdx];
+              state.profile.followers.items[followerIdx].isFollowing = !isFollowing;
+              if (state.profile.followers.items[followerIdx].stats?.followers === undefined) return;
+              state.profile.followers.items[followerIdx].stats!.followers += isFollowing ? -1 : 1;
+            }
+
+            const followingIdx = state.profile.followingUsers.items.findIndex(f => f.id === id);
+            if (followingIdx !== -1) {
+              state.profile.followingUsers.items[followingIdx].isFollowing = !state.profile.followingUsers.items[followingIdx].isFollowing;
+              if (state.profile.followingUsers.items[followingIdx].stats?.followers === undefined) return;
+              state.profile.followingUsers.items[followingIdx].stats!.followers += isFollowing ? -1 : 1;
+            }
+
+            if (currentUserId === get().profile.profile?.id && state.profile.profile?.stats?.following !== undefined) {
+              state.profile.profile.stats!.following += isFollowing ? -1 : 1;
+            }
+
+          } else {
+            state.profile.isFollowing = !isFollowing;
+            if (!state.profile.profile || state.profile.profile.stats?.followers == undefined) return;
+            state.profile.profile.stats.followers += isFollowing ? -1 : 1;
+          }
         })
       );
     }

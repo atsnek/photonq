@@ -1,11 +1,9 @@
-import { FC, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useMemo, useState } from 'react';
 import { TProfileStatType, TUser } from '../../types/user';
 import {
   Avatar,
   Box,
   Card,
-  Grid,
-  GridItem,
   HStack,
   Heading,
   LinkBox,
@@ -17,15 +15,28 @@ import {
 import { userStatIcons } from '../../../../shared/vars/user';
 import { formatNumber } from '../../../../shared/utils/utils';
 import ProfileFollowButton from '../../profile/components/ProfileFollowButton';
+import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IUserPreviewCardProps {
   user: TUser;
+  toggleFollow: (id: string) => Promise<boolean>;
 }
 
 /**
  * Component for displaying a preview of a user.
  */
-const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user }) => {
+const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
+  const [isTogglingFollow, setIsTogglingFollow] = useState(false);
+  const isAuthenticated = useAuthenticationContext().user !== null;
+
+  const handleToggleFollow = async () => {
+    setIsTogglingFollow(true);
+    await toggleFollow(user.id);
+    setTimeout(() => {
+      setIsTogglingFollow(false);
+    }, 3000);
+  };
+
   const stats = useMemo(() => {
     const output: ReactNode[] = [];
     if (!user.stats) return output;
@@ -90,12 +101,26 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user }) => {
   }, [user]);
 
   return (
-    <LinkBox as={Card} variant="outline" p={5} borderRadius="xl" w="full">
+    <LinkBox
+      as={Card}
+      variant="outline"
+      p={5}
+      borderRadius="xl"
+      w="full"
+      _hover={{
+        boxShadow: 'md',
+        borderColor: 'theme.500',
+        h5: {
+          color: 'theme.500'
+        }
+      }}
+      transition="all 0.2s cubic-bezier(.17,.67,.83,.67)"
+    >
       <HStack w="full" spacing={3} alignItems="start">
         <Avatar name={user.username} src={user.avatarUrl} borderRadius="md" />
         <VStack alignItems="flex-start">
           <HStack>
-            <Heading as="h5" size="sm">
+            <Heading as="h5" size="sm" transition="color 0.2s ease-in-out">
               {user.displayName}
             </Heading>
             <LinkOverlay href={`/user/${user.username}`} fontSize="sm" color="gray.500">
@@ -110,11 +135,11 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user }) => {
           </HStack>
         </VStack>
         <Spacer />
-        {!user.isOwnProfile && (
+        {!user.isOwnProfile && isAuthenticated && (
           <ProfileFollowButton
             isFollowing={user.isFollowing ?? false}
-            isLoading={false}
-            toggleFollowState={() => {}}
+            isLoading={isTogglingFollow}
+            toggleFollowState={handleToggleFollow}
             w="fit-content"
             m={0}
           />
