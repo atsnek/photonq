@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Divider,
   Flex,
@@ -9,7 +8,6 @@ import {
   HStack,
   Heading,
   IconButton,
-  IconProps,
   LinkBox,
   LinkOverlay,
   StackProps,
@@ -19,16 +17,7 @@ import {
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import {
-  Dispatch,
-  FC,
-  Fragment,
-  ReactNode,
-  SetStateAction,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useMemo, useRef, useState } from 'react';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
 import LeftNav, { ILeftNavProps } from '../../../../shared/containers/navigation/LeftNav';
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
@@ -38,10 +27,11 @@ import TbUserEdit from '../../../../shared/components/icons/tabler/TbUserEdit';
 import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck';
 import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
 import { uploadFile, useAuthenticationContext } from '@atsnek/jaen';
-import { formatNumber } from '../../../../shared/utils/utils';
+import { capitalizeWord, formatNumber } from '../../../../shared/utils/utils';
 import { TProfileStatType, TProfileTab } from '../../types/user';
 import { userStatIcons } from '../../../../shared/vars/user';
 import Image from '../../../../shared/components/image/Image';
+import { fallbackUserAvatar } from '../../variables/user';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -153,6 +143,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
   const statElements = useMemo(() => {
     const output: ReactNode[] = [];
     for (const key in userData?.stats) {
+      const label = capitalizeWord(key);
       const IconComp = userStatIcons[key as TProfileStatType];
 
       if (!IconComp) continue; // If this doesnt exist, we dont want to show it
@@ -175,7 +166,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
         </Text>
       );
 
-      if (key === 'followers') {
+      if (key === 'followers' || key === 'following') {
         output.push(
           <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
             {icon}
@@ -187,10 +178,10 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
                   color: 'pages.userProfile.leftNav.stats.link._hover.color'
                 }
               }}
-              onClick={() => setActiveTab('followers')}
+              onClick={() => setActiveTab(key)}
             >
               {statValue}
-              <LinkOverlay href="#followers">Followers</LinkOverlay>
+              <LinkOverlay href={`#${key}`}>{label}</LinkOverlay>
             </LinkBox>
           </GridItem>
         );
@@ -200,7 +191,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
             {icon}
             <Text cursor="default">
               {statValue}
-              {key}
+              {label}
             </Text>
           </GridItem>
         );
@@ -246,7 +237,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
       >
         <Image
           {...leftNavProfileStyling.avatar}
-          src={userData.avatarUrl}
+          src={userData.avatarUrl || fallbackUserAvatar}
           aspectRatio={1}
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',

@@ -62,6 +62,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const fetchStarredPosts = useAppStore(state => state.profile.fetchStarredPosts);
   const fetchFollowers = useAppStore(state => state.profile.fetchFollowers);
   const followers = useAppStore(state => state.profile.followers);
+  const fetchFollowingUsers = useAppStore(state => state.profile.fetchFollowingUsers);
+  const followingUsers = useAppStore(state => state.profile.followingUsers);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
 
   useEffect(() => {
@@ -82,6 +84,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       case '#followers':
       case '#follower':
         tab = 'followers';
+        break;
+      case '#following':
+        tab = 'following';
         break;
     }
     setActiveTab(tab);
@@ -104,6 +109,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       fetchStarredPosts('', POST_FETCH_LIMIT, 0);
     } else if (activeTab === 'followers' && followers.items.length === 0) {
       fetchFollowers();
+    } else if (activeTab === 'following' && followingUsers.items.length === 0) {
+      fetchFollowingUsers();
     }
   }, [activeTab, profile]);
 
@@ -211,7 +218,18 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       );
       break;
     case 'followers':
-      mainContent = <UserList listData={followers} toggleFollow={toggleFollow} />;
+      mainContent = (
+        <UserList listData={followers} toggleFollow={toggleFollow} fetchItems={fetchFollowers} />
+      );
+      break;
+    case 'following':
+      mainContent = (
+        <UserList
+          listData={followingUsers}
+          toggleFollow={toggleFollow}
+          fetchItems={fetchFollowingUsers}
+        />
+      );
       break;
     default:
       mainContent = (

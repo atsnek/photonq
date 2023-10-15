@@ -26,6 +26,7 @@ import { query } from '../../pages';
 import { TPaginationType } from '../../shared/types/pagination';
 import usePagination from '../../shared/hooks/use-pagination';
 import { POST_FETCH_LIMIT } from '../../contents/PostsContent';
+import LoadMoreButton from '../../shared/components/pagination/LoadMoreButton';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (
@@ -250,12 +251,7 @@ const PostList: FC<IPostListProps> = ({
             </HStack>
           ))}
       {paginationType === 'load-more' && postData.state !== 'inactive' && postData.hasMore && (
-        <Button
-          variant="ghost-hover-outline"
-          size="sm"
-          borderRadius="lg"
-          rightIcon={<ChevronRightIcon />}
-          isDisabled={postData.state === 'loading'}
+        <LoadMoreButton
           onClick={
             !!fetchPosts
               ? () => {
@@ -268,9 +264,29 @@ const PostList: FC<IPostListProps> = ({
                 }
               : undefined
           }
-        >
-          Load more
-        </Button>
+          isDisabled={postData.state === 'loading'}
+        />
+        // <Button
+        //   variant="ghost-hover-outline"
+        //   size="sm"
+        //   borderRadius="lg"
+        //   rightIcon={<ChevronRightIcon />}
+        //   isDisabled={postData.state === 'loading'}
+        //   onClick={
+        //     !!fetchPosts
+        //       ? () => {
+        //           fetchPosts(
+        //             currentQuery ?? defaultFilterQuery ?? '',
+        //             POST_FETCH_LIMIT,
+        //             pagination.currentItems.length,
+        //             filterLanguage
+        //           );
+        //         }
+        //       : undefined
+        //   }
+        // >
+        //   Load more
+        // </Button>
       )}
     </VStack>
   );

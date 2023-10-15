@@ -13,9 +13,36 @@ import {
   VStack
 } from '@chakra-ui/react';
 import { userStatIcons } from '../../../../shared/vars/user';
-import { formatNumber } from '../../../../shared/utils/utils';
+import { capitalizeWord, formatNumber } from '../../../../shared/utils/utils';
 import ProfileFollowButton from '../../profile/components/ProfileFollowButton';
 import { useAuthenticationContext } from '@atsnek/jaen';
+
+export const userPreviewCardStyling = {
+  card: {
+    variant: 'outline',
+    p: 5,
+    borderRadius: 'xl',
+    w: 'full'
+  },
+  outerHStack: {
+    w: 'full',
+    spacing: 3,
+    alignItems: 'start'
+  },
+  avatar: {
+    borderRadius: 'md',
+    boxSize: '48px'
+  },
+  vstack: {
+    alignItems: 'flex-start'
+  },
+  stats: {
+    hstack: {
+      w: 'full',
+      spacing: 3
+    }
+  }
+};
 
 interface IUserPreviewCardProps {
   user: TUser;
@@ -32,9 +59,7 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
   const handleToggleFollow = async () => {
     setIsTogglingFollow(true);
     await toggleFollow(user.id);
-    setTimeout(() => {
-      setIsTogglingFollow(false);
-    }, 3000);
+    setIsTogglingFollow(false);
   };
 
   const stats = useMemo(() => {
@@ -46,6 +71,7 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
       views: user.stats.views,
       posts: user.stats.posts
     }) {
+      const label = capitalizeWord(key);
       const IconComp = userStatIcons[key as TProfileStatType];
       if (!IconComp) continue;
 
@@ -81,7 +107,7 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
               }}
             >
               {statValue}
-              <LinkOverlay href={`/user/${user.username}#followers`}>Followers</LinkOverlay>
+              <LinkOverlay href={`/user/${user.username}#followers`}>{label}</LinkOverlay>
             </LinkBox>
           </Box>
         );
@@ -91,7 +117,7 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
             {icon}
             <Text cursor="default">
               {statValue}
-              {key}
+              {label}
             </Text>
           </Box>
         );
@@ -103,10 +129,7 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
   return (
     <LinkBox
       as={Card}
-      variant="outline"
-      p={5}
-      borderRadius="xl"
-      w="full"
+      {...userPreviewCardStyling.card}
       _hover={{
         boxShadow: 'md',
         borderColor: 'theme.500',
@@ -116,9 +139,9 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
       }}
       transition="all 0.2s cubic-bezier(.17,.67,.83,.67)"
     >
-      <HStack w="full" spacing={3} alignItems="start">
-        <Avatar name={user.username} src={user.avatarUrl} borderRadius="md" />
-        <VStack alignItems="flex-start">
+      <HStack {...userPreviewCardStyling.outerHStack}>
+        <Avatar name={user.username} src={user.avatarUrl} {...userPreviewCardStyling.avatar} />
+        <VStack {...userPreviewCardStyling.vstack}>
           <HStack>
             <Heading as="h5" size="sm" transition="color 0.2s ease-in-out">
               {user.displayName}
@@ -130,7 +153,7 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
           <Text fontSize="12px" color="gray.500">
             {user.bio}
           </Text>
-          <HStack fontSize="12px" color="gray.500" spacing={3} w="full">
+          <HStack fontSize="12px" color="gray.500" {...userPreviewCardStyling.stats.hstack}>
             {stats}
           </HStack>
         </VStack>

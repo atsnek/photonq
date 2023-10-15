@@ -13,14 +13,15 @@ import { TPaginatedPostListData } from '../../post/types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
 import { asEnumKey } from 'snek-query';
 import { PrivacyInputInput } from '@snek-functions/origin/dist/schema.generated';
+import { USER_FETCH_LIMIT } from '../variables/user';
 
 const initState: IProfileStateDefinition = {
-  activity: { items: [], totalCount: 0 },
+  activity: { items: [], totalCount: 0, state: 'loading' },
   overviewPosts: { state: 'loading', items: [], totalCount: 0 },
   searchPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
   starredPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
-  followers: { items: [], totalCount: 0 },
-  followingUsers: { items: [], totalCount: 0 },
+  followers: { items: [], totalCount: 0, state: 'loading' },
+  followingUsers: { items: [], totalCount: 0, state: 'loading' },
   isFollowing: undefined,
   profile: undefined
 };
@@ -183,7 +184,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
               ],
               totalCount: state.profile.activity.totalCount,
               nextCursor: activities.nextCursor,
-              hasMore: activities.hasMore
+              hasMore: activities.hasMore,
+              state: 'success'
             };
       }));
 
@@ -304,8 +306,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const [currentUser] = await sq.query(q => q.userMe);
 
-    console.log("dateRange: ", dateRange ?? get().profile.starredPosts.dateRange);
-
     const posts = await searchPosts(query, limit, 'PUBLIC', offset === 0 ? undefined : get().profile.starredPosts.nextCursor, currentUser, profile.id, language ?? get().profile.searchPosts.language, dateRange ?? get().profile.searchPosts.dateRange, 'starred');
 
     set(produce((state: TStoreState) => {
@@ -323,75 +323,155 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     return true;
   },
   fetchFollowers: async () => {
+    set(produce((state: TStoreState) => {
+      state.profile.followers.state = "loading";
+    }))
 
     const [currentUser] = await sq.query(q => q.userMe);
 
     const profile = get().profile.profile;
-
     if (!profile) return false;
 
-    const [followerIds, followerIdsError] = await sq.query(q => {
-      const followers = q.user({ id: profile.id }).profile?.followers({ first: 10, after: get().profile.followers?.nextCursor });
+    const [followerConn, followerConnError] = await sq.query(q => {
+      const followers = q.user({ id: profile.id }).profile?.followers({ first: USER_FETCH_LIMIT, after: get().profile.followers?.nextCursor });
 
-      return followers?.edges.map(fe => fe.node.follower.id);
+      followers?.pageInfo.hasNextPage;
+      followers?.pageInfo.endCursor;
+      followers?.edges.map(fe => fe.node.follower.id);
+
+      return followers;
     })
+    if (followerConnError?.length > 0) return false;
 
-    if (followerIdsError?.length > 0) return false;
+    const followers = await Promise.all((followerConn?.edges ?? [])
+      .map(fe => fe.node.follower.id)
+      .map(async (id): Promise<TUser | undefined> => {
+        const [user, userError] = await sq.query(q => {
+          const user = q.user({ id });
 
-    const followers = await Promise.all((followerIds ?? []).map(async (id): Promise<TUser | undefined> => {
-      const [user, userError] = await sq.query(q => {
-        const user = q.user({ id });
+          user.id;
+          user.details?.firstName;
+          user.details?.lastName;
+          user.details?.avatarURL;
+          user.profile?.bio;
+          user.username;
+          user.profile?.followers().edges.map(fe => fe.node.follower.id);
+          user.profile?.views;
+          user.profile?.posts().totalCount;
+          user.profile?.stars().totalCount;
+          user.profile?.followers().totalCount;
+          // user.profile?.following().nodes.map(n => n.id);
 
-        user.id;
-        user.details?.firstName;
-        user.details?.lastName;
-        user.details?.avatarURL;
-        user.profile?.bio;
-        user.username;
-        user.profile?.followers().edges.map(fe => fe.node.follower.id);
-        user.profile?.views;
-        user.profile?.posts().totalCount;
-        user.profile?.stars().totalCount;
-        user.profile?.followers().totalCount;
-        user.profile?.following().nodes.map(n => n.id);
+          return user;
+        });
 
-        return user;
-      });
+        if (!user || userError?.length > 0) return undefined;
 
-      if (!user || userError?.length > 0) return undefined;
-
-      return {
-        id: user.id,
-        avatarUrl: user.details?.avatarURL ?? '',
-        bio: user.profile?.bio ?? null,
-        displayName: getUserDisplayname(user),
-        username: user.username,
-        stats: {
-          followers: user.profile?.followers().totalCount ?? 0,
-          following: 0,
-          posts: user.profile?.posts().totalCount ?? 0,
-          starred: 0,
-          views: user.profile?.views ?? 0,
-        },
-        isFollowing: currentUser && !!user.profile?.followers().edges.find(fe => fe.node.follower.id === currentUser.id),
-        isOwnProfile: currentUser?.id === user.id,
-      }
-    }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
-
+        return {
+          id: user.id,
+          avatarUrl: user.details?.avatarURL ?? '',
+          bio: user.profile?.bio ?? null,
+          displayName: getUserDisplayname(user),
+          username: user.username,
+          stats: {
+            followers: user.profile?.followers().totalCount ?? 0,
+            following: 0,
+            posts: user.profile?.posts().totalCount ?? 0,
+            starred: 0,
+            views: user.profile?.views ?? 0,
+          },
+          isFollowing: currentUser && !!user.profile?.followers().edges.find(fe => fe.node.follower.id === currentUser.id),
+          isOwnProfile: currentUser?.id === user.id,
+        }
+      }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
     if (!followers) return false;
 
     set(produce((state: TStoreState) => {
       state.profile.followers = {
         items: get().profile.followers?.items.concat(followers) ?? followers,
         totalCount: get().profile.followers?.totalCount ?? followers.length,
-        nextCursor: followers.length === 0 ? undefined : followers[followers.length - 1].id,
-        hasMore: followers.length === 10
+        nextCursor: followerConn?.pageInfo.endCursor ?? undefined,
+        hasMore: followerConn?.pageInfo.hasNextPage ?? false,
+        state: 'success',
       }
     }));
 
     return true;
   },
   fetchFollowingUsers: async () => {
+    set(produce((state: TStoreState) => {
+      state.profile.followingUsers.state = "loading";
+    }))
+
+    const [currentUser] = await sq.query(q => q.userMe);
+
+    const profile = get().profile.profile;
+    if (!profile) return false;
+    const isUserOnOwnProfile = currentUser?.id === profile.id;
+
+    const [followingConn, followingConnError] = await sq.query(q => {
+      const following = q.user({ id: profile.id }).profile?.following({ first: USER_FETCH_LIMIT, after: get().profile.followers?.nextCursor });
+
+      following?.pageInfo.hasNextPage;
+      following?.pageInfo.endCursor;
+      following?.edges.map(fe => fe.node.followed.id);
+
+      return following;
+    })
+    if (followingConnError?.length > 0) return false;
+
+    const followingUsers = await Promise.all((followingConn?.edges ?? [])
+      .map(fe => fe.node.followed.id)
+      .map(async (id): Promise<TUser | undefined> => {
+        const [user, userError] = await sq.query(q => {
+          const user = q.user({ id });
+
+          user.id;
+          user.details?.firstName;
+          user.details?.lastName;
+          user.details?.avatarURL;
+          user.profile?.bio;
+          user.username;
+          user.profile?.views;
+          user.profile?.posts().totalCount;
+          user.profile?.stars().totalCount;
+          user.profile?.followers().totalCount;
+          user.profile?.following().nodes.map(n => n.followed.id);
+
+          return user;
+        });
+
+        if (!user || userError?.length > 0) return undefined;
+
+        return {
+          id: user.id,
+          avatarUrl: user.details?.avatarURL ?? '',
+          bio: user.profile?.bio ?? null,
+          displayName: getUserDisplayname(user),
+          username: user.username,
+          stats: {
+            followers: user.profile?.followers().totalCount ?? 0,
+            following: 0,
+            posts: user.profile?.posts().totalCount ?? 0,
+            starred: 0,
+            views: user.profile?.views ?? 0,
+          },
+          isFollowing: isUserOnOwnProfile || (currentUser && !!user.profile?.following().nodes.find(fe => fe.followed.id === currentUser.id)),
+          isOwnProfile: user.id === currentUser.id,
+        }
+      }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
+    if (!followingUsers) return false;
+
+    set(produce((state: TStoreState) => {
+      state.profile.followingUsers = {
+        items: get().profile.followingUsers?.items.concat(followingUsers) ?? followingUsers,
+        totalCount: get().profile.followingUsers?.totalCount ?? followingUsers.length,
+        nextCursor: followingConn?.pageInfo.endCursor ?? undefined,
+        hasMore: followingConn?.pageInfo.hasNextPage ?? false,
+        state: 'success',
+      }
+    }));
+
     return true;
   },
   toggleFollow: async (id) => {
@@ -430,7 +510,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             // If id is defined, we are following a different profile than the one being viewed
             const followerIdx = state.profile.followers.items.findIndex(f => f.id === id);
             if (followerIdx !== -1) {
-              const item = state.profile.followers.items[followerIdx];
               state.profile.followers.items[followerIdx].isFollowing = !isFollowing;
               if (state.profile.followers.items[followerIdx].stats?.followers === undefined) return;
               state.profile.followers.items[followerIdx].stats!.followers += isFollowing ? -1 : 1;
@@ -443,6 +522,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
               state.profile.followingUsers.items[followingIdx].stats!.followers += isFollowing ? -1 : 1;
             }
 
+            // If the followed user's profile is the one being viewed, we need to update the state of it
             if (currentUserId === get().profile.profile?.id && state.profile.profile?.stats?.following !== undefined) {
               state.profile.profile.stats!.following += isFollowing ? -1 : 1;
             }
