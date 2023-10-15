@@ -171,6 +171,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   );
 
   let mainContent: ReactNode;
+  console.log('active tab: ', activeTab);
   switch (activeTab) {
     case 'posts':
       mainContent = (
@@ -237,8 +238,6 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       );
       break;
   }
-
-  console.log('followers: ', followers);
 
   return (
     <>

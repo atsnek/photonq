@@ -38,7 +38,7 @@ export interface IProfileStateActions {
     postList?: TProfilePostLists,
   ) => void;
   fetchStarredPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => Promise<boolean>;
-  fetchFollowers: (offset: number) => Promise<boolean>;
+  fetchFollowers: () => Promise<boolean>;
   fetchFollowingUsers: () => Promise<boolean>;
   toggleFollow: (id?: string) => Promise<boolean>;
   changeBio: (bio: string) => Promise<boolean>;

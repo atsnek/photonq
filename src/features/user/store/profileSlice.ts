@@ -410,7 +410,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     const isUserOnOwnProfile = currentUser?.id === profile.id;
 
     const [followingConn, followingConnError] = await sq.query(q => {
-      const following = q.user({ id: profile.id }).profile?.following({ first: USER_FETCH_LIMIT, after: get().profile.followers?.nextCursor });
+      const following = q.user({ id: profile.id }).profile?.following({ first: USER_FETCH_LIMIT, after: get().profile.followingUsers?.nextCursor });
 
       following?.pageInfo.hasNextPage;
       following?.pageInfo.endCursor;
