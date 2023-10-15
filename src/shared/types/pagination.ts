@@ -18,6 +18,7 @@ export type TPaginationData<I, T = {}> = T & {
   prevCursor?: string;
   nextCursor?: string;
   totalCount: number;
+  state: 'inactive' | 'loading' | 'error' | 'success';
 };
 
 /**

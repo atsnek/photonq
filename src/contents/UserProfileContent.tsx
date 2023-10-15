@@ -103,7 +103,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     ) {
       fetchStarredPosts('', POST_FETCH_LIMIT, 0);
     } else if (activeTab === 'followers' && followers.items.length === 0) {
-      fetchFollowers();
+      fetchFollowers(0);
     }
   }, [activeTab, profile]);
 
@@ -211,7 +211,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       );
       break;
     case 'followers':
-      mainContent = <UserList listData={followers} toggleFollow={toggleFollow} />;
+      mainContent = (
+        <UserList listData={followers} toggleFollow={toggleFollow} fetchItems={fetchFollowers} />
+      );
       break;
     default:
       mainContent = (

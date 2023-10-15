@@ -42,6 +42,7 @@ import { formatNumber } from '../../../../shared/utils/utils';
 import { TProfileStatType, TProfileTab } from '../../types/user';
 import { userStatIcons } from '../../../../shared/vars/user';
 import Image from '../../../../shared/components/image/Image';
+import { fallbackUserAvatar } from '../../variables/user';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -246,7 +247,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
       >
         <Image
           {...leftNavProfileStyling.avatar}
-          src={userData.avatarUrl}
+          src={userData.avatarUrl || fallbackUserAvatar}
           aspectRatio={1}
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
