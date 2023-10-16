@@ -22,7 +22,6 @@ interface IPostActionToolbarProps {
   hasRated: boolean;
   isRating: boolean;
   canEdit?: boolean;
-  hasChanges?: boolean;
   savePost: () => void;
   isSavingPost: boolean;
   handleDeletePost?: () => void;
@@ -34,13 +33,11 @@ interface IPostActionToolbarProps {
  */
 const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   viewMode,
-
   toggleViewMode,
   canEdit,
   hasRated,
   toggleRating,
   handleDeletePost,
-  hasChanges,
   savePost,
   isSavingPost,
   isDeletingPost
@@ -71,7 +68,7 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
         tooltip: 'Save this post',
         icon: <TbDeviceFloppy />,
         onClick: savePost,
-        disabled: hasChanges || areActionsDisabled,
+        disabled: areActionsDisabled,
         hoverColor: 'components.postEditor.save.hover.color'
       }
     );

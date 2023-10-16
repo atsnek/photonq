@@ -29,9 +29,7 @@ export interface IBlogPostContentProps {
  * Content for the blog post page (reading and editing).
  */
 const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
-  const [viewMode, setViewMode] = useState<TPostViewMode>(
-    isNewPost ? 'edit' : 'read'
-  );
+  const [viewMode, setViewMode] = useState<TPostViewMode>(isNewPost ? 'edit' : 'read');
   const [madeChanges, setMadeChanges] = useState(false);
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
@@ -44,21 +42,15 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const post = useAppStore(state => state.singlePost.post);
-  const togglePostRating = useAppStore(
-    state => state.singlePost.togglePostRating
-  );
-  const togglePostPrivacy = useAppStore(
-    state => state.singlePost.togglePrivacy
-  );
+  const togglePostRating = useAppStore(state => state.singlePost.togglePostRating);
+  const togglePostPrivacy = useAppStore(state => state.singlePost.togglePrivacy);
   const editSummary = useAppStore(state => state.singlePost.editSummary);
   const editTitle = useAppStore(state => state.singlePost.editTitle);
-  const updatePreviewImage = useAppStore(
-    state => state.singlePost.updatePreviewImage
-  );
+  const updatePreviewImage = useAppStore(state => state.singlePost.updatePreviewImage);
   const changeLanguage = useAppStore(state => state.singlePost.changeLanguage);
   const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
   const createNewPost = useAppStore(state => state.singlePost.createNewPost);
-  const [isCreatingNewPost, setIsCreatingNewPost] = useState(false);
+  const savePost = useAppStore(state => state.singlePost.savePost);
   const [isSavingPost, setIsSavingPost] = useState(false);
   const [newPostPreviewImage, setNewPostPreviewImage] = useState<File>();
 
@@ -88,32 +80,28 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     if (isNewPost) setNewPostPreviewImage(src);
   };
 
-  // const handleTogglePrivacy = () => {
-  //   privacyAlertDisclosure.onOpen();
-  // };
+  const handleTogglePrivacy = () => {
+    privacyAlertDisclosure.onOpen();
+  };
 
-  // const togglePrivacy = async () => {
-  //   ref.current.oldPrivacy = post?.privacy ?? 'public';
-  //   setIsUpdatingPrivacy(true);
-  //   await togglePostPrivacy();
-  //   setIsUpdatingPrivacy(false);
-  //   if (!madeChanges) setMadeChanges(true);
-  //   ref.current.oldPrivacy = undefined;
-  // };
+  const togglePrivacy = async () => {
+    ref.current.oldPrivacy = post?.privacy ?? 'public';
+    setIsUpdatingPrivacy(true);
+    await togglePostPrivacy();
+    setIsUpdatingPrivacy(false);
+    if (!madeChanges) setMadeChanges(true);
+    ref.current.oldPrivacy = undefined;
+  };
 
-  // const handleSummaryChange = async (summary: string) => {
-  //   setIsSavingPost(true);
-  //   await editSummary(summary);
-  //   if (!madeChanges) setMadeChanges(true);
-  //   setIsSavingPost(false);
-  // };
+  const handleSummaryChange = async (summary: string) => {
+    await editSummary(summary);
+    if (!madeChanges) setMadeChanges(true);
+  };
 
-  // const handleTitleChange = async (title: string) => {
-  //   setIsSavingPost(true);
-  //   await editTitle(title);
-  //   if (!madeChanges) setMadeChanges(true);
-  //   setIsSavingPost(false);
-  // };
+  const handleTitleChange = async (title: string) => {
+    await editTitle(title);
+    if (!madeChanges) setMadeChanges(true);
+  };
 
   const handleRatePost = async () => {
     if (isPostAuthor || !isAuthenticated) return;
@@ -122,10 +110,10 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     setIsRating(false);
   };
 
-  // const handleLanguageChange = async (language: EnPostLanguage) => {
-  //   await changeLanguage(language);
-  //   if (!madeChanges) setMadeChanges(true);
-  // };
+  const handleLanguageChange = async (language: EnPostLanguage) => {
+    await changeLanguage(language);
+    if (!madeChanges) setMadeChanges(true);
+  };
 
   const handleCreateNewPost = async () => {};
 
@@ -140,8 +128,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     setIsDeletingPost(false);
   };
 
-  const isPostAuthor =
-    isNewPost || (!!currentUser && currentUser?.id === author?.id);
+  const isPostAuthor = isNewPost || (!!currentUser && currentUser?.id === author?.id);
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
   const isPostPublic = post?.privacy === 'PUBLIC';
 
@@ -149,7 +136,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
 
   const handleSavePost = async () => {
     setIsSavingPost(true);
-
+    console.log(isNewPost);
     if (isNewPost) {
       const slug = await createNewPost(newPostPreviewImage);
       if (slug) {
@@ -159,7 +146,10 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       setMadeChanges(false);
       if (slug) window.removeEventListener('beforeunload', handleBeforeUnload);
     } else {
+      console.log('!!!');
+      savePost();
     }
+    setIsSavingPost(false);
   };
 
   return (
@@ -176,7 +166,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         savePost={handleSavePost}
       />
       <MainWrapper>
-        {/* <PostLeftNav
+        <PostLeftNav
           handleTitleChange={handleTitleChange}
           handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
@@ -187,7 +177,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
           handleLanguageChange={handleLanguageChange}
           handleTogglePrivacy={handleTogglePrivacy}
           isUpdatingPrivacy={isUpdatingPrivacy}
-        /> */}
+        />
         {canEditPost ? (
           <PostEditor post={post} setIsSavingPost={setIsSavingPost} />
         ) : (
@@ -210,17 +200,14 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         isDeletingPost={isDeletingPost}
         savePost={handleSavePost}
         isSavingPost={isSavingPost}
-        hasChanges={madeChanges}
       />
-      {/* <Alert
+      <Alert
         disclosure={privacyAlertDisclosure}
         confirmationAction={togglePrivacy}
         confirmationLabel={isPostPublic ? 'Unpublish' : 'Publish'}
         confirmationProps={{
           variant:
-            (ref.current.oldPrivacy ?? post?.privacy) === 'PUBLIC'
-              ? 'filledYellow'
-              : 'filledGreen'
+            (ref.current.oldPrivacy ?? post?.privacy) === 'PUBLIC' ? 'filledYellow' : 'filledGreen'
         }}
         body={
           isPostPublic
@@ -228,7 +215,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
             : 'Are you sure you want to publish this post? This post will be visible to everyone.'
         }
         header={isPostPublic ? 'Unpublish this post?' : 'Publish this post?'}
-      /> */}
+      />
       <Alert
         disclosure={deletePostDisclosure}
         body="Are you sure you want to delete this post? This action cannot be undone."
