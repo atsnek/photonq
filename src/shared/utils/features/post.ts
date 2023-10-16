@@ -199,5 +199,5 @@ export const togglePostRating = async (
     if (hasRated) m.socialPostUnstar({ postId: postId });
     else m.socialPostStar({ postId: postId });
   });
-  return error?.length === 0;
+  return !error || error?.length === 0;
 };

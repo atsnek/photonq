@@ -27,6 +27,7 @@ import { TPaginationType } from '../../shared/types/pagination';
 import usePagination from '../../shared/hooks/use-pagination';
 import { POST_FETCH_LIMIT } from '../../contents/PostsContent';
 import LoadMoreButton from '../../shared/components/pagination/LoadMoreButton';
+import { TAsyncListData } from '../../shared/types/list';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (
@@ -37,7 +38,7 @@ interface IPostListProps extends StackProps {
     dateRange?: TPostDateRange
   ) => void;
   fetchNextPagePosts?: () => void;
-  postData: TPaginatedPostListData;
+  postData: TPaginatedPostListData | TAsyncListData<TPostPreview>;
   itemsPerPage?: number;
   maxItems?: number;
   paginationType?: TPaginationType;
@@ -94,7 +95,7 @@ const PostList: FC<IPostListProps> = ({
     itemsPerPage: itemsPerPage,
     maxItems: usePages ? maxItems : undefined,
     type: paginationType,
-    hasMoreItems: !!postData.nextCursor || postData.hasMore
+    hasMoreItems: 'nextCursor' in postData && (!!postData.nextCursor || postData.hasMore)
   });
 
   const [isTogglingPostPrivacy, setIsTogglingPostPrivacy] = useState(false);
@@ -193,6 +194,7 @@ const PostList: FC<IPostListProps> = ({
     if (
       fetchNextPagePosts &&
       paginationType === 'async-pages' &&
+      'hasMore' in postData &&
       postData.hasMore &&
       pagination.currentPage === pagination.totalPages - 1
     )
@@ -243,51 +245,58 @@ const PostList: FC<IPostListProps> = ({
                 size="sm"
                 borderRadius="lg"
                 rightIcon={<ChevronRightIcon />}
-                isDisabled={!postData?.hasMore && pagination.currentPage === pagination.totalPages}
+                isDisabled={
+                  'hasMore' in postData &&
+                  !postData?.hasMore &&
+                  pagination.currentPage === pagination.totalPages
+                }
                 onClick={handleNextPage}
               >
                 Next
               </Button>
             </HStack>
           ))}
-      {paginationType === 'load-more' && postData.state !== 'inactive' && postData.hasMore && (
-        <LoadMoreButton
-          onClick={
-            !!fetchPosts
-              ? () => {
-                  fetchPosts(
-                    currentQuery ?? defaultFilterQuery ?? '',
-                    POST_FETCH_LIMIT,
-                    pagination.currentItems.length,
-                    filterLanguage
-                  );
-                }
-              : undefined
-          }
-          isDisabled={postData.state === 'loading'}
-        />
-        // <Button
-        //   variant="ghost-hover-outline"
-        //   size="sm"
-        //   borderRadius="lg"
-        //   rightIcon={<ChevronRightIcon />}
-        //   isDisabled={postData.state === 'loading'}
-        //   onClick={
-        //     !!fetchPosts
-        //       ? () => {
-        //           fetchPosts(
-        //             currentQuery ?? defaultFilterQuery ?? '',
-        //             POST_FETCH_LIMIT,
-        //             pagination.currentItems.length,
-        //             filterLanguage
-        //           );
-        //         }
-        //       : undefined
-        //   }
-        // >
-        //   Load more
-        // </Button>
-      )}
+      {paginationType === 'load-more' &&
+        postData.state !== 'inactive' &&
+        'hasMore' in postData &&
+        postData.hasMore && (
+          <LoadMoreButton
+            onClick={
+              !!fetchPosts
+                ? () => {
+                    fetchPosts(
+                      currentQuery ?? defaultFilterQuery ?? '',
+                      POST_FETCH_LIMIT,
+                      pagination.currentItems.length,
+                      filterLanguage
+                    );
+                  }
+                : undefined
+            }
+            isDisabled={postData.state === 'loading'}
+          />
+          // <Button
+          //   variant="ghost-hover-outline"
+          //   size="sm"
+          //   borderRadius="lg"
+          //   rightIcon={<ChevronRightIcon />}
+          //   isDisabled={postData.state === 'loading'}
+          //   onClick={
+          //     !!fetchPosts
+          //       ? () => {
+          //           fetchPosts(
+          //             currentQuery ?? defaultFilterQuery ?? '',
+          //             POST_FETCH_LIMIT,
+          //             pagination.currentItems.length,
+          //             filterLanguage
+          //           );
+          //         }
+          //       : undefined
+          //   }
+          // >
+          //   Load more
+          // </Button>
+        )}
     </VStack>
   );
 };

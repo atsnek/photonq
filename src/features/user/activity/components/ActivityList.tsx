@@ -47,11 +47,7 @@ interface IActivityListProps extends BoxProps {
 /**
  * Component for displaying a list of activities.
  */
-const ActivityList: FC<IActivityListProps> = ({
-  activity,
-  fetchMore,
-  ...props
-}) => {
+const ActivityList: FC<IActivityListProps> = ({ activity, fetchMore, ...props }) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const stepperData = useMemo(() => {
@@ -64,13 +60,8 @@ const ActivityList: FC<IActivityListProps> = ({
     for (const item of activity.items) {
       // const item = activity.items[i];
       const itemDate = new Date(item.timestamp);
-      const sectionDate = new Date(
-        itemDate.getFullYear(),
-        itemDate.getMonth()
-      ).toISOString();
-      const sectionIndex = sections.findIndex(
-        section => section.timestamp === sectionDate
-      );
+      const sectionDate = new Date(itemDate.getFullYear(), itemDate.getMonth()).toISOString();
+      const sectionIndex = sections.findIndex(section => section.timestamp === sectionDate);
       if (sectionIndex === -1) {
         sections.push({
           timestamp: sectionDate,
@@ -85,9 +76,7 @@ const ActivityList: FC<IActivityListProps> = ({
       const sectionDate = new Date(section.timestamp);
       const sectionTitle = (
         <HStack spacing={1}>
-          <Text>
-            {sectionDate.toLocaleString('default', { month: 'long' })}
-          </Text>
+          <Text>{sectionDate.toLocaleString('default', { month: 'long' })}</Text>
           <Text opacity={0.5}>{sectionDate.getFullYear()}</Text>
         </HStack>
       );

@@ -71,7 +71,6 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     setPostFilterQuery(undefined);
 
     let tab: TProfileTab = 'overview';
-    console.log('hash', hash);
     switch (hash) {
       case '#posts':
       case '#post':
@@ -171,7 +170,6 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   );
 
   let mainContent: ReactNode;
-  console.log('active tab: ', activeTab);
   switch (activeTab) {
     case 'posts':
       mainContent = (

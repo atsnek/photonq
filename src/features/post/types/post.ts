@@ -5,6 +5,7 @@ import {
 } from '../../../shared/types/pagination';
 import { TUser } from '../../user/types/user';
 import { Language } from '@snek-functions/origin/dist/schema.generated';
+import { TAsyncListData } from '../../../shared/types/list';
 
 /**
  * A single post
@@ -79,10 +80,7 @@ export type TPostAuthor = {
 /**
  * Metadata for fetching posts
  */
-export type TPostListData = {
-  items: TPostPreview[];
-  state: 'inactive' | 'loading' | 'error' | 'success';
-};
+export type TPostListData = TAsyncListData<TPostPreview>
 
 export type TPaginatedPostListData = TPaginationData<
   TPostPreview[],

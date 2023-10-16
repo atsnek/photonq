@@ -22,6 +22,8 @@ const initState: IProfileStateDefinition = {
   starredPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
   followers: { items: [], totalCount: 0, state: 'loading' },
   followingUsers: { items: [], totalCount: 0, state: 'loading' },
+  showcaseStarsPosts: { items: [], state: 'inactive' },
+  showcaseLatestPosts: { items: [], state: 'inactive' },
   isFollowing: undefined,
   profile: undefined
 };
@@ -538,6 +540,34 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return succeed;
   },
+  fetchShowcaseLatestPosts: async () => {
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseLatestPosts.state = 'loading';
+      })
+    )
+
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseLatestPosts.state = 'success';
+      })
+    )
+    return true;
+  },
+  fetchShowcaseStarsPosts: async () => {
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseStarsPosts.state = 'loading';
+      })
+    )
+
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseStarsPosts.state = 'success';
+      })
+    )
+    return true;
+  },
   changeBio: async bio => {
     if (!get().profile.profile) return false;
     if (bio === get().profile.profile?.bio) return true;
@@ -569,12 +599,22 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   togglePostRating: async (id, source) => {
     let hasRated = false;
 
-    if (source === 'overview') {
-      hasRated = get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated ?? false;
-    } else if (source === 'posts') {
-      hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
-    } else {
-      hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+    switch (source) {
+      case 'overview':
+        hasRated = get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      case 'posts':
+        hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      case 'showcase_latest':
+        hasRated = get().profile.showcaseLatestPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      case 'showcase_stars':
+        hasRated = get().profile.showcaseStarsPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      default:
+        hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
     }
 
     if (hasRated === undefined) return false;
@@ -584,27 +624,35 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     if (succeed) {
       set(
         produce((state: TStoreState) => {
-          if (source === 'overview') {
-            const post = state.profile.overviewPosts.items.find(
-              p => p.id === id
-            );
+
+          [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.searchPosts.items].forEach(posts => {
+            const post = ('state' in posts ? posts.items : posts).find(p => p.id === id);
             if (post) {
               post.hasRated = !post.hasRated;
               post.stars += post.hasRated ? 1 : -1;
             }
-          } else if (source === 'posts') {
-            const post = state.profile.searchPosts.items.find(p => p.id === id);
-            if (post) {
-              post.hasRated = !post.hasRated;
-              post.stars += post.hasRated ? 1 : -1;
-            }
-          } else {
-            const post = state.profile.searchPosts.items.find(p => p.id === id);
-            if (post) {
-              post.hasRated = !post.hasRated;
-              post.stars += post.hasRated ? 1 : -1;
-            }
-          }
+          });
+          // if (source === 'overview') {
+          //   const post = state.profile.overviewPosts.items.find(
+          //     p => p.id === id
+          //   );
+          //   if (post) {
+          //     post.hasRated = !post.hasRated;
+          //     post.stars += post.hasRated ? 1 : -1;
+          //   }
+          // } else if (source === 'posts') {
+          //   const post = state.profile.searchPosts.items.find(p => p.id === id);
+          //   if (post) {
+          //     post.hasRated = !post.hasRated;
+          //     post.stars += post.hasRated ? 1 : -1;
+          //   }
+          // } else {
+          //   const post = state.profile.searchPosts.items.find(p => p.id === id);
+          //   if (post) {
+          //     post.hasRated = !post.hasRated;
+          //     post.stars += post.hasRated ? 1 : -1;
+          //   }
+          // }
         })
       );
     }

@@ -1,3 +1,4 @@
+import { TAsyncListData } from '../../../shared/types/list';
 import { TPaginationData } from '../../../shared/types/pagination';
 import {
   EnPostLanguage,
@@ -17,6 +18,8 @@ export interface IProfileStateDefinition {
   followers: TPaginationData<TUser[]>;
   followingUsers: TPaginationData<TUser[]>;
   activity: TPaginationData<TActivity[]>;
+  showcaseStarsPosts: TAsyncListData<TPostPreview>;
+  showcaseLatestPosts: TAsyncListData<TPostPreview>;
   isFollowing?: boolean;
 }
 
@@ -41,11 +44,13 @@ export interface IProfileStateActions {
   fetchFollowers: () => Promise<boolean>;
   fetchFollowingUsers: () => Promise<boolean>;
   toggleFollow: (id?: string) => Promise<boolean>;
+  fetchShowcaseStarsPosts: () => Promise<boolean>;
+  fetchShowcaseLatestPosts: () => Promise<boolean>;
   changeBio: (bio: string) => Promise<boolean>;
   changeProfilePicture: (avatarUrl: string) => boolean;
   togglePostRating: (
     id: TPostPreview['id'],
-    source: Extract<TProfileTab, 'posts' | 'overview' | 'stars'>,
+    source: Extract<TProfileTab, 'posts' | 'overview' | 'stars'> | 'showcase_stars' | 'showcase_latest',
   ) => Promise<boolean>;
   togglePostPrivacy: (
     id: TPostPreview['id'],
