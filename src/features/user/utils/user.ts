@@ -91,14 +91,16 @@ export const buildUserActivities = async (
       if (
         !createdAt ||
         (type.startsWith('star_') &&
-          post &&
-          activityRatingPostIds.findIndex(
-            ({ createdAt: existingCreatedAt, id }) =>
-              id === post.id && existingCreatedAt === createdAt
-          )) === -1
+          (!post ||
+            post &&
+            activityRatingPostIds.findIndex(
+              ({ createdAt: existingCreatedAt, id }) =>
+                id === post.id && existingCreatedAt === createdAt
+            ) === -1))
       )
         return;
 
+      console.log("activity: ", ae.node);
       let title = '';
       let href = '';
       if (type === 'blog_create' && post) {
