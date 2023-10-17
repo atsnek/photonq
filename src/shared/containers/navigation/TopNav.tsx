@@ -119,7 +119,15 @@ const TopNav: FC<ITopNavProps> = ({
     {
       name: 'Sign Up',
       matchMethod: 'exact',
-      href: '/signup'
+      href: '/signup',
+      style: {
+        border: '1px solid',
+        borderColor: 'topNav.input.borderColor',
+        borderRadius: 'lg',
+        h: 8,
+        px: 2,
+        lineHeight: 8
+      }
     }
   ];
 
@@ -230,9 +238,6 @@ const TopNav: FC<ITopNavProps> = ({
             <Spacer />
             <Center>
               <HStack spacing={4}>
-                {
-                  //! Causes hydration issue
-                }
                 <MemoizedLinks
                   links={activatedLinks}
                   props={{ ...navLinkProps, ...linkProps }}
@@ -255,23 +260,6 @@ const TopNav: FC<ITopNavProps> = ({
                     }}
                   />
                 </Box>
-                <Link
-                  display="inline-block"
-                  href="https://github.com/atsnek/photonq"
-                  // This doesnt work for some reason (min-width solves it temporarily)
-                  boxSize="32px"
-                  minWidth="32px"
-                  _hover={{
-                    transform: 'scale(1.2)'
-                  }}
-                  transition="transform 0.2s ease-in-out"
-                >
-                  <GitHub
-                    boxSize="32px"
-                    fill={`topNav.${colorMode ?? chakraColorMode}.GitHubFill`}
-                    transition="fill 0.2s ease-in-out"
-                  />
-                </Link>
                 <Button
                   variant="ghost-hover"
                   size="sm"
