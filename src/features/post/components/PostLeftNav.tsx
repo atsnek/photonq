@@ -9,6 +9,8 @@ import {
   Input,
   Menu,
   MenuButton,
+  Spacer,
+  Switch,
   Tag,
   Text,
   Textarea,
@@ -45,7 +47,6 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   handleSummaryChange,
   setPostPreviewImage,
   isPostPreviewImageUploading,
-  handleLanguageChange,
   handleTogglePrivacy,
   isUpdatingPrivacy
 }) => {
@@ -105,7 +106,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           {canEdit ? (
             <>
               <Input
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 placeholder="My Post"
                 defaultValue={post.title ?? 'My Post'}
@@ -114,6 +115,11 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 fontWeight="semibold"
                 borderRadius="md"
                 onBlur={e => handleTitleChange(e.target.value)}
+                colorScheme="brand"
+                _focusVisible={{
+                  borderWidth: 2,
+                  borderColor: 'brand.500'
+                }}
               />
               <TbEdit
                 id="editor-left-nav-edit-title-icon"
@@ -140,7 +146,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
         {canEdit && (
           <>
             <HStack>
-              <Tag
+              {/* <Tag
                 h="auto"
                 as={Button}
                 size="sm"
@@ -153,24 +159,41 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 isDisabled={isUpdatingPrivacy}
               >
                 {privacyLabel}
-              </Tag>
+              </Tag> */}
               <Menu>
-                <MenuButton
-                  as={Tag}
+                <Tag
                   size="sm"
                   h="fit-content"
                   colorScheme="gray"
-                  _hover={{
-                    bg: 'pages.singlePost.leftNav.tags.language.hover.bgColor'
-                  }}
-                  cursor="pointer"
+                  // _hover={{
+                  //   bg: 'pages.singlePost.leftNav.tags.language.hover.bgColor'
+                  // }}
+                  cursor="default"
                 >
                   {post.language === 'EN' ? '🇺🇸' : '🇦🇹'}
-                </MenuButton>
+                </Tag>
               </Menu>
             </HStack>
-            <Divider mt={8} mb={3} />
+            {/* <Divider mt={3} mb={3} /> */}
           </>
+        )}
+        {canEdit && (
+          <Box>
+            <HStack mt={3} w="full">
+              <Text fontSize="sm" fontWeight="medium">
+                Post Visibility
+              </Text>
+              <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
+                {privacyLabel}
+              </Tag>
+              <Spacer />
+              <Switch variant="privacy" defaultChecked={isPublic} onChange={handleTogglePrivacy} />
+            </HStack>
+            <Text size="sm" color="gray.500" w="full" mt={2}>
+              Your post is {isPublic ? 'visible to everyone.' : 'only visible to you.'}
+            </Text>
+            <Divider mt={3} mb={3} />
+          </Box>
         )}
         {post.summary && canEdit && (
           <Heading as="h6" fontSize="sm" color="brand.500" fontWeight="medium">
@@ -181,19 +204,25 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           <Textarea
             defaultValue={post.summary ?? 'Short summary of your post'}
             placeholder="Short summary of your post"
+            outline="1px solid"
+            outlineColor="gray.200"
             size="sm"
             borderRadius="lg"
             textAlign="center"
             variant="ghost"
             maxH="300px"
             onBlur={e => handleSummaryChange(e.target.value)}
+            _hover={{
+              outlineColor: 'components.textarea._hover.borderColor'
+            }}
+            _focusVisible={{
+              outlineWidth: 2,
+              outlineColor: 'components.textarea._focus.borderColor'
+            }}
+            transition="outline 0.1s ease-in-out"
           />
         ) : (
-          <Text
-            size="sm"
-            color="pages.singlePost.leftNav.summary.color"
-            textAlign="justify"
-          >
+          <Text size="sm" color="pages.singlePost.leftNav.summary.color" textAlign="justify">
             {post.summary}
           </Text>
         )}

@@ -116,7 +116,6 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
 
   const isPostAuthor = isNewPost || (!!currentUser && currentUser?.id === author?.id);
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
-  const isPostPublic = post?.privacy === 'PUBLIC';
 
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
 
@@ -128,11 +127,11 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         await wait(500); // Make sure the new post is created before navigating to it
         navigate(`/post/${slug}/`);
       }
-      setMadeChanges(false);
       if (slug) window.removeEventListener('beforeunload', handleBeforeUnload);
     } else {
       savePost();
     }
+    setMadeChanges(false);
     setIsSavingPost(false);
   };
 
