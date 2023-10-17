@@ -2,13 +2,11 @@ import { FC } from 'react';
 import { EnPostLanguage, TPost } from '../types/post';
 import {
   Box,
-  Button,
   Divider,
   HStack,
   Heading,
   Input,
   Menu,
-  MenuButton,
   Spacer,
   Switch,
   Tag,
@@ -33,7 +31,6 @@ interface IPostLeftNavProps {
   isPostPreviewImageUploading: boolean;
   handleLanguageChange: (language: EnPostLanguage) => void;
   handleTogglePrivacy: () => void;
-  isUpdatingPrivacy: boolean;
 }
 
 /**
@@ -47,8 +44,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   handleSummaryChange,
   setPostPreviewImage,
   isPostPreviewImageUploading,
-  handleTogglePrivacy,
-  isUpdatingPrivacy
+  handleTogglePrivacy
 }) => {
   const navOffset = useNavOffset();
 
@@ -146,42 +142,19 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
         {canEdit && (
           <>
             <HStack>
-              {/* <Tag
-                h="auto"
-                as={Button}
-                size="sm"
-                colorScheme={isPublic ? 'green' : 'yellow'}
-                _hover={{
-                  bg: `pages.singlePost.leftNav.tags.privacy.${privacyLabel}.hover.bgColor`,
-                  color: `pages.singlePost.leftNav.tags.privacy.${privacyLabel}.hover.color`
-                }}
-                onClick={handleTogglePrivacy}
-                isDisabled={isUpdatingPrivacy}
-              >
-                {privacyLabel}
-              </Tag> */}
               <Menu>
-                <Tag
-                  size="sm"
-                  h="fit-content"
-                  colorScheme="gray"
-                  // _hover={{
-                  //   bg: 'pages.singlePost.leftNav.tags.language.hover.bgColor'
-                  // }}
-                  cursor="default"
-                >
+                <Tag size="sm" h="fit-content" colorScheme="gray" cursor="default">
                   {post.language === 'EN' ? '🇺🇸' : '🇦🇹'}
                 </Tag>
               </Menu>
             </HStack>
-            {/* <Divider mt={3} mb={3} /> */}
           </>
         )}
         {canEdit && (
-          <Box>
-            <HStack mt={3} w="full">
+          <Box w="full">
+            <HStack mt={3}>
               <Text fontSize="sm" fontWeight="medium">
-                Post Visibility
+                Post Privacy
               </Text>
               <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
                 {privacyLabel}

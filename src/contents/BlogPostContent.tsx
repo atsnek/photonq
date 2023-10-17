@@ -8,7 +8,7 @@ import MainGrid from '../shared/containers/components/MainGrid';
 import PostEditor from '../features/post/components/PostEditor';
 import PostActionToolbar from '../features/post/components/PostActionToolbar';
 import Alert from '../shared/components/alert/Alert';
-import { useDisclosure } from '@chakra-ui/react';
+import { useDisclosure, useToast } from '@chakra-ui/react';
 import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { navigate } from '@reach/router';
@@ -32,10 +32,10 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [viewMode, setViewMode] = useState<TPostViewMode>(isNewPost ? 'edit' : 'read');
   const [madeChanges, setMadeChanges] = useState(false);
   const [isRating, setIsRating] = useState(false);
-  const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const deletePostDisclosure = useDisclosure();
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const isAuthenticated = useAuthenticationContext().user !== null;
+  const saveToast = useToast();
 
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
@@ -159,7 +159,6 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
           isPostPreviewImageUploading={isPreviewImageUploading}
           handleLanguageChange={handleLanguageChange}
           handleTogglePrivacy={handleTogglePrivacy}
-          isUpdatingPrivacy={isUpdatingPrivacy}
         />
         {canEditPost ? (
           <PostEditor
@@ -189,21 +188,6 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         savePost={handleSavePost}
         isSavingPost={isSavingPost}
       />
-      {/* <Alert
-        disclosure={privacyAlertDisclosure}
-        confirmationAction={togglePrivacy}
-        confirmationLabel={isPostPublic ? 'Unpublish' : 'Publish'}
-        confirmationProps={{
-          variant:
-            (ref.current.oldPrivacy ?? post?.privacy) === 'PUBLIC' ? 'filledYellow' : 'filledGreen'
-        }}
-        body={
-          isPostPublic
-            ? 'Are you sure you want to unpublish this post? This post will no longer be visible to everyone.'
-            : 'Are you sure you want to publish this post? This post will be visible to everyone.'
-        }
-        header={isPostPublic ? 'Unpublish this post?' : 'Publish this post?'}
-      /> */}
       <Alert
         disclosure={deletePostDisclosure}
         body="Are you sure you want to delete this post? This action cannot be undone."
