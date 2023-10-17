@@ -285,20 +285,6 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       })
     );
     return true;
-    // if (get().singlePost.isNewPost) return true;
-
-    // const postId = get().singlePost.post?.id ?? '';
-    // const [, error] = await sq.mutate(m =>
-    //   m.socialPostUpdate({
-    //     postId,
-    //     values: { privacy: asEnumKey(PrivacyInputInput, newPrivacy) }
-    //   })
-    // );
-
-    // const updateSucceed = await get().singlePost.fetchPost(
-    //   get().singlePost.post?.slug ?? ''
-    // );
-    // return error?.length === 0 && updateSucceed;
   },
   changeLanguage: async language => {
     set(

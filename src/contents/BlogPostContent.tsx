@@ -55,16 +55,14 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const deletePost = useAppStore(state => state.singlePost.deletePost);
 
   useEffect(() => {
-    if (isNewPost) {
+    // If the user made changes to the post, ask for confirmation before leaving the page
+    if (madeChanges) {
       window.addEventListener('beforeunload', handleBeforeUnload);
     }
-
     return () => {
-      if (isNewPost) {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      }
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [madeChanges]);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === 'read' ? 'edit' : 'read');
@@ -165,7 +163,12 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
           isUpdatingPrivacy={isUpdatingPrivacy}
         />
         {canEditPost ? (
-          <PostEditor post={post} setIsSavingPost={setIsSavingPost} />
+          <PostEditor
+            post={post}
+            setIsSavingPost={setIsSavingPost}
+            madeChanges={madeChanges}
+            setMadeChanges={setMadeChanges}
+          />
         ) : (
           <PostReader
             isAuthor={isPostAuthor}
