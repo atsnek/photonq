@@ -1,7 +1,8 @@
-import { FC } from 'react';
-import { EnPostLanguage, TPost } from '../types/post';
+import { Dispatch, FC, SetStateAction } from 'react';
+import { EnPostLanguage, TPost, TPostViewMode } from '../types/post';
 import {
   Box,
+  Button,
   Divider,
   HStack,
   Heading,
@@ -20,17 +21,22 @@ import { useNavOffset } from '../../../shared/hooks/use-nav-offset';
 import Image from '../../../shared/components/image/Image';
 import LeftNavPostReaderSkeleton from '../reader/components/LeftNavPostReaderSkeleton';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import { Language } from '@snek-functions/origin/dist/schema.generated';
+import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
 
 interface IPostLeftNavProps {
   post?: TPost;
-  isPostAuthor: boolean;
   canEdit?: boolean;
+  isAuthor: boolean;
+  viewMode: TPostViewMode;
+  setViewMode: Dispatch<SetStateAction<TPostViewMode>>;
   handleTitleChange: (title: string) => void;
   handleSummaryChange: (summary: string) => void;
   setPostPreviewImage: (src: File) => void;
   isPostPreviewImageUploading: boolean;
   handleLanguageChange: (language: EnPostLanguage) => void;
   handleTogglePrivacy: () => void;
+  handleSavePost: () => void;
 }
 
 /**
@@ -38,13 +44,17 @@ interface IPostLeftNavProps {
  */
 const PostLeftNav: FC<IPostLeftNavProps> = ({
   post,
-  isPostAuthor,
   canEdit,
+  isAuthor,
+  viewMode,
+  setViewMode,
   handleTitleChange,
   handleSummaryChange,
+  handleLanguageChange,
   setPostPreviewImage,
   isPostPreviewImageUploading,
-  handleTogglePrivacy
+  handleTogglePrivacy,
+  handleSavePost
 }) => {
   const navOffset = useNavOffset();
 
@@ -134,39 +144,47 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             </Text>
           )}
         </Box>
-        {isPostAuthor && !canEdit && post.privacy === 'PRIVATE' && (
-          <Tag size="sm" colorScheme="yellow">
-            private
-          </Tag>
-        )}
         {canEdit && (
           <>
-            <HStack>
-              <Menu>
-                <Tag size="sm" h="fit-content" colorScheme="gray" cursor="default">
-                  {post.language === 'EN' ? '🇺🇸' : '🇦🇹'}
+            <Box w="full">
+              <HStack mt={3}>
+                <Text fontSize="sm" fontWeight="medium">
+                  Post Privacy
+                </Text>
+                <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
+                  {privacyLabel}
                 </Tag>
-              </Menu>
-            </HStack>
-          </>
-        )}
-        {canEdit && (
-          <Box w="full">
-            <HStack mt={3}>
-              <Text fontSize="sm" fontWeight="medium">
-                Post Privacy
+                <Spacer />
+                <Switch
+                  variant="privacy"
+                  defaultChecked={isPublic}
+                  onChange={handleTogglePrivacy}
+                />
+              </HStack>
+              <Text size="sm" color="gray.500" w="full" mt={2}>
+                Your post is {isPublic ? 'visible to everyone.' : 'only visible to you.'}
               </Text>
-              <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
-                {privacyLabel}
-              </Tag>
-              <Spacer />
-              <Switch variant="privacy" defaultChecked={isPublic} onChange={handleTogglePrivacy} />
-            </HStack>
-            <Text size="sm" color="gray.500" w="full" mt={2}>
-              Your post is {isPublic ? 'visible to everyone.' : 'only visible to you.'}
-            </Text>
+            </Box>
+            <Box w="full" mt={2}>
+              <HStack>
+                <Text fontSize="sm" fontWeight="medium">
+                  Post Language
+                </Text>
+                <Tag colorScheme="gray" size="sm">
+                  {post.language}
+                </Tag>
+                <Spacer />
+                <Switch
+                  defaultChecked={post.language === 'EN'}
+                  variant="brand"
+                  onChange={() =>
+                    handleLanguageChange(post.language === 'EN' ? Language.DE : Language.EN)
+                  }
+                />
+              </HStack>
+            </Box>
             <Divider mt={3} mb={3} />
-          </Box>
+          </>
         )}
         {post.summary && canEdit && (
           <Heading as="h6" fontSize="sm" color="brand.500" fontWeight="medium">
@@ -178,7 +196,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             defaultValue={post.summary ?? 'Short summary of your post'}
             placeholder="Short summary of your post"
             outline="1px solid"
-            outlineColor="gray.200"
+            outlineColor="components.textarea.borderColor"
             size="sm"
             borderRadius="lg"
             textAlign="center"
@@ -198,6 +216,20 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           <Text size="sm" color="pages.singlePost.leftNav.summary.color" textAlign="justify">
             {post.summary}
           </Text>
+        )}
+        {isAuthor && (
+          <Button
+            w="full"
+            colorScheme="gray"
+            size="sm"
+            leftIcon={canEdit ? <TbDeviceFloppy /> : <TbEdit />}
+            onClick={() => {
+              if (canEdit) handleSavePost();
+              setViewMode(canEdit ? 'read' : 'edit');
+            }}
+          >
+            {canEdit ? 'Finish editing' : 'Edit post'}
+          </Button>
         )}
       </VStack>
     </LeftNav>

@@ -1,4 +1,8 @@
 const smtTextareaComponent = {
+  borderColor: {
+    default: 'gray.300',
+    _dark: 'gray.600'
+  },
   _focus: {
     borderColor: {
       default: 'brand.500',
@@ -8,7 +12,7 @@ const smtTextareaComponent = {
   _hover: {
     borderColor: {
       default: 'gray.300',
-      _dark: 'gray.600'
+      _dark: 'gray.500'
     },
   },
   variants: {
@@ -17,7 +21,7 @@ const smtTextareaComponent = {
       _focus: {
         borderColor: {
           default: 'gray.300',
-          _dark: 'gray.600'
+          _dark: 'gray.500'
         }
       }
     }

@@ -120,16 +120,24 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
 
   const handleSavePost = async () => {
+    if (!madeChanges) return;
     setIsSavingPost(true);
     if (isNewPost) {
+      1;
       const slug = await createNewPost(newPostPreviewImage);
       if (slug) {
-        await wait(500); // Make sure the new post is created before navigating to it
+        await wait(750); // Make sure the new post is created before navigating to it
         navigate(`/post/${slug}/`);
       }
       if (slug) window.removeEventListener('beforeunload', handleBeforeUnload);
     } else {
-      savePost();
+      const succeed = await savePost();
+      saveToast({
+        position: 'bottom-right',
+        duration: 3000,
+        status: succeed ? 'success' : 'error',
+        title: succeed ? 'Post saved' : 'Post could not be saved'
+      });
     }
     setMadeChanges(false);
     setIsSavingPost(false);
@@ -150,15 +158,18 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       />
       <MainWrapper>
         <PostLeftNav
+          setViewMode={setViewMode}
           handleTitleChange={handleTitleChange}
           handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
-          isPostAuthor={isPostAuthor}
           canEdit={canEditPost && !isDeletingPost}
+          isAuthor={isPostAuthor}
+          viewMode={viewMode}
           post={post}
           isPostPreviewImageUploading={isPreviewImageUploading}
           handleLanguageChange={handleLanguageChange}
           handleTogglePrivacy={handleTogglePrivacy}
+          handleSavePost={handleSavePost}
         />
         {canEditPost ? (
           <PostEditor

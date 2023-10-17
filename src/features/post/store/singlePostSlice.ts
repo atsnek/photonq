@@ -291,6 +291,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
         state.singlePost.post.language = language;
+        state.singlePost.madeChanges.language = true;
       })
     );
     return true;
@@ -333,9 +334,11 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       const { fileUrl } = await osg.uploadFile(newAvatarUrlFile);
       values.avatarURL = fileUrl;
     }
-
     if (madeChanges.privacy) {
       values.privacy = asEnumKey(PrivacyInputInput, post.privacy);
+    }
+    if (madeChanges.language) {
+      values.language = asEnumKey(LanguageInputInput, post.language);
     }
 
     const [, error] = await sq.mutate(m => {

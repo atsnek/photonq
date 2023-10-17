@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useRef } from 'react';
 import { TPost } from '../types/post';
 import { Stack, Box, useToast } from '@chakra-ui/react';
 import UncontrolledMdxEditor from '../../../shared/components/mdx-editor/UncontrolledMdxEditor';

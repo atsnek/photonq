@@ -2,8 +2,8 @@ const smtToastComponent = {
   status: {
     success: {
       color: {
-        default: 'rgb(12, 243, 135)',
-        _dark: 'flat.se.green.500'
+        default: 'green.500',
+        _dark: 'green.500'
       },
       bgColor: {
         default:

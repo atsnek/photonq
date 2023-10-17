@@ -7,7 +7,15 @@ const themeSwitchComponent = {
                     bgColor: 'green.600'
                 }
             }
-        }
+        },
+        brand: {
+            track: {
+                bgColor: 'gray.500',
+                _checked: {
+                    bgColor: 'brand.600'
+                }
+            }
+        },
     }
 }
 
