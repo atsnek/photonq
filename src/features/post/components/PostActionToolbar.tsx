@@ -52,26 +52,15 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   const areActionsDisabled = isDeletingPost;
 
   if (canEdit) {
-    actionToolbarItems.push(
-      {
-        order: 3,
-        icon: <TbSquareRoundedX />,
-        ariaLabel: 'Delete post',
-        tooltip: 'Delete post',
-        onClick: handleDeletePost,
-        disabled: isDeletingPost || areActionsDisabled,
-        hoverColor: 'components.postEditor.delete.hover.color'
-      },
-      {
-        order: 1,
-        ariaLabel: 'Save this post',
-        tooltip: 'Save this post',
-        icon: <TbDeviceFloppy />,
-        onClick: savePost,
-        disabled: areActionsDisabled,
-        hoverColor: 'components.postEditor.save.hover.color'
-      }
-    );
+    actionToolbarItems.push({
+      order: 3,
+      icon: <TbSquareRoundedX />,
+      ariaLabel: 'Delete post',
+      tooltip: 'Delete post',
+      onClick: handleDeletePost,
+      disabled: isDeletingPost || areActionsDisabled,
+      hoverColor: 'components.postEditor.delete.hover.color'
+    });
   } else {
     if (isAuthenticated) {
       actionToolbarItems.push({
@@ -89,6 +78,18 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
         hoverColor: 'components.postEditor.rate.hover.color'
       });
     }
+  }
+
+  if (viewMode === 'edit' && canEdit) {
+    actionToolbarItems.push({
+      order: 1,
+      ariaLabel: 'Save this post',
+      tooltip: 'Save this post',
+      icon: <TbDeviceFloppy />,
+      onClick: savePost,
+      disabled: areActionsDisabled,
+      hoverColor: 'components.postEditor.save.hover.color'
+    });
   }
 
   if (toggleViewMode && canEdit) {
