@@ -1,26 +1,9 @@
-import { ChangeEvent, FC, useRef } from 'react';
-import { TPost, EnPostLanguage } from '../types/post';
+import { FC } from 'react';
+import { TPost } from '../types/post';
 import { TUser } from '../../user/types/user';
-import {
-  Box,
-  Center,
-  HStack,
-  Spacer,
-  Input,
-  Button,
-  Menu,
-  MenuButton,
-  IconButton,
-  Tooltip,
-  ButtonGroup
-} from '@chakra-ui/react';
+import { Box, Center, HStack, Spacer, Button, ButtonGroup } from '@chakra-ui/react';
 import UserAvatar from '../../user/avatar/components/UserAvatar';
-import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
-import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
-import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import PostRatingButton from './PostRatingButton';
-import TbLanguage from '../../../shared/components/icons/tabler/TbLanguage';
-import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
 import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
 import TbEye from '../../../shared/components/icons/tabler/TbEye';
 import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
@@ -69,11 +52,7 @@ const PostTopNav: FC<IPostTopNavProps> = ({
         overflow="hidden"
       >
         <Center>
-          <HStack
-            w="full"
-            maxW="7xl"
-            justifyContent={{ base: 'center', sm: undefined }}
-          >
+          <HStack w="full" maxW="7xl" justifyContent={{ base: 'center', sm: undefined }}>
             {author && (
               <UserAvatar
                 user={author}
@@ -93,10 +72,11 @@ const PostTopNav: FC<IPostTopNavProps> = ({
                   isRating={isRating ?? false}
                   toggleRating={handleRatePost}
                   stars={post?.stars ?? 0}
-                  bgColor={'pages.singlePost.topNav.rating.bgColor'}
+                  bgColor={isAuthor ? undefined : 'pages.singlePost.topNav.rating.bgColor'}
                   _hover={{
-                    bgColor: 'pages.singlePost.topNav.rating._hover.bgColor'
+                    bgColor: isAuthor ? undefined : 'pages.singlePost.topNav.rating._hover.bgColor'
                   }}
+                  isAuthor={isAuthor}
                 />
               )}
 

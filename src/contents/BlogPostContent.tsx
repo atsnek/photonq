@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import PostTopNav from '../features/post/components/PostTopNav';
 import { useAppStore } from '../shared/store/store';
 import PostLeftNav from '../features/post/components/PostLeftNav';
@@ -33,11 +33,9 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [madeChanges, setMadeChanges] = useState(false);
   const [isRating, setIsRating] = useState(false);
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
-  const privacyAlertDisclosure = useDisclosure();
   const deletePostDisclosure = useDisclosure();
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const isAuthenticated = useAuthenticationContext().user !== null;
-  const ref = useRef<{ oldPrivacy?: string }>({ oldPrivacy: undefined }); // This allows us to retrieve the old privacy value to keep the same alert styling while optimistically updating the post's privacy
 
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
@@ -80,17 +78,9 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     if (isNewPost) setNewPostPreviewImage(src);
   };
 
-  const handleTogglePrivacy = () => {
-    privacyAlertDisclosure.onOpen();
-  };
-
-  const togglePrivacy = async () => {
-    ref.current.oldPrivacy = post?.privacy ?? 'public';
-    setIsUpdatingPrivacy(true);
-    await togglePostPrivacy();
-    setIsUpdatingPrivacy(false);
+  const handleTogglePrivacy = async () => {
+    togglePostPrivacy();
     if (!madeChanges) setMadeChanges(true);
-    ref.current.oldPrivacy = undefined;
   };
 
   const handleSummaryChange = async (summary: string) => {
@@ -115,8 +105,6 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     if (!madeChanges) setMadeChanges(true);
   };
 
-  const handleCreateNewPost = async () => {};
-
   const handleDeletePost = () => {
     deletePostDisclosure.onOpen();
   };
@@ -136,7 +124,6 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
 
   const handleSavePost = async () => {
     setIsSavingPost(true);
-    console.log(isNewPost);
     if (isNewPost) {
       const slug = await createNewPost(newPostPreviewImage);
       if (slug) {
@@ -146,7 +133,6 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       setMadeChanges(false);
       if (slug) window.removeEventListener('beforeunload', handleBeforeUnload);
     } else {
-      console.log('!!!');
       savePost();
     }
     setIsSavingPost(false);
@@ -201,7 +187,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         savePost={handleSavePost}
         isSavingPost={isSavingPost}
       />
-      <Alert
+      {/* <Alert
         disclosure={privacyAlertDisclosure}
         confirmationAction={togglePrivacy}
         confirmationLabel={isPostPublic ? 'Unpublish' : 'Publish'}
@@ -215,7 +201,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
             : 'Are you sure you want to publish this post? This post will be visible to everyone.'
         }
         header={isPostPublic ? 'Unpublish this post?' : 'Publish this post?'}
-      />
+      /> */}
       <Alert
         disclosure={deletePostDisclosure}
         body="Are you sure you want to delete this post? This action cannot be undone."

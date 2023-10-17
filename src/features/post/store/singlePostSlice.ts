@@ -27,7 +27,8 @@ const initState: ISinglePostStateDefinition = {
     avatarUrl: false,
     summary: false,
     content: false,
-    language: false
+    language: false,
+    privacy: false,
   },
   newAvatarUrlFile: undefined, // We need to store the file itself too, because we need to upload it to the storage server once the user saves the post.
 };
@@ -86,24 +87,24 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     const post = get().singlePost.post;
     if (!post || post.content === content) return false;
 
-    if (get().singlePost.isNewPost) {
-      set(
-        produce((state: TStoreState) => {
-          if (!state.singlePost.post) return;
-          state.singlePost.post.content = content;
-        })
-      );
-      return true;
-    }
+    // if (get().singlePost.isNewPost) {
+    //   set(
+    //     produce((state: TStoreState) => {
+    //       if (!state.singlePost.post) return;
+    //       state.singlePost.post.content = content;
+    //     })
+    //   );
+    //   return true;
+    // }
 
-    const [, error] = await sq.mutate(m =>
-      m.socialPostUpdate({
-        postId: post.id,
-        values: { content: JSON.stringify(content) }
-      })
-    );
+    // const [, error] = await sq.mutate(m =>
+    //   m.socialPostUpdate({
+    //     postId: post.id,
+    //     values: { content: JSON.stringify(content) }
+    //   })
+    // );
 
-    if (error?.length > 0) return false;
+    // if (error?.length > 0) return false;
 
     set(
       produce((state: TStoreState) => {
@@ -280,23 +281,24 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
         state.singlePost.post.privacy = newPrivacy;
+        state.singlePost.madeChanges.privacy = true;
       })
     );
+    return true;
+    // if (get().singlePost.isNewPost) return true;
 
-    if (get().singlePost.isNewPost) return true;
+    // const postId = get().singlePost.post?.id ?? '';
+    // const [, error] = await sq.mutate(m =>
+    //   m.socialPostUpdate({
+    //     postId,
+    //     values: { privacy: asEnumKey(PrivacyInputInput, newPrivacy) }
+    //   })
+    // );
 
-    const postId = get().singlePost.post?.id ?? '';
-    const [, error] = await sq.mutate(m =>
-      m.socialPostUpdate({
-        postId,
-        values: { privacy: asEnumKey(PrivacyInputInput, newPrivacy) }
-      })
-    );
-
-    const updateSucceed = await get().singlePost.fetchPost(
-      get().singlePost.post?.slug ?? ''
-    );
-    return error?.length === 0 && updateSucceed;
+    // const updateSucceed = await get().singlePost.fetchPost(
+    //   get().singlePost.post?.slug ?? ''
+    // );
+    // return error?.length === 0 && updateSucceed;
   },
   changeLanguage: async language => {
     set(
@@ -344,6 +346,10 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     if (madeChanges.avatarUrl && newAvatarUrlFile) {
       const { fileUrl } = await osg.uploadFile(newAvatarUrlFile);
       values.avatarURL = fileUrl;
+    }
+
+    if (madeChanges.privacy) {
+      values.privacy = asEnumKey(PrivacyInputInput, post.privacy);
     }
 
     const [, error] = await sq.mutate(m => {

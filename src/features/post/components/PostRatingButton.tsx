@@ -30,7 +30,8 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
 
   const rating = (
     <Button
-      variant="outline"
+      variant={isAuthor ? 'unstyled' : 'outline'}
+      cursor={isAuthor ? 'default' : 'pointer'}
       size="sm"
       leftIcon={
         <TbStar
@@ -46,7 +47,7 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
     </Button>
   );
 
-  if (showTooltip) {
+  if (showTooltip && !isAuthor) {
     let label = '';
 
     if (canRate) {
@@ -56,12 +57,7 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
     }
 
     return (
-      <Tooltip
-        label={label}
-        aria-label={label}
-        placement="bottom"
-        openDelay={500}
-      >
+      <Tooltip label={label} aria-label={label} placement="bottom" openDelay={500}>
         {rating}
       </Tooltip>
     );

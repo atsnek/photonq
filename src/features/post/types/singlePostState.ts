@@ -13,6 +13,7 @@ export interface ISinglePostStateDefinition {
     summary: boolean;
     content: boolean;
     language: boolean;
+    privacy: boolean;
   },
   newAvatarUrlFile?: File;
 }
