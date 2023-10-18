@@ -34,17 +34,34 @@ const SelectMenu: FC<ISelectMenu> = ({
   buttonProps,
   buttonLabel
 }) => {
-  const [items, setItems] = useState(initItems.slice());
+  console.log('initItems: ', initItems);
+  const [items, setItems] = useState<SelectMenuItem[]>(initItems);
 
   useEffect(() => {
+    // const itemsChanged =
+    //   items.length !== initItems.length ||
+    //   items.some((item, idx) => {
+    //     if (initItems[idx] === undefined) return true;
+    //     for (const key in item) {
+    //       if (item[key as keyof typeof item] !== initItems[idx][key as keyof typeof item])
+    //         return true;
+    //     }
+    //     return false;
+    //   });
+    // if (!itemsChanged) return;
+    // console.log('items changed', items);
     const itemsCopy = initItems.slice();
     // Set the active item to selected if it is not already selected.
     const activeItemIdx = items.findIndex(item => item.value === defaultValue);
-    if (activeItemIdx !== -1 && !itemsCopy[activeItemIdx]?.selected) {
+    if (
+      !itemsCopy.find(i => i.selected) &&
+      activeItemIdx !== -1 &&
+      !itemsCopy[activeItemIdx]?.selected
+    ) {
       itemsCopy[activeItemIdx].selected = true;
     }
     setItems(itemsCopy);
-  }, [items]);
+  }, []);
 
   const menuItems = useMemo(() => {
     return items.map((item, index) => {
@@ -55,6 +72,9 @@ const SelectMenu: FC<ISelectMenu> = ({
             if (onChange) onChange(item.value);
             const newItems = initItems.slice();
             newItems[index] = { ...newItems[index], selected: true };
+
+            const previousItem = items.find(i => i.selected);
+            if (previousItem) previousItem.selected = false;
             setItems(newItems);
           }}
           position="relative"
@@ -87,4 +107,4 @@ const SelectMenu: FC<ISelectMenu> = ({
   );
 };
 
-export default memo(SelectMenu);
+export default SelectMenu;

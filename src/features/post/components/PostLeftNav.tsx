@@ -177,8 +177,14 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                     { label: 'EN', value: 'EN' },
                     { label: 'DE', value: 'DE' }
                   ]}
-                  defaultValue="EN"
-                  onChange={console.log}
+                  defaultValue={post.language}
+                  onChange={lang =>
+                    handleLanguageChange(
+                      lang in EnPostLanguage
+                        ? EnPostLanguage[lang as keyof typeof EnPostLanguage]
+                        : EnPostLanguage.EN
+                    )
+                  }
                   buttonLabel="Language"
                   buttonProps={{
                     size: 'sm',

@@ -87,25 +87,6 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     const post = get().singlePost.post;
     if (!post || post.content === content) return false;
 
-    // if (get().singlePost.isNewPost) {
-    //   set(
-    //     produce((state: TStoreState) => {
-    //       if (!state.singlePost.post) return;
-    //       state.singlePost.post.content = content;
-    //     })
-    //   );
-    //   return true;
-    // }
-
-    // const [, error] = await sq.mutate(m =>
-    //   m.socialPostUpdate({
-    //     postId: post.id,
-    //     values: { content: JSON.stringify(content) }
-    //   })
-    // );
-
-    // if (error?.length > 0) return false;
-
     set(
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
@@ -287,6 +268,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     return true;
   },
   changeLanguage: async language => {
+    console.log("language: ", language);
     set(
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
