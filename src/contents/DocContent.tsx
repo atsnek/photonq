@@ -12,11 +12,11 @@ import MdxEditor from '../shared/components/mdx-editor/MdxEditor';
 const links = [
   {
     name: 'Question? Give us feedback',
-    href: 'https://snek.at/'
+    href: '/contact'
   },
   {
     name: 'Edit this page on Jaen',
-    href: '/admin/#/pages'
+    href: '/cms/pages'
   }
 ];
 
