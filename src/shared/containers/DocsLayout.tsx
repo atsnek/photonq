@@ -32,8 +32,6 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
 
   const memoedChildren = useMemo(() => children, [children]);
 
-  if (isCommunity) return memoedChildren;
-
   return (
     <MainGrid>
       <Box display={{ base: 'none', md: 'block' }} position="sticky">

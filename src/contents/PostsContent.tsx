@@ -62,13 +62,12 @@ const PostsContent: FC = () => {
   };
 
   return (
-    <Container maxW="7xl" mt={10}>
+    <Container maxW="7xl">
       <VStack>
         <PostListControls
           filterLanguage={filterLanguage}
           setFilterLanguage={setFilterLanguage}
           // setPosts={setPostResults}
-          w={{ base: 'full', md: '75%' }}
           fetchPosts={(query, offset, lang) =>
             fetchSearchPosts(query, POST_FETCH_LIMIT, 0, lang ?? undefined)
           }
