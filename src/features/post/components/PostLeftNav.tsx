@@ -23,6 +23,7 @@ import LeftNavPostReaderSkeleton from '../reader/components/LeftNavPostReaderSke
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { Language } from '@snek-functions/origin/dist/schema.generated';
 import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
+import SelectMenu from '../../../shared/components/select-menu/SelectMenu';
 
 interface IPostLeftNavProps {
   post?: TPost;
@@ -166,20 +167,26 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
               </Text>
             </Box>
             <Box w="full" mt={2}>
-              <HStack>
+              <HStack alignItems="center">
                 <Text fontSize="sm" fontWeight="medium">
                   Post Language
                 </Text>
-                <Tag colorScheme="gray" size="sm">
-                  {post.language}
-                </Tag>
                 <Spacer />
-                <Switch
-                  defaultChecked={post.language === 'EN'}
-                  variant="brand"
-                  onChange={() =>
-                    handleLanguageChange(post.language === 'EN' ? Language.DE : Language.EN)
-                  }
+                <SelectMenu
+                  items={[
+                    { label: 'EN', value: 'EN' },
+                    { label: 'DE', value: 'DE' }
+                  ]}
+                  defaultValue="EN"
+                  onChange={console.log}
+                  buttonLabel="Language"
+                  buttonProps={{
+                    size: 'sm',
+                    colorScheme: 'gray'
+                  }}
+                  listProps={{
+                    minW: 'fit-content'
+                  }}
                 />
               </HStack>
             </Box>
