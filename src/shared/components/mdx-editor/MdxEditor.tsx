@@ -8,7 +8,9 @@ import {
   Th,
   Td,
   Box,
-  Text
+  Text,
+  Stack,
+  Button
 } from '@chakra-ui/react';
 // import { Field } from '@snek-at/jaen';
 import { FC } from 'react';
@@ -25,6 +27,7 @@ import ImageCard from '../../../features/main-content/image-card/components/Imag
 import DocsIndex from '../../../features/main-content/docs-index/components/DocsIndex';
 
 import { MdxField, MdxFieldProps } from '@atsnek/jaen-fields-mdx';
+import { useAuthenticationContext, useContentManagement } from '@atsnek/jaen';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -97,32 +100,48 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
+  const { isAuthenticated, user, isLoading } = useAuthenticationContext();
+  const { isEditing, toggleIsEditing } = useContentManagement();
+
+  const canEdit = isAuthenticated && user?.isAdmin ? true : false;
+
   return (
-    <MdxField
-      name="documentation"
-      components={{
-        // TEXT
-        h1: props => (
-          <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h2: props => (
-          <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h3: props => (
-          <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h4: props => (
-          <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h5: props => (
-          <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h6: props => (
-          <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />
-        ),
-        ...mdxEditorComponents
-      }}
-    />
+    <Stack spacing={4}>
+      {canEdit && isLoading === false && (
+        <Button
+          variant="outline"
+          colorScheme={isEditing ? 'red' : undefined}
+          onClick={() => toggleIsEditing()}
+        >
+          {isEditing ? 'Stop editing' : 'Start editing'}
+        </Button>
+      )}
+      <MdxField
+        name="documentation"
+        components={{
+          // TEXT
+          h1: props => (
+            <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h2: props => (
+            <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h3: props => (
+            <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h4: props => (
+            <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h5: props => (
+            <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h6: props => (
+            <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />
+          ),
+          ...mdxEditorComponents
+        }}
+      />
+    </Stack>
   );
 };
 
