@@ -1,9 +1,6 @@
-import { Link as ChLink, LinkProps, Text } from '@chakra-ui/react';
-import { Link as GaLink } from 'gatsby';
-import { FC, ReactNode, forwardRef } from 'react';
-import { isInternalLink } from '../utils/utils';
-import { useLocation } from '@reach/router';
+import { LinkProps } from '@chakra-ui/react';
 import { Link as JaenLink } from 'gatsby-plugin-jaen';
+import { ReactNode, forwardRef } from 'react';
 
 interface GatsbyLinkProps extends LinkProps {
   href?: string;
