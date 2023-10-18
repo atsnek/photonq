@@ -3,6 +3,7 @@ import { Link as GaLink } from 'gatsby';
 import { FC, ReactNode, forwardRef } from 'react';
 import { isInternalLink } from '../utils/utils';
 import { useLocation } from '@reach/router';
+import { Link as JaenLink } from 'gatsby-plugin-jaen';
 
 interface GatsbyLinkProps extends LinkProps {
   href?: string;
@@ -13,25 +14,11 @@ interface GatsbyLinkProps extends LinkProps {
  * Custom link component combining Chakra UI's and Gatsby's Link.
  */
 
-const Link = forwardRef<typeof ChLink, GatsbyLinkProps>(
+const Link = forwardRef<typeof JaenLink, GatsbyLinkProps>(
   ({ href = '#', ...props }, ref) => {
-    // Props that both link variants share.
-    const baseProps: LinkProps = {
-      position: 'relative'
-    };
+    console.log('Link href', href, props);
 
-    if (isInternalLink(href)) {
-      return (
-        <ChLink
-          ref={ref}
-          {...baseProps}
-          to={href}
-          as={GaLink}
-          {...props}
-        ></ChLink>
-      );
-    }
-    return <ChLink ref={ref} {...baseProps} href={href} {...props}></ChLink>;
+    return <JaenLink ref={ref as any} to={href} {...props} />;
   }
 );
 
