@@ -3622,10 +3622,10 @@
   dependencies:
     snek-query "*"
 
-"@snek-functions/origin@^0.8.23":
-  version "0.8.23"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.23.tgz#1e8412f6e8b23119fa0758233813279428506f19"
-  integrity sha512-jzpuLNnnDl1fIn1g0mtUcNECKhQ870UOmJqnrezgmJMZE+JvQiPKx4O4ezahKPUVj8U8vhgWbjdFX/LsdQSYwQ==
+"@snek-functions/origin@^0.8.25":
+  version "0.8.25"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.25.tgz#0a47c3b0742aba0abfe32889a7917bed1ed34115"
+  integrity sha512-zpLL7LnLCP6eJaTthrJjBqrJO2tzUqq7Ln0fnjYFS1w9HkzNj9LmJsNthKVS30DM4Lh/oXtam6MLYwNrbKkMVg==
   dependencies:
     snek-query "*"
 

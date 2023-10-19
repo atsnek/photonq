@@ -201,3 +201,15 @@ export const togglePostRating = async (
   });
   return !error || error?.length === 0;
 };
+
+/**
+ *  Triggers all root-level proxy props of a post so they are fetched by sq
+ * @param post The post to trigger the props of
+ */
+export const triggerPostProxyProps = (post: Post): void => {
+  post.stars().totalCount;
+  post.stars().edges.map(se => se.node.profile.id);
+  for (const key in post) {
+    post[key as keyof typeof post];
+  }
+}

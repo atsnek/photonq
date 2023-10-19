@@ -7,7 +7,8 @@ import { buildUserActivities, changeUserFollowingState, getUserDisplayname } fro
 import {
   buildPostPreview,
   searchPosts,
-  togglePostRating
+  togglePostRating,
+  triggerPostProxyProps
 } from '../../../shared/utils/features/post';
 import { TPaginatedPostListData } from '../../post/types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
@@ -541,29 +542,73 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     return succeed;
   },
   fetchShowcaseLatestPosts: async () => {
+    const profile = get().profile.profile;
+
+    if (!profile) return false;
+
+    const [currentUser,] = await sq.query(q => q.userMe);
+
     set(
       produce((state: TStoreState) => {
         state.profile.showcaseLatestPosts.state = 'loading';
       })
     )
 
+    const [postConnection, postConnectionError] = await sq.query(q => {
+      const user = q.user({ id: get().profile.profile?.id }).profile;
+      if (!user) return undefined;
+
+      const posts = user.posts({ first: 2 });
+      posts.nodes.map(triggerPostProxyProps);
+      return posts;
+    })
+
+    if (!postConnection || postConnectionError?.length > 0) return false;
+
+    const posts = await Promise.all(postConnection.nodes.map(async pe => {
+      return (await sq.query(q => buildPostPreview(q, pe, currentUser)))[0]
+    }));
+
     set(
       produce((state: TStoreState) => {
         state.profile.showcaseLatestPosts.state = 'success';
+        state.profile.showcaseLatestPosts.items = posts;
       })
     )
     return true;
   },
   fetchShowcaseStarsPosts: async () => {
+    const profile = get().profile.profile;
+
+    if (!profile) return false;
+
+    const [currentUser,] = await sq.query(q => q.userMe);
+
     set(
       produce((state: TStoreState) => {
         state.profile.showcaseStarsPosts.state = 'loading';
       })
     )
 
+    const [postConnection, postConnectionError] = await sq.query(q => {
+      const user = q.user({ id: get().profile.profile?.id }).profile;
+      if (!user) return undefined;
+
+      const posts = user.posts({ first: 2 });
+      posts.nodes.map(triggerPostProxyProps);
+      return posts;
+    })
+
+    if (!postConnection || postConnectionError?.length > 0) return false;
+
+    const posts = await Promise.all(postConnection.nodes.map(async pe => {
+      return (await sq.query(q => buildPostPreview(q, pe, currentUser)))[0]
+    }));
+
     set(
       produce((state: TStoreState) => {
         state.profile.showcaseStarsPosts.state = 'success';
+        state.profile.showcaseStarsPosts.items = posts;
       })
     )
     return true;
