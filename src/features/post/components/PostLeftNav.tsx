@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import { EnPostLanguage, TPost } from '../types/post';
+import { Dispatch, FC, SetStateAction } from 'react';
+import { EnPostLanguage, TPost, TPostViewMode } from '../types/post';
 import {
   Box,
   Button,
@@ -8,7 +8,8 @@ import {
   Heading,
   Input,
   Menu,
-  MenuButton,
+  Spacer,
+  Switch,
   Tag,
   Text,
   Textarea,
@@ -20,19 +21,23 @@ import { useNavOffset } from '../../../shared/hooks/use-nav-offset';
 import Image from '../../../shared/components/image/Image';
 import LeftNavPostReaderSkeleton from '../reader/components/LeftNavPostReaderSkeleton';
 import { useAuthenticationContext } from '@atsnek/jaen';
-import PostLanguageMenuList from './PostLanguageMenuList';
+import { Language } from '@snek-functions/origin/dist/schema.generated';
+import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
+import SelectMenu from '../../../shared/components/select-menu/SelectMenu';
 
 interface IPostLeftNavProps {
   post?: TPost;
-  isPostAuthor: boolean;
   canEdit?: boolean;
+  isAuthor: boolean;
+  viewMode: TPostViewMode;
+  setViewMode: Dispatch<SetStateAction<TPostViewMode>>;
   handleTitleChange: (title: string) => void;
   handleSummaryChange: (summary: string) => void;
   setPostPreviewImage: (src: File) => void;
   isPostPreviewImageUploading: boolean;
   handleLanguageChange: (language: EnPostLanguage) => void;
   handleTogglePrivacy: () => void;
-  isUpdatingPrivacy: boolean;
+  handleSavePost: () => void;
 }
 
 /**
@@ -40,15 +45,17 @@ interface IPostLeftNavProps {
  */
 const PostLeftNav: FC<IPostLeftNavProps> = ({
   post,
-  isPostAuthor,
   canEdit,
+  isAuthor,
+  viewMode,
+  setViewMode,
   handleTitleChange,
   handleSummaryChange,
+  handleLanguageChange,
   setPostPreviewImage,
   isPostPreviewImageUploading,
-  handleLanguageChange,
   handleTogglePrivacy,
-  isUpdatingPrivacy
+  handleSavePost
 }) => {
   const navOffset = useNavOffset();
 
@@ -106,7 +113,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           {canEdit ? (
             <>
               <Input
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 placeholder="My Post"
                 defaultValue={post.title ?? 'My Post'}
@@ -115,6 +122,11 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 fontWeight="semibold"
                 borderRadius="md"
                 onBlur={e => handleTitleChange(e.target.value)}
+                colorScheme="brand"
+                _focusVisible={{
+                  borderWidth: 2,
+                  borderColor: 'brand.500'
+                }}
               />
               <TbEdit
                 id="editor-left-nav-edit-title-icon"
@@ -133,36 +145,53 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             </Text>
           )}
         </Box>
-        {isPostAuthor && !canEdit && post.privacy === 'PRIVATE' && (
-          <Tag size="sm" colorScheme="yellow">
-            private
-          </Tag>
-        )}
         {canEdit && (
           <>
-            <HStack>
-              <Tag
-                h="auto"
-                as={Button}
-                size="sm"
-                colorScheme={isPublic ? 'green' : 'yellow'}
-                _hover={{
-                  bg: `pages.singlePost.leftNav.tags.privacy.${privacyLabel}.hover.bgColor`,
-                  color: `pages.singlePost.leftNav.tags.privacy.${privacyLabel}.hover.color`
-                }}
-                onClick={handleTogglePrivacy}
-                isDisabled={isUpdatingPrivacy}
-              >
-                {privacyLabel}
-              </Tag>
-              <Menu>
-                <MenuButton
-                  as={Tag}
-                  size="sm"
-                  h="fit-content"
-                  colorScheme="gray"
-                  _hover={{
-                    bg: 'pages.singlePost.leftNav.tags.language.hover.bgColor'
+            <Box w="full">
+              <HStack mt={3}>
+                <Text fontSize="sm" fontWeight="medium">
+                  Post Privacy
+                </Text>
+                <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
+                  {privacyLabel}
+                </Tag>
+                <Spacer />
+                <Switch
+                  variant="privacy"
+                  defaultChecked={isPublic}
+                  onChange={handleTogglePrivacy}
+                />
+              </HStack>
+              <Text size="sm" color="gray.500" w="full" mt={2}>
+                Your post is {isPublic ? 'visible to everyone.' : 'only visible to you.'}
+              </Text>
+            </Box>
+            <Box w="full" mt={2}>
+              <HStack alignItems="center">
+                <Text fontSize="sm" fontWeight="medium">
+                  Post Language
+                </Text>
+                <Spacer />
+                <SelectMenu
+                  items={[
+                    { label: 'EN', value: 'EN' },
+                    { label: 'DE', value: 'DE' }
+                  ]}
+                  defaultValue={post.language}
+                  onChange={lang =>
+                    handleLanguageChange(
+                      lang in EnPostLanguage
+                        ? EnPostLanguage[lang as keyof typeof EnPostLanguage]
+                        : EnPostLanguage.EN
+                    )
+                  }
+                  buttonLabel="Language"
+                  buttonProps={{
+                    size: 'sm',
+                    colorScheme: 'gray'
+                  }}
+                  listProps={{
+                    minW: 'fit-content'
                   }}
                   cursor="pointer"
                 >
@@ -174,9 +203,9 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                   w
                   compactMode
                 />
-              </Menu>
-            </HStack>
-            <Divider mt={8} mb={3} />
+              </HStack>
+            </Box>
+            <Divider mt={3} mb={3} />
           </>
         )}
         {post.summary && canEdit && (
@@ -188,17 +217,41 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           <Textarea
             defaultValue={post.summary ?? 'Short summary of your post'}
             placeholder="Short summary of your post"
+            outline="1px solid"
+            outlineColor="components.textarea.borderColor"
             size="sm"
             borderRadius="lg"
             textAlign="center"
             variant="ghost"
             maxH="300px"
             onBlur={e => handleSummaryChange(e.target.value)}
+            _hover={{
+              outlineColor: 'components.textarea._hover.borderColor'
+            }}
+            _focusVisible={{
+              outlineWidth: 2,
+              outlineColor: 'components.textarea._focus.borderColor'
+            }}
+            transition="outline 0.1s ease-in-out"
           />
         ) : (
           <Text size="sm" color="pages.singlePost.leftNav.summary.color" textAlign="justify">
             {post.summary}
           </Text>
+        )}
+        {isAuthor && (
+          <Button
+            w="full"
+            colorScheme="gray"
+            size="sm"
+            leftIcon={canEdit ? <TbDeviceFloppy /> : <TbEdit />}
+            onClick={() => {
+              if (canEdit) handleSavePost();
+              setViewMode(canEdit ? 'read' : 'edit');
+            }}
+          >
+            {canEdit ? 'Finish editing' : 'Edit post'}
+          </Button>
         )}
       </VStack>
     </LeftNav>

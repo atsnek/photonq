@@ -15,7 +15,7 @@ const themeInputComponent: ComponentStyleConfig = {
         borderColor: 'transparent',
         _focus: {
           borderColor:
-            'components.input.variants.ghost._focus.field.borderColor'
+            'brand.500'
         }
       }
     }

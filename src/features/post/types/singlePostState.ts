@@ -7,6 +7,15 @@ export interface ISinglePostStateDefinition {
   isNewPost: boolean;
   post?: TPost;
   postAuthor: TUser | null;
+  madeChanges: {
+    title: boolean;
+    avatarUrl: boolean;
+    summary: boolean;
+    content: boolean;
+    language: boolean;
+    privacy: boolean;
+  },
+  newAvatarUrlFile?: File;
 }
 
 export interface ISinglePostStateActions {
@@ -16,6 +25,7 @@ export interface ISinglePostStateActions {
   editSummary: (summary: string) => Promise<boolean>;
   fetchPost: (slug: string) => Promise<boolean>;
   createNewPost: (previewImage?: File) => Promise<string | undefined>;
+  savePost: () => Promise<boolean>;
   togglePostRating: () => Promise<boolean>;
   updatePreviewImage: (src: File) => Promise<boolean>;
   togglePrivacy: () => Promise<boolean>;

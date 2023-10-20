@@ -1,10 +1,19 @@
 const smtTextareaComponent = {
-  a: 'b', // Remove after adding another property (otherwise _focus won't work)
+  borderColor: {
+    default: 'gray.300',
+    _dark: 'gray.600'
+  },
   _focus: {
     borderColor: {
-      default: 'theme.500',
-      _dark: 'theme.600'
+      default: 'brand.500',
+      _dark: 'brand.600'
     }
+  },
+  _hover: {
+    borderColor: {
+      default: 'gray.300',
+      _dark: 'gray.500'
+    },
   },
   variants: {
     ghost: {
@@ -12,7 +21,7 @@ const smtTextareaComponent = {
       _focus: {
         borderColor: {
           default: 'gray.300',
-          _dark: 'gray.600'
+          _dark: 'gray.500'
         }
       }
     }
