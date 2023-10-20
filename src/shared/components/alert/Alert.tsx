@@ -60,7 +60,7 @@ const Alert: FC<IPublishAlertProps> = ({
   return (
     <AlertDialog
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleCancel}
       leastDestructiveRef={cancelRef}
       isCentered
       motionPreset="slideInBottom"
@@ -70,12 +70,7 @@ const Alert: FC<IPublishAlertProps> = ({
         <AlertDialogHeader>{header}</AlertDialogHeader>
         <AlertDialogBody>{body}</AlertDialogBody>
         <AlertDialogFooter>
-          <Button
-            colorScheme="gray"
-            {...cancelProps}
-            ref={cancelRef}
-            onClick={handleCancel}
-          >
+          <Button colorScheme="gray" {...cancelProps} ref={cancelRef} onClick={handleCancel}>
             {cancelLabel}
           </Button>
           <Button

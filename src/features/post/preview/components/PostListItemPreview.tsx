@@ -53,6 +53,10 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
   post,
   wrapperProps,
   showPrivacy,
+  togglePostPrivacy,
+  isTogglingPostPrivacy,
+  deletePost,
+  isDeletingPost,
   toggleRating,
   hideAuthor
 }) => {
@@ -121,13 +125,17 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             </HStack>
           </VStack>
           <Spacer />
-          {post.canManage && false && (
+          {post.canManage && (
             <PostPreviewManageMenu
               alignSelf="flex-start"
               minW="fit-content"
               postPrivacy={post.privacy}
-              togglePostPrivacy={() => {}}
-              isTogglingPostPrivacy={false}
+              togglePostPrivacy={id =>
+                togglePostPrivacy(id, post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC')
+              }
+              isTogglingPostPrivacy={isTogglingPostPrivacy}
+              deletePost={deletePost}
+              isDeletingPost={isDeletingPost}
               postId={post.id}
             />
           )}

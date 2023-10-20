@@ -7,10 +7,11 @@ import { buildUserActivities, changeUserFollowingState } from '../utils/user';
 import { useAppStore } from '../../../shared/store/store';
 import {
   buildPostPreview,
+  deletePost,
   searchPosts,
   togglePostRating
 } from '../../../shared/utils/features/post';
-import { TPaginatedPostListData } from '../../post/types/post';
+import { TPaginatedPostListData, TPostPreview } from '../../post/types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
 import { asEnumKey } from 'snek-query';
 import { PrivacyInputInput } from '@snek-functions/origin/dist/schema.generated';
@@ -443,6 +444,31 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     );
 
     return true;
+  },
+  deletePost: async (id) => {
+    const succeed = deletePost(id);
+
+    if (!succeed) return false;
+
+    // TODO: Include the showcase post once the branch is merged
+    const postSections = [get().profile.overviewPosts, get().profile.searchPosts];
+
+    const doesSectionPostExist = (id: TPostPreview['id'], section: TPaginatedPostListData) => section.items.findIndex(p => p.id === id) !== -1;
+
+    if (doesSectionPostExist(id, get().profile.overviewPosts)) {
+      get().profile.fetchOverviewPosts();
+    }
+    if (doesSectionPostExist(id, get().profile.searchPosts)) {
+      get().profile.fetchSearchPosts(
+        get().profile.searchPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        get().profile.searchPostLanguage,
+        get().profile.searchPostsDateRange
+      );
+    }
+
+    return succeed;
   },
   reset: () => {
     set(

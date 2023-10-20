@@ -116,14 +116,12 @@ export const searchPosts = async (
       }
 
       if (dateRange?.from) {
-        requestArgs.filters.from = `${dateRange.from.getFullYear()}-${
-          dateRange.from.getMonth() + 1
-        }-${dateRange.from.getDate()}`;
+        requestArgs.filters.from = `${dateRange.from.getFullYear()}-${dateRange.from.getMonth() + 1
+          }-${dateRange.from.getDate()}`;
       }
       if (dateRange?.to) {
-        requestArgs.filters.to = `${dateRange.to.getFullYear()}-${
-          dateRange.to.getMonth() + 1
-        }-${dateRange.to.getDate()}`;
+        requestArgs.filters.to = `${dateRange.to.getFullYear()}-${dateRange.to.getMonth() + 1
+          }-${dateRange.to.getDate()}`;
       }
     }
 
@@ -142,7 +140,7 @@ export const searchPosts = async (
         for (const key in pe.node) {
           pe.node[key as keyof typeof pe.node];
         }
-      } catch {}
+      } catch { }
     });
     return posts;
   });
@@ -187,3 +185,13 @@ export const togglePostRating = async (
   });
   return error?.length === 0;
 };
+
+/**
+ * Delete a post by its id
+ * @param id The post id
+ * @returns Whether the post was deleted successfully
+ */
+export const deletePost = async (id: TPost['id']): Promise<boolean> => {
+  const [, error] = await sq.mutate(m => m.socialPostDelete({ postId: id }));
+  return error?.length === 0;
+}

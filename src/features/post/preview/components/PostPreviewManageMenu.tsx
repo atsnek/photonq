@@ -1,20 +1,16 @@
-import {
-  Menu,
-  MenuButton,
-  Button,
-  MenuList,
-  MenuItem,
-  ButtonProps
-} from '@chakra-ui/react';
+import { Menu, MenuButton, Button, MenuList, MenuItem, ButtonProps } from '@chakra-ui/react';
 import { FC } from 'react';
 import { TPostPreview } from '../../types/post';
 import TbBookUpload from '../../../../shared/components/icons/tabler/TbBookUpload';
+import TbSquareRoundedX from '../../../../shared/components/icons/tabler/TbSquareRoundedX';
 
 interface IPostPreviewManageMenuProps extends ButtonProps {
   postId: TPostPreview['id'];
   postPrivacy: TPostPreview['privacy'];
   togglePostPrivacy: (id: TPostPreview['id']) => void;
   isTogglingPostPrivacy: boolean;
+  deletePost?: (id: TPostPreview['id']) => void;
+  isDeletingPost?: boolean;
 }
 
 /**
@@ -25,9 +21,13 @@ const PostPreviewManageMenu: FC<IPostPreviewManageMenuProps> = ({
   postPrivacy,
   togglePostPrivacy,
   isTogglingPostPrivacy,
+  deletePost,
+  isDeletingPost,
   ...props
 }) => {
   const isPostPrivate = postPrivacy === 'PRIVATE';
+
+  console.log('isDeletingPost', isDeletingPost);
 
   return (
     <Menu>
@@ -46,8 +46,17 @@ const PostPreviewManageMenu: FC<IPostPreviewManageMenuProps> = ({
           isDisabled={isTogglingPostPrivacy}
           icon={isPostPrivate ? <TbBookUpload /> : <TbBookUpload />}
         >
-          {isPostPrivate ? 'Publish' : 'Unpublish'}
+          {isPostPrivate ? 'Set public' : 'Set private'}
         </MenuItem>
+        {deletePost && (
+          <MenuItem
+            icon={<TbSquareRoundedX />}
+            onClick={() => deletePost(postId)}
+            isDisabled={isDeletingPost}
+          >
+            Delete
+          </MenuItem>
+        )}
       </MenuList>
     </Menu>
   );
