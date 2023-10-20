@@ -29,7 +29,7 @@ const smtTopNav = {
       }
     },
     borderColor: {
-      default: 'gray.200',
+      default: 'gray.300',
       _dark: 'gray.500'
     },
     color: {
