@@ -16,6 +16,7 @@ import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
 import { asEnumKey } from 'snek-query';
 import { PrivacyInputInput } from '@snek-functions/origin/dist/schema.generated';
 import { USER_FETCH_LIMIT } from '../variables/user';
+import { TAsyncListData } from '../../../shared/types/list';
 
 const initState: IProfileStateDefinition = {
   activity: { items: [], totalCount: 0, state: 'loading' },
@@ -559,6 +560,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       const user = q.user({ id: get().profile.profile?.id }).profile;
       if (!user) return undefined;
 
+      console.log("user", profile.id)
       const posts = user.posts({ first: 2 });
       posts.nodes.map(triggerPostProxyProps);
       return posts;
@@ -592,18 +594,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     )
 
     const [postConnection, postConnectionError] = await sq.query(q => {
-      const user = q.user({ id: get().profile.profile?.id }).profile;
-      if (!user) return undefined;
-
-      const posts = user.posts({ first: 2 });
+      const posts = q.allSocialPostTrending({ first: 2, filters: { userId: profile.id } });
       posts.nodes.map(triggerPostProxyProps);
       return posts;
     })
 
     if (!postConnection || postConnectionError?.length > 0) return false;
 
-    const posts = await Promise.all(postConnection.nodes.map(async pe => {
-      return (await sq.query(q => buildPostPreview(q, pe, currentUser)))[0]
+    const posts = await Promise.all(postConnection.nodes.map(async post => {
+      return (await sq.query(q => buildPostPreview(q, post, currentUser)))[0]
     }));
 
     set(
@@ -834,7 +833,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     // TODO: Include the showcase post once the branch is merged
     const postSections = [get().profile.overviewPosts, get().profile.searchPosts];
 
-    const doesSectionPostExist = (id: TPostPreview['id'], section: TPaginatedPostListData) => section.items.findIndex(p => p.id === id) !== -1;
+    const doesSectionPostExist = (id: TPostPreview['id'], section: TPaginatedPostListData | TAsyncListData<TPostPreview>) => section.items.findIndex(p => p.id === id) !== -1;
 
     if (doesSectionPostExist(id, get().profile.overviewPosts)) {
       get().profile.fetchOverviewPosts();
@@ -847,6 +846,18 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         get().profile.searchPosts.language,
         get().profile.searchPosts.dateRange
       );
+    }
+    if (doesSectionPostExist(id, get().profile.starredPosts)) {
+      get().profile.fetchStarredPosts(
+        get().profile.starredPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        get().profile.starredPosts.language,
+        get().profile.starredPosts.dateRange
+      );
+    }
+    if (doesSectionPostExist(id, get().profile.showcaseLatestPosts)) {
+      get().profile.fetchShowcaseLatestPosts();
     }
 
     return succeed;
