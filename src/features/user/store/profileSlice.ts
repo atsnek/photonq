@@ -793,18 +793,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   },
   togglePostPrivacy: async (postId, privacy) => {
     if (!get().profile.profile) return false;
-
-    const postIdx = [
-      get().profile.searchPosts.items.findIndex(p => p.id === postId),
-      get().profile.overviewPosts.items.findIndex(p => p.id === postId)
-    ];
-
-    if (
-      get().profile.searchPosts.items[postIdx[0]]?.privacy === privacy ||
-      get().profile.overviewPosts.items[postIdx[1]]?.privacy === privacy
-    )
-      return true;
-
     const [, err] = await sq.mutate(m =>
       m.socialPostUpdate({
         postId,
@@ -816,10 +804,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     set(
       produce((state: TStoreState): void => {
-        if (postIdx[0] !== -1)
-          state.profile.searchPosts.items[postIdx[0]].privacy = privacy;
-        if (postIdx[1] !== -1)
-          state.profile.overviewPosts.items[postIdx[1]].privacy = privacy;
+        [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.searchPosts.items].forEach(posts => {
+          const post = ('state' in posts ? posts.items : posts).find(p => p.id === postId);
+          if (!post) return;
+          post.privacy = privacy;
+        });
       })
     );
 
@@ -827,11 +816,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   },
   deletePost: async (id) => {
     const succeed = deletePost(id);
-
     if (!succeed) return false;
-
-    // TODO: Include the showcase post once the branch is merged
-    const postSections = [get().profile.overviewPosts, get().profile.searchPosts];
 
     const doesSectionPostExist = (id: TPostPreview['id'], section: TPaginatedPostListData | TAsyncListData<TPostPreview>) => section.items.findIndex(p => p.id === id) !== -1;
 
