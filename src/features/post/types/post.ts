@@ -109,6 +109,8 @@ export interface IPostPreviewProps<T> {
   showPrivacy?: boolean;
   togglePostPrivacy: (id: string, privacy: TPostPreview['privacy']) => void;
   isTogglingPostPrivacy: boolean;
+  deletePost?: (id: TPostPreview['id']) => void;
+  isDeletingPost?: boolean;
 }
 
 export type TPostReviewStatus = 'pending' | 'approved' | 'rejected';

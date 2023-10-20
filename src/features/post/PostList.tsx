@@ -13,7 +13,8 @@ import {
   LinkBoxProps,
   SimpleGrid,
   StackProps,
-  VStack
+  VStack,
+  useDisclosure
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import PostCardPreview from './preview/components/PostCardPreview';
@@ -28,6 +29,7 @@ import usePagination from '../../shared/hooks/use-pagination';
 import { POST_FETCH_LIMIT } from '../../contents/PostsContent';
 import LoadMoreButton from '../../shared/components/pagination/LoadMoreButton';
 import { TAsyncListData } from '../../shared/types/list';
+import Alert from '../../shared/components/alert/Alert';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (
@@ -56,6 +58,7 @@ interface IPostListProps extends StackProps {
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => Promise<boolean>;
+  deletePost: (id: TPostPreview['id']) => Promise<boolean>;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
   dateRange?: { from: Date | undefined; to: Date | undefined };
@@ -83,6 +86,7 @@ const PostList: FC<IPostListProps> = ({
   toggleRating,
   showPostPrivacy,
   togglePostPrivacy,
+  deletePost,
   filterLanguage,
   setFilterLanguage,
   dateRange,
@@ -97,7 +101,9 @@ const PostList: FC<IPostListProps> = ({
     type: paginationType,
     hasMoreItems: 'nextCursor' in postData && (!!postData.nextCursor || postData.hasMore)
   });
-
+  const deletePostDisclosure = useDisclosure();
+  const [deletePostId, setDeletePostId] = useState<TPostPreview['id']>();
+  const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [isTogglingPostPrivacy, setIsTogglingPostPrivacy] = useState(false);
 
   const handleTogglePostPrivacy = async (
@@ -108,6 +114,25 @@ const PostList: FC<IPostListProps> = ({
     setIsTogglingPostPrivacy(true);
     await togglePostPrivacy(id, privacy);
     setIsTogglingPostPrivacy(false);
+  };
+
+  const handleDeletePost = (id: TPostPreview['id']) => {
+    if (isDeletingPost) return;
+    setIsDeletingPost(true);
+    setDeletePostId(id);
+    deletePostDisclosure.onOpen();
+  };
+
+  const handleDeletePostConfirmation = async () => {
+    deletePostDisclosure.onClose();
+    if (!deletePostId) return;
+    await deletePost(deletePostId);
+    setIsDeletingPost(false);
+  };
+
+  const handleDeletePostCancel = () => {
+    setDeletePostId(undefined);
+    setIsDeletingPost(false);
   };
 
   const memoizedPostPreviews = useMemo(() => {
@@ -143,6 +168,8 @@ const PostList: FC<IPostListProps> = ({
           toggleRating={toggleRating}
           togglePostPrivacy={handleTogglePostPrivacy}
           isTogglingPostPrivacy={isTogglingPostPrivacy}
+          deletePost={handleDeletePost}
+          isDeletingPost={postPreview.id === deletePostId && isDeletingPost}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}
           showPrivacy={showPostPrivacy}
@@ -297,7 +324,16 @@ const PostList: FC<IPostListProps> = ({
           //   Load more
           // </Button>
         )}
-    </VStack>
+      </VStack>
+      <Alert
+        disclosure={deletePostDisclosure}
+        body="Are you sure you want to delete this post? This action cannot be undone"
+        header="Delete this post?"
+        confirmationAction={handleDeletePostConfirmation}
+        confirmationProps={{ variant: 'filledRed' }}
+        cancelAction={handleDeletePostCancel}
+      />
+    </>
   );
 };
 

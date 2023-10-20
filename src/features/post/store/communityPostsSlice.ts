@@ -4,6 +4,7 @@ import { TCommunityPostsSlice } from '../types/communityPostsState';
 import { produce } from 'immer';
 import {
   buildPostPreview,
+  deletePost,
   searchPosts
 } from '../../../shared/utils/features/post';
 import { asEnumKey } from 'snek-query';
@@ -363,5 +364,17 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       get().communityPosts.postLanguage,
       dateRange
     );
-  }
+  },
+  deletePost: async (id) => {
+    const succeed = await deletePost(id);
+    if (succeed) return false;
+    set(
+      produce((state: TStoreState) => {
+        state.communityPosts.featuredPosts.items = state.communityPosts.featuredPosts.items.filter(p => p.id !== id);
+        state.communityPosts.latestPosts.items = state.communityPosts.latestPosts.items.filter(p => p.id !== id);
+        state.communityPosts.searchPosts.items = state.communityPosts.searchPosts.items.filter(p => p.id !== id);
+      })
+    );
+    return true;
+  },
 });

@@ -65,6 +65,15 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const fetchFollowingUsers = useAppStore(state => state.profile.fetchFollowingUsers);
   const followingUsers = useAppStore(state => state.profile.followingUsers);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
+  const searchPostLanguage = useAppStore(state => state.profile.searchPostLanguage);
+  const setSearchPostLanguage = useAppStore(state => state.profile.setSearchPostLanguage);
+  const deletePost = useAppStore(state => state.profile.deletePost);
+
+  const [postFilterQuery, setPostFilterQuery] = useState<string>();
+  const searchPostDateRange = useAppStore(state => state.profile.searchPostsDateRange);
+  const setSearchPostDateRange = useAppStore(state => state.profile.setSearchPostsDateRange);
+  const [activeTab, setActiveTab] = useState<(typeof tabNavItems)[number]['value']>('posts');
+  const { user } = useAuthenticationContext();
 
   useEffect(() => {
     resetProfile();

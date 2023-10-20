@@ -4,7 +4,7 @@ import Link from './Link';
 import { TLinkData } from '../types/navigation';
 
 interface LinksProps {
-  links: TLinkData[];
+  links: Array<TLinkData & { style?: LinkProps }>;
   props: LinkProps;
   activeProps?: LinkProps;
 }
@@ -19,6 +19,7 @@ const Links: FC<LinksProps> = ({ links, props, activeProps }) => {
             href={link.href}
             onClick={link.onClick}
             {...props}
+            {...link.style}
             {...(link.isActive ? activeProps : {})}
           >
             {link.name}
