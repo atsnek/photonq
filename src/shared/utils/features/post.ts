@@ -213,10 +213,10 @@ export const triggerPostProxyProps = (post: Post): void => {
     post[key as keyof typeof post];
   }
 }
- * Delete a post by its id
- * @param id The post id
- * @returns Whether the post was deleted successfully
- */
+/* Delete a post by its id
+* @param id The post id
+* @returns Whether the post was deleted successfully
+*/
 export const deletePost = async (id: TPost['id']): Promise<boolean> => {
   const [, error] = await sq.mutate(m => m.socialPostDelete({ postId: id }));
   return error?.length === 0;

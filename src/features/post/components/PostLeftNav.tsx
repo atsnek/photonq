@@ -193,15 +193,6 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                   listProps={{
                     minW: 'fit-content'
                   }}
-                  cursor="pointer"
-                >
-                  {post.language === 'EN' ? '🇺🇸' : '🇦🇹'}
-                </MenuButton>
-                <PostLanguageMenuList
-                  changeLanguage={handleLanguageChange}
-                  currentLanguage={post.language}
-                  w
-                  compactMode
                 />
               </HStack>
             </Box>

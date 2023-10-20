@@ -237,93 +237,94 @@ const PostList: FC<IPostListProps> = ({
   };
 
   return (
-    <VStack w="full" gap={5} {...props}>
-      {showControls && fetchPosts && (
-        <PostListControls
-          fetchPosts={handleFetchPosts}
-          defaultQuery={defaultFilterQuery}
-          query={currentQuery ?? ''}
-          setQuery={setFilterQuery}
-          filterLanguage={filterLanguage}
-          setFilterLanguage={handleToggleLanguage}
-          dateRange={dateRange}
-          setDateRange={setDateRange}
-          showCreatePostButton
-        />
-      )}
-      {postData.state !== 'inactive' &&
-        (postPreviews || showNoListResult ? postPreviews : <PostListNoResults mt={10} />)}
-      {paginationType === 'pages' ||
-        (paginationType === 'async-pages' &&
-          (pagination.currentPage > 1 || pagination.currentPage < pagination.totalPages) && (
-            <HStack alignContent="space-around">
-              <Button
-                variant="ghost-hover-outline"
-                size="sm"
-                borderRadius="lg"
-                leftIcon={<ChevronLeftIcon />}
-                isDisabled={pagination.currentPage === 1}
-                onClick={pagination.previousPage}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="ghost-hover-outline"
-                size="sm"
-                borderRadius="lg"
-                rightIcon={<ChevronRightIcon />}
-                isDisabled={
-                  'hasMore' in postData &&
-                  !postData?.hasMore &&
-                  pagination.currentPage === pagination.totalPages
-                }
-                onClick={handleNextPage}
-              >
-                Next
-              </Button>
-            </HStack>
-          ))}
-      {paginationType === 'load-more' &&
-        postData.state !== 'inactive' &&
-        'hasMore' in postData &&
-        postData.hasMore && (
-          <LoadMoreButton
-            onClick={
-              !!fetchPosts
-                ? () => {
-                    fetchPosts(
-                      currentQuery ?? defaultFilterQuery ?? '',
-                      POST_FETCH_LIMIT,
-                      pagination.currentItems.length,
-                      filterLanguage
-                    );
-                  }
-                : undefined
-            }
-            isDisabled={postData.state === 'loading'}
+    <>
+      <VStack w="full" gap={5} {...props}>
+        {showControls && fetchPosts && (
+          <PostListControls
+            fetchPosts={handleFetchPosts}
+            defaultQuery={defaultFilterQuery}
+            query={currentQuery ?? ''}
+            setQuery={setFilterQuery}
+            filterLanguage={filterLanguage}
+            setFilterLanguage={handleToggleLanguage}
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            showCreatePostButton
           />
-          // <Button
-          //   variant="ghost-hover-outline"
-          //   size="sm"
-          //   borderRadius="lg"
-          //   rightIcon={<ChevronRightIcon />}
-          //   isDisabled={postData.state === 'loading'}
-          //   onClick={
-          //     !!fetchPosts
-          //       ? () => {
-          //           fetchPosts(
-          //             currentQuery ?? defaultFilterQuery ?? '',
-          //             POST_FETCH_LIMIT,
-          //             pagination.currentItems.length,
-          //             filterLanguage
-          //           );
-          //         }
-          //       : undefined
-          //   }
-          // >
-          //   Load more
-          // </Button>
         )}
+        {postData.state !== 'inactive' &&
+          (postPreviews || showNoListResult ? postPreviews : <PostListNoResults mt={10} />)}
+        {paginationType === 'pages' ||
+          (paginationType === 'async-pages' &&
+            (pagination.currentPage > 1 || pagination.currentPage < pagination.totalPages) && (
+              <HStack alignContent="space-around">
+                <Button
+                  variant="ghost-hover-outline"
+                  size="sm"
+                  borderRadius="lg"
+                  leftIcon={<ChevronLeftIcon />}
+                  isDisabled={pagination.currentPage === 1}
+                  onClick={pagination.previousPage}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="ghost-hover-outline"
+                  size="sm"
+                  borderRadius="lg"
+                  rightIcon={<ChevronRightIcon />}
+                  isDisabled={
+                    'hasMore' in postData &&
+                    !postData?.hasMore &&
+                    pagination.currentPage === pagination.totalPages
+                  }
+                  onClick={handleNextPage}
+                >
+                  Next
+                </Button>
+              </HStack>
+            ))}
+        {paginationType === 'load-more' &&
+          postData.state !== 'inactive' &&
+          'hasMore' in postData &&
+          postData.hasMore && (
+            <LoadMoreButton
+              onClick={
+                !!fetchPosts
+                  ? () => {
+                      fetchPosts(
+                        currentQuery ?? defaultFilterQuery ?? '',
+                        POST_FETCH_LIMIT,
+                        pagination.currentItems.length,
+                        filterLanguage
+                      );
+                    }
+                  : undefined
+              }
+              isDisabled={postData.state === 'loading'}
+            />
+            // <Button
+            //   variant="ghost-hover-outline"
+            //   size="sm"
+            //   borderRadius="lg"
+            //   rightIcon={<ChevronRightIcon />}
+            //   isDisabled={postData.state === 'loading'}
+            //   onClick={
+            //     !!fetchPosts
+            //       ? () => {
+            //           fetchPosts(
+            //             currentQuery ?? defaultFilterQuery ?? '',
+            //             POST_FETCH_LIMIT,
+            //             pagination.currentItems.length,
+            //             filterLanguage
+            //           );
+            //         }
+            //       : undefined
+            //   }
+            // >
+            //   Load more
+            // </Button>
+          )}
       </VStack>
       <Alert
         disclosure={deletePostDisclosure}

@@ -65,15 +65,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const fetchFollowingUsers = useAppStore(state => state.profile.fetchFollowingUsers);
   const followingUsers = useAppStore(state => state.profile.followingUsers);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
-  const searchPostLanguage = useAppStore(state => state.profile.searchPostLanguage);
-  const setSearchPostLanguage = useAppStore(state => state.profile.setSearchPostLanguage);
   const deletePost = useAppStore(state => state.profile.deletePost);
-
-  const [postFilterQuery, setPostFilterQuery] = useState<string>();
-  const searchPostDateRange = useAppStore(state => state.profile.searchPostsDateRange);
-  const setSearchPostDateRange = useAppStore(state => state.profile.setSearchPostsDateRange);
-  const [activeTab, setActiveTab] = useState<(typeof tabNavItems)[number]['value']>('posts');
-  const { user } = useAuthenticationContext();
 
   useEffect(() => {
     resetProfile();
@@ -202,6 +194,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           setFilterLanguage={language => setPostListLanguage('all-posts', language)}
           dateRange={searchPosts.dateRange}
           setDateRange={(from, to) => setPostListDateRange(from, to, 'all-posts')}
+          deletePost={deletePost}
         />
       );
       break;
@@ -222,6 +215,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           dateRange={starredPosts.dateRange}
           setDateRange={(from, to) => setPostListDateRange(from, to, 'starred-posts')}
           defaultFilterQuery={starredPosts.query}
+          deletePost={deletePost}
         />
       );
       break;
