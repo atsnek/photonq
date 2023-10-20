@@ -80,9 +80,7 @@ const TopNav: FC<ITopNavProps> = ({
   colorMode,
   children
 }) => {
-  const { colorMode: chakraColorMode } = useColorMode();
   const [hamburgerClass, setHamburgerClass] = useState('');
-  const [topNavProps, setTopNavProps] = useState<CenterProps>({});
   const { openLoginModal } = useAuthenticationContext();
   const { isOpen, onOpen, onClose } = drawerDisclosure;
 
@@ -92,40 +90,44 @@ const TopNav: FC<ITopNavProps> = ({
   const isMobile = useMemo(() => useMobileDetection(), []);
   const isAuthenticated = useAuthenticationContext().user !== null;
 
-  const stateRef = useRef<{
-    prevScrollPosition: number;
-    translateValue: number;
-  }>({
-    prevScrollPosition: -1,
-    translateValue: 0
-  });
-
-  const links: TTopNavLinkData[] = [
-    {
-      name: 'Home',
-      href: '/',
-      matchMethod: 'exact'
-    },
-    {
-      name: 'Documentation',
-      href: '/docs/',
-      matchMethod: 'includes'
-    },
-    {
-      name: 'Sign In',
-      matchMethod: 'exact',
-      onClick: openLoginModal
-    },
-    {
-      name: 'Sign Up',
-      matchMethod: 'exact',
-      href: '/signup'
-    }
-  ];
+  const links: { left: TTopNavLinkData[]; right: TTopNavLinkData[] } = {
+    left: [
+      {
+        name: 'Home',
+        href: '/',
+        matchMethod: 'exact'
+      },
+      {
+        name: 'Documentation',
+        href: '/docs/',
+        matchMethod: 'includes'
+      }
+    ],
+    right: [
+      {
+        name: 'Sign In',
+        matchMethod: 'exact',
+        onClick: openLoginModal
+      },
+      {
+        name: 'Sign Up',
+        matchMethod: 'exact',
+        href: '/signup',
+        style: {
+          border: '1px solid',
+          borderColor: 'topNav.input.borderColor',
+          borderRadius: 'lg',
+          h: 8,
+          px: 2,
+          lineHeight: 8
+        }
+      }
+    ]
+  };
 
   const activatedLinks = useMemo(() => {
     let activeLinkFound = false;
-    return links.map(link => {
+    return links.left.map(link => {
       if (activeLinkFound) return link;
       const isActive =
         link.href && link.matchMethod
@@ -145,31 +147,6 @@ const TopNav: FC<ITopNavProps> = ({
   useEffect(() => {
     if (windowSize.width >= 768 && isOpen) closeDrawer();
   }, [windowSize.width]);
-
-  useEffect(() => {
-    if (isMobile || isAuthenticated) return;
-    if (scrollPosition > stateRef.current.prevScrollPosition) {
-      const translateValue =
-        Math.min(
-          Math.abs(stateRef.current.translateValue) +
-            (scrollPosition - stateRef.current.prevScrollPosition),
-          64
-        ) * -1;
-      stateRef.current.translateValue = translateValue;
-      setTopNavProps({ transform: `translateY(${translateValue}px)` });
-    } else {
-      // user is scrolling up
-      const translateValue =
-        Math.max(
-          Math.abs(stateRef.current.translateValue) +
-            (stateRef.current.prevScrollPosition - scrollPosition) * -1,
-          0
-        ) * -1;
-      stateRef.current.translateValue = translateValue;
-      setTopNavProps({ transform: `translateY(${translateValue}px)` });
-    }
-    stateRef.current.prevScrollPosition = scrollPosition;
-  }, [scrollPosition]);
 
   const openDrawer = () => {
     setHamburgerClass('open');
@@ -192,7 +169,6 @@ const TopNav: FC<ITopNavProps> = ({
         as="nav"
         position="sticky"
         top={0}
-        {...topNavProps}
         h="64px"
         px={{ base: 5, xl: 0 }}
         borderBottom="1px solid"
@@ -201,9 +177,6 @@ const TopNav: FC<ITopNavProps> = ({
         backdropFilter="blur(10px)"
         zIndex={3}
         {...wrapperProps}
-        _hover={{
-          top: stateRef.current.translateValue * -1 + 'px'
-        }}
         transition="top 0.2s ease-in-out"
       >
         <VStack w="full" spacing={0}>
@@ -230,9 +203,6 @@ const TopNav: FC<ITopNavProps> = ({
             <Spacer />
             <Center>
               <HStack spacing={4}>
-                {
-                  //! Causes hydration issue
-                }
                 <MemoizedLinks
                   links={activatedLinks}
                   props={{ ...navLinkProps, ...linkProps }}
@@ -255,23 +225,6 @@ const TopNav: FC<ITopNavProps> = ({
                     }}
                   />
                 </Box>
-                <Link
-                  display="inline-block"
-                  href="https://github.com/atsnek/photonq"
-                  // This doesnt work for some reason (min-width solves it temporarily)
-                  boxSize="32px"
-                  minWidth="32px"
-                  _hover={{
-                    transform: 'scale(1.2)'
-                  }}
-                  transition="transform 0.2s ease-in-out"
-                >
-                  <GitHub
-                    boxSize="32px"
-                    fill={`topNav.${colorMode ?? chakraColorMode}.GitHubFill`}
-                    transition="fill 0.2s ease-in-out"
-                  />
-                </Link>
                 <Button
                   variant="ghost-hover"
                   size="sm"
@@ -284,6 +237,20 @@ const TopNav: FC<ITopNavProps> = ({
                     iconProps={hamburgerIconProps}
                   />
                 </Button>
+                s
+              </HStack>
+            </Center>
+            <Center>
+              <HStack spacing={4} ml={4}>
+                <MemoizedLinks
+                  links={links.right}
+                  props={{ ...navLinkProps, ...linkProps }}
+                  activeProps={{
+                    opacity: 1,
+                    fontWeight: 'semibold',
+                    color: 'topNav.links.active.color'
+                  }}
+                />
               </HStack>
             </Center>
           </Flex>
