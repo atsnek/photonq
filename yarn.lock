@@ -70,7 +70,7 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.32":
+"@atsnek/jaen@^1.0.0-rc.33":
   version "1.0.0-rc.33"
   resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.33.tgz#268fb4938f8cecf2cbbdc41c8cb99e6597f70b4c"
   integrity sha512-tlI2Vk9/kgCX4SbmO55vMCsyGKteE9nP3AzZsCB+kSRoV8yWRy5d4x4C6T8QuVn8mlGr3SpYHwe3YKFAsYH3cQ==
@@ -3622,10 +3622,10 @@
   dependencies:
     snek-query "*"
 
-"@snek-functions/origin@^0.8.22":
-  version "0.8.22"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.22.tgz#6c6a2601aaa90c84766190139acde6c0a3b4f603"
-  integrity sha512-e/nbqOsYTpjrDQzw1wyY1BOoMghg3o8S1KWgJCunv+YEkKvycxuCw1A0bqDhY82mc9/o2d3bHQiFJP4M8rT4FA==
+"@snek-functions/origin@^0.8.25":
+  version "0.8.25"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.25.tgz#0a47c3b0742aba0abfe32889a7917bed1ed34115"
+  integrity sha512-zpLL7LnLCP6eJaTthrJjBqrJO2tzUqq7Ln0fnjYFS1w9HkzNj9LmJsNthKVS30DM4Lh/oXtam6MLYwNrbKkMVg==
   dependencies:
     snek-query "*"
 

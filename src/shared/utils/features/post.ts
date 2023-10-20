@@ -1,4 +1,7 @@
 import {
+  Connection_1,
+  Connection_1_2,
+  Edge_1_2,
   LanguageInputInput,
   Post,
   PrivacyInputInput,
@@ -48,6 +51,7 @@ export const buildPostPreview = (
   currentUser?: t.Nullable<User>
 ): TPostPreview => {
   const author = q.user({ id: post?.profileId ?? '' });
+  console.log("post: ", post);
   return {
     id: post?.id ?? '',
     slug: post?.slug ?? '',
@@ -94,21 +98,25 @@ export const searchPosts = async (
   currentUser?: t.Nullable<User>,
   userId?: string,
   language?: EnPostLanguage,
-  dateRange?: TPostDateRange
+  dateRange?: TPostDateRange,
+  dataSource: 'all-social' | 'starred' = 'all-social'
 ): Promise<TPaginatedPostListData> => {
   const [postConnection] = await sq.query(q => {
     const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
-      filters: { privacy: asEnumKey(PrivacyInputInput, privacy) },
+      filters: {},
       first: limit
     };
 
     if (requestArgs.filters) {
-      if (searchQuery.length > 0) {
-        requestArgs.filters.query = searchQuery;
+      if (dataSource !== "starred") {
+        requestArgs.filters.privacy = asEnumKey(PrivacyInputInput, privacy);
+        if (userId) {
+          requestArgs.filters.userId = userId;
+        }
       }
 
-      if (userId) {
-        requestArgs.filters.userId = userId;
+      if (searchQuery.length > 0) {
+        requestArgs.filters.query = searchQuery;
       }
 
       if (language) {
@@ -116,14 +124,12 @@ export const searchPosts = async (
       }
 
       if (dateRange?.from) {
-        requestArgs.filters.from = `${dateRange.from.getFullYear()}-${
-          dateRange.from.getMonth() + 1
-        }-${dateRange.from.getDate()}`;
+        requestArgs.filters.from = `${dateRange.from.getFullYear()}-${dateRange.from.getMonth() + 1
+          }-${dateRange.from.getDate()}`;
       }
       if (dateRange?.to) {
-        requestArgs.filters.to = `${dateRange.to.getFullYear()}-${
-          dateRange.to.getMonth() + 1
-        }-${dateRange.to.getDate()}`;
+        requestArgs.filters.to = `${dateRange.to.getFullYear()}-${dateRange.to.getMonth() + 1
+          }-${dateRange.to.getDate()}`;
       }
     }
 
@@ -131,18 +137,24 @@ export const searchPosts = async (
       requestArgs.after = cursor;
     }
 
-    const posts = q.allSocialPost(requestArgs);
+    const posts = dataSource === 'all-social' ? q.allSocialPost(requestArgs) : q.user({ id: userId })?.profile?.starredPosts(requestArgs);
+    if (!posts) return;
     //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
     posts?.pageInfo.hasNextPage;
     posts?.pageInfo.endCursor;
     posts?.edges.forEach(pe => {
       try {
-        pe.node.stars().edges.map(se => se.node.profile.id);
-        pe.node.stars().totalCount;
-        for (const key in pe.node) {
-          pe.node[key as keyof typeof pe.node];
+        const node = dataSource === 'all-social' ? pe.node as Post : (pe as Edge_1_2).node.post;
+        if (dataSource === 'starred') {
+          (pe as Edge_1_2).node.post.stars().totalCount;
+          node.stars().totalCount;
         }
-      } catch {}
+        node.stars().edges.map(se => se.node.profile.id);
+        node.stars().totalCount;
+        for (const key in node) {
+          node[key as keyof typeof node];
+        }
+      } catch { }
     });
     return posts;
   });
@@ -150,24 +162,26 @@ export const searchPosts = async (
   const postEdges = postConnection?.edges ?? [];
   //* We need to query each post in a separate query until snek-query offers us a better way to do this
   const postPreviews = await Promise.all(
-    postEdges.map(async p => {
-      return (
-        await sq.query(q => buildPostPreview(q, p.node as Post, currentUser))
-      )[0];
-    })
-  );
+    postEdges
+      .map(async p => {
+        return (
+          await sq.query(q => buildPostPreview(q, (dataSource === 'all-social' ? p.node as Post : (p as Edge_1_2).node.post), currentUser))
+        )[0];
+      })
+  )
+    .then(p => p.filter(p => !!p.id)); //* Filter out empty posts (seems to happen when fetching starred posts)
 
   return {
     state: 'success',
     items: postPreviews ?? [],
     hasMore: postConnection?.pageInfo?.hasNextPage ?? false,
-    totalCount: postConnection?.totalCount,
+    totalCount: postConnection?.totalCount ?? 0,
     nextCursor: postConnection?.pageInfo.hasNextPage
       ? postConnection?.pageInfo?.endCursor ?? ''
       : undefined,
     prevCursor: postConnection?.pageInfo.hasPreviousPage
       ? postConnection?.pageInfo.startCursor ?? ''
-      : undefined
+      : undefined,
   };
 };
 
@@ -185,5 +199,25 @@ export const togglePostRating = async (
     if (hasRated) m.socialPostUnstar({ postId: postId });
     else m.socialPostStar({ postId: postId });
   });
-  return error?.length === 0;
+  return !error || error?.length === 0;
 };
+
+/**
+ *  Triggers all root-level proxy props of a post so they are fetched by sq
+ * @param post The post to trigger the props of
+ */
+export const triggerPostProxyProps = (post: Post): void => {
+  post.stars().totalCount;
+  post.stars().edges.map(se => se.node.profile.id);
+  for (const key in post) {
+    post[key as keyof typeof post];
+  }
+}
+ * Delete a post by its id
+ * @param id The post id
+ * @returns Whether the post was deleted successfully
+ */
+export const deletePost = async (id: TPost['id']): Promise<boolean> => {
+  const [, error] = await sq.mutate(m => m.socialPostDelete({ postId: id }));
+  return error?.length === 0;
+}

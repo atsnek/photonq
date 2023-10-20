@@ -1,6 +1,5 @@
-import { ReactNode } from 'react';
 import { TPostPreview } from '../../post/types/post';
-import { TActivity, TActivitySection } from '../activity/types/activity';
+import { TActivitySection } from '../activity/types/activity';
 
 /**
  * This represents a single user.
@@ -11,9 +10,10 @@ export type TUser = {
   displayName: string; // This is the name visible to other users
   bio: string | null;
   avatarUrl?: string;
-  // socials: TUserSocials[];
   stats?: TProfileStat;
   location?: string;
+  isFollowing?: boolean;
+  isOwnProfile?: boolean;
 };
 
 /**
@@ -25,27 +25,19 @@ export type TProfile = {
   posts: TPostPreview[];
 };
 
-export type TProfileStatType = 'stars' | 'followers' | 'views' | 'posts';
-
-export type TProfileStat = { [key in TProfileStatType]: number };
+/**
+ * All the possible tabs in the profile page.
+ */
+export type TProfileTab = 'overview' | 'posts' | 'stars' | 'followers' | 'following';
 
 /**
- * This contains all the variants of social links that a user can have.
+ * This represents a single stat of a user.
  */
-//TODO: Maybe there is a better way to do this?
-// export type TUserSocialType = 'email' | 'linkedin' | 'company';
-// export type TUserLinklessSocialType = 'location';
+export type TProfileStatType = 'following' | 'followers' | 'views' | 'posts' | 'starred';
 
-// /**
-//  * This represents a single social link of a user.
-//  */
-// export type TUserSocials =
-//   | {
-//     type: TUserSocialType;
-//     label: string;
-//     url: string;
-//   }
-//   | {
-//     type: TUserLinklessSocialType;
-//     label: string;
-//   };
+export type TProfilePostLists = 'all-posts' | 'starred-posts'
+
+/**
+ * This represents all the stats of a user.
+ */
+export type TProfileStat = { [key in TProfileStatType]: number };

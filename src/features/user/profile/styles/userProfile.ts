@@ -52,6 +52,15 @@ const smtUserProfilePage = {
           default: 'gray.600',
           _dark: 'gray.500'
         }
+      },
+      link: {
+        a: 'b',
+        _hover: {
+          color: {
+            default: 'brand.500',
+            _dark: 'brand.500'
+          }
+        }
       }
     }
   },

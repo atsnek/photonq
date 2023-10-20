@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atsnek/jaen": "^1.0.0-rc.32",
+    "@atsnek/jaen": "^1.0.0-rc.33",
     "@atsnek/jaen-fields-mdx": "^1.0.0-rc.4",
     "@chakra-ui/anatomy": "^2.2.0",
     "@chakra-ui/icons": "^2.1.0",
@@ -25,7 +25,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@reach/router": "^1.3.4",
-    "@snek-functions/origin": "^0.8.22",
+    "@snek-functions/origin": "^0.8.25",
     "date-fns": "^2.30.0",
     "flexsearch": "^0.7.31",
     "framer-motion": "^10.16.1",

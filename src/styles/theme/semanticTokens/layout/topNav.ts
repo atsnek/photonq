@@ -29,8 +29,18 @@ const smtTopNav = {
       }
     },
     borderColor: {
-      default: 'transparent',
-      _dark: 'gray.700'
+      default: 'gray.300',
+      _dark: 'gray.500'
+    },
+    color: {
+      default: 'gray.800',
+      _dark: 'gray.400',
+    },
+    kbd: {
+      color: {
+        default: 'rgb(107, 114, 128)',
+        _dark: 'gray.400'
+      }
     }
   },
   mobile: {
