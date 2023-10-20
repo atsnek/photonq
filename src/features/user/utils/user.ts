@@ -22,7 +22,6 @@ import { TPaginationData } from '../../../shared/types/pagination';
  */
 export const getUserDisplayname = (user: ObjectAndUser) => {
   let displayName: string | undefined = undefined;
-  console.log("gudn", user, user.details?.firstName, user.details?.lastName)
   if (user.details?.firstName) {
     displayName = user.details.firstName;
   }
@@ -82,7 +81,8 @@ export const buildUserActivities = async (
     totalCount: activityConnection.totalCount,
     hasMore: activityConnection.pageInfo.hasNextPage,
     nextCursor: activityConnection.pageInfo.endCursor ?? undefined,
-    prevCursor: activityConnection.pageInfo.startCursor ?? undefined
+    prevCursor: activityConnection.pageInfo.startCursor ?? undefined,
+    state: 'success'
   };
 
   const items = activityConnection.edges

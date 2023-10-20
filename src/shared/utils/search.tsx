@@ -1,12 +1,9 @@
 const FlexSearch = require('flexsearch');
 import { sq } from '@snek-functions/origin';
 import { UseSearchResult, useSearch } from '../../search/use-search';
-import {
-  TSearchMetadata,
-  TSearchResult,
-  TSearchResultSection
-} from '../types/search';
+import { TSearchMetadata, TSearchResult, TSearchResultSection } from '../types/search';
 import { filterWhitespaceItems } from './utils';
+import { getUserDisplayname } from '../../features/user/utils/user';
 
 /**
  * Searches the docs for the given query.
@@ -140,9 +137,7 @@ export async function searchDocs(
       }
 
       const key =
-        sectionResult.doc.url +
-        '@' +
-        (sectionResult.doc.display ?? sectionResult.doc.content);
+        sectionResult.doc.url + '@' + (sectionResult.doc.display ?? sectionResult.doc.content);
 
       if (occured[key]) {
         continue;
@@ -177,9 +172,7 @@ export async function searchDocs(
     if (a._page_matches !== b._page_matches) {
       return b._page_matches - a._page_matches;
     }
-    return a._section_matches === b._section_matches
-      ? 0
-      : b._section_matches - a._section_matches;
+    return a._section_matches === b._section_matches ? 0 : b._section_matches - a._section_matches;
   });
   return res;
 }
@@ -189,11 +182,9 @@ export async function searchDocs(
  * @param query The query to search for
  * @returns  The search results
  */
-export async function searchSocialPosts(
-  query: string
-): Promise<TSearchResultSection[]> {
+export async function searchSocialPosts(query: string): Promise<TSearchResultSection[]> {
   const [searchResult, error] = await sq.query(q => {
-    const posts = q.allSocialPost({ filters: { query } });
+    const posts = q.allSocialPost({ filters: { query }, first: 5 });
 
     const sections: TSearchResultSection[] = [];
     posts.nodes.map(post => {
@@ -211,5 +202,29 @@ export async function searchSocialPosts(
     return sections;
   });
 
-  return searchResult;
+  return !error || error?.length === 0 ? searchResult : [];
+}
+
+export async function searchUser(query: string): Promise<TSearchResultSection[]> {
+  const [searchResult, error] = await sq.query(q => {
+    const user = q.user({ login: query, resourceId: __SNEK_RESOURCE_ID__ });
+
+    const sections: TSearchResultSection[] = [];
+    if (!user) sections;
+
+    sections.push({
+      title: user.username,
+      results: [
+        {
+          avatarURL: user.details?.avatarURL ?? undefined,
+          description: user.profile?.bio ?? user.username,
+          href: `/user/${user.username}`,
+          title: getUserDisplayname(user)
+        }
+      ]
+    });
+    return sections;
+  });
+
+  return !error || error?.length === 0 ? searchResult : [];
 }

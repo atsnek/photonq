@@ -6,10 +6,12 @@ export type TSearchMetadata = {
 /**
  * The combined search results.
  */
-export type TSearchResults = {
-  docs: TSearchResultSection[];
-  community: TSearchResultSection[];
-}
+export type TSearchResults = Record<string, { title: string, sections: TSearchResultSection[] }>;
+// {
+//   docs: TSearchResultSection[];
+//   community: TSearchResultSection[];
+//   users: TSearchResultSection[];
+// }
 
 /**
  * A single search result section.
@@ -23,6 +25,7 @@ export type TSearchResultSection = {
  * A single search result.
  */
 export type TSearchResult = {
+  avatarURL?: string;
   title: string;
   description: string;
   href: string;
