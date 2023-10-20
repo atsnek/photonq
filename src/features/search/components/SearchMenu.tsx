@@ -79,15 +79,6 @@ const SearchMenu: FC<SearchMenuProps> = ({ onItemClickCapture, styleProps }) => 
         return;
       }
     }
-    // if (
-    //   (searchResultData.docs.length > 0 || searchResultData.community.length > 0) &&
-    //   (searchResultData.docs[0]?.results.length > 0 ||
-    //     searchResultData.community[0]?.results.length > 0)
-    // ) {
-    //   const href = (searchResultData.docs[0] ?? searchResultData.community[0]).results[0].href;
-    //   navigate(href);
-    //   setIsAnyItemFocused(false);
-    // }
   };
 
   const search = useSearch();
@@ -155,9 +146,8 @@ const SearchMenu: FC<SearchMenuProps> = ({ onItemClickCapture, styleProps }) => 
               fontSize="sm"
               backgroundColor="shared.translucent.bgColor"
               backdropBlur={8}
-              h="50%"
-              height="auto"
-              maxHeight="xs"
+              maxH="80%"
+              h="max-content"
               overflowY="scroll"
               {...styleProps?.menuList}
               onFocusCapture={e => {
