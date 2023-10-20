@@ -678,27 +678,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
               post.stars += post.hasRated ? 1 : -1;
             }
           });
-          // if (source === 'overview') {
-          //   const post = state.profile.overviewPosts.items.find(
-          //     p => p.id === id
-          //   );
-          //   if (post) {
-          //     post.hasRated = !post.hasRated;
-          //     post.stars += post.hasRated ? 1 : -1;
-          //   }
-          // } else if (source === 'posts') {
-          //   const post = state.profile.searchPosts.items.find(p => p.id === id);
-          //   if (post) {
-          //     post.hasRated = !post.hasRated;
-          //     post.stars += post.hasRated ? 1 : -1;
-          //   }
-          // } else {
-          //   const post = state.profile.searchPosts.items.find(p => p.id === id);
-          //   if (post) {
-          //     post.hasRated = !post.hasRated;
-          //     post.stars += post.hasRated ? 1 : -1;
-          //   }
-          // }
         })
       );
     }
@@ -865,8 +844,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         get().profile.searchPosts.query,
         POST_FETCH_LIMIT,
         0,
-        get().profile.searchPostLanguage,
-        get().profile.searchPostsDateRange
+        get().profile.searchPosts.language,
+        get().profile.searchPosts.dateRange
       );
     }
 
