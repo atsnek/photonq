@@ -37,33 +37,21 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const resetProfile = useAppStore(state => state.profile.reset);
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
-  const fetchOverviewPosts = useAppStore(
-    state => state.profile.fetchOverviewPosts
-  );
+  const fetchOverviewPosts = useAppStore(state => state.profile.fetchOverviewPosts);
   const fetchActivitiy = useAppStore(state => state.profile.fetchActivity);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const searchPosts = useAppStore(state => state.profile.searchPosts);
   const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
-  const searchPostLanguage = useAppStore(
-    state => state.profile.searchPostLanguage
-  );
-  const setSearchPostLanguage = useAppStore(
-    state => state.profile.setSearchPostLanguage
-  );
+  const searchPostLanguage = useAppStore(state => state.profile.searchPostLanguage);
+  const setSearchPostLanguage = useAppStore(state => state.profile.setSearchPostLanguage);
   const togglePostRating = useAppStore(state => state.profile.togglePostRating);
-  const togglePostPrivacy = useAppStore(
-    state => state.profile.togglePostPrivacy
-  );
+  const togglePostPrivacy = useAppStore(state => state.profile.togglePostPrivacy);
+  const deletePost = useAppStore(state => state.profile.deletePost);
 
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
-  const searchPostDateRange = useAppStore(
-    state => state.profile.searchPostsDateRange
-  );
-  const setSearchPostDateRange = useAppStore(
-    state => state.profile.setSearchPostsDateRange
-  );
-  const [activeTab, setActiveTab] =
-    useState<(typeof tabNavItems)[number]['value']>('posts');
+  const searchPostDateRange = useAppStore(state => state.profile.searchPostsDateRange);
+  const setSearchPostDateRange = useAppStore(state => state.profile.setSearchPostsDateRange);
+  const [activeTab, setActiveTab] = useState<(typeof tabNavItems)[number]['value']>('posts');
   const { user } = useAuthenticationContext();
 
   useEffect(() => {
@@ -78,11 +66,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   }, [username]);
 
   useEffect(() => {
-    if (
-      activeTab === 'posts' &&
-      searchPosts.items.length === 0 &&
-      searchPosts.query.length === 0
-    ) {
+    if (activeTab === 'posts' && searchPosts.items.length === 0 && searchPosts.query.length === 0) {
       fetchSearchPosts('', POST_FETCH_LIMIT, 0);
     }
   }, [activeTab]);
@@ -129,10 +113,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   let mainContent: ReactNode;
   if (activeTab === 'overview') {
     mainContent = (
-      <ProfileOverview
-        isOwnProfile={isOwnProfile}
-        togglePostPrivacy={togglePostPrivacy}
-      />
+      <ProfileOverview isOwnProfile={isOwnProfile} togglePostPrivacy={togglePostPrivacy} />
     );
   } else {
     mainContent = (
@@ -152,6 +133,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         maxItems={POST_FETCH_LIMIT}
         showPostPrivacy={isOwnProfile}
         togglePostPrivacy={togglePostPrivacy}
+        deletePost={deletePost}
         filterLanguage={searchPostLanguage}
         setFilterLanguage={setSearchPostLanguage}
         dateRange={searchPostDateRange}
@@ -169,11 +151,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         <Box>
           <LeftNavProfile isOwnProfile={isOwnProfile} />
         </Box>
-        <Stack
-          verticalAlign="top"
-          spacing={{ base: 0, xl: 12 }}
-          direction="row"
-        >
+        <Stack verticalAlign="top" spacing={{ base: 0, xl: 12 }} direction="row">
           <Box w="full">{mainContent}</Box>
         </Stack>
       </MainGrid>

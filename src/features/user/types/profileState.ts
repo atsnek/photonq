@@ -45,6 +45,7 @@ export interface IProfileStateActions {
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => Promise<boolean>;
+  deletePost: (id: TPostPreview['id']) => Promise<boolean>;
   reset: () => void;
 }
 

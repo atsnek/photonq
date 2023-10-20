@@ -52,6 +52,8 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
   showPrivacy,
   togglePostPrivacy,
   isTogglingPostPrivacy,
+  deletePost,
+  isDeletingPost,
   wrapperProps
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
@@ -141,6 +143,8 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             }
             isTogglingPostPrivacy={isTogglingPostPrivacy}
             display={manageBtnDisplay}
+            deletePost={deletePost}
+            isDeletingPost={isDeletingPost}
           />
         )}
       </HStack>
