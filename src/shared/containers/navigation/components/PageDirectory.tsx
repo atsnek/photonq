@@ -236,6 +236,8 @@ const PageDirectory: FC<PageDirectoryProps> = ({
     return data.menu ? getExpandedMenuItemIndices(data.menu) : [];
   }, [data.activeIdx]);
 
+  console.log('data.menu', data.menu);
+
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
   const { isAuthenticated, openLoginModal } = useAuthenticationContext();

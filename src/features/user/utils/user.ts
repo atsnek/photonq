@@ -22,6 +22,7 @@ import { TPaginationData } from '../../../shared/types/pagination';
  */
 export const getUserDisplayname = (user: ObjectAndUser) => {
   let displayName: string | undefined = undefined;
+  console.log("gudn", user, user.details?.firstName, user.details?.lastName)
   if (user.details?.firstName) {
     displayName = user.details.firstName;
   }
@@ -100,7 +101,6 @@ export const buildUserActivities = async (
       )
         return;
 
-      console.log("activity: ", ae.node);
       let title = '';
       let href = '';
       if (type === 'blog_create' && post) {

@@ -171,6 +171,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 <PostLanguageMenuList
                   changeLanguage={handleLanguageChange}
                   currentLanguage={post.language}
+                  w
                   compactMode
                 />
               </Menu>

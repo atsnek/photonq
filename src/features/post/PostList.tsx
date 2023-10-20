@@ -27,6 +27,8 @@ import { query } from '../../pages';
 import { TPaginationType } from '../../shared/types/pagination';
 import usePagination from '../../shared/hooks/use-pagination';
 import { POST_FETCH_LIMIT } from '../../contents/PostsContent';
+import LoadMoreButton from '../../shared/components/pagination/LoadMoreButton';
+import { TAsyncListData } from '../../shared/types/list';
 import Alert from '../../shared/components/alert/Alert';
 
 interface IPostListProps extends StackProps {
@@ -38,7 +40,7 @@ interface IPostListProps extends StackProps {
     dateRange?: TPostDateRange
   ) => void;
   fetchNextPagePosts?: () => void;
-  postData: TPaginatedPostListData;
+  postData: TPaginatedPostListData | TAsyncListData<TPostPreview>;
   itemsPerPage?: number;
   maxItems?: number;
   paginationType?: TPaginationType;
@@ -52,7 +54,10 @@ interface IPostListProps extends StackProps {
   showNoListResult?: boolean;
   showPostPrivacy?: boolean;
   toggleRating: (id: TPostPreview['id']) => void;
-  togglePostPrivacy: (id: TPostPreview['id'], privacy: TPostPreview['privacy']) => Promise<boolean>;
+  togglePostPrivacy?: (
+    id: TPostPreview['id'],
+    privacy: TPostPreview['privacy']
+  ) => Promise<boolean>;
   deletePost: (id: TPostPreview['id']) => Promise<boolean>;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
@@ -94,7 +99,7 @@ const PostList: FC<IPostListProps> = ({
     itemsPerPage: itemsPerPage,
     maxItems: usePages ? maxItems : undefined,
     type: paginationType,
-    hasMoreItems: !!postData.nextCursor || postData.hasMore
+    hasMoreItems: 'nextCursor' in postData && (!!postData.nextCursor || postData.hasMore)
   });
   const deletePostDisclosure = useDisclosure();
   const [deletePostId, setDeletePostId] = useState<TPostPreview['id']>();
@@ -105,6 +110,7 @@ const PostList: FC<IPostListProps> = ({
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => {
+    if (!togglePostPrivacy) return;
     setIsTogglingPostPrivacy(true);
     await togglePostPrivacy(id, privacy);
     setIsTogglingPostPrivacy(false);
@@ -215,6 +221,7 @@ const PostList: FC<IPostListProps> = ({
     if (
       fetchNextPagePosts &&
       paginationType === 'async-pages' &&
+      'hasMore' in postData &&
       postData.hasMore &&
       pagination.currentPage === pagination.totalPages - 1
     )
@@ -230,58 +237,57 @@ const PostList: FC<IPostListProps> = ({
   };
 
   return (
-    <>
-      <VStack w="full" gap={5} {...props}>
-        {showControls && fetchPosts && (
-          <PostListControls
-            fetchPosts={handleFetchPosts}
-            defaultQuery={defaultFilterQuery}
-            query={currentQuery ?? ''}
-            setQuery={setFilterQuery}
-            filterLanguage={filterLanguage}
-            setFilterLanguage={handleToggleLanguage}
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-            showCreatePostButton
-          />
-        )}
-        {postData.state !== 'inactive' &&
-          (postPreviews || showNoListResult ? postPreviews : <PostListNoResults mt={10} />)}
-        {paginationType === 'pages' ||
-          (paginationType === 'async-pages' &&
-            (pagination.currentPage > 1 || pagination.currentPage < pagination.totalPages) && (
-              <HStack alignContent="space-around">
-                <Button
-                  variant="ghost-hover-outline"
-                  size="sm"
-                  borderRadius="lg"
-                  leftIcon={<ChevronLeftIcon />}
-                  isDisabled={pagination.currentPage === 1}
-                  onClick={pagination.previousPage}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="ghost-hover-outline"
-                  size="sm"
-                  borderRadius="lg"
-                  rightIcon={<ChevronRightIcon />}
-                  isDisabled={
-                    !postData?.hasMore && pagination.currentPage === pagination.totalPages
-                  }
-                  onClick={handleNextPage}
-                >
-                  Next
-                </Button>
-              </HStack>
-            ))}
-        {paginationType === 'load-more' && postData.state !== 'inactive' && postData.hasMore && (
-          <Button
-            variant="ghost-hover-outline"
-            size="sm"
-            borderRadius="lg"
-            rightIcon={<ChevronRightIcon />}
-            isDisabled={postData.state === 'loading'}
+    <VStack w="full" gap={5} {...props}>
+      {showControls && fetchPosts && (
+        <PostListControls
+          fetchPosts={handleFetchPosts}
+          defaultQuery={defaultFilterQuery}
+          query={currentQuery ?? ''}
+          setQuery={setFilterQuery}
+          filterLanguage={filterLanguage}
+          setFilterLanguage={handleToggleLanguage}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          showCreatePostButton
+        />
+      )}
+      {postData.state !== 'inactive' &&
+        (postPreviews || showNoListResult ? postPreviews : <PostListNoResults mt={10} />)}
+      {paginationType === 'pages' ||
+        (paginationType === 'async-pages' &&
+          (pagination.currentPage > 1 || pagination.currentPage < pagination.totalPages) && (
+            <HStack alignContent="space-around">
+              <Button
+                variant="ghost-hover-outline"
+                size="sm"
+                borderRadius="lg"
+                leftIcon={<ChevronLeftIcon />}
+                isDisabled={pagination.currentPage === 1}
+                onClick={pagination.previousPage}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="ghost-hover-outline"
+                size="sm"
+                borderRadius="lg"
+                rightIcon={<ChevronRightIcon />}
+                isDisabled={
+                  'hasMore' in postData &&
+                  !postData?.hasMore &&
+                  pagination.currentPage === pagination.totalPages
+                }
+                onClick={handleNextPage}
+              >
+                Next
+              </Button>
+            </HStack>
+          ))}
+      {paginationType === 'load-more' &&
+        postData.state !== 'inactive' &&
+        'hasMore' in postData &&
+        postData.hasMore && (
+          <LoadMoreButton
             onClick={
               !!fetchPosts
                 ? () => {
@@ -294,9 +300,29 @@ const PostList: FC<IPostListProps> = ({
                   }
                 : undefined
             }
-          >
-            Load more
-          </Button>
+            isDisabled={postData.state === 'loading'}
+          />
+          // <Button
+          //   variant="ghost-hover-outline"
+          //   size="sm"
+          //   borderRadius="lg"
+          //   rightIcon={<ChevronRightIcon />}
+          //   isDisabled={postData.state === 'loading'}
+          //   onClick={
+          //     !!fetchPosts
+          //       ? () => {
+          //           fetchPosts(
+          //             currentQuery ?? defaultFilterQuery ?? '',
+          //             POST_FETCH_LIMIT,
+          //             pagination.currentItems.length,
+          //             filterLanguage
+          //           );
+          //         }
+          //       : undefined
+          //   }
+          // >
+          //   Load more
+          // </Button>
         )}
       </VStack>
       <Alert
