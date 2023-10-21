@@ -14,6 +14,7 @@ import { THamburgerMenuIconStylerProps } from '../components/HamburgerMenuIcon';
 import { MenuContext } from '../contexts/menu';
 import { useAuthenticationContext, useCMSManagementContext } from '@atsnek/jaen';
 import { createPageTree } from '../utils/navigation';
+import CommunityLayout from './CommunityLayout';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -81,13 +82,13 @@ const AppLayout: FC<AppLayoutProps> = ({
             />
           )}
           <Box flex="1">
-            {isDocs ? (
+            {isDocs && (
               <DocsLayout path={path} isCommunity={isCommunity}>
                 {children}
               </DocsLayout>
-            ) : (
-              <>{children}</>
             )}
+            {isCommunity && <CommunityLayout>{children}</CommunityLayout>}
+            {!isDocs && !isCommunity && children}
           </Box>
         </Flex>
       </MenuContext.Provider>
