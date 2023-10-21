@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 import TopNav, {
   TBrandImage,
   TMobileMenuButtonProps,
@@ -65,6 +65,20 @@ const AppLayout: FC<AppLayoutProps> = ({
 
   const FooterComp = footer ?? Footer;
 
+  let childrenElmnt: ReactNode = null;
+
+  if (isDocs) {
+    childrenElmnt = (
+      <DocsLayout path={path} isCommunity={isCommunity}>
+        {children}
+      </DocsLayout>
+    );
+  } else if (isCommunity) {
+    childrenElmnt = <CommunityLayout>{children}</CommunityLayout>;
+  } else {
+    childrenElmnt = children;
+  }
+
   return (
     <>
       <MenuContext.Provider value={{ menuStructure }}>
@@ -81,15 +95,7 @@ const AppLayout: FC<AppLayoutProps> = ({
               branding={branding}
             />
           )}
-          <Box flex="1">
-            {isDocs && (
-              <DocsLayout path={path} isCommunity={isCommunity}>
-                {children}
-              </DocsLayout>
-            )}
-            {isCommunity && <CommunityLayout>{children}</CommunityLayout>}
-            {!isDocs && !isCommunity && children}
-          </Box>
+          <Box flex="1">{childrenElmnt}</Box>
         </Flex>
       </MenuContext.Provider>
       <FooterComp />

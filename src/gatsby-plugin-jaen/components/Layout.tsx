@@ -34,7 +34,10 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   return (
     <CMSManagement>
       <AppLayout
-        isDocs={docsPaths.some(docsPath => path.startsWith(docsPath)) || path === '/community'}
+        isDocs={
+          docsPaths.some(docsPath => path.startsWith(docsPath)) ||
+          ['/community/', '/community'].includes(path)
+        }
         isCommunity={path.startsWith('/community')}
         path={path}
         topNavProps={{
