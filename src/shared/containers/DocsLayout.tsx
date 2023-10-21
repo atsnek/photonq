@@ -37,7 +37,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
       <Box display={{ base: 'none', md: 'block' }} position="sticky">
         <LeftNav isExpanded={isExpanded} setIsExpanded={setIsExpanded}>
           <Box w={isExpanded ? 'auto' : 0}>
-            <PageDirectory data={menuStructure} isExpanded={isExpanded} />
+            <PageDirectory data={menuStructure} isExpanded={isExpanded} path={path} />
           </Box>
         </LeftNav>
       </Box>

@@ -12,6 +12,7 @@ interface PageDirectoryProps {
   isExpanded?: boolean;
   isMobile?: boolean;
   closeMobileDrawer?: () => void;
+  path?: string;
 }
 /**
  * The page directory component that shows the documentation structure.
@@ -20,7 +21,8 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   data,
   isExpanded = true,
   isMobile = false,
-  closeMobileDrawer
+  closeMobileDrawer,
+  path
 }) => {
   // Calculate the default expanded indices for the accordion
   const defaultExpandedIdx = useMemo(() => {
@@ -49,7 +51,8 @@ const PageDirectory: FC<PageDirectoryProps> = ({
       items: [
         {
           name: 'Posts',
-          href: '/community'
+          href: '/community',
+          isActive: path?.startsWith('/community')
         }
       ]
     },
