@@ -1,6 +1,6 @@
 import { Box, Collapse, Flex, Spacer } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import PageDirectory from './components/PageDirectory';
+import PageDirectory from './components/page-directory/PageDirectory';
 import NavbarControls from './components/NavbarControls';
 import { Global } from '@emotion/react';
 import SearchMenu from '../../../features/search/components/SearchMenu';

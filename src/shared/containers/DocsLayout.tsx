@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import React, { FC, useMemo, useState } from 'react';
 import LeftNav from './navigation/LeftNav';
 import MainBreadcrumb from './navigation/components/MainBreadcrumb';
-import PageDirectory from './navigation/components/PageDirectory';
+import PageDirectory from './navigation/components/page-directory/PageDirectory';
 import MainGrid from './components/MainGrid';
 import { useMenuContext } from '../contexts/menu';
 import { MainBreadcrumbPart } from '../types/navigation';
