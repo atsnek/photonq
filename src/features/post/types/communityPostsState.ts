@@ -34,6 +34,7 @@ export interface ICommunityPostsStateActions {
     from: Date | null | undefined,
     to: Date | null | undefined
   ) => void;
+  deletePost: (id: TPostPreview['id']) => Promise<boolean>;
 }
 
 export type TCommunityPostsSlice = ICommunityPostsStateDefinitions &

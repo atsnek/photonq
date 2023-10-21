@@ -201,16 +201,17 @@ const PostListControls: FC<IPostListControlsProps> = ({
                 type="date"
                 onChange={e => {
                   const date = e.currentTarget.valueAsDate;
+                  date?.setMonth(date.getMonth() + 1);
 
                   if (!date) return;
 
                   let dateTo: Date | null | undefined = undefined;
-                  if (date.getTime() > (dateToRef.current?.valueAsDate?.getTime() ?? 0)) {
+                  if (date.getTime() > (dateToRef.current?.valueAsDate?.getTime() ?? Infinity)) {
                     if (!dateToRef.current) return;
                     dateToRef.current.value = '';
                     dateTo = null;
                   }
-
+                  console.log('date', date, dateTo);
                   setDateRange(isNaN(date.getTime()) ? undefined : date, dateTo);
                 }}
               />
@@ -221,6 +222,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
                 sx={{ borderRightRadius: 'lg' }}
                 onChange={e => {
                   const date = e.currentTarget.valueAsDate;
+                  date?.setMonth(date.getMonth() + 1);
                   if (!date) return;
                   let dateFrom: Date | null | undefined = undefined;
                   if (date.getTime() < (dateFromRef.current?.valueAsDate?.getTime() ?? 0)) {

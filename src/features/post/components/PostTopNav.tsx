@@ -1,42 +1,22 @@
-import { ChangeEvent, FC, useRef } from 'react';
-import { TPost, EnPostLanguage } from '../types/post';
+import { FC } from 'react';
+import { TPost } from '../types/post';
 import { TUser } from '../../user/types/user';
-import {
-  Box,
-  Center,
-  HStack,
-  Spacer,
-  Input,
-  Button,
-  Menu,
-  MenuButton,
-  IconButton,
-  Tooltip
-} from '@chakra-ui/react';
+import { Box, Center, HStack, Spacer, Button, ButtonGroup } from '@chakra-ui/react';
 import UserAvatar from '../../user/avatar/components/UserAvatar';
-import TbBookDownload from '../../../shared/components/icons/tabler/TbBookDownload';
-import TbBookUpload from '../../../shared/components/icons/tabler/TbBookUpload';
-import TbPhoto from '../../../shared/components/icons/tabler/TbPhoto';
 import PostRatingButton from './PostRatingButton';
-import TbLanguage from '../../../shared/components/icons/tabler/TbLanguage';
-import PostLanguageMenuList from './PostLanguageMenuList';
-import TbDeviceIpadPlus from '../../../shared/components/icons/tabler/TbDeviceIpadPlus';
 import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFloppy';
+import TbEye from '../../../shared/components/icons/tabler/TbEye';
+import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
 
 interface IPostTopNavProps {
   post?: TPost;
+  isAuthor: boolean;
   author: TUser | null;
-  handleTogglePrivacy: () => void;
-  isUpdatingPrivacy?: boolean;
-  setPostPreviewImage: (src: File) => void;
-  isAuthor?: boolean;
-  canEdit?: boolean;
+  mode: 'edit' | 'read';
+  setMode: (mode: 'edit' | 'read') => void;
   handleRatePost: () => void;
   isRating?: boolean;
-  handleLanguageChange: (language: EnPostLanguage) => void;
-  isNewPost: boolean;
-  createNewPost: () => void;
-  isCreatingNewPost: boolean;
+  savePost: () => void;
   isSavingPost: boolean;
 }
 
@@ -45,35 +25,22 @@ interface IPostTopNavProps {
  */
 const PostTopNav: FC<IPostTopNavProps> = ({
   post,
-  author,
-  handleTogglePrivacy,
-  isUpdatingPrivacy,
-  setPostPreviewImage,
   isAuthor,
-  canEdit,
+  author,
+  mode,
+  setMode,
   handleRatePost,
   isRating,
-  handleLanguageChange,
-  isNewPost,
-  createNewPost,
-  isCreatingNewPost,
+  savePost,
   isSavingPost
 }) => {
-  const imageInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.currentTarget?.files || e.currentTarget.files?.length === 0) return;
-    const file = e.currentTarget.files[0];
-    setPostPreviewImage(file);
-  };
-
-  const isPublic = post?.privacy === 'PUBLIC';
-
   return (
     <Center>
       <Box
         position="relative"
         w="full"
+        border={'1px solid'}
+        borderColor={'pages.singlePost.topNav.borderColor'}
         minW="fit-content"
         maxW="7xl"
         bgColor="pages.singlePost.topNav.bgColor"
@@ -99,88 +66,44 @@ const PostTopNav: FC<IPostTopNavProps> = ({
             )}
             <Spacer display={{ base: 'none', sm: 'initial' }} />
             <HStack spacing={3} display={{ base: 'none', sm: 'flex' }}>
-              {!canEdit && (
+              {mode === 'read' && (
                 <PostRatingButton
                   hasRated={post?.hasRated ?? false}
                   isRating={isRating ?? false}
                   toggleRating={handleRatePost}
                   stars={post?.stars ?? 0}
-                  bgColor={!isAuthor ? 'pages.singlePost.topNav.rating.bgColor' : undefined}
-                  _hover={
-                    !isAuthor
-                      ? {
-                          bgColor: 'pages.singlePost.topNav.rating._hover.bgColor'
-                        }
-                      : undefined
-                  }
+                  bgColor={isAuthor ? undefined : 'pages.singlePost.topNav.rating.bgColor'}
+                  _hover={{
+                    bgColor: isAuthor ? undefined : 'pages.singlePost.topNav.rating._hover.bgColor'
+                  }}
+                  isAuthor={isAuthor}
                 />
               )}
-              <Input
-                ref={imageInputRef}
-                type="file"
-                display="none"
-                visibility="hidden"
-                zIndex={-9999}
-                accept="image/*"
-                onChange={handleImageInputChange}
-              />
-              {canEdit && (
-                <>
+
+              {isAuthor && (
+                <ButtonGroup>
                   <Button
-                    colorScheme="gray"
                     size="sm"
-                    leftIcon={<TbPhoto />}
-                    onClick={() => imageInputRef.current?.click()}
+                    leftIcon={mode === 'read' ? <TbEdit /> : <TbEye />}
+                    variant="outline"
+                    onClick={() => {
+                      setMode(mode === 'read' ? 'edit' : 'read');
+                    }}
                   >
-                    Image
+                    {mode === 'read' ? 'Edit' : 'Preview'}
                   </Button>
-                  <Menu>
-                    <MenuButton as={Button} colorScheme="gray" size="sm" leftIcon={<TbLanguage />}>
-                      Language
-                    </MenuButton>
-                    <PostLanguageMenuList
-                      currentLanguage={post?.language ?? EnPostLanguage.EN}
-                      changeLanguage={handleLanguageChange}
-                    />
-                  </Menu>
-                  {isNewPost ? (
+                  {mode === 'edit' && (
                     <Button
-                      colorScheme="gray"
                       size="sm"
-                      leftIcon={<TbDeviceIpadPlus />}
-                      onClick={createNewPost}
-                      isDisabled={isCreatingNewPost}
+                      leftIcon={<TbDeviceFloppy />}
+                      isLoading={isSavingPost}
+                      loadingText="Saving..."
+                      onClick={savePost}
                     >
-                      Create post
+                      Save
                     </Button>
-                  ) : (
-                    <>
-                      <Button
-                        colorScheme="gray"
-                        size="sm"
-                        leftIcon={isPublic ? <TbBookDownload /> : <TbBookUpload />}
-                        onClick={handleTogglePrivacy}
-                        isDisabled={isUpdatingPrivacy}
-                      >
-                        {isPublic ? 'Unpublish' : 'Publish'}
-                      </Button>
-                    </>
                   )}
-                </>
-              )}
-              {isAuthor && !isNewPost && (
-                <Tooltip label="Posts are saved automatically">
-                  <Button
-                    colorScheme="gray"
-                    bgColor=""
-                    size="sm"
-                    leftIcon={<TbDeviceFloppy />}
-                    isLoading={isSavingPost}
-                    loadingText="Saving..."
-                  >
-                    Save
-                  </Button>
-                </Tooltip>
+                </ButtonGroup>
               )}
             </HStack>
           </HStack>

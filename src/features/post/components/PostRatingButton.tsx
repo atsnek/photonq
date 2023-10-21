@@ -30,8 +30,8 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
 
   const rating = (
     <Button
-      variant={isAuthor || !isAuthenticated ? 'invisible' : 'solid'}
-      colorScheme="gray"
+      variant={isAuthor ? 'unstyled' : 'outline'}
+      cursor={isAuthor ? 'default' : 'pointer'}
       size="sm"
       leftIcon={
         <TbStar
@@ -47,8 +47,15 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
     </Button>
   );
 
-  if (canRate && showTooltip) {
-    const label = `${hasRated ? 'Unr' : 'R'}ate this post`;
+  if (showTooltip && !isAuthor) {
+    let label = '';
+
+    if (canRate) {
+      label = `${hasRated ? 'Unr' : 'R'}ate this post`;
+    } else {
+      label = 'You must be logged in to rate this post';
+    }
+
     return (
       <Tooltip label={label} aria-label={label} placement="bottom" openDelay={500}>
         {rating}
