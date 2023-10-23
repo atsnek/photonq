@@ -219,7 +219,7 @@ const TopNav: FC<ITopNavProps> = ({
                       ...searchProps,
                       menuList: {
                         ...searchProps?.menuList,
-                        width: { base: 0, md: '500px' },
+                        width: { base: 0, md: '500px', lg: '700px' },
                         zIndex: 3
                       }
                     }}

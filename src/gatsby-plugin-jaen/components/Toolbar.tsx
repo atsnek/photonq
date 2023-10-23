@@ -13,7 +13,7 @@ export const Toolbar: React.FC<ToolbarProps> = () => {
           kbd: { mt: 1, mr: 2 }
         },
         menuList: {
-          width: { base: 0, md: '500px' },
+          width: { base: 0, md: '500px', lg: '700px' },
           zIndex: 9999,
           backgroundColor: 'var(--chakra-colors-features-search-menuList-bgColor)' // Otherwise, the color is not applied
         }

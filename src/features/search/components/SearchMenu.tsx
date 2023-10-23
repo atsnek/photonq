@@ -92,7 +92,7 @@ const SearchMenu: FC<SearchMenuProps> = ({ onItemClickCapture, styleProps }) => 
 
   const fetchSearchResults = async () => {
     const docsResults = await searchDocs(searchQuery, search.searchIndex);
-    const socialPostResults = searchQuery.length >= 3 ? await searchSocialPosts(searchQuery) : [];
+    const socialPostResults = await searchSocialPosts(searchQuery);
     const userResult = await searchUser(searchQuery);
 
     setSearchResultData({
