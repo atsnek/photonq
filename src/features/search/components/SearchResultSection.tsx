@@ -1,5 +1,5 @@
-import { HeadingProps, Heading, MenuGroup, MenuDivider } from '@chakra-ui/react';
-import { FC } from 'react';
+import { HeadingProps, Heading, MenuGroup, MenuDivider, HStack } from '@chakra-ui/react';
+import { FC, ReactNode } from 'react';
 import { TSearchResultSection } from '../../../shared/types/search';
 import SearchResultItem from './SearchResultItem';
 
@@ -10,9 +10,10 @@ export const SearchResultSectionTitle: FC<
   HeadingProps & {
     title: string;
     idx: number;
+    icon?: ReactNode;
   }
-> = ({ title, idx, ...props }) => {
-  return (
+> = ({ title, idx, icon, ...props }) => {
+  const heading = (
     <Heading
       key={-1}
       fontSize="12px"
@@ -25,6 +26,22 @@ export const SearchResultSectionTitle: FC<
       {title}
     </Heading>
   );
+
+  if (icon) {
+    return (
+      <HStack
+        __css={{
+          '& svg': {
+            stroke: props.color ?? 'components.menu.groupTitle.color'
+          }
+        }}
+      >
+        {heading}
+        {icon}
+      </HStack>
+    );
+  }
+  return heading;
 };
 
 /**
@@ -32,14 +49,15 @@ export const SearchResultSectionTitle: FC<
  */
 export const SearchResultSection: FC<{
   section: TSearchResultSection;
+  icon?: ReactNode;
   idx: number;
   query: string;
   defaultHighlight?: boolean;
   onItemClickCapture?: () => void;
-}> = ({ section, idx, query, defaultHighlight, onItemClickCapture }) => {
+}> = ({ section, idx, icon, query, defaultHighlight, onItemClickCapture }) => {
   return (
     <MenuGroup key={idx}>
-      <SearchResultSectionTitle title={section.title} idx={idx} />
+      <SearchResultSectionTitle title={section.title} idx={idx} icon={icon} />
       <MenuDivider />
       {section.results.map((result, i) => (
         <SearchResultItem

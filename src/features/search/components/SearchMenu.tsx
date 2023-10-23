@@ -18,6 +18,9 @@ import { SearchProvider } from '../../../search/search-provider';
 import { useSearch } from '../../../search/use-search';
 import theme from '../../../styles/theme/theme';
 import { SearchResultSection, SearchResultSectionTitle } from './SearchResultSection';
+import TbBook from '../../../shared/components/icons/tabler/TbBook';
+import TbUsers from '../../../shared/components/icons/tabler/TbUsers';
+import TbConfetti from '../../../shared/components/icons/tabler/TbConfetti';
 
 export type TSearchMenuStyleProps = {
   input?: TSearchInputStyleProps;
@@ -46,7 +49,12 @@ const SearchMenu: FC<SearchMenuProps> = ({ onItemClickCapture, styleProps }) => 
       if (section.sections.length === 0) continue;
       output.push(
         <Fragment key={itemIdx}>
-          <SearchResultSectionTitle title={section.title} idx={itemIdx++} color="theme.500" />
+          <SearchResultSectionTitle
+            title={section.title}
+            idx={itemIdx++}
+            icon={section.icon}
+            color="theme.500"
+          />
           {section.sections.map((section, i) => (
             <SearchResultSection
               section={section}
@@ -96,9 +104,9 @@ const SearchMenu: FC<SearchMenuProps> = ({ onItemClickCapture, styleProps }) => 
     const userResult = await searchUser(searchQuery);
 
     setSearchResultData({
-      docs: { title: 'Documentation', sections: docsResults },
-      community: { title: 'Community Posts', sections: socialPostResults },
-      user: { title: 'Users', sections: userResult }
+      docs: { title: 'Documentation', sections: docsResults, icon: <TbBook /> },
+      community: { title: 'Community Posts', sections: socialPostResults, icon: <TbConfetti /> },
+      user: { title: 'Users', sections: userResult, icon: <TbUsers /> }
     });
   };
 

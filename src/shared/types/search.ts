@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export type TSearchMetadata = {
   _page_matches: number;
   _section_matches: number;
@@ -6,7 +8,7 @@ export type TSearchMetadata = {
 /**
  * The combined search results.
  */
-export type TSearchResults = Record<string, { title: string, sections: TSearchResultSection[] }>;
+export type TSearchResults = Record<string, { title: string, sections: TSearchResultSection[], icon: ReactNode }>;
 // {
 //   docs: TSearchResultSection[];
 //   community: TSearchResultSection[];
