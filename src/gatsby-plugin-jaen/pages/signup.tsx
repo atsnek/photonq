@@ -281,7 +281,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
       timer.current = setTimeout(() => {
         setDisplayText(prevText => prevText + welcomeText[currentIndex]);
         setCurrentIndex(currentIndex + 1);
-      }, 50); // Adjust the speed by changing the delay (e.g., 100ms for 10 characters per second)
+      }, 25); // Adjust the speed by changing the delay (e.g., 100ms for 10 characters per second)
 
       return () => clearTimeout(timer.current);
     } else {
