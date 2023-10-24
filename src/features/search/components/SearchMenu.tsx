@@ -1,7 +1,7 @@
 import { Center, Divider, ThemeProvider, VStack, useDisclosure, Text } from '@chakra-ui/react';
 import { FC, Fragment, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
-import { TSearchResults } from '../../../shared/types/search';
+import { TSearchResultSection, TSearchResults } from '../../../shared/types/search';
 import {
   getDefaultSearchDocs,
   getDefaultSearchUsers,
@@ -57,7 +57,6 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   }, [search]);
 
   const fetchSearchResults = async () => {
-    console.log('fetching search results', searchQuery);
     const docsResults = await searchDocs(searchQuery, search.searchIndex);
     const socialPostResults = await searchSocialPosts(searchQuery);
     const userResult = await searchUser(searchQuery);
@@ -71,7 +70,14 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   };
 
   const fetchDefaultSearchResults = async () => {
-    const userResults = currentUserId ? await getDefaultSearchUsers(currentUserId) : [];
+    const userResults: TSearchResultSection[] = currentUserId
+      ? await getDefaultSearchUsers(currentUserId)
+      : [
+          {
+            title: 'users',
+            results: [{ title: 'Create an account', href: '/signup', description: '' }]
+          }
+        ];
     const docsResults = await getDefaultSearchDocs(search.searchIndex);
     const socialPostResults = await searchSocialPosts();
 

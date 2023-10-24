@@ -48,7 +48,7 @@ const SearchModal: FC<ISearchModalProps> = ({
               placeholder="Search documentation"
               size="sm"
               borderRadius="lg"
-              focusBorderColor="brand.500"
+              focusBorderColor="brand.400"
               onChange={e => {
                 setSearchQuery(e.target.value);
               }}

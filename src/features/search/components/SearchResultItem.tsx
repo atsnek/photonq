@@ -33,7 +33,8 @@ export const SearchResultItem: FC<{
       w="full"
       key={id}
       _hover={{
-        bgColor: 'features.search.section.item._hover.bgColor'
+        bgColor: 'features.search.section.item._hover.bgColor',
+        color: 'features.search.section.item._hover.color'
       }}
       px={2}
       py={2}
@@ -41,7 +42,8 @@ export const SearchResultItem: FC<{
       alignItems="center"
       transition="background-color 0.2s ease-in-out"
       _focusWithin={{
-        bgColor: 'features.search.section.item._hover.bgColor'
+        bgColor: 'features.search.section.item._hover.bgColor',
+        color: 'features.search.section.item._hover.color'
       }}
       {...(item.isActive && {
         bgColor: 'features.search.section.item._hover.bgColor'

@@ -5,6 +5,12 @@ const smtSearchFeature = {
       _dark: 'gray.800'
     }
   },
+  input: {
+    borderColor: {
+      default: 'brand.400',
+      _dark: 'brand.600'
+    },
+  },
   section: {
     title: {
       color: {
@@ -29,9 +35,13 @@ const smtSearchFeature = {
         bgColor: {
           default: 'gray.100',
           _dark: 'gray.600'
-        }
-      }
-    }
+        },
+        color: {
+          default: 'brand.500',
+          _dark: 'brand.300'
+        },
+      },
+    },
   },
   noResults: {
     text: {
