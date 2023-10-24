@@ -1,6 +1,7 @@
 import { MenuItemProps, LinkBox, LinkOverlay, Text, Box, Spacer, Flex } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 import { TSearchResult } from '../../../shared/types/search';
+import Highlighter from 'react-highlight-words';
 
 /**
  * The search menu item component for displaying a specific search result item.
@@ -12,7 +13,8 @@ export const SearchResultItem: FC<{
   defaultFocus?: boolean;
   onClickCapture?: () => void;
   icon?: ReactNode;
-}> = ({ item, query, id, defaultFocus = false, onClickCapture = undefined, icon }) => {
+  isDocs?: boolean;
+}> = ({ item, query, id, defaultFocus = false, onClickCapture = undefined, icon, isDocs }) => {
   let props: MenuItemProps = {};
 
   if (defaultFocus) {
@@ -30,7 +32,7 @@ export const SearchResultItem: FC<{
   return (
     <LinkBox
       as={Flex}
-      w="full"
+      w={isDocs ? 'calc(100% - 20px)' : 'full'}
       key={id}
       _hover={{
         bgColor: 'features.search.section.item._hover.bgColor',
@@ -38,6 +40,7 @@ export const SearchResultItem: FC<{
       }}
       px={2}
       py={2}
+      ml={isDocs ? 5 : 0}
       borderRadius="md"
       alignItems="center"
       transition="background-color 0.2s ease-in-out"
@@ -58,6 +61,7 @@ export const SearchResultItem: FC<{
             verticalAlign: 'middle'
           }
         }}
+        w={isDocs ? 'calc(95% - 20px)' : 'calc(95%)'}
       >
         {icon}
         <LinkOverlay
@@ -66,8 +70,19 @@ export const SearchResultItem: FC<{
           _focus={{
             outline: 'none'
           }}
+          textOverflow="ellipsis"
+          overflow="hidden"
+          whiteSpace="nowrap"
         >
-          {item.title}
+          {isDocs ? (
+            <Highlighter
+              searchWords={queryTokens}
+              textToHighlight={item.title ?? ''}
+              highlightTag={highlightTag}
+            />
+          ) : (
+            item.title
+          )}
         </LinkOverlay>
       </Box>
       <Spacer />

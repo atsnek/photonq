@@ -58,6 +58,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
 
   const fetchSearchResults = async () => {
     const docsResults = await searchDocs(searchQuery, search.searchIndex);
+    console.log('docs: ', docsResults);
     const socialPostResults = await searchSocialPosts(searchQuery);
     const userResult = await searchUser(searchQuery);
 
@@ -111,6 +112,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     }
 
     for (const key in searchResultData) {
+      const isDocs = key === 'docs' && searchQuery.length > 0;
       const section = searchResultData[key as keyof TSearchResults];
       if (haveSomeResults && section.sections.length === 0) continue;
       output.push(
@@ -144,6 +146,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
                 key={itemIdx}
                 defaultHighlight={itemIdx++ === 0}
                 icon={section.icon}
+                isDocs={isDocs}
               />
             ))}
           </VStack>

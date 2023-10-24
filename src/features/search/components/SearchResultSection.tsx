@@ -68,9 +68,18 @@ export const SearchResultSection: FC<{
   query: string;
   defaultHighlight?: boolean;
   onItemClickCapture?: () => void;
-}> = ({ section, idx, icon, query, defaultHighlight, onItemClickCapture }) => {
+  isDocs?: boolean;
+}> = ({ section, idx, icon, query, defaultHighlight, onItemClickCapture, isDocs }) => {
   return (
     <Box key={idx} w="full">
+      {isDocs && (
+        <SearchResultItem
+          item={{ title: section.title, href: section.results[0].href, description: '' }}
+          query={query}
+          id={-1}
+          icon={icon}
+        />
+      )}
       {/* <SearchResultSectionTitle title={section.title} idx={idx} icon={icon} /> */}
       {/* <Divider /> */}
       {section.results.map((result, i) => (
@@ -82,6 +91,7 @@ export const SearchResultSection: FC<{
           defaultFocus={defaultHighlight && i === 0}
           onClickCapture={onItemClickCapture}
           icon={icon}
+          isDocs={isDocs}
         />
       ))}
     </Box>
