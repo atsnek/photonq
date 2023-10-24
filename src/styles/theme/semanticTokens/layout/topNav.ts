@@ -30,7 +30,7 @@ const smtTopNav = {
     },
     hover: {
       borderColor: {
-        default: 'brand.500',
+        default: 'brand.400',
         _dark: 'brand.600'
       },
     },
