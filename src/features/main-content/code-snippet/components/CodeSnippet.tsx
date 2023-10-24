@@ -54,8 +54,6 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
     if (children !== code) setCode(children);
   }, [children]);
 
-  console.log('language: ', language, 'grammar: ', grammar);
-
   /**
    * Copy code to clipboard.
    */

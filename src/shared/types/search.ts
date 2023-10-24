@@ -8,7 +8,7 @@ export type TSearchMetadata = {
 /**
  * The combined search results.
  */
-export type TSearchResults = Record<string, { title: string, sections: TSearchResultSection[], icon: ReactNode }>;
+export type TSearchResults = Record<string, { title: string, sections: TSearchResultSection[], icon?: ReactNode }>;
 // {
 //   docs: TSearchResultSection[];
 //   community: TSearchResultSection[];
@@ -21,6 +21,7 @@ export type TSearchResults = Record<string, { title: string, sections: TSearchRe
 export type TSearchResultSection = {
   title: string;
   results: TSearchResult[];
+  icon?: ReactNode;
 };
 
 /**
@@ -31,6 +32,7 @@ export type TSearchResult = {
   title: string;
   description: string;
   href: string;
+  isActive?: boolean;
 };
 
 /**

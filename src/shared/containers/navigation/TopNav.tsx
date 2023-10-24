@@ -4,7 +4,6 @@ import {
   Button,
   ButtonProps,
   Center,
-  CenterProps,
   Flex,
   HStack,
   Image,
@@ -14,26 +13,24 @@ import {
   StackProps,
   VStack,
   useDisclosure,
-  useColorMode
+  DarkMode,
+  LightMode
 } from '@chakra-ui/react';
 import { useLocation } from '@reach/router';
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import SnekIcon from '../../../assets/icons/brand.svg';
-import SearchMenu, { TSearchMenuStyleProps } from '../../../features/search/components/SearchMenu';
+import SearchMenu from '../../../features/search/components/SearchMenu';
 import HamburgerMenuIcon, {
   THamburgerMenuIconStylerProps
 } from '../../components/HamburgerMenuIcon';
 import MemoizedLinks from '../../components/MemoizedLink';
-import GitHub from '../../components/icons/brands/GitHub';
 import useWindowSize from '../../hooks/use-current-window-size';
-import { useNavOffset } from '../../hooks/use-nav-offset';
 import { TTopNavLinkData } from '../../types/navigation';
 import MobileNavDrawer from './MobileNavDrawer';
 import Link from '../../components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import Logo from '../../../gatsby-plugin-jaen/components/Logo';
 import useScrollPosition from '../../hooks/use-scroll-position';
-import { transferableAbortSignal } from 'util';
 import useMobileDetection from '../../hooks/use-mobile-detection';
 
 const navLinkProps = {
@@ -58,7 +55,6 @@ interface ITopNavProps {
   };
   wrapperProps?: StackProps;
   linkProps?: LinkProps;
-  searchProps?: TSearchMenuStyleProps;
   mobileMenuButtonProps?: ButtonProps;
   hamburgerIconProps?: THamburgerMenuIconStylerProps;
   drawerDisclosure: ReturnType<typeof useDisclosure>;
@@ -73,7 +69,6 @@ const TopNav: FC<ITopNavProps> = ({
   branding,
   wrapperProps,
   linkProps,
-  searchProps,
   mobileMenuButtonProps,
   hamburgerIconProps,
   drawerDisclosure,
@@ -163,6 +158,22 @@ const TopNav: FC<ITopNavProps> = ({
     else openDrawer();
   };
 
+  const search = useMemo(() => {
+    if (!colorMode) return <SearchMenu />;
+    if (colorMode === 'dark')
+      return (
+        <DarkMode>
+          <SearchMenu />
+        </DarkMode>
+      );
+    if (colorMode === 'light')
+      return (
+        <LightMode>
+          <SearchMenu />
+        </LightMode>
+      );
+  }, [colorMode]);
+
   return (
     <>
       <Center
@@ -212,19 +223,7 @@ const TopNav: FC<ITopNavProps> = ({
                     color: 'topNav.links.active.color'
                   }}
                 />
-                <Box display={{ base: 'none', md: 'initial' }}>
-                  <SearchMenu
-                    // width base 0 is a hack to prevent the menu from causing a horizontal scrollbar
-                    styleProps={{
-                      ...searchProps,
-                      menuList: {
-                        ...searchProps?.menuList,
-                        width: { base: 0, md: '500px', lg: '700px' },
-                        zIndex: 3
-                      }
-                    }}
-                  />
-                </Box>
+                <Box display={{ base: 'none', md: 'initial' }}>{search}</Box>
                 <Button
                   variant="ghost-hover"
                   size="sm"

@@ -24,17 +24,29 @@ const smtTopNav = {
         _dark: 'gray.900'
       },
       borderColor: {
-        default: 'theme.500',
-        _dark: 'theme.600'
+        default: 'brand.500',
+        _dark: 'brand.600'
       }
+    },
+    hover: {
+      borderColor: {
+        default: 'brand.500',
+        _dark: 'brand.600'
+      },
+    },
+    active: {
+      bgColor: {
+        default: 'gray.100',
+        _dark: 'gray.700'
+      },
     },
     borderColor: {
       default: 'gray.300',
-      _dark: 'gray.500'
+      _dark: 'gray.700'
     },
     color: {
       default: 'gray.800',
-      _dark: 'gray.400',
+      _dark: 'rgba(255, 255, 255, 0.4)',
     },
     kbd: {
       color: {
@@ -68,8 +80,8 @@ const smtTopNav = {
   links: {
     active: {
       color: {
-        default: 'theme.500',
-        _dark: 'theme.600'
+        default: 'brand.500',
+        _dark: 'brand.600'
       }
     }
   }
