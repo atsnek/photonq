@@ -32,6 +32,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const modalDisclosure = useDisclosure();
   const ref = useRef<{ searchTimout: NodeJS.Timeout | undefined }>({ searchTimout: undefined });
   const currentUserId = useAuthenticationContext().user?.id;
+  const search = useSearch();
 
   useEffect(() => {
     if (searchQuery.length > 0) {
@@ -43,6 +44,17 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
       fetchDefaultSearchResults();
     }
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (
+      searchQuery.length === 0 &&
+      Object.keys(searchResultData)
+        .map(key => searchResultData[key as keyof TSearchResults].sections.length)
+        .reduce((a, b) => a + b, 0) === 0
+    ) {
+      fetchDefaultSearchResults();
+    }
+  }, [search]);
 
   const fetchSearchResults = async () => {
     console.log('fetching search results', searchQuery);
@@ -135,8 +147,6 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     }
     return output;
   }, [searchResultData]);
-
-  const search = useSearch();
 
   useEffect(() => {
     // Focus the input when the user presses the shortcut
