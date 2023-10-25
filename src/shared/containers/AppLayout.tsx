@@ -29,7 +29,6 @@ interface AppLayoutProps {
     link?: TTopNavLinkProps;
     colorMode?: 'light' | 'dark';
     hamburger?: THamburgerMenuIconStylerProps;
-    searchProps?: TSearchMenuStyleProps;
     mobileMenuButtonProps?: TMobileMenuButtonProps;
   };
   branding?: {
@@ -90,7 +89,6 @@ const AppLayout: FC<AppLayoutProps> = ({
               wrapperProps={topNavProps?.wrapper}
               colorMode={topNavProps?.colorMode}
               hamburgerIconProps={topNavProps?.hamburger}
-              searchProps={topNavProps?.searchProps}
               mobileMenuButtonProps={topNavProps?.mobileMenuButtonProps}
               branding={branding}
             />

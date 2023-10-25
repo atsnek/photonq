@@ -27,8 +27,6 @@ const PostPreviewManageMenu: FC<IPostPreviewManageMenuProps> = ({
 }) => {
   const isPostPrivate = postPrivacy === 'PRIVATE';
 
-  console.log('isDeletingPost', isDeletingPost);
-
   return (
     <Menu>
       <MenuButton
