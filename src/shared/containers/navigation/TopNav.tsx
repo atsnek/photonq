@@ -226,17 +226,7 @@ const TopNav: FC<ITopNavProps> = ({
             <Center>
               <HStack spacing={4}>
                 <Box display={{ base: 'none', md: 'initial' }}>
-                  <SearchMenu
-                    // width base 0 is a hack to prevent the menu from causing a horizontal scrollbar
-                    styleProps={{
-                      ...searchProps,
-                      menuList: {
-                        ...searchProps?.menuList,
-                        width: { base: 0, md: '500px' },
-                        zIndex: 3
-                      }
-                    }}
-                  />
+                  <SearchMenu />
                 </Box>
                 <Button
                   variant="ghost-hover"
