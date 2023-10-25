@@ -4,6 +4,7 @@ import { UseSearchResult, useSearch } from '../../search/use-search';
 import { TSearchMetadata, TSearchResult, TSearchResultSection } from '../types/search';
 import { filterWhitespaceItems } from './utils';
 import { getUserDisplayname } from '../../features/user/utils/user';
+import TbIndentIncrease from '../components/icons/tabler/TbIndentIncrease';
 
 /**
  * Searches the docs for the given query.
@@ -177,7 +178,8 @@ export async function searchDocs(
       _page_matches: pageTitleMatches[i],
       _section_matches: sectionResults.length,
       title: pageResult.doc.title,
-      results: searchResultItems
+      results: searchResultItems,
+      resultIcon: <TbIndentIncrease />
     });
   }
   const res = searchResults.sort((a, b) => {
@@ -207,7 +209,8 @@ export async function getDefaultSearchDocs(
           href: key,
           title: item.title ?? ''
         }
-      ]
+      ],
+      resultIcon: <TbIndentIncrease />
     });
   });
   return results;

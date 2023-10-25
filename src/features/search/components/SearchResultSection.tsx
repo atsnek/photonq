@@ -90,7 +90,7 @@ export const SearchResultSection: FC<{
           key={i}
           defaultFocus={defaultHighlight && i === 0}
           onClickCapture={onItemClickCapture}
-          icon={icon}
+          icon={section.resultIcon ?? icon}
           isDocs={isDocs}
         />
       ))}

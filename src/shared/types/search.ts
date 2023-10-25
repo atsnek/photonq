@@ -22,6 +22,7 @@ export type TSearchResultSection = {
   title: string;
   results: TSearchResult[];
   icon?: ReactNode;
+  resultIcon?: ReactNode;
 };
 
 /**
