@@ -23,6 +23,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile, togglePostPr
   const fetchShowcaseStarPosts = useAppStore(state => state.profile.fetchShowcaseStarsPosts);
   const showcaseLatestPosts = useAppStore(state => state.profile.showcaseLatestPosts);
   const fetchShowcaseLatestPosts = useAppStore(state => state.profile.fetchShowcaseLatestPosts);
+  const deletePost = useAppStore(state => state.profile.deletePost);
 
   useEffect(() => {
     if (showcaseStarPosts.items.length === 0 && showcaseStarPosts.state === 'inactive') {
@@ -45,6 +46,18 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile, togglePostPr
   );
   return (
     <VStack gap={hasOverviewPosts || postData.state === 'loading' ? 12 : 0}>
+      <PostList
+        postData={postData}
+        previewType="card"
+        hidePostAuthor
+        showPostPrivacy={isOwnProfile}
+        togglePostPrivacy={togglePostPrivacy}
+        toggleRating={id => toggleRating(id, 'overview')}
+        itemsPerPage={6}
+        maxItems={6}
+        deletePost={deletePost}
+      />
+      {/* {hasShowcasePosts && <Divider />} */}
       {(showcaseStarPosts.state === 'loading' || showcaseStarPosts.items.length > 0) && (
         <Box w="full">
           <Heading size={'md'} mb={5}>
@@ -59,6 +72,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile, togglePostPr
             toggleRating={id => toggleRating(id, 'showcase_stars')}
             itemsPerPage={4}
             maxItems={4}
+            deletePost={deletePost}
           />
         </Box>
       )}
@@ -76,20 +90,10 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile, togglePostPr
             toggleRating={id => toggleRating(id, 'showcase_latest')}
             itemsPerPage={4}
             maxItems={4}
+            deletePost={deletePost}
           />
         </Box>
       )}
-      {hasShowcasePosts && <Divider />}
-      <PostList
-        postData={postData}
-        previewType="card"
-        hidePostAuthor
-        showPostPrivacy={isOwnProfile}
-        togglePostPrivacy={togglePostPrivacy}
-        toggleRating={id => toggleRating(id, 'overview')}
-        itemsPerPage={6}
-        maxItems={6}
-      />
       <ActivityList activity={activity} mb={10} fetchMore={fetchActivities} />
     </VStack>
   );
