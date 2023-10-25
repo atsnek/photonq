@@ -225,9 +225,7 @@ const TopNav: FC<ITopNavProps> = ({
             <Spacer />
             <Center>
               <HStack spacing={4}>
-                <Box display={{ base: 'none', md: 'initial' }}>
-                  <SearchMenu />
-                </Box>
+                <Box display={{ base: 'none', md: 'initial' }}>{search}</Box>
                 <Button
                   variant="ghost-hover"
                   size="sm"

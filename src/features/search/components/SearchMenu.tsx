@@ -71,7 +71,6 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
 
   const fetchSearchResults = async () => {
     const docsResults = await searchDocs(searchQuery, search.searchIndex);
-    console.log('docs: ', docsResults);
     const socialPostResults = await searchSocialPosts(searchQuery);
     const userResult = await searchUser(searchQuery);
 
