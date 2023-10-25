@@ -18,6 +18,7 @@ interface ISearchModalProps {
   searchResultItems: ReactNode[];
   setSearchQuery: (query: string) => void;
   handleNavigate(isUp: boolean): void;
+  openActiveItem: () => void;
 }
 
 const SearchModal: FC<ISearchModalProps> = ({
@@ -26,7 +27,8 @@ const SearchModal: FC<ISearchModalProps> = ({
   onClose,
   searchResultItems,
   setSearchQuery,
-  handleNavigate
+  handleNavigate,
+  openActiveItem
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -43,6 +45,9 @@ const SearchModal: FC<ISearchModalProps> = ({
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       handleNavigate(true);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      openActiveItem();
     }
   };
 

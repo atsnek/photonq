@@ -19,6 +19,7 @@ import SearchModal from './SearchModal';
 import TbBooks from '../../../shared/components/icons/tabler/TbBooks';
 import TbUser from '../../../shared/components/icons/tabler/TbUser';
 import { useAuthenticationContext } from '@atsnek/jaen';
+import { navigate } from 'gatsby';
 
 interface SearchMenuProps {}
 
@@ -102,6 +103,9 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     setNavigateIdx(0);
   };
 
+  /**
+   * The search result items to display in the search modal
+   */
   const resultItems = useMemo(() => {
     const output: ReactNode[] = [];
     let itemIdx = 0;
@@ -194,6 +198,10 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     }
   }, [resultItems]);
 
+  /**
+   * Navigate to the next or previous item in the search results
+   * @param isUp Whether to navigate up or down
+   */
   const handleNavigate = (isUp: boolean) => {
     const itemsCount = Object.values(searchResultData)
       .map(section => section.sections.map(s => s.results).flat())
@@ -209,6 +217,20 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     else setNavigateIdx(0);
   };
 
+  /**
+   * Navigate to the active item's href
+   */
+  const handleOpenActiveItem = () => {
+    const activeItem = Object.values(searchResultData)
+      .map(section => section.sections.map(s => s.results).flat())
+      .flat()
+      .find(item => item.isActive);
+    if (activeItem) {
+      modalDisclosure.onClose();
+      navigate(activeItem.href);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <SearchProvider>
@@ -221,6 +243,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
         searchResultItems={resultItems}
         setSearchQuery={setSearchQuery}
         handleNavigate={handleNavigate}
+        openActiveItem={handleOpenActiveItem}
       />
     </ThemeProvider>
   );
