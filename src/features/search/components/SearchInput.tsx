@@ -139,7 +139,7 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
               if (!menu.isOpen && query.length > 0) {
                 menu.onOpen();
               }
-              setSearchQuery(e.currentTarget.value.trim());
+              setSearchQuery(e.currentTarget.value);
             }}
             onKeyDownCapture={e => {
               if (e.key === 'Escape') {

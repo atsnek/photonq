@@ -1,10 +1,12 @@
 const FlexSearch = require('flexsearch');
 import { sq } from '@snek-functions/origin';
 import { UseSearchResult, useSearch } from '../../search/use-search';
-import { TSearchMetadata, TSearchResult, TSearchResultSection } from '../types/search';
+import {
+  TSearchMetadata,
+  TSearchResult,
+  TSearchResultSection
+} from '../types/search';
 import { filterWhitespaceItems } from './utils';
-import { getUserDisplayname } from '../../features/user/utils/user';
-import TbIndentIncrease from '../components/icons/tabler/TbIndentIncrease';
 
 /**
  * Searches the docs for the given query.
@@ -118,20 +120,8 @@ export async function searchDocs(
     pageTitleMatches[i] = 0;
     const pageResult = pageResults[i];
     const searchResultItems: Array<TSearchResult> = [];
-    // searchResults.push({
-    //   _page_matches: pageTitleMatches[i],
-    //   _section_matches: 0,
-    //   title: pageResult.doc.title,
-    //   results: [
-    //     {
-    //       title: pageResult.doc.title,
-    //       description: pageResult.doc.content ?? pageResult.doc.title,
-    //       href: pageResult.doc.url ?? '#'
-    //     }
-    //   ]
-    // });
 
-    //Search for hits in the sections of the page.
+    // Search for hits in the sections of the page.
     const sectionResults =
       sectionIndex.search(query, 5, {
         // offset: i * 5,
@@ -142,7 +132,7 @@ export async function searchDocs(
       })[0]?.result ?? [];
 
     const occured: Record<string, boolean> = {};
-    // We set an additional limit since flexsearch doesn't seem to work with the offset and either ot both limit parameters.
+    //* We set an additional limit since flexsearch doesn't seem to work with the offset and either ot both limit parameters.
     for (let j = 0; j < Math.min(sectionResults.length, 5); j++) {
       const sectionResult = sectionResults[j];
       if (sectionResult.doc.display !== undefined) {
@@ -150,7 +140,9 @@ export async function searchDocs(
       }
 
       const key =
-        sectionResult.doc.url + '@' + (sectionResult.doc.display ?? sectionResult.doc.content);
+        sectionResult.doc.url +
+        '@' +
+        (sectionResult.doc.display ?? sectionResult.doc.content);
 
       if (occured[key]) {
         continue;
@@ -158,7 +150,7 @@ export async function searchDocs(
       occured[key] = true;
 
       searchResultItems.push({
-        title: sectionResult.doc.content ?? sectionResult.doc.title ?? pageResult.doc.title,
+        title: sectionResult.doc.title,
         description: sectionResult.doc.content ?? sectionResult.doc.title,
         href: sectionResult.doc.url
       });
@@ -173,47 +165,23 @@ export async function searchDocs(
       });
     }
 
-    //Add the result section to the search results.
+    // Add the result section to the search results.
     searchResults.push({
       _page_matches: pageTitleMatches[i],
       _section_matches: sectionResults.length,
       title: pageResult.doc.title,
-      results: searchResultItems,
-      resultIcon: <TbIndentIncrease />
+      results: searchResultItems
     });
   }
   const res = searchResults.sort((a, b) => {
     if (a._page_matches !== b._page_matches) {
       return b._page_matches - a._page_matches;
     }
-    return a._section_matches === b._section_matches ? 0 : b._section_matches - a._section_matches;
+    return a._section_matches === b._section_matches
+      ? 0
+      : b._section_matches - a._section_matches;
   });
   return res;
-}
-
-export async function getDefaultSearchDocs(
-  data: UseSearchResult['searchIndex']
-): Promise<TSearchResultSection[]> {
-  const results: TSearchResultSection[] = [];
-  Object.keys(data).forEach(key => {
-    if (!key.startsWith('/docs/') || key === '/docs/') return;
-    const item = data[key];
-    const summary = Object.keys(item.data)
-      .find(key => key.length > 0 && item.data[key].length > 0)
-      ?.slice(0, 100);
-    results.push({
-      title: item.title,
-      results: [
-        {
-          description: summary ?? item.title ?? '',
-          href: key,
-          title: item.title ?? ''
-        }
-      ],
-      resultIcon: <TbIndentIncrease />
-    });
-  });
-  return results;
 }
 
 /**
@@ -221,110 +189,27 @@ export async function getDefaultSearchDocs(
  * @param query The query to search for
  * @returns  The search results
  */
-export async function searchSocialPosts(query?: string): Promise<TSearchResultSection[]> {
-  const [postConn, postConnError] = await sq.query(q => {
-    const posts =
-      query && query.length > 0
-        ? q.allSocialPost({ filters: { query }, first: 10 })
-        : q.allSocialPostTrending({ first: 10 });
+export async function searchSocialPosts(
+  query: string
+): Promise<TSearchResultSection[]> {
+  const [searchResult, error] = await sq.query(q => {
+    const posts = q.allSocialPost({ filters: { query } });
 
+    const sections: TSearchResultSection[] = [];
     posts.nodes.map(post => {
-      post.title;
-      post.matchingQuery;
-      post.summary;
-      post.slug;
-      post.profileId;
-    });
-
-    return posts;
-  });
-
-  const sections: TSearchResultSection[] = [];
-  await Promise.all(
-    postConn.nodes.map(async pn => {
-      const [username] = await sq.query(q => q.user({ id: pn.profileId }).username);
       sections.push({
-        title: pn.title,
+        title: post.title,
         results: [
           {
-            description: pn.matchingQuery ?? pn.summary ?? pn.title,
-            href: `/post/${pn.slug}`,
-            title: `${username}/${pn.title}`
+            description: post.matchingQuery ?? post.summary ?? post.title,
+            href: `/post/${post.slug}`,
+            title: post.title
           }
         ]
       });
-    })
-  );
-
-  return !postConnError || postConnError?.length === 0 ? sections : [];
-}
-
-/**
- * Search the users for the given query.
- * @param query The query to search for
- * @returns  The users matching the query
- */
-export async function searchUser(query: string): Promise<TSearchResultSection[]> {
-  const [searchResult, error] = await sq.query(q => {
-    const user = q.user({ login: query, resourceId: __SNEK_RESOURCE_ID__ });
-
-    const sections: TSearchResultSection[] = [];
-    if (!user) sections;
-
-    sections.push({
-      title: user.username,
-      results: [
-        {
-          avatarURL: user.details?.avatarURL ?? undefined,
-          description: user.profile?.bio ?? user.username,
-          href: `/user/${user.username}`,
-          title: getUserDisplayname(user)
-        }
-      ]
     });
     return sections;
   });
 
-  return !error || error?.length === 0 ? searchResult : [];
-}
-
-/**
- * Get the default search results for the given user.
- * @param currentUserId  The id of the current user
- * @returns  The default search results
- */
-export async function getDefaultSearchUsers(
-  currentUserId: string
-): Promise<TSearchResultSection[]> {
-  if (!currentUserId) return [];
-  const [followerCon, followerConError] = await sq.query(q => {
-    const followers = q.user({ id: currentUserId }).profile?.followers({ first: 5 });
-    followers?.nodes.map(fn => fn.follower.id);
-    return followers;
-  });
-  if (!followerCon || followerConError?.length > 0) return [];
-
-  const results = await Promise.all(
-    followerCon.nodes.map(async (fn): Promise<TSearchResult> => {
-      const [follower] = await sq.query(q => {
-        const user = q.user({ id: fn.follower.id });
-        user.details?.firstName;
-        user.details?.lastName;
-        user.username;
-        return user;
-      });
-      return {
-        description: follower.profile?.bio ?? follower.username,
-        href: `/user/${follower.username}`,
-        title: getUserDisplayname(follower)
-      };
-    })
-  );
-
-  return [
-    {
-      title: 'Users',
-      results
-    }
-  ];
+  return searchResult;
 }

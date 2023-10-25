@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 export type TSearchMetadata = {
   _page_matches: number;
   _section_matches: number;
@@ -8,12 +6,10 @@ export type TSearchMetadata = {
 /**
  * The combined search results.
  */
-export type TSearchResults = Record<string, { title: string, sections: TSearchResultSection[], icon?: ReactNode }>;
-// {
-//   docs: TSearchResultSection[];
-//   community: TSearchResultSection[];
-//   users: TSearchResultSection[];
-// }
+export type TSearchResults = {
+  docs: TSearchResultSection[];
+  community: TSearchResultSection[];
+}
 
 /**
  * A single search result section.
@@ -21,19 +17,15 @@ export type TSearchResults = Record<string, { title: string, sections: TSearchRe
 export type TSearchResultSection = {
   title: string;
   results: TSearchResult[];
-  icon?: ReactNode;
-  resultIcon?: ReactNode;
 };
 
 /**
  * A single search result.
  */
 export type TSearchResult = {
-  avatarURL?: string;
   title: string;
   description: string;
   href: string;
-  isActive?: boolean;
 };
 
 /**
