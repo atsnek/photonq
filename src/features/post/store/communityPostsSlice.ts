@@ -247,6 +247,8 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       ) ||
       get().communityPosts.latestPosts.items.some(
         post => post.id === postId && post.hasRated
+      ) || get().communityPosts.searchPosts.items.some(
+        post => post.id === postId && post.hasRated
       );
 
     set(
@@ -264,6 +266,14 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
         if (latestPost) {
           latestPost.hasRated = !hasRated;
           latestPost.stars += hasRated ? -1 : 1;
+        }
+
+        const searchPosts = state.communityPosts.searchPosts.items.find(
+          post => post.id === postId
+        );
+        if (searchPosts) {
+          searchPosts.hasRated = !hasRated;
+          searchPosts.stars += hasRated ? -1 : 1;
         }
       })
     );

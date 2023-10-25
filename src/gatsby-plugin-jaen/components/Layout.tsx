@@ -11,7 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   const hiddenTopNavPaths = ['/profile', '/blog-post'];
   const fetchUser = useAppStore(state => state.currentUser.fetchUser);
 
-  const docsPaths = ['/docs', '/community', '/docs/new-post/'];
+  const docsPaths = ['/docs'];
 
   const jaenFrame = useJaenFrameMenuContext();
 
@@ -34,13 +34,14 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   return (
     <CMSManagement>
       <AppLayout
-        isDocs={docsPaths.some(docsPath => path.startsWith(docsPath))}
+        isDocs={
+          docsPaths.some(docsPath => path.startsWith(docsPath)) ||
+          ['/community/', '/community'].includes(path)
+        }
         isCommunity={path.startsWith('/community')}
         path={path}
         topNavProps={{
-          isVisible: !hiddenTopNavPaths.some(hiddenPath =>
-            path.startsWith(hiddenPath)
-          )
+          isVisible: !hiddenTopNavPaths.some(hiddenPath => path.startsWith(hiddenPath))
         }}
       >
         {children}

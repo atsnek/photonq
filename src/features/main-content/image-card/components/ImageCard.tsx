@@ -15,6 +15,7 @@ import { TImageData } from '../types/imageCard';
 // import themeCardComponent from '../../../theme/components/card';
 import JaenImage from '../../../../shared/components/JaenImage';
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
+import { useContentManagement, useEditingContext } from '@atsnek/jaen';
 
 interface IImageCardProps extends IMainContentComponentBaseProps {
   id: string;
@@ -33,6 +34,19 @@ const ImageCard: FC<IImageCardProps> = ({
   link,
   size = 'md'
 }) => {
+  const cms = useContentManagement();
+
+  let isEditing = false;
+
+  try {
+    const editingContext = useEditingContext();
+    isEditing = editingContext.isEditing;
+  } catch (e) {
+    console.log('error', e);
+
+    isEditing = cms.isEditing;
+  }
+
   return (
     <LinkBox>
       <Card
@@ -65,8 +79,8 @@ const ImageCard: FC<IImageCardProps> = ({
           }}
         />
         <Box p={4}>
-          <LinkOverlay
-            as={Link}
+          <Link
+            as={isEditing ? undefined : LinkOverlay}
             fontSize="16px"
             fontWeight="semibold"
             href={link.href}
@@ -77,7 +91,7 @@ const ImageCard: FC<IImageCardProps> = ({
               ml={2}
               transition="margin .15s ease-in-out"
             />
-          </LinkOverlay>
+          </Link>
         </Box>
       </Card>
     </LinkBox>

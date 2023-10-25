@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 import TopNav, {
   TBrandImage,
   TMobileMenuButtonProps,
@@ -14,6 +14,7 @@ import { THamburgerMenuIconStylerProps } from '../components/HamburgerMenuIcon';
 import { MenuContext } from '../contexts/menu';
 import { useAuthenticationContext, useCMSManagementContext } from '@atsnek/jaen';
 import { createPageTree } from '../utils/navigation';
+import CommunityLayout from './CommunityLayout';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -63,6 +64,20 @@ const AppLayout: FC<AppLayoutProps> = ({
 
   const FooterComp = footer ?? Footer;
 
+  let childrenElmnt: ReactNode = null;
+
+  if (isDocs) {
+    childrenElmnt = (
+      <DocsLayout path={path} isCommunity={isCommunity}>
+        {children}
+      </DocsLayout>
+    );
+  } else if (isCommunity) {
+    childrenElmnt = <CommunityLayout>{children}</CommunityLayout>;
+  } else {
+    childrenElmnt = children;
+  }
+
   return (
     <>
       <MenuContext.Provider value={{ menuStructure }}>
@@ -78,15 +93,7 @@ const AppLayout: FC<AppLayoutProps> = ({
               branding={branding}
             />
           )}
-          <Box flex="1">
-            {isDocs ? (
-              <DocsLayout path={path} isCommunity={isCommunity}>
-                {children}
-              </DocsLayout>
-            ) : (
-              <>{children}</>
-            )}
-          </Box>
+          <Box flex="1">{childrenElmnt}</Box>
         </Flex>
       </MenuContext.Provider>
       <FooterComp />

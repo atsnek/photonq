@@ -211,19 +211,33 @@ const TopNav: FC<ITopNavProps> = ({
                 <Logo forceColorMode={branding?.colorMode} />
               )}
             </Link>
+            <HStack spacing={4} ml={5}>
+              <MemoizedLinks
+                links={activatedLinks}
+                props={{ ...navLinkProps, ...linkProps }}
+                activeProps={{
+                  opacity: 1,
+                  fontWeight: 'semibold',
+                  color: 'topNav.links.active.color'
+                }}
+              />
+            </HStack>
             <Spacer />
             <Center>
               <HStack spacing={4}>
-                <MemoizedLinks
-                  links={activatedLinks}
-                  props={{ ...navLinkProps, ...linkProps }}
-                  activeProps={{
-                    opacity: 1,
-                    fontWeight: 'semibold',
-                    color: 'topNav.links.active.color'
-                  }}
-                />
-                <Box display={{ base: 'none', md: 'initial' }}>{search}</Box>
+                <Box display={{ base: 'none', md: 'initial' }}>
+                  <SearchMenu
+                    // width base 0 is a hack to prevent the menu from causing a horizontal scrollbar
+                    styleProps={{
+                      ...searchProps,
+                      menuList: {
+                        ...searchProps?.menuList,
+                        width: { base: 0, md: '500px' },
+                        zIndex: 3
+                      }
+                    }}
+                  />
+                </Box>
                 <Button
                   variant="ghost-hover"
                   size="sm"

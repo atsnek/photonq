@@ -51,6 +51,8 @@ const PostPreviewManageMenu: FC<IPostPreviewManageMenuProps> = ({
             icon={<TbSquareRoundedX />}
             onClick={() => deletePost(postId)}
             isDisabled={isDeletingPost}
+            _hover={{ bg: 'rgba(255, 0, 0, 0.5)' }}
+            transition="background-color 0.2s"
           >
             Delete
           </MenuItem>
