@@ -8,7 +8,7 @@ import {
   ModalOverlay,
   VStack
 } from '@chakra-ui/react';
-import { FC, ReactNode, useEffect, useRef } from 'react';
+import { Dispatch, FC, KeyboardEvent, ReactNode, SetStateAction, useEffect, useRef } from 'react';
 import TbSearch from '../../../shared/components/icons/tabler/TbSearch';
 
 interface ISearchModalProps {
@@ -17,6 +17,7 @@ interface ISearchModalProps {
   onClose: () => void;
   searchResultItems: ReactNode[];
   setSearchQuery: (query: string) => void;
+  handleNavigate(isUp: boolean): void;
 }
 
 const SearchModal: FC<ISearchModalProps> = ({
@@ -24,7 +25,8 @@ const SearchModal: FC<ISearchModalProps> = ({
   isOpen,
   onClose,
   searchResultItems,
-  setSearchQuery
+  setSearchQuery,
+  handleNavigate
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,6 +35,16 @@ const SearchModal: FC<ISearchModalProps> = ({
       inputRef.current.focus();
     }
   }, [inputRef]);
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      handleNavigate(false);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      handleNavigate(true);
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full">
@@ -53,6 +65,7 @@ const SearchModal: FC<ISearchModalProps> = ({
                 setSearchQuery(e.target.value);
               }}
               defaultValue={defaultQuery}
+              onKeyDown={handleKeyDown}
             />
           </InputGroup>
           <VStack

@@ -34,6 +34,7 @@ export const SearchResultItem: FC<{
       as={Flex}
       w={isDocs ? 'calc(100% - 20px)' : 'full'}
       key={id}
+      id={`sd-search-ri-${id}`}
       _hover={{
         bgColor: 'features.search.section.item._hover.bgColor',
         color: 'features.search.section.item._hover.color'
@@ -49,7 +50,8 @@ export const SearchResultItem: FC<{
         color: 'features.search.section.item._hover.color'
       }}
       {...(item.isActive && {
-        bgColor: 'features.search.section.item._hover.bgColor'
+        bgColor: 'features.search.section.item._hover.bgColor',
+        color: 'features.search.section.item._hover.color'
       })}
     >
       <Box

@@ -86,7 +86,7 @@ export const SearchResultSection: FC<{
         <SearchResultItem
           item={result}
           query={query}
-          id={i}
+          id={idx + i}
           key={i}
           defaultFocus={defaultHighlight && i === 0}
           onClickCapture={onItemClickCapture}

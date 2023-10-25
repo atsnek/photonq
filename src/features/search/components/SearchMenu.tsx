@@ -56,6 +56,18 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     }
   }, [search]);
 
+  useEffect(() => {
+    // Focus the input when the user presses the shortcut
+    const handleGlobalKeydown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') modalDisclosure.onOpen();
+    };
+    window.addEventListener('keydown', handleGlobalKeydown);
+
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeydown);
+    };
+  }, []);
+
   const fetchSearchResults = async () => {
     const docsResults = await searchDocs(searchQuery, search.searchIndex);
     console.log('docs: ', docsResults);
@@ -111,6 +123,24 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
       ];
     }
 
+    // Mark the item as highlighted if its index matches the navigateIdx
+    if (navigateIdx >= 0) {
+      Object.values(searchResultData).forEach(section => {
+        section.sections.find(subSection => {
+          subSection.results.forEach(item => {
+            if (itemIdx++ === navigateIdx) {
+              item.isActive = true;
+              return true;
+            }
+            if (item.isActive) item.isActive = false;
+            return false;
+          });
+          return false;
+        });
+      });
+    }
+    itemIdx = 0; // Reset the item index
+
     for (const key in searchResultData) {
       const isDocs = key === 'docs' && searchQuery.length > 0;
       const section = searchResultData[key as keyof TSearchResults];
@@ -120,7 +150,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
           {itemIdx > 0 && <Divider />}
           <SearchResultSectionTitle
             title={section.title}
-            idx={itemIdx++}
+            idx={itemIdx * -1}
             color="features.search.section.title.color"
             textTransform="none"
             {...(!section.icon && {
@@ -155,23 +185,28 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
       sectionIdx++;
     }
     return output;
-  }, [searchResultData]);
+  }, [searchResultData, navigateIdx]);
 
   useEffect(() => {
-    // Focus the input when the user presses the shortcut
-    const handleGlobalKeydown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') modalDisclosure.onOpen();
-    };
-    window.addEventListener('keydown', handleGlobalKeydown);
-
-    return () => {
-      window.removeEventListener('keydown', handleGlobalKeydown);
-    };
-  }, []);
+    if (navigateIdx >= 0) {
+      const item = document.getElementById(`sd-search-ri-${navigateIdx}`);
+      if (item) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [resultItems]);
 
   const handleNavigate = (isUp: boolean) => {
-    if (isUp && navigateIdx > 0) {
+    const itemsCount = Object.values(searchResultData)
+      .map(section => section.sections.map(s => s.results).flat())
+      .flat().length;
+
+    if (isUp) {
+      if (navigateIdx > 0) setNavigateIdx(navigateIdx - 1);
+      else setNavigateIdx(itemsCount - 1);
+      return;
     }
+
+    if (navigateIdx < itemsCount - 1) setNavigateIdx(navigateIdx + 1);
+    else setNavigateIdx(0);
   };
 
   return (
@@ -185,6 +220,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
         onClose={modalDisclosure.onClose}
         searchResultItems={resultItems}
         setSearchQuery={setSearchQuery}
+        handleNavigate={handleNavigate}
       />
     </ThemeProvider>
   );
