@@ -47,7 +47,7 @@ export interface IProfileStateActions {
   fetchShowcaseStarsPosts: () => Promise<boolean>;
   fetchShowcaseLatestPosts: () => Promise<boolean>;
   changeBio: (bio: string) => Promise<boolean>;
-  changeProfilePicture: (avatarUrl: string) => boolean;
+  changeProfilePicture: (avatarFile: File) => boolean;
   togglePostRating: (
     id: TPostPreview['id'],
     source: Extract<TProfileTab, 'posts' | 'overview' | 'stars'> | 'showcase_stars' | 'showcase_latest',

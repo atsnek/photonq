@@ -40,10 +40,10 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile, togglePostPr
   };
 
   const hasOverviewPosts = useMemo(() => postData.items.length > 0, [postData]);
-  const hasShowcasePosts = useMemo(
-    () => showcaseStarPosts.items.length > 0 || showcaseLatestPosts.items.length > 0,
-    [showcaseStarPosts, showcaseLatestPosts]
-  );
+  // const hasShowcasePosts = useMemo(
+  //   () => showcaseStarPosts.items.length > 0 || showcaseLatestPosts.items.length > 0,
+  //   [showcaseStarPosts, showcaseLatestPosts]
+  // );
   return (
     <VStack gap={hasOverviewPosts || postData.state === 'loading' ? 12 : 0}>
       <PostList

@@ -632,13 +632,19 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return succeed;
   },
-  changeProfilePicture: (avatarUrl) => {
+  changeProfilePicture: (avatarFile) => {
     if (!get().profile.profile) return false;
-    set(
-      produce((state: TStoreState): void => {
-        state.profile.profile!.avatarUrl = avatarUrl;
-      })
-    )
+
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(avatarFile);
+
+    fileReader.onload = () => {
+      set(
+        produce((state: TStoreState): void => {
+          state.profile.profile!.avatarUrl = fileReader.result as string;
+        })
+      )
+    }
     return true;
   },
   togglePostRating: async (id, source) => {

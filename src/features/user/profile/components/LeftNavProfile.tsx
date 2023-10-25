@@ -17,19 +17,9 @@ import {
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useMemo, useRef, useState } from 'react';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
-import LeftNav, {
-  ILeftNavProps
-} from '../../../../shared/containers/navigation/LeftNav';
+import LeftNav, { ILeftNavProps } from '../../../../shared/containers/navigation/LeftNav';
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
 import { useAppStore } from '../../../../shared/store/store';
 import ProfileFollowButton from './ProfileFollowButton';
@@ -96,10 +86,7 @@ interface LeftNavProfileProps {
 /**
  * Sub-component of the profile page that displays the key information about the user.
  */
-const LeftNavProfile: FC<LeftNavProfileProps> = ({
-  isOwnProfile,
-  setActiveTab
-}) => {
+const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab }) => {
   const navTopOffset = useNavOffset();
   const isAuthenticated = useAuthenticationContext().user !== null;
   const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
@@ -112,9 +99,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const isFollowing = useAppStore(state => state.profile.isFollowing);
   const changeBio = useAppStore(state => state.profile.changeBio);
-  const changeProfilePicture = useAppStore(
-    state => state.profile.changeProfilePicture
-  );
+  const changeProfilePicture = useAppStore(state => state.profile.changeProfilePicture);
 
   const [isUpdatingProfileImage, setIsUpdatingProfileImage] = useState(false);
   const updateUserDetails = useAuthenticationContext().updateDetails;
@@ -148,10 +133,8 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({
 
   const handleUpdateProfileImage = async (avatarFile: File) => {
     setIsUpdatingProfileImage(true);
-    // const { data, fileUrl } = await uploadFile(avatarFile);
-    // if (!data) return;
     await updateUserDetails({ avatarFile });
-    // changeProfilePicture(fileUrl);
+    changeProfilePicture(avatarFile);
     setIsUpdatingProfileImage(false);
   };
 
@@ -183,11 +166,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({
 
       if (key === 'followers' || key === 'following' || key === 'posts') {
         output.push(
-          <GridItem
-            key={key}
-            {...leftNavProfileStyling.stats.gridItems}
-            as={HStack}
-          >
+          <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
             {icon}
             <LinkBox
               as={HStack}
@@ -206,11 +185,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({
         );
       } else {
         output.push(
-          <GridItem
-            key={key}
-            {...leftNavProfileStyling.stats.gridItems}
-            as={HStack}
-          >
+          <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
             {icon}
             <Text cursor="default">
               {statValue}
@@ -273,11 +248,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({
           isUploading={isUpdatingProfileImage}
         />
         <VStack {...leftNavProfileStyling.userData.stack}>
-          <Heading
-            as="h6"
-            fontSize="24px"
-            {...leftNavProfileStyling.userData.displayName}
-          >
+          <Heading as="h6" fontSize="24px" {...leftNavProfileStyling.userData.displayName}>
             {userData.displayName}
           </Heading>
           <Text
@@ -297,9 +268,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({
           {userData.bio && (
             <>
               <Divider {...leftNavProfileStyling.bioDividers} />
-              {!isEditing && (
-                <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>
-              )}
+              {!isEditing && <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>}
             </>
           )}
           {isEditing && (
@@ -351,10 +320,9 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({
             </Flex>
           )}
         </VStack>
-        {userData.stats &&
-          Object.values(userData.stats).some(value => value > 0) && (
-            <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
-          )}
+        {userData.stats && Object.values(userData.stats).some(value => value > 0) && (
+          <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
+        )}
         <Grid {...leftNavProfileStyling.stats.grid}>{statElements}</Grid>
       </VStack>
     </LeftNav>
