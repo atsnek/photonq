@@ -200,18 +200,20 @@ const TopNav: FC<ITopNavProps> = ({
                 <Logo forceColorMode={branding?.colorMode} />
               )}
             </Link>
+            <HStack spacing={4} ml={5}>
+              <MemoizedLinks
+                links={activatedLinks}
+                props={{ ...navLinkProps, ...linkProps }}
+                activeProps={{
+                  opacity: 1,
+                  fontWeight: 'semibold',
+                  color: 'topNav.links.active.color'
+                }}
+              />
+            </HStack>
             <Spacer />
             <Center>
               <HStack spacing={4}>
-                <MemoizedLinks
-                  links={activatedLinks}
-                  props={{ ...navLinkProps, ...linkProps }}
-                  activeProps={{
-                    opacity: 1,
-                    fontWeight: 'semibold',
-                    color: 'topNav.links.active.color'
-                  }}
-                />
                 <Box display={{ base: 'none', md: 'initial' }}>
                   <SearchMenu
                     // width base 0 is a hack to prevent the menu from causing a horizontal scrollbar
