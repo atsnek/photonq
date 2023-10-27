@@ -17,7 +17,7 @@ permissions:
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ['main']
+    branches: ['main', 'dev']
   # Allows you to run this workflow from another workflow
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
