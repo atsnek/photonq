@@ -70,15 +70,15 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.32":
-  version "1.0.0-rc.33"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.33.tgz#268fb4938f8cecf2cbbdc41c8cb99e6597f70b4c"
-  integrity sha512-tlI2Vk9/kgCX4SbmO55vMCsyGKteE9nP3AzZsCB+kSRoV8yWRy5d4x4C6T8QuVn8mlGr3SpYHwe3YKFAsYH3cQ==
+"@atsnek/jaen@^1.0.0-rc.37":
+  version "1.0.0-rc.37"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.37.tgz#3696fa9171b95ac7fc0662edf57682a855dd3ccf"
+  integrity sha512-aIJEKX3DHp+Xlrkw7pL8fxXNdcJn3G3B4X8sIolO63khnYLQvebONleGHXYq8l59vmAsfKtZwM1RuSQNa3Vb1A==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
     "@reduxjs/toolkit" "^1.9.5"
-    "@snek-functions/origin" "^0.8.16"
+    "@snek-functions/origin" "^0.9.0"
     deepmerge "^4.3.1"
     form-data "^4.0.0"
     gatsby-plugin-image "^3.11.0"
@@ -3615,17 +3615,17 @@
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
 
-"@snek-functions/origin@^0.8.16":
-  version "0.8.21"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.21.tgz#2abfb98747ac746bb9b3afa411e46869269c1cbd"
-  integrity sha512-Uf3IWwH6xU6P1LY6HK/bupjFx1TIJuRYF7rQ+F/jFvqEL6y+JiyNEtgvHWumBn1R44ohvWA8e0FqWsjy97MDcw==
-  dependencies:
-    snek-query "*"
-
 "@snek-functions/origin@^0.8.22":
   version "0.8.22"
   resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.22.tgz#6c6a2601aaa90c84766190139acde6c0a3b4f603"
   integrity sha512-e/nbqOsYTpjrDQzw1wyY1BOoMghg3o8S1KWgJCunv+YEkKvycxuCw1A0bqDhY82mc9/o2d3bHQiFJP4M8rT4FA==
+  dependencies:
+    snek-query "*"
+
+"@snek-functions/origin@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.9.0.tgz#5c228771702635201430ae261f8d549b72a9571d"
+  integrity sha512-gxVxKPiTpbo3ewWdYIT774DYnAwypvnIe4ARamORNkX4SPetPeJryFLYYxIbS0KAeP7oTps6aWGQa3lu8zbMhA==
   dependencies:
     snek-query "*"
 
@@ -7602,10 +7602,10 @@ gatsby-graphiql-explorer@^3.12.1:
   resolved "https://registry.yarnpkg.com/gatsby-graphiql-explorer/-/gatsby-graphiql-explorer-3.12.1.tgz#7ea2196467d5982bc3fb8e0326cd57161bc1b8c6"
   integrity sha512-c2iG+4nAft2cTS9zgnPUAYNBtxTWGKjI26QIfjuo25j7/klnz8rLQYdj6TA4Z2Y3yyTyBspAHr9ho6zvOHlBJg==
 
-gatsby-jaen-lens@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.15.tgz#3d3581e14e0ea0fcaf95e549498065f7b6c34007"
-  integrity sha512-ylD7k140MTlOssKEhLV1p/LapITVGDYEyiIKbJU+FRVVSYAO7D/bz2ksfHS2nAo8qyu+rggfPR2LnSJW+Te40A==
+gatsby-jaen-lens@^0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.16.tgz#65a678a61a74edd4f737eba6c2415c56889a8d55"
+  integrity sha512-qeHQvFFmnp+uVUMDzaVKn7mVZYzVopTn34LGyHrFiYgGwCMnS4cBQbQ7Aiwl0jSCoUy/vIPVofiQIu7QL/uBnA==
   dependencies:
     react-hook-form "^7.46.1"
     react-icons "^4.11.0"
@@ -7613,10 +7613,10 @@ gatsby-jaen-lens@^0.0.15:
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
 
-gatsby-jaen-resource@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-resource/-/gatsby-jaen-resource-0.0.7.tgz#3e529e5b6dcf0b94a32959c42138d14a1937dcef"
-  integrity sha512-yrOw8Zks6DDObGSDSyjYaT6Rb/JDX5735VfpKmSS3TngCk8jm3wXUdaeGS69O775HTzh7g73KiBxYxipma45Pw==
+gatsby-jaen-resource@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-resource/-/gatsby-jaen-resource-0.0.8.tgz#d68e1d01dbdc0b7b1ecf4b9ed80b9dd333ccfce1"
+  integrity sha512-i7zUIlH5/7AHdNMGGxH0sWduCHxF50n0hipMAffznhFNQGOb4fFXTddAJzteqPdv0Mr9MmkqxD0QtBAX3tiZFw==
   dependencies:
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
     react-hook-form "^7.46.1"
@@ -7707,16 +7707,16 @@ gatsby-plugin-image@^3.11.0:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.54:
-  version "1.0.0-rc.54"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.54.tgz#cd4cdd9d462936b10a9e1581ff5b342e86d25574"
-  integrity sha512-CSLx6ZwezaR3nbH8xAi8ihWXPP1l5EdTD48W5PEojL0Qr4eF/hUrr2Wxip2w3RyFvx6UUngfoZJIu2O1tBHaQg==
+gatsby-plugin-jaen@^1.0.0-rc.61:
+  version "1.0.0-rc.61"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.61.tgz#49c2c6e0ee3c6732f54fb753b6b8adedd3675d48"
+  integrity sha512-soyhrFjvMacbrAKl098wmuguKmPqXlpMcpauPnpjRAFHSs0SCRCRpkZAWIbYyK7/rGkVq7C/hHvZrwgy97GPig==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
     "@emotion/styled" "^11.11.0"
     framer-motion "^10.13.0"
-    gatsby-jaen-resource "^0.0.7"
+    gatsby-jaen-resource "^0.0.8"
     gatsby-plugin-google-gtag "^5.12.0"
     gatsby-plugin-manifest "^5.12.0"
     gatsby-plugin-sharp "^5.11.0"
