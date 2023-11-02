@@ -3615,17 +3615,17 @@
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
 
-"@snek-functions/origin@^0.8.25":
-  version "0.8.25"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.8.25.tgz#0a47c3b0742aba0abfe32889a7917bed1ed34115"
-  integrity sha512-zpLL7LnLCP6eJaTthrJjBqrJO2tzUqq7Ln0fnjYFS1w9HkzNj9LmJsNthKVS30DM4Lh/oXtam6MLYwNrbKkMVg==
-  dependencies:
-    snek-query "*"
-
 "@snek-functions/origin@^0.9.0":
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.9.0.tgz#5c228771702635201430ae261f8d549b72a9571d"
   integrity sha512-gxVxKPiTpbo3ewWdYIT774DYnAwypvnIe4ARamORNkX4SPetPeJryFLYYxIbS0KAeP7oTps6aWGQa3lu8zbMhA==
+  dependencies:
+    snek-query "*"
+
+"@snek-functions/origin@^0.9.2":
+  version "0.9.2"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.9.2.tgz#82d7bc32e2e03af504ba1b0ec118609918e070ee"
+  integrity sha512-Q0hPR1YFU5FcJ+KxoXjglcLDQmTOkigQ/8GzKk6H81AmzcFEqiV3s7k8o/hCsjY6wLtF6Put4mEOUAc43To+2Q==
   dependencies:
     snek-query "*"
 

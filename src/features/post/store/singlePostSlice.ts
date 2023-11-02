@@ -59,7 +59,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     });
 
     const [author, authorError] = await sq.query((q): TUser => {
-      const user = q.user({ id: post?.authorProfileId ?? '' });
+      const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: post?.authorProfileId ?? '' });
 
       if (post) {
         post.language = user.profile?.language ?? EnPostLanguage.EN;
@@ -125,7 +125,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
   fetchPost: async slug => {
     const [currentUser] = await sq.query(q => q.userMe);
     const [post, postError] = await sq.query((q): TPost | null => {
-      const post = q.socialPost({ slug: slug });
+      const post = q.socialPost({ resourceId: __SNEK_RESOURCE_ID__, slug: slug });
 
       if (!post) return null;
 
@@ -161,7 +161,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     if (postError || post === null) return false;
 
     const [author, authorError] = await sq.query((q): TUser => {
-      const user = q.user({ id: post?.authorProfileId ?? '' });
+      const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: post?.authorProfileId ?? '' });
       return {
         id: user.id,
         username: user.username,

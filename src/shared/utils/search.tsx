@@ -225,8 +225,8 @@ export async function searchSocialPosts(query?: string): Promise<TSearchResultSe
   const [postConn, postConnError] = await sq.query(q => {
     const posts =
       query && query.length > 0
-        ? q.allSocialPost({ filters: { query }, first: 10 })
-        : q.allSocialPostTrending({ first: 10 });
+        ? q.allSocialPost({ resourceId: __SNEK_RESOURCE_ID__, filters: { query }, first: 10 })
+        : q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 10 });
 
     posts.nodes.map(post => {
       post.title;
@@ -242,7 +242,9 @@ export async function searchSocialPosts(query?: string): Promise<TSearchResultSe
   const sections: TSearchResultSection[] = [];
   await Promise.all(
     postConn.nodes.map(async pn => {
-      const [username] = await sq.query(q => q.user({ id: pn.profileId }).username);
+      const [username] = await sq.query(
+        q => q.user({ resourceId: __SNEK_RESOURCE_ID__, id: pn.profileId }).username
+      );
       sections.push({
         title: pn.title,
         results: [
@@ -298,7 +300,9 @@ export async function getDefaultSearchUsers(
 ): Promise<TSearchResultSection[]> {
   if (!currentUserId) return [];
   const [followerCon, followerConError] = await sq.query(q => {
-    const followers = q.user({ id: currentUserId }).profile?.followers({ first: 5 });
+    const followers = q
+      .user({ resourceId: __SNEK_RESOURCE_ID__, id: currentUserId })
+      .profile?.followers({ first: 5 });
     followers?.nodes.map(fn => fn.follower.id);
     return followers;
   });
@@ -307,7 +311,7 @@ export async function getDefaultSearchUsers(
   const results = await Promise.all(
     followerCon.nodes.map(async (fn): Promise<TSearchResult> => {
       const [follower] = await sq.query(q => {
-        const user = q.user({ id: fn.follower.id });
+        const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: fn.follower.id });
         user.details?.firstName;
         user.details?.lastName;
         user.username;

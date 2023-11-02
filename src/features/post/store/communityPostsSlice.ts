@@ -9,7 +9,6 @@ import {
 } from '../../../shared/utils/features/post';
 import { asEnumKey } from 'snek-query';
 import {
-  FiltersInputInput,
   FiltersInput_1Input,
   LanguageInputInput,
   PrivacyInputInput
@@ -51,7 +50,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
     }
 
     const [rawPosts, rawError] = await sq.query(q => {
-      const postComm = q.allSocialPostTrending({ first: 4, filters });
+      const postComm = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 4, filters });
       //! Existing issue: see post utils -> buildPostPreview
       postComm?.nodes.forEach(pn => {
         try {
@@ -109,7 +108,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
 
     const [currentUser] = await sq.query(q => q.userMe);
 
-    const filters: FiltersInputInput = {
+    const filters: FiltersInput_1Input = {
       privacy: asEnumKey(PrivacyInputInput, 'PUBLIC')
     };
 
@@ -122,6 +121,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
 
     const [postConnection, rawError] = await sq.query(q => {
       const postComm = q.allSocialPost({
+        resourceId: __SNEK_RESOURCE_ID__,
         first: POST_FETCH_LIMIT,
         after:
           get().communityPosts.latestPosts.hasMore && !reload

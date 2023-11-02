@@ -121,7 +121,7 @@ export const buildUserActivities = async (
       } else if (type === 'follow_follow') {
         if (!follow || !follow.followed) return;
         const [followedUser, followedUserError] = await sq.query(q => {
-          const user = q.user({ id: follow.followed.id });
+          const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: follow.followed.id });
           user.username;
           user.details?.firstName;
           user.details?.lastName;

@@ -103,7 +103,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const userId = get().profile.profile?.id;
     const [rawPosts, error] = await sq.query(q => {
-      const posts = q.allSocialPostTrending({ filters: { userId }, first: 6 });
+      const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, filters: { userId }, first: 6 });
       posts?.pageInfo.hasNextPage;
       posts?.pageInfo.endCursor;
       posts?.nodes.forEach(pn => {
@@ -117,6 +117,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       });
       return posts;
     });
+
+    console.log("rawPosts", rawPosts)
 
     const posts = await Promise.all(
       rawPosts?.nodes
@@ -338,7 +340,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     if (!profile) return false;
 
     const [followerConn, followerConnError] = await sq.query(q => {
-      const followers = q.user({ id: profile.id }).profile?.followers({ first: USER_FETCH_LIMIT, after: get().profile.followers?.nextCursor });
+      const followers = q.user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ }).profile?.followers({ first: USER_FETCH_LIMIT, after: get().profile.followers?.nextCursor });
 
       followers?.pageInfo.hasNextPage;
       followers?.pageInfo.endCursor;
@@ -352,7 +354,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       .map(fe => fe.node.follower.id)
       .map(async (id): Promise<TUser | undefined> => {
         const [user, userError] = await sq.query(q => {
-          const user = q.user({ id });
+          const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
 
           user.id;
           user.details?.firstName;
@@ -415,7 +417,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     const isUserOnOwnProfile = currentUser?.id === profile.id;
 
     const [followingConn, followingConnError] = await sq.query(q => {
-      const following = q.user({ id: profile.id }).profile?.following({ first: USER_FETCH_LIMIT, after: get().profile.followingUsers?.nextCursor });
+      const following = q.user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ }).profile?.following({ first: USER_FETCH_LIMIT, after: get().profile.followingUsers?.nextCursor });
 
       following?.pageInfo.hasNextPage;
       following?.pageInfo.endCursor;
@@ -429,7 +431,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       .map(fe => fe.node.followed.id)
       .map(async (id): Promise<TUser | undefined> => {
         const [user, userError] = await sq.query(q => {
-          const user = q.user({ id });
+          const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
 
           user.id;
           user.details?.firstName;
@@ -557,7 +559,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     )
 
     const [postConnection, postConnectionError] = await sq.query(q => {
-      const user = q.user({ id: get().profile.profile?.id }).profile;
+      const user = q.user({ id: get().profile.profile?.id, resourceId: __SNEK_RESOURCE_ID__ }).profile;
       if (!user) return undefined;
 
       console.log("user", profile.id)
@@ -594,7 +596,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     )
 
     const [postConnection, postConnectionError] = await sq.query(q => {
-      const posts = q.allSocialPostTrending({ first: 2, filters: { userId: profile.id } });
+      const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 2, filters: { userId: profile.id } });
       posts.nodes.map(triggerPostProxyProps);
       return posts;
     })

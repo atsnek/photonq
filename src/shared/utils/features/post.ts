@@ -50,7 +50,7 @@ export const buildPostPreview = (
   post: t.Nullable<Post>,
   currentUser?: t.Nullable<User>
 ): TPostPreview => {
-  const author = q.user({ id: post?.profileId ?? '' });
+  const author = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: post?.profileId ?? '' });
   console.log("post: ", post);
   return {
     id: post?.id ?? '',
@@ -103,6 +103,7 @@ export const searchPosts = async (
 ): Promise<TPaginatedPostListData> => {
   const [postConnection] = await sq.query(q => {
     const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
+      resourceId: __SNEK_RESOURCE_ID__,
       filters: {},
       first: limit
     };
@@ -137,7 +138,7 @@ export const searchPosts = async (
       requestArgs.after = cursor;
     }
 
-    const posts = dataSource === 'all-social' ? q.allSocialPost(requestArgs) : q.user({ id: userId })?.profile?.starredPosts(requestArgs);
+    const posts = dataSource === 'all-social' ? q.allSocialPost(requestArgs) : q.user({ resourceId: __SNEK_RESOURCE_ID__, id: userId })?.profile?.starredPosts(requestArgs);
     if (!posts) return;
     //! This is a workaround for a (probably) limitation of snek-query - Otherwise, not all required props will be fetched. We also can't simply put the buildPost mapper inside this query, because it's user acquisition breaks the whole query due to an auth error. This loop just acesses all props of the first post, which will inform the proxy to fetch all props of all posts
     posts?.pageInfo.hasNextPage;
