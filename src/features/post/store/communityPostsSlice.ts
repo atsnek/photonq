@@ -8,13 +8,13 @@ import {
 } from '../../../shared/utils/features/post';
 import { asEnumKey } from 'snek-query';
 import {
-  FiltersInputInput,
   FiltersInput_1Input,
   LanguageInputInput,
   PrivacyInputInput
 } from '@snek-functions/origin/dist/schema.generated';
 import { TPostPreview } from '../types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
+import { snekResourceId } from '@atsnek/jaen';
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
   set,
@@ -50,7 +50,11 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
     }
 
     const [rawPosts, rawError] = await sq.query(q => {
-      const postComm = q.allSocialPostTrending({ first: 4, filters });
+      const postComm = q.allSocialPostTrending({
+        first: 4,
+        filters,
+        resourceId: snekResourceId
+      });
       //! Existing issue: see post utils -> buildPostPreview
       postComm?.nodes.forEach(pn => {
         try {
@@ -59,7 +63,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
           for (const key in pn) {
             pn[key as keyof typeof pn];
           }
-        } catch { }
+        } catch {}
       });
       return postComm?.nodes ?? [];
     });
@@ -108,7 +112,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
 
     const [currentUser] = await sq.query(q => q.userMe);
 
-    const filters: FiltersInputInput = {
+    const filters: FiltersInput_1Input = {
       privacy: asEnumKey(PrivacyInputInput, 'PUBLIC')
     };
 
@@ -121,6 +125,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
 
     const [postConnection, rawError] = await sq.query(q => {
       const postComm = q.allSocialPost({
+        resourceId: snekResourceId,
         first: POST_FETCH_LIMIT,
         after:
           get().communityPosts.latestPosts.hasMore && !reload
@@ -140,7 +145,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
           for (const key in pn) {
             pn[key as keyof typeof pn];
           }
-        } catch { }
+        } catch {}
       });
       return postComm;
     });
@@ -165,12 +170,12 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
           totalCount: posts.length,
           nextCursor:
             postConnection?.pageInfo?.hasNextPage &&
-              postConnection.pageInfo.endCursor
+            postConnection.pageInfo.endCursor
               ? postConnection?.pageInfo.endCursor
               : undefined,
           prevCursor:
             postConnection?.pageInfo?.hasPreviousPage &&
-              postConnection.pageInfo.startCursor
+            postConnection.pageInfo.startCursor
               ? postConnection?.pageInfo.startCursor
               : undefined,
           hasMore: postConnection?.pageInfo?.hasNextPage ?? false
@@ -289,7 +294,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
     if (
       get().communityPosts.searchPosts.items[postIdx[0]]?.privacy === privacy ||
       get().communityPosts.featuredPosts.items[postIdx[1]]?.privacy ===
-      privacy ||
+        privacy ||
       get().communityPosts.latestPosts.items[postIdx[2]]?.privacy === privacy
     )
       return true;

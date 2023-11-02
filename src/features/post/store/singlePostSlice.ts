@@ -14,7 +14,7 @@ import {
   LanguageInputInput,
   PrivacyInputInput
 } from '@snek-functions/origin/dist/schema.generated';
-import { osg } from '@atsnek/jaen';
+import { osg, snekResourceId } from '@atsnek/jaen';
 import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
 
 const initState: ISinglePostStateDefinition = {
@@ -49,7 +49,10 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     });
 
     const [author, authorError] = await sq.query((q): TUser => {
-      const user = q.user({ id: post?.authorProfileId ?? '' });
+      const user = q.user({
+        id: post?.authorProfileId ?? '',
+        resourceId: snekResourceId
+      });
 
       if (post) {
         post.language = user.profile?.language ?? EnPostLanguage.EN;
@@ -155,7 +158,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
   fetchPost: async slug => {
     const [currentUser] = await sq.query(q => q.userMe);
     const [post, postError] = await sq.query((q): TPost | null => {
-      const post = q.socialPost({ slug: slug });
+      const post = q.socialPost({ resourceId: snekResourceId, slug: slug });
 
       if (!post) return null;
 
@@ -164,7 +167,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
         if (post.content) {
           jsonContent = JSON.parse(post.content) as MdastRoot;
         }
-      } catch { }
+      } catch {}
 
       return {
         authorProfileId: post.profileId,
@@ -191,7 +194,10 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     if (postError || post === null) return false;
 
     const [author, authorError] = await sq.query((q): TUser => {
-      const user = q.user({ id: post?.authorProfileId ?? '' });
+      const user = q.user({
+        id: post?.authorProfileId ?? '',
+        resourceId: snekResourceId
+      });
       return {
         id: user.id,
         username: user.username,
@@ -228,7 +234,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     let content: string = '';
     try {
       content = JSON.stringify(post.content);
-    } catch { }
+    } catch {}
 
     const [newPost, error] = await sq.mutate(q =>
       q.socialPostCreate({

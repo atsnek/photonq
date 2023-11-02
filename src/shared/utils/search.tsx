@@ -7,6 +7,7 @@ import {
   TSearchResultSection
 } from '../types/search';
 import { filterWhitespaceItems } from './utils';
+import { snekResourceId } from '@atsnek/jaen';
 
 /**
  * Searches the docs for the given query.
@@ -193,7 +194,10 @@ export async function searchSocialPosts(
   query: string
 ): Promise<TSearchResultSection[]> {
   const [searchResult, error] = await sq.query(q => {
-    const posts = q.allSocialPost({ filters: { query } });
+    const posts = q.allSocialPost({
+      resourceId: snekResourceId,
+      filters: { query }
+    });
 
     const sections: TSearchResultSection[] = [];
     posts.nodes.map(post => {

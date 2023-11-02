@@ -17,6 +17,7 @@ import {
 import { getUserDisplayname } from '../../../features/user/utils/user';
 import { t, asEnumKey } from 'snek-query';
 import { sq } from '@snek-functions/origin';
+import { snekResourceId } from '@atsnek/jaen';
 
 /**
  * Format post date to a nicely readable format
@@ -47,7 +48,10 @@ export const buildPostPreview = (
   post: t.Nullable<Post>,
   currentUser?: t.Nullable<User>
 ): TPostPreview => {
-  const author = q.user({ id: post?.profileId ?? '' });
+  const author = q.user({
+    id: post?.profileId ?? '',
+    resourceId: snekResourceId
+  });
   return {
     id: post?.id ?? '',
     slug: post?.slug ?? '',
@@ -99,7 +103,8 @@ export const searchPosts = async (
   const [postConnection] = await sq.query(q => {
     const requestArgs: Parameters<typeof q.allSocialPost>[0] = {
       filters: { privacy: asEnumKey(PrivacyInputInput, privacy) },
-      first: limit
+      first: limit,
+      resourceId: snekResourceId
     };
 
     if (requestArgs.filters) {

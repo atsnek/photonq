@@ -14,6 +14,7 @@ import { TPaginatedPostListData } from '../../post/types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
 import { asEnumKey } from 'snek-query';
 import { PrivacyInputInput } from '@snek-functions/origin/dist/schema.generated';
+import { snekResourceId } from '@atsnek/jaen';
 
 const initState: IProfileStateDefinition = {
   activity: { items: [], totalCount: 0 },
@@ -33,7 +34,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       followers: 0,
       views: 0,
       stars: 0,
-      posts: 0,
+      posts: 0
     };
 
     const [currentUser, currentUserError] = await sq.query(q => q.userMe);
@@ -41,7 +42,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     const [userData, error] = await sq.query(
       (q): TProfile['user'] | undefined => {
         const user = q.user({
-          resourceId: __SNEK_RESOURCE_ID__,
+          resourceId: snekResourceId,
           login: username
         });
         const profile = user.profile;
@@ -65,13 +66,14 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           id: user.id,
           avatarUrl: user.details?.avatarURL ?? '',
           bio: profile?.bio ?? null,
-          displayName: `${user.details?.firstName ?? ''} ${user.details?.lastName ?? ''
-            }`,
+          displayName: `${user.details?.firstName ?? ''} ${
+            user.details?.lastName ?? ''
+          }`,
           stats: {
             followers: profile?.followers().totalCount ?? 0,
             views: profile?.views ?? 0,
             stars: profile?.stars().totalCount ?? 0,
-            posts: profile?.posts().totalCount ?? 0,
+            posts: profile?.posts().totalCount ?? 0
           },
           username: username
         };
@@ -95,7 +97,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const userId = get().profile.profile?.id;
     const [rawPosts, error] = await sq.query(q => {
-      const posts = q.allSocialPostTrending({ filters: { userId }, first: 6 });
+      const posts = q.allSocialPostTrending({
+        resourceId: snekResourceId,
+        filters: { userId },
+        first: 6
+      });
       posts?.pageInfo.hasNextPage;
       posts?.pageInfo.endCursor;
       posts?.nodes.forEach(pn => {
@@ -105,7 +111,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           for (const key in pn) {
             pn[key as keyof typeof pn];
           }
-        } catch { }
+        } catch {}
       });
       return posts;
     });
@@ -138,10 +144,16 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     const [currentUser] = await sq.query(q => q.userMe);
 
     const [activityData, activityDataError] = await sq.query(q => {
-      const profile = q.user({ resourceId: __SNEK_RESOURCE_ID__, login: get().profile.profile?.username }).profile;
+      const profile = q.user({
+        resourceId: snekResourceId,
+        login: get().profile.profile?.username
+      }).profile;
       if (!profile) return undefined;
 
-      const activity = profile.activity({ first: 10, after: get().profile.activity.nextCursor });
+      const activity = profile.activity({
+        first: 10,
+        after: get().profile.activity.nextCursor
+      });
 
       activity.pageInfo.endCursor;
       activity.pageInfo.hasNextPage;
@@ -163,10 +175,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           }
 
         ae.node.follow?.followed.id;
-      })
+      });
       return activity;
     });
-    if (!activityData || (activityDataError && activityDataError.length > 0)) return false;
+    if (!activityData || (activityDataError && activityDataError.length > 0))
+      return false;
 
     const activities = await buildUserActivities(activityData, currentUser);
     set(
@@ -175,15 +188,13 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           state.profile.activity.totalCount === 0
             ? activities
             : {
-              items: [
-                ...state.profile.activity.items,
-                ...activities.items
-              ],
-              totalCount: state.profile.activity.totalCount,
-              nextCursor: activities.nextCursor,
-              hasMore: activities.hasMore
-            };
-      }));
+                items: [...state.profile.activity.items, ...activities.items],
+                totalCount: state.profile.activity.totalCount,
+                nextCursor: activities.nextCursor,
+                hasMore: activities.hasMore
+              };
+      })
+    );
 
     return true;
   },
@@ -197,7 +208,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             state: 'loading',
             items: [],
             hasMore: false,
-            totalCount: 0,
+            totalCount: 0
           };
         } else {
           state.profile.searchPosts.state = 'loading';
@@ -214,8 +225,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       state: 'inactive',
       items: [],
       totalCount: 0
-    }
-
+    };
 
     if (get().profile.searchPosts.publicPageInfo?.hasNextPage || offset === 0) {
       publicPosts = await searchPosts(
@@ -232,13 +242,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       );
     }
 
-
     let privatePosts: TPaginatedPostListData = {
       state: 'inactive',
       items: [],
       totalCount: 0
     };
-    if (isOwnProfile && (get().profile.searchPosts.privatePageInfo?.hasNextPage || offset === 0)) {
+    if (
+      isOwnProfile &&
+      (get().profile.searchPosts.privatePageInfo?.hasNextPage || offset === 0)
+    ) {
       privatePosts = await searchPosts(
         query,
         Math.max(Math.ceil(limit / 2), limit - publicPosts.items.length),
@@ -284,7 +296,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     const [currentProfileId, profileError] = await sq.query(
       q =>
         q.user({
-          resourceId: __SNEK_RESOURCE_ID__,
+          resourceId: snekResourceId,
           id: get().profile.profile?.id
         }).id
     );
@@ -306,8 +318,11 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       set(
         produce((state: TStoreState): void => {
           state.profile.isFollowing = !get().profile.isFollowing;
-          if (!state.profile.profile || !state.profile.profile.stats?.followers) return;
-          state.profile.profile.stats.followers += get().profile.isFollowing ? -1 : 1;
+          if (!state.profile.profile || !state.profile.profile.stats?.followers)
+            return;
+          state.profile.profile.stats.followers += get().profile.isFollowing
+            ? -1
+            : 1;
         })
       );
     }
