@@ -9,7 +9,6 @@ import {
   deletePost,
   searchPosts,
   togglePostRating,
-  triggerPostProxyProps
 } from '../../../shared/utils/features/post';
 import { TPaginatedPostListData, TPostPreview } from '../../post/types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
@@ -104,38 +103,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     const userId = get().profile.profile?.id;
     const [rawPosts, error] = await sq.query(q => {
       const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, filters: { userId }, first: 6 });
-      posts?.pageInfo.hasNextPage;
-      posts?.pageInfo.endCursor;
-      posts?.nodes.forEach(pn => {
-        try {
-          pn.stars().edges.map(se => se.node.profile.id);
-          pn.stars().totalCount;
-          for (const key in pn) {
-            pn[key as keyof typeof pn];
-          }
-        } catch { }
-      });
-      return posts;
+      return posts.nodes.filter(p => p.privacy === 'PUBLIC' || (!!currentUser && userId === currentUser.id))
+        .map(p => buildPostPreview(q, p, currentUser));
     });
-
-    console.log("rawPosts", rawPosts)
-
-    const posts = await Promise.all(
-      rawPosts?.nodes
-        .filter(
-          ({ privacy }) =>
-            privacy === 'PUBLIC' || (!!currentUser && userId === currentUser.id)
-        )
-        .map(async p => {
-          return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
-        }) ?? []
-    );
 
     set(
       produce((state: TStoreState): void => {
         state.profile.overviewPosts = {
           state: 'success',
-          items: posts,
+          items: rawPosts ?? [],
           totalCount: 0
         };
       })
@@ -367,7 +343,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           user.profile?.posts().totalCount;
           user.profile?.stars().totalCount;
           user.profile?.followers().totalCount;
-          // user.profile?.following().nodes.map(n => n.id);
 
           return user;
         });
@@ -558,21 +533,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       })
     )
 
-    const [postConnection, postConnectionError] = await sq.query(q => {
+    const [posts, postsError] = await sq.query(q => {
       const user = q.user({ id: get().profile.profile?.id, resourceId: __SNEK_RESOURCE_ID__ }).profile;
       if (!user) return undefined;
 
-      console.log("user", profile.id)
       const posts = user.posts({ first: 2 });
-      posts.nodes.map(triggerPostProxyProps);
-      return posts;
+      return posts.nodes.map(p => buildPostPreview(q, p, currentUser));
     })
 
-    if (!postConnection || postConnectionError?.length > 0) return false;
-
-    const posts = await Promise.all(postConnection.nodes.map(async pe => {
-      return (await sq.query(q => buildPostPreview(q, pe, currentUser)))[0]
-    }));
+    if (!posts || postsError?.length > 0) return false;
 
     set(
       produce((state: TStoreState) => {
@@ -595,17 +564,12 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       })
     )
 
-    const [postConnection, postConnectionError] = await sq.query(q => {
+    const [posts, postsError] = await sq.query(q => {
       const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 2, filters: { userId: profile.id } });
-      posts.nodes.map(triggerPostProxyProps);
-      return posts;
+      return posts.nodes.map(p => buildPostPreview(q, p, currentUser));
     })
 
-    if (!postConnection || postConnectionError?.length > 0) return false;
-
-    const posts = await Promise.all(postConnection.nodes.map(async post => {
-      return (await sq.query(q => buildPostPreview(q, post, currentUser)))[0]
-    }));
+    if (!posts || postsError?.length > 0) return false;
 
     set(
       produce((state: TStoreState) => {

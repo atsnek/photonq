@@ -13,7 +13,6 @@ import {
   LanguageInputInput,
   PrivacyInputInput
 } from '@snek-functions/origin/dist/schema.generated';
-import { TPostPreview } from '../types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
@@ -49,31 +48,12 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       filters.language = asEnumKey(LanguageInputInput, postLanguage);
     }
 
-    const [rawPosts, rawError] = await sq.query(q => {
+    const [posts, postsError] = await sq.query(q => {
       const postComm = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 4, filters });
-      //! Existing issue: see post utils -> buildPostPreview
-      postComm?.nodes.forEach(pn => {
-        try {
-          pn.stars().edges.map(se => se.node.profile.id);
-          pn.stars().totalCount;
-          for (const key in pn) {
-            pn[key as keyof typeof pn];
-          }
-        } catch { }
-      });
-      return postComm?.nodes ?? [];
+      return postComm?.nodes.map(pn => buildPostPreview(q, pn, currentUser)) ?? [];
     });
-    // const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
-    const posts = (await Promise.all(
-      (
-        rawPosts?.map(async p => {
-          if (!p) return;
-          return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
-        }) ?? []
-      ).filter(p => !!p)
-    )) as TPostPreview[];
 
-    if (rawError) return;
+    if (postsError?.length > 0) return;
     set(
       produce((state: TStoreState) => {
         state.communityPosts.featuredPosts = {
@@ -119,7 +99,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       );
     }
 
-    const [postConnection, rawError] = await sq.query(q => {
+    const [posts, postsError] = await sq.query(q => {
       const postComm = q.allSocialPost({
         resourceId: __SNEK_RESOURCE_ID__,
         first: POST_FETCH_LIMIT,
@@ -129,52 +109,41 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
             : undefined,
         filters
       });
-      //! Existing issue: see post utils -> buildPostPreview
       postComm?.pageInfo.endCursor;
       postComm?.pageInfo.hasNextPage;
       postComm?.pageInfo.hasPreviousPage;
       postComm?.pageInfo.startCursor;
-      postComm?.nodes.forEach(pn => {
-        try {
-          pn.stars().edges.map(se => se.node.profile.id);
-          pn.stars().totalCount;
-          for (const key in pn) {
-            pn[key as keyof typeof pn];
-          }
-        } catch { }
-      });
-      return postComm;
+      return {
+        hasPreviousPage: postComm?.pageInfo.hasPreviousPage,
+        hasNextPage: postComm?.pageInfo.hasNextPage,
+        startCursor: postComm?.pageInfo.startCursor,
+        endCursor: postComm?.pageInfo.endCursor,
+        totalCount: postComm?.totalCount,
+        items: postComm?.nodes.map(pn => buildPostPreview(q, pn, currentUser))
+      }
     });
-    const posts = (await Promise.all(
-      (
-        postConnection?.nodes?.map(async p => {
-          if (!p) return;
-          return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
-        }) ?? []
-      ).filter(p => !!p)
-    )) as TPostPreview[];
 
-    if (rawError) return;
+    if (postsError?.length > 0) return;
     set(
       produce((state: TStoreState) => {
         state.communityPosts.latestPosts = {
           state: 'success',
-          items: postConnection?.pageInfo.hasPreviousPage
-            ? [...state.communityPosts.latestPosts.items, ...posts]
-            : posts,
+          items: posts.hasPreviousPage
+            ? [...state.communityPosts.latestPosts.items, ...posts.items]
+            : posts.items,
           itemsPerPage: POST_FETCH_LIMIT,
-          totalCount: posts.length,
+          totalCount: posts.totalCount,
           nextCursor:
-            postConnection?.pageInfo?.hasNextPage &&
-              postConnection.pageInfo.endCursor
-              ? postConnection?.pageInfo.endCursor
+            posts.hasNextPage &&
+              posts.endCursor
+              ? posts.endCursor
               : undefined,
           prevCursor:
-            postConnection?.pageInfo?.hasPreviousPage &&
-              postConnection.pageInfo.startCursor
-              ? postConnection?.pageInfo.startCursor
+            posts.hasPreviousPage &&
+              posts.startCursor
+              ? posts.startCursor
               : undefined,
-          hasMore: postConnection?.pageInfo?.hasNextPage ?? false
+          hasMore: posts.hasNextPage ?? false
         };
       })
     );

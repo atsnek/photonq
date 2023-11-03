@@ -1,10 +1,9 @@
 import {
   Connection_1_2_3_4_5_6,
-  Edge_1_2_3_4_5_6,
   ObjectAndUser,
   Privacy,
-  Query,
-  User
+  User,
+  User_1
 } from '@snek-functions/origin/dist/schema.generated';
 import { TActivity, TActivityType } from '../activity/types/activity';
 import { t } from 'snek-query';
@@ -20,7 +19,7 @@ import { TPaginationData } from '../../../shared/types/pagination';
  * @example getDisplayname({ username: "test", details: { lastName: "User" } }) // "User"
  * @example getDisplayname({ username: "test" }) // "test"
  */
-export const getUserDisplayname = (user: ObjectAndUser) => {
+export const getUserDisplayname = (user: ObjectAndUser | User_1) => {
   let displayName: string | undefined = undefined;
   if (user.details?.firstName) {
     displayName = user.details.firstName;
@@ -31,7 +30,7 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
   }
 
   if (!displayName) {
-    displayName = user.username;
+    displayName = user.username ?? '';
   }
   return displayName;
 };
