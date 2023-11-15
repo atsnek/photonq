@@ -167,7 +167,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           </Button>
         );
       }),
-    [tabNavItems, activeTab, profile]
+    [tabNavItems, activeTab, profile, profile?.stats]
   );
 
   let mainContent: ReactNode;

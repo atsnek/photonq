@@ -302,6 +302,10 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         dateRange: dateRange ?? get().profile.starredPosts.dateRange,
         language: language ?? get().profile.starredPosts.language,
       };
+      // Update the starred count in the profile stats if the current locale value is different from the remote one (which means that the user has starred or unstarred a post in the meantime on another tab)
+      if (state.profile?.profile?.stats && state.profile.profile.stats.starred !== posts.totalCount) {
+        state.profile.profile.stats.starred = posts.totalCount;
+      }
     }))
     return true;
   },
@@ -629,6 +633,9 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       case 'showcase_stars':
         hasRated = get().profile.showcaseStarsPosts.items.find(p => p.id === id)?.hasRated ?? false;
         break;
+      case 'stars':
+        hasRated = get().profile.starredPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
       default:
         hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
         break;
@@ -642,7 +649,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       set(
         produce((state: TStoreState) => {
 
-          [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.searchPosts.items].forEach(posts => {
+          [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.starredPosts.items, state.profile.searchPosts.items].forEach(posts => {
             const post = ('state' in posts ? posts.items : posts).find(p => p.id === id);
             if (post) {
               post.hasRated = !post.hasRated;
