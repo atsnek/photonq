@@ -74,6 +74,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
       isExpanded={true}
       display={{ base: 'none', md: 'flex' }}
       top={isAuthenticated ? `${navOffset}` : '85px'}
+      minH="420px"
       h={`calc(100vh - 100px  - ${navOffset})`}
       mr={10}
     >
