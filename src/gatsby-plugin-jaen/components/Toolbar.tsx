@@ -1,5 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/react';
 import SearchMenu from '../../features/search/components/SearchMenu';
+import { useEffect } from 'react';
 
 export interface ToolbarProps {}
 

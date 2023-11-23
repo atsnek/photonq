@@ -20,6 +20,7 @@ import TbBooks from '../../../shared/components/icons/tabler/TbBooks';
 import TbUser from '../../../shared/components/icons/tabler/TbUser';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { navigate } from 'gatsby';
+import { useSearchContext } from '../../../shared/contexts/search';
 
 interface SearchMenuProps {}
 
@@ -28,7 +29,8 @@ interface SearchMenuProps {}
  */
 const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResultData, setSearchResultData] = useState<TSearchResults>({});
+  const [searchResultData, setSearchResultData] = useState<TSearchResults>();
+  const { data: searchData, fetchSearchResults } = useSearchContext();
   const [navigateIdx, setNavigateIdx] = useState<number>(-1);
   const modalDisclosure = useDisclosure();
   const ref = useRef<{ searchTimout: NodeJS.Timeout | undefined }>({ searchTimout: undefined });
@@ -39,23 +41,24 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     if (searchQuery.length > 0) {
       // Retrieve the search data
       if (ref.current.searchTimout) clearTimeout(ref.current.searchTimout);
-      ref.current.searchTimout = setTimeout(fetchSearchResults, 500);
+      ref.current.searchTimout = setTimeout(handleFetchSearchResults, 500);
     } else {
       if (ref.current.searchTimout) clearTimeout(ref.current.searchTimout);
-      fetchDefaultSearchResults();
+      // fetchDefaultSearchResults();
     }
   }, [searchQuery]);
 
   useEffect(() => {
     if (
       searchQuery.length === 0 &&
-      Object.keys(searchResultData)
-        .map(key => searchResultData[key as keyof TSearchResults].sections.length)
+      Object.keys(searchData)
+        .map(key => searchData[key as keyof TSearchResults].sections.length)
         .reduce((a, b) => a + b, 0) === 0
     ) {
-      fetchDefaultSearchResults();
+      // debugger;
+      // fetchDefaultSearchResults();
     }
-  }, [search]);
+  }, []);
 
   useEffect(() => {
     // Focus the input when the user presses the shortcut
@@ -69,38 +72,43 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     };
   }, []);
 
-  const fetchSearchResults = async () => {
-    const docsResults = await searchDocs(searchQuery, search.searchIndex);
-    const socialPostResults = await searchSocialPosts(searchQuery);
-    const userResult = await searchUser(searchQuery);
-
-    setSearchResultData({
-      docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-      community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
-      user: { title: 'Users', sections: userResult, icon: <TbUser /> }
-    });
+  const handleFetchSearchResults = async () => {
+    await fetchSearchResults(searchQuery, search.searchIndex);
     setNavigateIdx(0);
   };
 
-  const fetchDefaultSearchResults = async () => {
-    const userResults: TSearchResultSection[] = currentUserId
-      ? await getDefaultSearchUsers(currentUserId)
-      : [
-          {
-            title: 'users',
-            results: [{ title: 'Create an account', href: '/signup', description: '' }]
-          }
-        ];
-    const docsResults = await getDefaultSearchDocs(search.searchIndex);
-    const socialPostResults = await searchSocialPosts();
+  // const fetchSearchResults = async () => {
+  //   const docsResults = await searchDocs(searchQuery, search.searchIndex);
+  //   const socialPostResults = await searchSocialPosts(searchQuery);
+  //   const userResult = await searchUser(searchQuery);
 
-    setSearchResultData({
-      docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-      community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
-      user: { title: 'Users', sections: userResults, icon: <TbUser /> }
-    });
-    setNavigateIdx(0);
-  };
+  //   setSearchResultData({
+  //     docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
+  //     community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+  //     user: { title: 'Users', sections: userResult, icon: <TbUser /> }
+  //   });
+  //   setNavigateIdx(0);
+  // };
+
+  // const fetchDefaultSearchResults = async () => {
+  //   const userResults: TSearchResultSection[] = currentUserId
+  //     ? await getDefaultSearchUsers(currentUserId)
+  //     : [
+  //         {
+  //           title: 'users',
+  //           results: [{ title: 'Create an account', href: '/signup', description: '' }]
+  //         }
+  //       ];
+  //   const docsResults = await getDefaultSearchDocs(search.searchIndex);
+  //   const socialPostResults = await searchSocialPosts();
+
+  //   setSearchResultData({
+  //     docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
+  //     community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+  //     user: { title: 'Users', sections: userResults, icon: <TbUser /> }
+  //   });
+  //   setNavigateIdx(0);
+  // };
 
   /**
    * The search result items to display in the search modal
@@ -110,9 +118,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     let itemIdx = 0;
     let sectionIdx = 0;
 
-    const haveSomeResults = Object.values(searchResultData).some(
-      section => section.sections.length > 0
-    );
+    const haveSomeResults = Object.values(searchData).some(section => section.sections.length > 0);
 
     if (!haveSomeResults && searchQuery.length > 0) {
       return [
@@ -128,7 +134,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
 
     // Mark the item as highlighted if its index matches the navigateIdx
     if (navigateIdx >= 0) {
-      Object.values(searchResultData).forEach(section => {
+      Object.values(searchData).forEach(section => {
         section.sections.find(subSection => {
           subSection.results.forEach(item => {
             if (itemIdx++ === navigateIdx) {
@@ -202,7 +208,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
    * @param isUp Whether to navigate up or down
    */
   const handleNavigate = (isUp: boolean) => {
-    const itemsCount = Object.values(searchResultData)
+    const itemsCount = Object.values(searchData)
       .map(section => section.sections.map(s => s.results).flat())
       .flat().length;
 
@@ -220,7 +226,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
    * Navigate to the active item's href
    */
   const handleOpenActiveItem = () => {
-    const activeItem = Object.values(searchResultData)
+    const activeItem = Object.values(searchData)
       .map(section => section.sections.map(s => s.results).flat())
       .flat()
       .find(item => item.isActive);

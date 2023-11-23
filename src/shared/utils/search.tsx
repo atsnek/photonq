@@ -222,6 +222,7 @@ export async function getDefaultSearchDocs(
  * @returns  The search results
  */
 export async function searchSocialPosts(query?: string): Promise<TSearchResultSection[]> {
+  console.log('searchSocialPosts');
   const [postConn, postConnError] = await sq.query(q => {
     const posts =
       query && query.length > 0
