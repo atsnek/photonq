@@ -112,29 +112,15 @@ const AppLayout: FC<AppLayoutProps> = ({
     const docsResults = await getDefaultSearchDocs(search.searchIndex);
     const socialPostResults = await searchSocialPosts();
 
-    debugger;
     setSearchData({
       docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
       community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
       user: { title: 'Users', sections: userResults, icon: <TbUser /> }
     });
-    // setNavigateIdx(0);
-  };
-
-  const fetchSearchResults = async (query: string, index: SearchIndex) => {
-    const docsResults = await searchDocs(query, index);
-    const socialPostResults = await searchSocialPosts(query);
-    const userResult = await searchUser(query);
-
-    setSearchData({
-      docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-      community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
-      user: { title: 'Users', sections: userResult, icon: <TbUser /> }
-    });
   };
 
   return (
-    <SearchContext.Provider value={{ data: searchData, fetchSearchResults }}>
+    <SearchContext.Provider value={{ data: searchData, setSearchData }}>
       <MenuContext.Provider value={{ menuStructure }}>
         <Flex minW="210px" h="max(100%, 100vh)" minH="100vh" direction="column" pb={5}>
           {!isAuthenticated && topNavProps?.isVisible && (

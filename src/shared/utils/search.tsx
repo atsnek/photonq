@@ -1,10 +1,20 @@
 const FlexSearch = require('flexsearch');
 import { sq } from '@snek-functions/origin';
 import { UseSearchResult, useSearch } from '../../search/use-search';
-import { TSearchMetadata, TSearchResult, TSearchResultSection } from '../types/search';
+import {
+  TSearchMetadata,
+  TSearchResult,
+  TSearchResultSection,
+  TSearchResults
+} from '../types/search';
 import { filterWhitespaceItems } from './utils';
 import { getUserDisplayname } from '../../features/user/utils/user';
 import TbIndentIncrease from '../components/icons/tabler/TbIndentIncrease';
+import { SnekUser } from '@atsnek/jaen';
+import { SearchIndex } from '../../search/types';
+import TbBook from '../components/icons/tabler/TbBook';
+import TbBooks from '../components/icons/tabler/TbBooks';
+import TbUser from '../components/icons/tabler/TbUser';
 
 /**
  * Searches the docs for the given query.
@@ -332,4 +342,32 @@ export async function getDefaultSearchUsers(
       results
     }
   ];
+}
+
+/**
+ * Get the default search results for the given user.
+ * @param currentUserId  The id of the current user
+ * @param searchIndex  The search index to use
+ * @returns  The default search results
+ */
+export async function fetchDefaultSearchresult(
+  userId: SnekUser['id'] | undefined,
+  searchIndex: SearchIndex
+): Promise<TSearchResults> {
+  const userResults: TSearchResultSection[] = userId
+    ? await getDefaultSearchUsers(userId)
+    : [
+        {
+          title: 'users',
+          results: [{ title: 'Create an account', href: '/signup', description: '' }]
+        }
+      ];
+  const docsResults = await getDefaultSearchDocs(searchIndex);
+  const socialPostResults = await searchSocialPosts();
+
+  return {
+    docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
+    community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+    user: { title: 'Users', sections: userResults, icon: <TbUser /> }
+  };
 }

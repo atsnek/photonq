@@ -158,7 +158,7 @@ const TopNav: FC<ITopNavProps> = ({
     else openDrawer();
   };
 
-  const search = useMemo(() => {
+  const search = (() => {
     if (!colorMode) return <SearchMenu />;
     if (colorMode === 'dark')
       return (
@@ -172,7 +172,7 @@ const TopNav: FC<ITopNavProps> = ({
           <SearchMenu />
         </LightMode>
       );
-  }, [colorMode]);
+  })();
 
   return (
     <>

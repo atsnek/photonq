@@ -1,10 +1,9 @@
 import { Center, Divider, ThemeProvider, VStack, useDisclosure, Text } from '@chakra-ui/react';
 import { FC, Fragment, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
-import { TSearchResultSection, TSearchResults } from '../../../shared/types/search';
+import { TSearchResults } from '../../../shared/types/search';
 import {
-  getDefaultSearchDocs,
-  getDefaultSearchUsers,
+  fetchDefaultSearchresult,
   searchDocs,
   searchSocialPosts,
   searchUser
@@ -29,8 +28,7 @@ interface SearchMenuProps {}
  */
 const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResultData, setSearchResultData] = useState<TSearchResults>();
-  const { data: searchData, fetchSearchResults } = useSearchContext();
+  const { data: searchData, setSearchData } = useSearchContext();
   const [navigateIdx, setNavigateIdx] = useState<number>(-1);
   const modalDisclosure = useDisclosure();
   const ref = useRef<{ searchTimout: NodeJS.Timeout | undefined }>({ searchTimout: undefined });
@@ -41,10 +39,10 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     if (searchQuery.length > 0) {
       // Retrieve the search data
       if (ref.current.searchTimout) clearTimeout(ref.current.searchTimout);
-      ref.current.searchTimout = setTimeout(handleFetchSearchResults, 500);
+      ref.current.searchTimout = setTimeout(fetchSearchResults, 500);
     } else {
       if (ref.current.searchTimout) clearTimeout(ref.current.searchTimout);
-      // fetchDefaultSearchResults();
+      fetchDefaultSearchresult(currentUserId, search.searchIndex).then(setSearchData);
     }
   }, [searchQuery]);
 
@@ -55,10 +53,12 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
         .map(key => searchData[key as keyof TSearchResults].sections.length)
         .reduce((a, b) => a + b, 0) === 0
     ) {
-      // debugger;
-      // fetchDefaultSearchResults();
     }
   }, []);
+
+  useEffect(() => {
+    console.log('searchData', searchData);
+  });
 
   useEffect(() => {
     // Focus the input when the user presses the shortcut
@@ -72,43 +72,18 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     };
   }, []);
 
-  const handleFetchSearchResults = async () => {
-    await fetchSearchResults(searchQuery, search.searchIndex);
+  const fetchSearchResults = async () => {
+    const docsResults = await searchDocs(searchQuery, search.searchIndex);
+    const socialPostResults = await searchSocialPosts(searchQuery);
+    const userResult = await searchUser(searchQuery);
+
+    setSearchData({
+      docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
+      community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+      user: { title: 'Users', sections: userResult, icon: <TbUser /> }
+    });
     setNavigateIdx(0);
   };
-
-  // const fetchSearchResults = async () => {
-  //   const docsResults = await searchDocs(searchQuery, search.searchIndex);
-  //   const socialPostResults = await searchSocialPosts(searchQuery);
-  //   const userResult = await searchUser(searchQuery);
-
-  //   setSearchResultData({
-  //     docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-  //     community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
-  //     user: { title: 'Users', sections: userResult, icon: <TbUser /> }
-  //   });
-  //   setNavigateIdx(0);
-  // };
-
-  // const fetchDefaultSearchResults = async () => {
-  //   const userResults: TSearchResultSection[] = currentUserId
-  //     ? await getDefaultSearchUsers(currentUserId)
-  //     : [
-  //         {
-  //           title: 'users',
-  //           results: [{ title: 'Create an account', href: '/signup', description: '' }]
-  //         }
-  //       ];
-  //   const docsResults = await getDefaultSearchDocs(search.searchIndex);
-  //   const socialPostResults = await searchSocialPosts();
-
-  //   setSearchResultData({
-  //     docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-  //     community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
-  //     user: { title: 'Users', sections: userResults, icon: <TbUser /> }
-  //   });
-  //   setNavigateIdx(0);
-  // };
 
   /**
    * The search result items to display in the search modal
@@ -150,9 +125,9 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     }
     itemIdx = 0; // Reset the item index
 
-    for (const key in searchResultData) {
+    for (const key in searchData) {
       const isDocs = key === 'docs' && searchQuery.length > 0;
-      const section = searchResultData[key as keyof TSearchResults];
+      const section = searchData[key as keyof TSearchResults];
       if (haveSomeResults && section.sections.length === 0) continue;
       output.push(
         <Fragment key={itemIdx}>
@@ -194,7 +169,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
       sectionIdx++;
     }
     return output;
-  }, [searchResultData, navigateIdx]);
+  }, [searchData, navigateIdx]);
 
   useEffect(() => {
     if (navigateIdx >= 0) {
