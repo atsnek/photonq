@@ -232,30 +232,15 @@ export async function getDefaultSearchDocs(
  * @returns  The search results
  */
 export async function searchSocialPosts(query?: string): Promise<TSearchResultSection[]> {
-  console.log('searchSocialPosts');
-  const [postConn, postConnError] = await sq.query(q => {
+  const [posts, postsError] = await sq.query(q => {
     const posts =
       query && query.length > 0
         ? q.allSocialPost({ resourceId: __SNEK_RESOURCE_ID__, filters: { query }, first: 10 })
         : q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 10 });
 
-    posts.nodes.map(post => {
-      post.title;
-      post.matchingQuery;
-      post.summary;
-      post.slug;
-      post.profileId;
-    });
-
-    return posts;
-  });
-
-  const sections: TSearchResultSection[] = [];
-  await Promise.all(
-    postConn.nodes.map(async pn => {
-      const [username] = await sq.query(
-        q => q.user({ resourceId: __SNEK_RESOURCE_ID__, id: pn.profileId }).username
-      );
+    const sections: TSearchResultSection[] = [];
+    posts.nodes.map(pn => {
+      const username = pn.profile?.user?.username ?? '';
       sections.push({
         title: pn.title,
         results: [
@@ -266,10 +251,12 @@ export async function searchSocialPosts(query?: string): Promise<TSearchResultSe
           }
         ]
       });
-    })
-  );
+    });
 
-  return !postConnError || postConnError?.length === 0 ? sections : [];
+    return sections;
+  });
+
+  return !postsError || postsError?.length === 0 ? posts : [];
 }
 
 /**

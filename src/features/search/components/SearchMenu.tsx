@@ -31,7 +31,10 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const { data: searchData, setSearchData } = useSearchContext();
   const [navigateIdx, setNavigateIdx] = useState<number>(-1);
   const modalDisclosure = useDisclosure();
-  const ref = useRef<{ searchTimout: NodeJS.Timeout | undefined }>({ searchTimout: undefined });
+  const ref = useRef<{ searchTimout: NodeJS.Timeout | undefined; changedQuery: boolean }>({
+    searchTimout: undefined,
+    changedQuery: false // We use this to prevent the menu from fetching the default search results on first render since this is already done in the context provider
+  });
   const currentUserId = useAuthenticationContext().user?.id;
   const search = useSearch();
 
@@ -40,9 +43,11 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
       // Retrieve the search data
       if (ref.current.searchTimout) clearTimeout(ref.current.searchTimout);
       ref.current.searchTimout = setTimeout(fetchSearchResults, 500);
+      ref.current.changedQuery = true;
     } else {
       if (ref.current.searchTimout) clearTimeout(ref.current.searchTimout);
-      fetchDefaultSearchresult(currentUserId, search.searchIndex).then(setSearchData);
+      if (ref.current.changedQuery)
+        fetchDefaultSearchresult(currentUserId, search.searchIndex).then(setSearchData);
     }
   }, [searchQuery]);
 

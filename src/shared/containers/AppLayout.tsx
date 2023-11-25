@@ -75,7 +75,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   const [searchData, setSearchData] = useState<TSearchResults>({});
 
   useEffect(() => {
-    fetchDefaultSearchResults();
+    if (!isAuthenticated) fetchDefaultSearchResults();
   }, []);
 
   // This generates the menu structure from the page tree that is used over the whole app by accessing the context.
