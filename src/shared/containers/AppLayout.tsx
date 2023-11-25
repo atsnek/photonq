@@ -44,6 +44,7 @@ interface AppLayoutProps {
     colorMode?: 'light' | 'dark';
     hamburger?: THamburgerMenuIconStylerProps;
     mobileMenuButtonProps?: TMobileMenuButtonProps;
+    showThemeToggle?: boolean;
   };
   branding?: {
     image?: TBrandImage;
@@ -131,6 +132,7 @@ const AppLayout: FC<AppLayoutProps> = ({
               colorMode={topNavProps?.colorMode}
               hamburgerIconProps={topNavProps?.hamburger}
               mobileMenuButtonProps={topNavProps?.mobileMenuButtonProps}
+              showThemeToggle={topNavProps?.showThemeToggle}
               branding={branding}
             />
           )}

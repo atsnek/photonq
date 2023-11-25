@@ -28,8 +28,12 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
     const heroHeight = document.querySelector<HTMLDivElement>('#hero');
     if (!heroHeight) return;
     const heroHeightPx = heroHeight.getBoundingClientRect().height;
-    setColorMode(scrollPos < heroHeightPx && !topNavDisclosure.isOpen ? 'dark' : 'light');
-  }, [scrollPos, topNavDisclosure.isOpen]);
+    setColorMode(
+      chakraColorMode === 'dark' || (scrollPos < heroHeightPx && !topNavDisclosure.isOpen)
+        ? 'dark'
+        : 'light'
+    );
+  }, [scrollPos, topNavDisclosure.isOpen, chakraColorMode]);
 
   let linkProps: TTopNavLinkProps = { transition: 'opacity 0.2s ease-in-out' };
   let wrapperProps: TTopNavWrapperProps = {
@@ -85,7 +89,8 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
                 }
               }
             : undefined,
-        colorMode
+        colorMode,
+        showThemeToggle: true
       }}
       branding={{
         colorMode: colorMode

@@ -32,6 +32,7 @@ import { useAuthenticationContext } from '@atsnek/jaen';
 import Logo from '../../../gatsby-plugin-jaen/components/Logo';
 import useScrollPosition from '../../hooks/use-scroll-position';
 import useMobileDetection from '../../hooks/use-mobile-detection';
+import ThemeChooser from '../../components/theme-chooser/ThemeChooser';
 
 const navLinkProps = {
   display: { base: 'none', md: 'initial' },
@@ -59,6 +60,7 @@ interface ITopNavProps {
   hamburgerIconProps?: THamburgerMenuIconStylerProps;
   drawerDisclosure: ReturnType<typeof useDisclosure>;
   colorMode?: 'light' | 'dark';
+  showThemeToggle?: boolean;
   children?: React.ReactNode;
 }
 
@@ -73,6 +75,7 @@ const TopNav: FC<ITopNavProps> = ({
   hamburgerIconProps,
   drawerDisclosure,
   colorMode,
+  showThemeToggle,
   children
 }) => {
   const [hamburgerClass, setHamburgerClass] = useState('');
@@ -159,6 +162,7 @@ const TopNav: FC<ITopNavProps> = ({
   };
 
   const search = (() => {
+    console.log('colorMode', colorMode);
     if (!colorMode) return <SearchMenu />;
     if (colorMode === 'dark')
       return (
@@ -238,7 +242,6 @@ const TopNav: FC<ITopNavProps> = ({
                     iconProps={hamburgerIconProps}
                   />
                 </Button>
-                s
               </HStack>
             </Center>
             <Center>
@@ -252,6 +255,18 @@ const TopNav: FC<ITopNavProps> = ({
                     color: 'topNav.links.active.color'
                   }}
                 />
+                {!isAuthenticated && !isMobile && (
+                  <ThemeChooser
+                    buttonProps={{
+                      variant: 'outline',
+                      color: 'inherit',
+                      borderColor: 'topNav.input.borderColor',
+                      opacity: 0.4,
+                      _hover: { opacity: 1 }
+                    }}
+                    forceMenuColorMode={colorMode}
+                  />
+                )}
               </HStack>
             </Center>
           </Flex>
