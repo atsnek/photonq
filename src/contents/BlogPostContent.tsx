@@ -11,7 +11,7 @@ import Alert from '../shared/components/alert/Alert';
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
-import { navigate } from '@reach/router';
+import { globalHistory, navigate } from '@reach/router';
 import { wait } from '../shared/utils/utils';
 
 const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -56,8 +56,18 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
 
   useEffect(() => {
     // If the user made changes to the post, ask for confirmation before leaving the page
+    let historyListener: any = undefined;
     if (madeChanges) {
       window.addEventListener('beforeunload', handleBeforeUnload);
+      globalHistory.listen(({ action, location }) => {
+        if (action === 'PUSH' && location.pathname !== '/community/new-post/') {
+          if (
+            !window.confirm('Are you sure you want to leave this page? Your changes will be lost.')
+          ) {
+            globalHistory.navigate(location.pathname);
+          }
+        }
+      });
     }
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
