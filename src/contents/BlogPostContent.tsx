@@ -11,7 +11,7 @@ import Alert from '../shared/components/alert/Alert';
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
-import { globalHistory, navigate } from '@reach/router';
+import { HistoryUnsubscribe, globalHistory, navigate, useLocation } from '@reach/router';
 import { wait } from '../shared/utils/utils';
 
 const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -36,6 +36,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const isAuthenticated = useAuthenticationContext().user !== null;
   const saveToast = useToast();
+  const location = useLocation();
 
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
@@ -56,11 +57,12 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
 
   useEffect(() => {
     // If the user made changes to the post, ask for confirmation before leaving the page
-    let historyListener: any = undefined;
+    let historyListener: HistoryUnsubscribe | undefined = undefined;
     if (madeChanges) {
       window.addEventListener('beforeunload', handleBeforeUnload);
-      globalHistory.listen(({ action, location }) => {
-        if (action === 'PUSH' && location.pathname !== '/community/new-post/') {
+      historyListener = globalHistory.listen(({ action, location: historyLocation }) => {
+        if (location.pathname === historyLocation.pathname) return;
+        if (action === 'PUSH' && location.pathname === '/community/new-post/') {
           if (
             !window.confirm('Are you sure you want to leave this page? Your changes will be lost.')
           ) {
@@ -71,6 +73,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     }
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (historyListener) historyListener();
     };
   }, [madeChanges]);
 
