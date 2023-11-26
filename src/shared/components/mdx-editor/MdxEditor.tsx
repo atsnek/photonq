@@ -11,7 +11,8 @@ import {
   Stack,
   Button,
   UnorderedList,
-  OrderedList
+  OrderedList,
+  ButtonGroup
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import Callout from '../../../features/main-content/callout/components/Callouts';
@@ -27,7 +28,12 @@ import ImageCard from '../../../features/main-content/image-card/components/Imag
 import DocsIndex from '../../../features/main-content/docs-index/components/DocsIndex';
 
 import { MdxField, MdxFieldProps } from '@atsnek/jaen-fields-mdx';
-import { useAuthenticationContext, useContentManagement } from '@atsnek/jaen';
+import {
+  useAuthenticationContext,
+  useContentManagement,
+  usePageContext
+} from '@atsnek/jaen';
+import { EditIcon, LinkIcon } from '@chakra-ui/icons';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -72,7 +78,9 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
             await new Promise(resolve => setTimeout(resolve, 3000));
 
             // Fetch some random data from the internet
-            const res = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+            const res = await fetch(
+              'https://jsonplaceholder.typicode.com/todos/1'
+            );
             const data = await res.json();
 
             return (
@@ -100,30 +108,55 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
   const { isAuthenticated, user, isLoading } = useAuthenticationContext();
   const { isEditing, toggleIsEditing } = useContentManagement();
+  const { jaenPage } = usePageContext();
 
   const canEdit = isAuthenticated && user?.isAdmin ? true : false;
 
   return (
     <Stack spacing={4}>
       {canEdit && isLoading === false && (
-        <Button
-          variant="outline"
-          colorScheme={isEditing ? 'red' : undefined}
-          onClick={() => toggleIsEditing()}
-        >
-          {isEditing ? 'Stop editing' : 'Start editing'}
-        </Button>
+        <ButtonGroup>
+          <Link
+            leftIcon={<LinkIcon />}
+            variant="outline"
+            as={Button}
+            to={`/cms/pages/#${btoa(jaenPage.id)}`}
+          >
+            Edit in CMS
+          </Link>
+          <Button
+            leftIcon={<EditIcon />}
+            variant="outline"
+            colorScheme={isEditing ? 'red' : undefined}
+            onClick={() => toggleIsEditing()}
+          >
+            {isEditing ? 'Stop Editing' : 'Edit directly'}
+          </Button>
+        </ButtonGroup>
       )}
+
       <MdxField
         name="documentation"
         components={{
           // TEXT
-          h1: props => <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />,
-          h2: props => <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />,
-          h3: props => <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />,
-          h4: props => <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />,
-          h5: props => <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />,
-          h6: props => <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />,
+          h1: props => (
+            <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h2: props => (
+            <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h3: props => (
+            <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h4: props => (
+            <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h5: props => (
+            <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h6: props => (
+            <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />
+          ),
           ...mdxEditorComponents
         }}
       />
