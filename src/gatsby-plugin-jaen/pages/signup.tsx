@@ -46,20 +46,6 @@ const Page: React.FC<PageProps> = () => {
     description?: string;
   } | null>(null);
 
-  const onSubmit: SubmitHandler<FormData> = async (data: FormData, e) => {
-    e?.preventDefault();
-
-    try {
-      //   await props.onSignUp(data)
-    } catch (e: any) {
-      setAlert({
-        status: 'error',
-        message: `Unable to sign up.`,
-        description: e.message
-      });
-    }
-  };
-
   const resetAlert = () => {
     setAlert(null);
   };
@@ -255,6 +241,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
     setError,
     reset,
     control,
+    setFocus,
     formState: { errors, isSubmitting, isSubmitted, isSubmitSuccessful }
   } = useForm<SignupFormData>();
 
@@ -376,11 +363,24 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
     }
 
     if (shouldJumpToNextStep) {
-      setStep(step + 1);
-
-      // reset isSubmitted
+      const nextStep = step + 1;
+      setStep(nextStep);
     }
   };
+
+  useEffect(() => {
+    if (step === SignupFormStep.Email) {
+      setFocus('email');
+    } else if (step === SignupFormStep.Password) {
+      setFocus('password');
+    } else if (step === SignupFormStep.Username) {
+      setFocus('username');
+    } else if (step === SignupFormStep.Details) {
+      setFocus('details.firstName');
+    } else if (step === SignupFormStep.Terms) {
+      setFocus('terms');
+    }
+  }, [step, setFocus]);
 
   useEffect(() => {
     const submittedData = getValues();
@@ -423,6 +423,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
             </FormLabel>
             <HStack>
               <Input
+                autoFocus
                 type="email"
                 {...register('email', {
                   required: true
