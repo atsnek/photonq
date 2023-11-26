@@ -2956,6 +2956,20 @@
     "@lezer/lr" "^1.0.0"
     json5 "^2.2.1"
 
+"@monaco-editor/loader@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@monaco-editor/loader/-/loader-1.4.0.tgz#f08227057331ec890fa1e903912a5b711a2ad558"
+  integrity sha512-00ioBig0x642hytVspPl7DbQyaSWRaolYie/UFNjoTdvoKPzo6xrXLhTk9ixgIKcLH5b5vDOjVNiGyY+uDCUlg==
+  dependencies:
+    state-local "^1.0.6"
+
+"@monaco-editor/react@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@monaco-editor/react/-/react-4.6.0.tgz#bcc68671e358a21c3814566b865a54b191e24119"
+  integrity sha512-RFkU9/i7cN2bsq/iTkurMWOEErmYcY6JiQI3Jn+WeR/FGISH8JbHERjpS9oRuSOPvDMJI0Z8nJeKkbOs9sBYQw==
+  dependencies:
+    "@monaco-editor/loader" "^1.4.0"
+
 "@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-darwin-arm64/-/msgpackr-extract-darwin-arm64-3.0.2.tgz#44d752c1a2dc113f15f781b7cc4f53a307e3fa38"
@@ -3656,6 +3670,18 @@
   dependencies:
     defer-to-connect "^2.0.1"
 
+"@tanstack/react-table@^8.10.7":
+  version "8.10.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.10.7.tgz#733f4bee8cf5aa19582f944dd0fd3224b21e8c94"
+  integrity sha512-bXhjA7xsTcsW8JPTTYlUg/FuBpn8MNjiEPhkNhIGCUR6iRQM2+WEco4OBpvDeVcR9SE+bmWLzdfiY7bCbCSVuA==
+  dependencies:
+    "@tanstack/table-core" "8.10.7"
+
+"@tanstack/table-core@8.10.7":
+  version "8.10.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.10.7.tgz#577e8a635048875de4c9d6d6a3c21d26ff9f9d08"
+  integrity sha512-KQk5OMg5OH6rmbHZxuNROvdI+hKDIUxANaHlV+dPlNN7ED3qYQ/WkpY2qlXww1SIdeMlkIhpN/2L00rof0fXFw==
+
 "@tokenizer/token@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@tokenizer/token/-/token-0.3.0.tgz#fe98a93fe789247e998c75e74e9c7c63217aa276"
@@ -3738,6 +3764,13 @@
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-3.0.3.tgz#d34ba1cf4f8b8f2cbfe5d3118dc3b7d81858fa42"
   integrity sha512-odiGr/9/qMqjcBOe5UhcNLOFHSYmKFOyr+bJ/Xu3Qp4k1pNPAlNLUVNNLcLfjQI7+W7ObX58EdD3H+3p3voOvA==
+  dependencies:
+    "@types/trusted-types" "*"
+
+"@types/dompurify@^3.0.3":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-3.0.5.tgz#02069a2fcb89a163bacf1a788f73cb415dd75cb7"
+  integrity sha512-1Wg0g3BtQF7sSb27fJQAKck1HECM6zV1EB66j8JH9i3LCjYabJa0FSdiSgsD5K/RbrsR0SiraKacLB+T8ZVYAg==
   dependencies:
     "@types/trusted-types" "*"
 
@@ -6357,6 +6390,11 @@ dompurify@^3.0.5:
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.0.5.tgz#eb3d9cfa10037b6e73f32c586682c4b2ab01fbed"
   integrity sha512-F9e6wPGtY+8KNMRAVfxeCOHU0/NPWMSENNq4pQctuXRqqdEPW7q3CrLbR5Nse044WwacyjHGOMlvNsBe1y6z9A==
 
+dompurify@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.0.6.tgz#925ebd576d54a9531b5d76f0a5bef32548351dae"
+  integrity sha512-ilkD8YEnnGh1zJ240uJsW7AzE+2qpbOUYjacomn3AvJ6J4JhKGSZ2nh4wUIXPZrEPppaCLx5jFe8T89Rk8tQ7w==
+
 domutils@^2.5.2, domutils@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-2.8.0.tgz#4437def5db6e2d1f5d6ee859bd95ca7d02048135"
@@ -7602,16 +7640,28 @@ gatsby-graphiql-explorer@^3.12.1:
   resolved "https://registry.yarnpkg.com/gatsby-graphiql-explorer/-/gatsby-graphiql-explorer-3.12.1.tgz#7ea2196467d5982bc3fb8e0326cd57161bc1b8c6"
   integrity sha512-c2iG+4nAft2cTS9zgnPUAYNBtxTWGKjI26QIfjuo25j7/klnz8rLQYdj6TA4Z2Y3yyTyBspAHr9ho6zvOHlBJg==
 
-gatsby-jaen-lens@^0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.16.tgz#65a678a61a74edd4f737eba6c2415c56889a8d55"
-  integrity sha512-qeHQvFFmnp+uVUMDzaVKn7mVZYzVopTn34LGyHrFiYgGwCMnS4cBQbQ7Aiwl0jSCoUy/vIPVofiQIu7QL/uBnA==
+gatsby-jaen-lens@^0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-lens/-/gatsby-jaen-lens-0.0.17.tgz#b61e3196a9be5b2c2dd1bda0520898ce1ed0469a"
+  integrity sha512-YStvzfWOVChEGm4G+0TjE+sFsb5KfqewWmrJ+reBekoqUmi9L7Jqo5bDGm74NwThNTQlZhvcfqLBDhEty6/p7A==
   dependencies:
     react-hook-form "^7.46.1"
     react-icons "^4.11.0"
     snek-query "^0.0.83"
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
+
+gatsby-jaen-mailpress@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-0.0.1.tgz#a86c9f8799da6a8581cc94e3b464768c615bc54a"
+  integrity sha512-HIc3B23OVE0NnTY5jsa76Tf+QTgQBhz3c/tSGjjJjjyWzt6n2idYk2M633VjPP9kbyuDocEytlIE/lSIkR/+hA==
+  dependencies:
+    "@monaco-editor/react" "^4.6.0"
+    "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
+    "@tanstack/react-table" "^8.10.7"
+    isomorphic-dompurify "^1.9.0"
+    react-hook-form "^7.46.1"
+    snek-query "^0.0.83"
 
 gatsby-jaen-resource@^0.0.8:
   version "0.0.8"
@@ -7707,10 +7757,10 @@ gatsby-plugin-image@^3.11.0:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.61:
-  version "1.0.0-rc.61"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.61.tgz#49c2c6e0ee3c6732f54fb753b6b8adedd3675d48"
-  integrity sha512-soyhrFjvMacbrAKl098wmuguKmPqXlpMcpauPnpjRAFHSs0SCRCRpkZAWIbYyK7/rGkVq7C/hHvZrwgy97GPig==
+gatsby-plugin-jaen@^1.0.0-rc.62:
+  version "1.0.0-rc.62"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.62.tgz#c67599183db07a734f7dab832d13cba2ff96ad12"
+  integrity sha512-1pUuycLXUky6l40+41iMO5J5wpCjEZQdnUJVOO78Fgbj8XvrGOyQwGkRuIgthYRBMWsgS7XdWGnOWmHy39OkVw==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
@@ -9355,6 +9405,15 @@ isomorphic-dompurify@^1.8.0:
   dependencies:
     "@types/dompurify" "^3.0.2"
     dompurify "^3.0.5"
+    jsdom "^22.1.0"
+
+isomorphic-dompurify@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/isomorphic-dompurify/-/isomorphic-dompurify-1.9.0.tgz#609a329d9961be2cf50e772d046378f3850d8cde"
+  integrity sha512-DehfjDqzqDIX6ltkpcpXXzOOUm5Qi+3OioI0ZMzZh1C7xTsUpPMVT/UCaPmYXnOf4PjbTDA1tAyxnt8rBkYudA==
+  dependencies:
+    "@types/dompurify" "^3.0.3"
+    dompurify "^3.0.6"
     jsdom "^22.1.0"
 
 iterator.prototype@^1.1.2:
@@ -13752,6 +13811,11 @@ stackframe@^1.3.4:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.3.4.tgz#b881a004c8c149a5e8efef37d51b16e412943310"
   integrity sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==
+
+state-local@^1.0.6:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/state-local/-/state-local-1.0.7.tgz#da50211d07f05748d53009bee46307a37db386d5"
+  integrity sha512-HTEHMNieakEnoe33shBYcZ7NX83ACUjCu8c40iOGEZsngj9zRnkqS9j1pqQPXwobB0ZcVTk27REb7COQ0UR59w==
 
 stats-gl@^1.0.2:
   version "1.0.5"
