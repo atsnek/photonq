@@ -31,7 +31,7 @@
     "framer-motion": "^10.16.1",
     "gatsby": "^5.11.0",
     "gatsby-jaen-lens": "^0.0.17",
-    "gatsby-plugin-jaen": "^1.0.0-rc.61",
+    "gatsby-plugin-jaen": "^1.0.0-rc.62",
     "immer": "^10.0.2",
     "prismjs": "^1.29.0",
     "react": "^18.2.0",
