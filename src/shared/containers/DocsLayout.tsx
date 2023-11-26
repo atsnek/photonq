@@ -33,7 +33,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
   const memoedChildren = useMemo(() => children, [children]);
 
   return (
-    <MainGrid>
+    <MainGrid isLeftNavExpanded={isExpanded}>
       <Box display={{ base: 'none', md: 'block' }} position="sticky">
         <LeftNav isExpanded={isExpanded} setIsExpanded={setIsExpanded}>
           <Box w={isExpanded ? 'auto' : 0}>

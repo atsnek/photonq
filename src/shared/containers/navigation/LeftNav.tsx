@@ -36,9 +36,7 @@ const LeftNav: FC<ILeftNavProps> = ({
     >
       {children}
       <Spacer />
-      {!hideControls && (
-        <NavbarControls isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
-      )}
+      {!hideControls && <NavbarControls isExpanded={isExpanded} setIsExpanded={setIsExpanded} />}
     </Flex>
   );
 };
