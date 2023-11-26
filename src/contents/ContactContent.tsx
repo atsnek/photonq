@@ -3,6 +3,7 @@ import {
   ChakraProvider,
   Checkbox,
   FormControl,
+  FormErrorMessage,
   // FormErrorMessage,
   FormLabel,
   HStack,
@@ -16,6 +17,9 @@ import { FC } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import BaseContentLayout from '../shared/containers/BaseContentLayout';
 import theme from '../styles/theme/theme';
+import { sq } from '@snek-functions/origin';
+import { doNotConvertToString } from 'snek-query';
+import { useNotificationsContext } from '@atsnek/jaen';
 
 type FormValues = {
   name: string;
@@ -28,11 +32,45 @@ type FormValues = {
  * Content for the contact page.
  */
 const ContactContent: FC = () => {
-  const { register, handleSubmit, formState } = useForm<FormValues>();
-  const { errors, isSubmitting } = formState;
+  const { toast } = useNotificationsContext();
 
-  const onSubmit: SubmitHandler<FormValues> = data => {
+  const { register, handleSubmit, formState } = useForm<FormValues>();
+  const { errors, isSubmitting, isValid } = formState;
+
+  const onSubmit: SubmitHandler<FormValues> = async data => {
     // TODO: Implement connection with Jaen
+
+    const [_, errors] = await sq.mutate(m =>
+      m.mailpressMailSchedule({
+        envelope: {
+          replyTo: {
+            value: data.email,
+            type: doNotConvertToString('EMAIL_ADDRESS') as any
+          }
+        },
+        template: {
+          id: '76abe113-2637-4dd0-883b-ab9d745f72fc',
+          values: {
+            name: data.name,
+            message: data.message
+          }
+        }
+      })
+    );
+
+    if (errors) {
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while sending your message',
+        status: 'error'
+      });
+    } else {
+      toast({
+        title: 'Success',
+        description: 'Your message has been sent',
+        status: 'success'
+      });
+    }
   };
 
   //!Bug: The default focusBorderColor of all inputs is different from the theme (some strange purple color)
@@ -74,8 +112,9 @@ const ContactContent: FC = () => {
               id="message"
               placeholder="I love your documentation!"
               focusBorderColor="theme.500"
-              {...register('message', { required: true, minLength: 20 })}
+              {...register('message', { required: true })}
             />
+            <FormErrorMessage>{errors.message?.message}</FormErrorMessage>
           </FormControl>
           <FormControl
             id="contact-form-agreement"
@@ -95,12 +134,13 @@ const ContactContent: FC = () => {
               I agree that my details will be stored for contact and for any
               further queries.
             </Checkbox>
-            {/* <FormErrorMessage>{errors.agreement?.message}</FormErrorMessage> */}
+            <FormErrorMessage>{errors.agreement?.message}</FormErrorMessage>
           </FormControl>
           <Button
             colorScheme="theme"
             type="submit"
             px={10}
+            isDisabled={!isValid}
             isLoading={isSubmitting}
           >
             Send
