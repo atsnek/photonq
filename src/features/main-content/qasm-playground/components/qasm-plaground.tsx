@@ -93,6 +93,21 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = () => {
           isStandalone
           headerText="Translation"
           isExecuting={translator.isLoading}
+          result={
+            translator.result ? (
+              <>
+                {translator.result?.map(translation => (
+                  <>
+                    {translation ? (
+                      <img src={translation.svg} alt={translation.name || ''} />
+                    ) : (
+                      <p>Translation failed</p>
+                    )}
+                  </>
+                ))}
+              </>
+            ) : null
+          }
         />
 
         <CodeResultPreview
