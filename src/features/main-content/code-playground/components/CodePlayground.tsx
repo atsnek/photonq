@@ -1,6 +1,8 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { FC, ReactNode, useEffect, useState } from 'react';
-import CodeSnippet, { ICodeSnippetProps } from '../../code-snippet/components/CodeSnippet';
+import CodeSnippet, {
+  ICodeSnippetProps
+} from '../../code-snippet/components/CodeSnippet';
 import CodeResultPreview from '../../code-result-preview/components/CodeResultPreview';
 import ReactDOM from 'react-dom/server';
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
@@ -8,26 +10,24 @@ import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainC
 interface ICodePlaygroundProps {
   children: string;
   codeEditorProps: Exclude<ICodeSnippetProps, 'children'>;
-  executeCode: (code: string) => Promise<ReactNode>;
+  onCodeChange?: (code: string) => void;
+  toolbar?: ReactNode;
 }
 /**
  * Component for showing a code editor and (live) preview.
  * This component uses the CodeSnippet component to display and edit the code.
  */
-const CodePlayground: FC<ICodePlaygroundProps> = ({ children, codeEditorProps, executeCode }) => {
+const CodePlayground: FC<ICodePlaygroundProps> = ({
+  children,
+  codeEditorProps,
+  toolbar,
+  onCodeChange
+}) => {
   const [code, setCode] = useState<string>(children);
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [result, setResult] = useState<Awaited<ReturnType<typeof executeCode>>>();
 
-  const handleExecuteCode = async (code: string) => {
-    try {
-      setIsExecuting(true);
-
-      setResult(await executeCode(code));
-    } finally {
-      setIsExecuting(false);
-    }
-  };
+  useEffect(() => {
+    if (onCodeChange) onCodeChange(code);
+  }, [code]);
 
   return (
     <>
@@ -47,9 +47,7 @@ const CodePlayground: FC<ICodePlaygroundProps> = ({ children, codeEditorProps, e
             borderBottomRadius: 'none'
           }}
           isStandalone={false}
-          isExecutable
-          isExecuting={isExecuting}
-          executeCode={code => handleExecuteCode(code)}
+          toolbar={toolbar}
           onChange={setCode}
           isEditable={true}
         />

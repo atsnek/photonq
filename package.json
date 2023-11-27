@@ -35,6 +35,7 @@
     "gatsby-plugin-jaen": "^1.0.0-rc.63",
     "immer": "^10.0.2",
     "prismjs": "^1.29.0",
+    "quantum-circuit": "^0.9.218",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-highlight-words": "^0.20.0",

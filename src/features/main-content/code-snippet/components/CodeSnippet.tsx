@@ -1,11 +1,10 @@
-import { Box, BoxProps, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import { Box, BoxProps, Flex, Text } from '@chakra-ui/react';
 import 'highlight.js/styles/atom-one-dark.css';
-import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
-import { IMainContentComponentBaseProps } from '../../types/mainContent';
-import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
-import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import Editor from 'react-simple-code-editor';
+import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
+import { IMainContentComponentBaseProps } from '../../types/mainContent';
 import '../styles/prism-one-dark.css';
 
 export interface ICodeSnippetProps extends IMainContentComponentBaseProps {
@@ -14,14 +13,11 @@ export interface ICodeSnippetProps extends IMainContentComponentBaseProps {
   headerText?: string;
   isStandalone?: boolean;
   isExecutable?: boolean;
-  isExecuting?: boolean;
-  executeCode?: (code: string) => void;
+  toolbar?: React.ReactNode;
+
   containerProps?: BoxProps;
-  isEditable?: boolean;
   onChange?: (code: string) => void;
 }
-
-let timeout: NodeJS.Timeout;
 
 /**
  * Code snippet component for displaying code examples.
@@ -32,10 +28,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   headerText,
   containerProps,
   isStandalone = true,
-  isExecutable,
-  isExecuting,
-  executeCode,
-  isEditable,
+  toolbar = <></>,
   onChange
 }) => {
   const [code, setCode] = useState(children);
@@ -70,8 +63,9 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   return (
     <Box
       {...baseProps}
-      w={{ base: 'calc(100vw - 3.5rem)', md: 'auto' }}
       overflow="hidden"
+      boxSizing="border-box"
+      flex="1"
       border="1px solid"
       borderColor="components.codeSnippet.borderColor"
       borderRadius="xl"
@@ -81,107 +75,53 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
       transition="box-shadow 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
       {...containerProps}
     >
-      <Box
+      {(headerText || toolbar) && (
+        <Flex
+          bgColor="components.codeSnippet.header.bgColor"
+          color="components.codeSnippet.header.text.color"
+          _hover={{
+            color: 'components.codeSnippet.header._hover.text.color'
+          }}
+          transition="color 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
+          p={3}
+          flexDir={{ base: 'column', md: 'row' }}
+        >
+          {headerText && (
+            <Text fontSize="xs" my="auto">
+              {headerText}
+            </Text>
+          )}
+          {toolbar}
+        </Flex>
+      )}
+      <Flex
         fontSize="sm"
         borderRadius="md"
-        overflowX="auto"
+        w="full"
+        transition="box-shadow 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
         __css={{
-          '& .cm-gutters': {
-            backgroundColor: 'components.codeSnippet.body.bgColor !important',
-            border: 'none'
-          },
-          // '& pre': {
-          //   backgroundColor: 'components.codeSnippet.body.bgColor !important',
-          //   fontFamily:
-          //     'ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace',
-          //   fontWeight: 500,
-          //   fontSize: '12.96px',
-          //   padding: 3,
-          //   pt: 0,
-          //   pb: 5,
-          //   my: '0 !important',
-          //   minH: '100px'
-          // },
-          '& code, & pre': {
-            bgColor: 'transparent !important',
-            w: 'max-content',
-            display: 'block'
-          },
-          '&:hover .code-snippet-copy-button': {
-            visibility: 'visible',
-            opacity: 1
-          },
-          '&:hover': {
-            boxShadow: 'lg'
+          '& textarea:focus': {
+            outline: 'none'
           }
         }}
-        transition="box-shadow 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
       >
-        {(headerText || isExecutable) && (
-          <Flex
-            bgColor="components.codeSnippet.header.bgColor"
-            color="components.codeSnippet.header.text.color"
-            _hover={{
-              color: 'components.codeSnippet.header._hover.text.color'
-            }}
-            transition="color 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-            p={3}
-          >
-            {headerText && (
-              <Text fontSize="xs" my="auto">
-                {headerText}
-              </Text>
-            )}
-            {isExecutable && (
-              <>
-                <Spacer />
-                <Button
-                  size="sm"
-                  colorScheme="theme"
-                  my="auto"
-                  _hover={{
-                    transform: 'scale(1.05)'
-                  }}
-                  transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                  isLoading={isExecuting}
-                  onClick={executeCode && children ? () => executeCode(children) : undefined}
-                >
-                  Execute
-                </Button>
-              </>
-            )}
-          </Flex>
-        )}
-        <Box position="relative">
-          <Editor
-            value={code}
-            highlight={code => highlight(code, grammar, language)}
-            onValueChange={code => {
-              setCode(code);
-              if (onChange) onChange(code);
-            }}
-            padding={5}
-            style={{
-              fontFamily:
-                '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"',
-              minHeight: '100px',
-              margin: '10px'
-            }}
-          />
-          <IconButton
-            position="absolute"
-            top={5}
-            right={5}
-            visibility="hidden"
-            opacity={0}
-            className="code-snippet-copy-button"
-            aria-label="Copy code to clipboard"
-            icon={buttonIcon === 'copy' ? <CopyIcon /> : <CheckIcon />}
-            transition="opacity 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000), visibility 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-            onClick={copyToClipboard}
-          />
-        </Box>
-      </Box>
+        <Editor
+          value={code}
+          highlight={code => highlight(code, grammar, language)}
+          onValueChange={code => {
+            setCode(code);
+            if (onChange) onChange(code);
+          }}
+          padding={5}
+          style={{
+            flex: 1,
+            fontFamily:
+              '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"',
+            minHeight: '100px',
+            margin: '10px'
+          }}
+        />
+      </Flex>
     </Box>
   );
 };

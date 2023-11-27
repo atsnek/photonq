@@ -34,6 +34,7 @@ import {
   usePageContext
 } from '@atsnek/jaen';
 import { EditIcon, LinkIcon } from '@chakra-ui/icons';
+import { QASMPlayground } from '../../../features/main-content/qasm-playground/components/qasm-plaground';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -68,36 +69,13 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
     const lang = className?.replace('language-', '') || 'text';
 
     if (playground) {
-      return (
-        <CodePlayground
-          codeEditorProps={{
-            language: lang,
-            ...props
-          }}
-          executeCode={async code => {
-            await new Promise(resolve => setTimeout(resolve, 3000));
-
-            // Fetch some random data from the internet
-            const res = await fetch(
-              'https://jsonplaceholder.typicode.com/todos/1'
-            );
-            const data = await res.json();
-
-            return (
-              <Box>
-                <h1>How cool is that?</h1>
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              </Box>
-            );
-          }}
-          {...props}
-        />
-      );
+      return <QASMPlayground {...props} />;
     }
 
     return <CodeSnippet language={lang} {...props} />;
   },
   // CUSTOM COMPONENTS
+  QASMPlayground,
   Filesystem,
   ImageCard,
   Callout,
