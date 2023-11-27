@@ -57,7 +57,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   handleTogglePrivacy,
   handleSavePost
 }) => {
-  const navOffset = useNavOffset();
+  const navOffset = useNavOffset('90px');
 
   const isAuthenticated = useAuthenticationContext().user !== null;
 
