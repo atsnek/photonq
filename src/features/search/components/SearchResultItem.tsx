@@ -1,4 +1,12 @@
-import { MenuItemProps, LinkBox, LinkOverlay, Text, Box, Spacer, Flex } from '@chakra-ui/react';
+import {
+  MenuItemProps,
+  LinkBox,
+  LinkOverlay,
+  Text,
+  Box,
+  Spacer,
+  Flex
+} from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 import { TSearchResult } from '../../../shared/types/search';
 import Highlighter from 'react-highlight-words';
@@ -14,7 +22,15 @@ export const SearchResultItem: FC<{
   onClickCapture?: () => void;
   icon?: ReactNode;
   isDocs?: boolean;
-}> = ({ item, query, id, defaultFocus = false, onClickCapture = undefined, icon, isDocs }) => {
+}> = ({
+  item,
+  query,
+  id,
+  defaultFocus = false,
+  onClickCapture = undefined,
+  icon,
+  isDocs
+}) => {
   let props: MenuItemProps = {};
 
   if (defaultFocus) {
@@ -26,7 +42,11 @@ export const SearchResultItem: FC<{
 
   const queryTokens = query.split(' ').filter(token => /\S/.test(token));
   const highlightTag = ({ children }: any) => (
-    <Text as="span" color="components.menu.item.highlight" children={children} />
+    <Text
+      as="span"
+      color="components.menu.item.highlight"
+      children={children}
+    />
   );
 
   return (
@@ -88,7 +108,9 @@ export const SearchResultItem: FC<{
         </LinkOverlay>
       </Box>
       <Spacer />
-      <Text color="features.search.section.item.goto.color">Go to</Text>
+      <Text whiteSpace="nowrap" color="features.search.section.item.goto.color">
+        Go to
+      </Text>
     </LinkBox>
   );
 };
