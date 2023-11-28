@@ -25,7 +25,7 @@ const PostEditor: FC<IPostEditorProps> = ({
   });
   const updatePostContent = useAppStore(state => state.singlePost.editContent);
 
-  const handleEditorChange = (value: MdastRoot) => {
+  const handleEditorChange = async (value: MdastRoot) => {
     // clearTimeout(stateRef.current.timeout);
     // stateRef.current.timeout = setTimeout(async () => {
     //   setIsSavingPost(true);
@@ -36,7 +36,11 @@ const PostEditor: FC<IPostEditorProps> = ({
 
     // There is no need to debounce the content update because there is no autosave feature
     // and the user has to click the save button to save the changes
-    updatePostContent(value);
+    setIsSavingPost(true);
+    await updatePostContent(value);
+    setIsSavingPost(false);
+
+    if (!madeChanges) setMadeChanges(true);
   };
 
   return (
