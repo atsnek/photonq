@@ -41,7 +41,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = () => {
   const translator = useQasmTranslate({ code: qasmCode });
 
   return (
-    <Card my="4" p="4" borderRadius="md" variant="outline">
+    <Card my="4" p="4" borderRadius="md" variant="outline" w="full">
       <Stack w="full">
         <DiagramPreview isStandalone headerText="Diagram">
           <Box ref={diagram} overflowY="scroll"></Box>
