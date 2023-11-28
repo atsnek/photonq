@@ -9,6 +9,7 @@ import { TActivity, TActivityType } from '../activity/types/activity';
 import { t } from 'snek-query';
 import { sq } from '@snek-functions/origin';
 import { TPaginationData } from '../../../shared/types/pagination';
+import { snekResourceId } from '@atsnek/jaen';
 
 /**
  * Returns the display name of a user
@@ -92,14 +93,13 @@ export const buildUserActivities = async (
         !createdAt ||
         (type.startsWith('star_') &&
           (!post ||
-            post &&
-            activityRatingPostIds.findIndex(
-              ({ createdAt: existingCreatedAt, id }) =>
-                id === post.id && existingCreatedAt === createdAt
-            ) === -1))
+            (post &&
+              activityRatingPostIds.findIndex(
+                ({ createdAt: existingCreatedAt, id }) =>
+                  id === post.id && existingCreatedAt === createdAt
+              ) === -1)))
       )
         return;
-
       let title = '';
       let href = '';
       if (type === 'blog_create' && post) {
@@ -110,8 +110,9 @@ export const buildUserActivities = async (
           title = 'Created a private blog post';
           href = '#';
         } else {
-          title = `Created a blog post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
-            }\"`;
+          title = `Created a blog post \"${post.title?.substring(0, 20)}${
+            post.title?.length > 20 ? '...' : ''
+          }\"`;
           href = '/post/' + post.slug;
         }
       } else if (type === 'profile_create') {
@@ -126,12 +127,17 @@ export const buildUserActivities = async (
           user.details?.lastName;
           return user;
         });
-        if (!followedUser || (followedUserError && followedUserError.length > 0)) return;
+        if (
+          !followedUser ||
+          (followedUserError && followedUserError.length > 0)
+        )
+          return;
         title = `Followed ${getUserDisplayname(followedUser)}`;
         href = follow.followed?.id ? '/user/' + followedUser.username : '#';
       } else if (type === 'star_star' && post) {
-        title = `Starred a post \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
-          }\"`;
+        title = `Starred a post \"${post.title?.substring(0, 20)}${
+          post.title?.length > 20 ? '...' : ''
+        }\"`;
         href = '/post/' + post.slug;
       }
 
@@ -148,7 +154,9 @@ export const buildUserActivities = async (
         }
       };
     });
-  activityList.items = (await Promise.all(items)).filter(Boolean) as TActivity[];
+  activityList.items = (await Promise.all(items)).filter(
+    Boolean
+  ) as TActivity[];
   return activityList;
 };
 

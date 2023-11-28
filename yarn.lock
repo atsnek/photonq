@@ -7675,7 +7675,6 @@ gatsby-jaen-mailpress@^0.0.1:
     isomorphic-dompurify "^1.9.0"
     react-hook-form "^7.46.1"
     snek-query "^0.0.83"
-
 gatsby-jaen-resource@^0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/gatsby-jaen-resource/-/gatsby-jaen-resource-0.0.8.tgz#d68e1d01dbdc0b7b1ecf4b9ed80b9dd333ccfce1"

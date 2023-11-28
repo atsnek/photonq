@@ -14,6 +14,7 @@ import {
   PrivacyInputInput
 } from '@snek-functions/origin/dist/schema.generated';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
+import { snekResourceId } from '@atsnek/jaen';
 
 export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
   set,
@@ -269,7 +270,7 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
     if (
       get().communityPosts.searchPosts.items[postIdx[0]]?.privacy === privacy ||
       get().communityPosts.featuredPosts.items[postIdx[1]]?.privacy ===
-      privacy ||
+        privacy ||
       get().communityPosts.latestPosts.items[postIdx[2]]?.privacy === privacy
     )
       return true;

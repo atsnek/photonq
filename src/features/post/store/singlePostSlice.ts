@@ -15,7 +15,7 @@ import {
   PostDataInputInput,
   PrivacyInputInput
 } from '@snek-functions/origin/dist/schema.generated';
-import { osg } from '@atsnek/jaen';
+import { osg, snekResourceId } from '@atsnek/jaen';
 import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
 
 const initState: ISinglePostStateDefinition = {
@@ -134,7 +134,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
         if (post.content) {
           jsonContent = JSON.parse(post.content) as MdastRoot;
         }
-      } catch { }
+      } catch {}
 
       return {
         authorProfileId: post.profileId,
@@ -198,7 +198,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     let content: string = '';
     try {
       content = JSON.stringify(post.content);
-    } catch { }
+    } catch {}
 
     const [newPost, error] = await sq.mutate(q =>
       q.socialPostCreate({
