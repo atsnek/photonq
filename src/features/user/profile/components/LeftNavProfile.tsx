@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Divider,
   Flex,
@@ -9,7 +8,8 @@ import {
   HStack,
   Heading,
   IconButton,
-  IconProps,
+  LinkBox,
+  LinkOverlay,
   StackProps,
   Text,
   Textarea,
@@ -17,24 +17,21 @@ import {
   VStack,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { FC, Fragment, ReactNode, useMemo, useRef, useState } from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useMemo, useRef, useState } from 'react';
 import { useNavOffset } from '../../../../shared/hooks/use-nav-offset';
-import LeftNav, {
-  ILeftNavProps
-} from '../../../../shared/containers/navigation/LeftNav';
+import LeftNav, { ILeftNavProps } from '../../../../shared/containers/navigation/LeftNav';
 import LeftNavProfileSkeleton from './LeftNavProfileSkeleton';
 import { useAppStore } from '../../../../shared/store/store';
 import ProfileFollowButton from './ProfileFollowButton';
 import TbUserEdit from '../../../../shared/components/icons/tabler/TbUserEdit';
 import TbUserCheck from '../../../../shared/components/icons/tabler/TbUserCheck';
 import TbUserCancel from '../../../../shared/components/icons/tabler/TbUserCancel';
-import TbUsers from '../../../../shared/components/icons/tabler/TbUsers';
-import { useAuthenticationContext } from '@atsnek/jaen';
-import { formatNumber } from '../../../../shared/utils/utils';
-import TbEye from '../../../../shared/components/icons/tabler/TbEye';
-import TbStar from '../../../../shared/components/icons/tabler/TbStar';
-import { TProfileStatType } from '../../types/user';
-import TbBooks from '../../../../shared/components/icons/tabler/TbBooks';
+import { uploadFile, useAuthenticationContext } from '@atsnek/jaen';
+import { capitalizeWord, formatNumber } from '../../../../shared/utils/utils';
+import { TProfileStatType, TProfileTab } from '../../types/user';
+import { userStatIcons } from '../../../../shared/vars/user';
+import Image from '../../../../shared/components/image/Image';
+import { fallbackUserAvatar } from '../../variables/user';
 
 export type TSocialLink = 'email' | 'linkedin' | 'location' | 'company';
 
@@ -83,25 +80,13 @@ export const leftNavProfileStyling = {
 
 interface LeftNavProfileProps {
   isOwnProfile: boolean;
+  setActiveTab: Dispatch<SetStateAction<TProfileTab>>;
 }
 
 /**
  * Sub-component of the profile page that displays the key information about the user.
  */
-const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
-  // const socialLinkIcons: { [key in TSocialLink]: FC<IconProps> } = {
-  //   email: FeatherInbox,
-  //   linkedin: TbLinkedIn,
-  //   location: TbMapPin,
-  //   company: TbBuilding
-  // };
-  const statIcons: { [key in TProfileStatType]: FC<IconProps> } = {
-    followers: TbUsers,
-    views: TbEye,
-    stars: TbStar,
-    posts: TbBooks
-  };
-
+const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab }) => {
   const navTopOffset = useNavOffset();
   const isAuthenticated = useAuthenticationContext().user !== null;
   const [viewMode, setViewMode] = useState<'read' | 'edit'>('read');
@@ -114,6 +99,10 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const isFollowing = useAppStore(state => state.profile.isFollowing);
   const changeBio = useAppStore(state => state.profile.changeBio);
+  const changeProfilePicture = useAppStore(state => state.profile.changeProfilePicture);
+
+  const [isUpdatingProfileImage, setIsUpdatingProfileImage] = useState(false);
+  const updateUserDetails = useAuthenticationContext().updateDetails;
 
   const handleToggleFollow = async () => {
     setIsFollowUpdating(true);
@@ -142,32 +131,69 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
     bioInputRef.current.value = userData?.bio ?? '';
   };
 
+  const handleUpdateProfileImage = async (avatarFile: File) => {
+    setIsUpdatingProfileImage(true);
+    await updateUserDetails({ avatarFile });
+    changeProfilePicture(avatarFile);
+    setIsUpdatingProfileImage(false);
+  };
+
   const statElements = useMemo(() => {
     const output: ReactNode[] = [];
     for (const key in userData?.stats) {
-      const IconComp = statIcons[key as TProfileStatType];
-      output.push(
-        <Fragment key={key}>
-          <GridItem {...leftNavProfileStyling.stats.gridItems} as={HStack}>
-            <IconComp
-              strokeWidth={2.2}
-              h="full"
-              color="pages.userProfile.leftNav.socialLinks.icon.color"
-            />
+      const label = capitalizeWord(key);
+      const IconComp = userStatIcons[key as TProfileStatType];
+
+      if (!IconComp) continue; // If this doesnt exist, we dont want to show it
+
+      const icon = (
+        <IconComp
+          strokeWidth={2.2}
+          h="full"
+          color="pages.userProfile.leftNav.socialLinks.icon.color"
+        />
+      );
+      const statValue = (
+        <Text
+          as="span"
+          color="pages.userProfile.leftNav.stats.count.color"
+          fontWeight="semibold"
+          mr={1}
+        >
+          {formatNumber(userData.stats[key as TProfileStatType])}
+        </Text>
+      );
+
+      if (key === 'followers' || key === 'following' || key === 'posts') {
+        output.push(
+          <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
+            {icon}
+            <LinkBox
+              as={HStack}
+              spacing={0}
+              _hover={{
+                '& *': {
+                  color: 'pages.userProfile.leftNav.stats.link._hover.color'
+                }
+              }}
+              onClick={() => setActiveTab(key)}
+            >
+              {statValue}
+              <LinkOverlay href={`#${key}`}>{label}</LinkOverlay>
+            </LinkBox>
+          </GridItem>
+        );
+      } else {
+        output.push(
+          <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
+            {icon}
             <Text cursor="default">
-              <Text
-                as="span"
-                color="pages.userProfile.leftNav.stats.count.color"
-                fontWeight="semibold"
-                mr={1}
-              >
-                {formatNumber(userData.stats[key as TProfileStatType])}
-              </Text>
-              {key}
+              {statValue}
+              {label}
             </Text>
           </GridItem>
-        </Fragment>
-      );
+        );
+      }
     }
     return output;
   }, [userData?.stats]);
@@ -207,23 +233,22 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           }
         }}
       >
-        <Avatar
+        <Image
           {...leftNavProfileStyling.avatar}
-          name={userData.username}
-          src={userData.avatarUrl}
+          src={userData.avatarUrl || fallbackUserAvatar}
           aspectRatio={1}
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
             transform: 'scale(1.02)'
           }}
+          borderRadius="full"
           transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
+          editable={isOwnProfile}
+          handleImageChange={handleUpdateProfileImage}
+          isUploading={isUpdatingProfileImage}
         />
         <VStack {...leftNavProfileStyling.userData.stack}>
-          <Heading
-            as="h6"
-            fontSize="24px"
-            {...leftNavProfileStyling.userData.displayName}
-          >
+          <Heading as="h6" fontSize="24px" {...leftNavProfileStyling.userData.displayName}>
             {userData.displayName}
           </Heading>
           <Text
@@ -243,9 +268,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
           {userData.bio && (
             <>
               <Divider {...leftNavProfileStyling.bioDividers} />
-              {!isEditing && (
-                <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>
-              )}
+              {!isEditing && <Text {...leftNavProfileStyling.bio}>{userData.bio}</Text>}
             </>
           )}
           {isEditing && (
@@ -297,10 +320,9 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile }) => {
             </Flex>
           )}
         </VStack>
-        {userData.stats &&
-          Object.values(userData.stats).some(value => value > 0) && (
-            <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
-          )}
+        {userData.stats && Object.values(userData.stats).some(value => value > 0) && (
+          <Divider {...leftNavProfileStyling.bioDividers} mt={0} />
+        )}
         <Grid {...leftNavProfileStyling.stats.grid}>{statElements}</Grid>
       </VStack>
     </LeftNav>

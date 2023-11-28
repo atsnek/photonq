@@ -1,27 +1,31 @@
-import { TProfile, TProfileStatType } from '../types/user';
+import { TProfile, TProfileStatType, TUser } from '../types/user';
 import { sq } from '@snek-functions/origin';
 import { produce } from 'immer';
 import { TStoreSlice, TStoreState } from '../../../shared/types/store';
 import { IProfileStateDefinition, TProfileSlice } from '../types/profileState';
-import { buildUserActivities, changeUserFollowingState } from '../utils/user';
-import { useAppStore } from '../../../shared/store/store';
+import { buildUserActivities, changeUserFollowingState, getUserDisplayname } from '../utils/user';
 import {
   buildPostPreview,
+  deletePost,
   searchPosts,
-  togglePostRating
+  togglePostRating,
 } from '../../../shared/utils/features/post';
-import { TPaginatedPostListData } from '../../post/types/post';
+import { TPaginatedPostListData, TPostPreview } from '../../post/types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
 import { asEnumKey } from 'snek-query';
 import { PrivacyInputInput } from '@snek-functions/origin/dist/schema.generated';
-import { snekResourceId } from '@atsnek/jaen';
+import { USER_FETCH_LIMIT } from '../variables/user';
+import { TAsyncListData } from '../../../shared/types/list';
 
 const initState: IProfileStateDefinition = {
-  activity: { items: [], totalCount: 0 },
+  activity: { items: [], totalCount: 0, state: 'loading' },
   overviewPosts: { state: 'loading', items: [], totalCount: 0 },
   searchPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
-  searchPostLanguage: undefined,
-  searchPostsDateRange: { from: undefined, to: undefined },
+  starredPosts: { query: '', state: 'inactive', items: [], totalCount: 0 },
+  followers: { items: [], totalCount: 0, state: 'loading' },
+  followingUsers: { items: [], totalCount: 0, state: 'loading' },
+  showcaseStarsPosts: { items: [], state: 'inactive' },
+  showcaseLatestPosts: { items: [], state: 'inactive' },
   isFollowing: undefined,
   profile: undefined
 };
@@ -32,9 +36,10 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     let isFollowing: boolean | undefined = undefined;
     const stats: { [key in TProfileStatType]: number } = {
       followers: 0,
+      following: 0,
       views: 0,
-      stars: 0,
-      posts: 0
+      posts: 0,
+      starred: 0,
     };
 
     const [currentUser, currentUserError] = await sq.query(q => q.userMe);
@@ -57,8 +62,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
         if (profile) {
           stats.followers = profile.followers().totalCount;
+          stats.following = profile.following().totalCount;
           stats.views = profile.views;
-          stats.stars = profile.stars().totalCount;
           stats.posts = profile.posts().totalCount;
         }
 
@@ -71,9 +76,10 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           }`,
           stats: {
             followers: profile?.followers().totalCount ?? 0,
+            following: profile?.following().totalCount ?? 0,
             views: profile?.views ?? 0,
-            stars: profile?.stars().totalCount ?? 0,
-            posts: profile?.posts().totalCount ?? 0
+            posts: profile?.posts().totalCount ?? 0,
+            starred: profile?.starredPosts().totalCount ?? 0,
           },
           username: username
         };
@@ -97,41 +103,16 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const userId = get().profile.profile?.id;
     const [rawPosts, error] = await sq.query(q => {
-      const posts = q.allSocialPostTrending({
-        resourceId: snekResourceId,
-        filters: { userId },
-        first: 6
-      });
-      posts?.pageInfo.hasNextPage;
-      posts?.pageInfo.endCursor;
-      posts?.nodes.forEach(pn => {
-        try {
-          pn.stars().edges.map(se => se.node.profile.id);
-          pn.stars().totalCount;
-          for (const key in pn) {
-            pn[key as keyof typeof pn];
-          }
-        } catch {}
-      });
-      return posts;
+      const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, filters: { userId }, first: 6 });
+      return posts.nodes.filter(p => p.privacy === 'PUBLIC' || (!!currentUser && userId === currentUser.id))
+        .map(p => buildPostPreview(q, p, currentUser));
     });
-
-    const posts = await Promise.all(
-      rawPosts?.nodes
-        .filter(
-          ({ privacy }) =>
-            privacy === 'PUBLIC' || (!!currentUser && userId === currentUser.id)
-        )
-        .map(async p => {
-          return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
-        }) ?? []
-    );
 
     set(
       produce((state: TStoreState): void => {
         state.profile.overviewPosts = {
           state: 'success',
-          items: posts,
+          items: rawPosts ?? [],
           totalCount: 0
         };
       })
@@ -188,13 +169,16 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           state.profile.activity.totalCount === 0
             ? activities
             : {
-                items: [...state.profile.activity.items, ...activities.items],
-                totalCount: state.profile.activity.totalCount,
-                nextCursor: activities.nextCursor,
-                hasMore: activities.hasMore
-              };
-      })
-    );
+              items: [
+                ...state.profile.activity.items,
+                ...activities.items
+              ],
+              totalCount: state.profile.activity.totalCount,
+              nextCursor: activities.nextCursor,
+              hasMore: activities.hasMore,
+              state: 'success'
+            };
+      }));
 
     return true;
   },
@@ -217,7 +201,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     );
 
     const [currentUser] = await sq.query(q => q.userMe);
-    const currentProfile = useAppStore.getState().profile.profile;
+    const currentProfile = get().profile.profile;
     if (!currentProfile) return;
     const isOwnProfile = !!currentUser && currentUser.id === currentProfile.id;
 
@@ -237,8 +221,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           : get().profile.searchPosts.publicPageInfo?.nextCursor,
         currentUser,
         currentProfile?.id,
-        language ?? get().profile.searchPostLanguage,
-        dateRange ?? get().profile.searchPostsDateRange
+        language ?? get().profile.searchPosts.language,
+        dateRange ?? get().profile.searchPosts.dateRange
       );
     }
 
@@ -260,8 +244,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           : get().profile.searchPosts.privatePageInfo?.nextCursor,
         currentUser,
         currentProfile?.id,
-        language ?? get().profile.searchPostLanguage,
-        dateRange ?? get().profile.searchPostsDateRange
+        language ?? get().profile.searchPosts.language,
+        dateRange ?? get().profile.searchPosts.dateRange
       );
     }
 
@@ -291,43 +275,322 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       })
     );
   },
-  toggleFollow: async () => {
-    const [currentUserId] = await sq.query(q => q.userMe.id);
-    const [currentProfileId, profileError] = await sq.query(
-      q =>
-        q.user({
-          resourceId: snekResourceId,
-          id: get().profile.profile?.id
-        }).id
+  fetchStarredPosts: async (query, limit, offset, language, dateRange) => {
+    set(
+      produce((state: TStoreState) => {
+        if (query !== state.profile.starredPosts.query || (dateRange && dateRange?.from !== state.profile.starredPosts.dateRange?.from || dateRange?.to !== state.profile.starredPosts.dateRange?.to)) {
+          // Reset the state if the query changed
+          state.profile.starredPosts = {
+            query,
+            state: 'loading',
+            items: [],
+            hasMore: false,
+            totalCount: 0,
+          };
+        } else {
+          state.profile.starredPosts.state = 'loading';
+        }
+      })
     );
 
+    const profile = get().profile.profile;
+    if (!profile) return false;
+
+    const [currentUser] = await sq.query(q => q.userMe);
+
+    const posts = await searchPosts(query, limit, 'PUBLIC', offset === 0 ? undefined : get().profile.starredPosts.nextCursor, currentUser, profile.id, language ?? get().profile.searchPosts.language, dateRange ?? get().profile.searchPosts.dateRange, 'starred');
+
+    set(produce((state: TStoreState) => {
+      state.profile.starredPosts = {
+        query,
+        state: 'success',
+        items: offset === 0 ? posts.items : [...state.profile.starredPosts.items, ...posts.items],
+        hasMore: posts.hasMore,
+        totalCount: posts.totalCount,
+        nextCursor: posts.nextCursor,
+        dateRange: dateRange ?? get().profile.starredPosts.dateRange,
+        language: language ?? get().profile.starredPosts.language,
+      };
+      // Update the starred count in the profile stats if the current locale value is different from the remote one (which means that the user has starred or unstarred a post in the meantime on another tab)
+      if (state.profile?.profile?.stats && state.profile.profile.stats.starred !== posts.totalCount) {
+        state.profile.profile.stats.starred = posts.totalCount;
+      }
+    }))
+    return true;
+  },
+  fetchFollowers: async () => {
+    set(produce((state: TStoreState) => {
+      state.profile.followers.state = "loading";
+    }))
+
+    const [currentUser] = await sq.query(q => q.userMe);
+
+    const profile = get().profile.profile;
+    if (!profile) return false;
+
+    const [followerConn, followerConnError] = await sq.query(q => {
+      const followers = q.user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ }).profile?.followers({ first: USER_FETCH_LIMIT, after: get().profile.followers?.nextCursor });
+
+      followers?.pageInfo.hasNextPage;
+      followers?.pageInfo.endCursor;
+      followers?.edges.map(fe => fe.node.follower.id);
+
+      return followers;
+    })
+    if (followerConnError?.length > 0) return false;
+
+    const followers = await Promise.all((followerConn?.edges ?? [])
+      .map(fe => fe.node.follower.id)
+      .map(async (id): Promise<TUser | undefined> => {
+        const [user, userError] = await sq.query(q => {
+          const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
+
+          user.id;
+          user.details?.firstName;
+          user.details?.lastName;
+          user.details?.avatarURL;
+          user.profile?.bio;
+          user.username;
+          user.profile?.followers().edges.map(fe => fe.node.follower.id);
+          user.profile?.views;
+          user.profile?.posts().totalCount;
+          user.profile?.stars().totalCount;
+          user.profile?.followers().totalCount;
+
+          return user;
+        });
+
+        if (!user || userError?.length > 0) return undefined;
+
+        return {
+          id: user.id,
+          avatarUrl: user.details?.avatarURL ?? '',
+          bio: user.profile?.bio ?? null,
+          displayName: getUserDisplayname(user),
+          username: user.username,
+          stats: {
+            followers: user.profile?.followers().totalCount ?? 0,
+            following: 0,
+            posts: user.profile?.posts().totalCount ?? 0,
+            starred: 0,
+            views: user.profile?.views ?? 0,
+          },
+          isFollowing: currentUser && !!user.profile?.followers().edges.find(fe => fe.node.follower.id === currentUser.id),
+          isOwnProfile: currentUser?.id === user.id,
+        }
+      }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
+    if (!followers) return false;
+
+    set(produce((state: TStoreState) => {
+      state.profile.followers = {
+        items: get().profile.followers?.items.concat(followers) ?? followers,
+        totalCount: get().profile.followers?.totalCount ?? followers.length,
+        nextCursor: followerConn?.pageInfo.endCursor ?? undefined,
+        hasMore: followerConn?.pageInfo.hasNextPage ?? false,
+        state: 'success',
+      }
+    }));
+
+    return true;
+  },
+  fetchFollowingUsers: async () => {
+    set(produce((state: TStoreState) => {
+      state.profile.followingUsers.state = "loading";
+    }))
+
+    const [currentUser] = await sq.query(q => q.userMe);
+
+    const profile = get().profile.profile;
+    if (!profile) return false;
+    const isUserOnOwnProfile = currentUser?.id === profile.id;
+
+    const [followingConn, followingConnError] = await sq.query(q => {
+      const following = q.user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ }).profile?.following({ first: USER_FETCH_LIMIT, after: get().profile.followingUsers?.nextCursor });
+
+      following?.pageInfo.hasNextPage;
+      following?.pageInfo.endCursor;
+      following?.edges.map(fe => fe.node.followed.id);
+
+      return following;
+    })
+    if (followingConnError?.length > 0) return false;
+
+    const followingUsers = await Promise.all((followingConn?.edges ?? [])
+      .map(fe => fe.node.followed.id)
+      .map(async (id): Promise<TUser | undefined> => {
+        const [user, userError] = await sq.query(q => {
+          const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
+
+          user.id;
+          user.details?.firstName;
+          user.details?.lastName;
+          user.details?.avatarURL;
+          user.profile?.bio;
+          user.username;
+          user.profile?.views;
+          user.profile?.posts().totalCount;
+          user.profile?.stars().totalCount;
+          user.profile?.followers().totalCount;
+          user.profile?.following().nodes.map(n => n.followed.id);
+
+          return user;
+        });
+
+        if (!user || userError?.length > 0) return undefined;
+
+        return {
+          id: user.id,
+          avatarUrl: user.details?.avatarURL ?? '',
+          bio: user.profile?.bio ?? null,
+          displayName: getUserDisplayname(user),
+          username: user.username,
+          stats: {
+            followers: user.profile?.followers().totalCount ?? 0,
+            following: 0,
+            posts: user.profile?.posts().totalCount ?? 0,
+            starred: 0,
+            views: user.profile?.views ?? 0,
+          },
+          isFollowing: isUserOnOwnProfile || (currentUser && !!user.profile?.following().nodes.find(fe => fe.followed.id === currentUser.id)),
+          isOwnProfile: user.id === currentUser.id,
+        }
+      }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
+    if (!followingUsers) return false;
+
+    set(produce((state: TStoreState) => {
+      state.profile.followingUsers = {
+        items: get().profile.followingUsers?.items.concat(followingUsers) ?? followingUsers,
+        totalCount: get().profile.followingUsers?.totalCount ?? followingUsers.length,
+        nextCursor: followingConn?.pageInfo.endCursor ?? undefined,
+        hasMore: followingConn?.pageInfo.hasNextPage ?? false,
+        state: 'success',
+      }
+    }));
+
+    return true;
+  },
+  toggleFollow: async (id) => {
+    const [currentUserId] = await sq.query(q => q.userMe.id);
+    const [targetUser, targetUserErro] = await sq.query(
+      q => {
+        const user = q.user({
+          resourceId: __SNEK_RESOURCE_ID__,
+          id: id ?? get().profile.profile?.id
+        });
+        user.id;
+        user.details?.lastName;
+        user.profile?.followers().nodes.map(n => n.follower.id);
+        return user;
+      }
+    );
+    const isFollowing = targetUser?.profile?.followers().nodes.findIndex(f => f.follower.id === currentUserId) !== -1;
+
     if (
-      profileError ||
+      targetUserErro ||
       !currentUserId ||
-      !currentProfileId ||
-      currentUserId === currentProfileId
+      !targetUser.id ||
+      currentUserId === targetUser.id
     )
       return false;
 
     const succeed = await changeUserFollowingState(
-      currentProfileId,
-      get().profile.isFollowing ?? false
+      targetUser.id,
+      isFollowing
     );
 
     if (succeed) {
       set(
         produce((state: TStoreState): void => {
-          state.profile.isFollowing = !get().profile.isFollowing;
-          if (!state.profile.profile || !state.profile.profile.stats?.followers)
-            return;
-          state.profile.profile.stats.followers += get().profile.isFollowing
-            ? -1
-            : 1;
+          if (id) {
+            // If id is defined, we are following a different profile than the one being viewed
+            const followerIdx = state.profile.followers.items.findIndex(f => f.id === id);
+            if (followerIdx !== -1) {
+              state.profile.followers.items[followerIdx].isFollowing = !isFollowing;
+              if (state.profile.followers.items[followerIdx].stats?.followers === undefined) return;
+              state.profile.followers.items[followerIdx].stats!.followers += isFollowing ? -1 : 1;
+            }
+
+            const followingIdx = state.profile.followingUsers.items.findIndex(f => f.id === id);
+            if (followingIdx !== -1) {
+              state.profile.followingUsers.items[followingIdx].isFollowing = !state.profile.followingUsers.items[followingIdx].isFollowing;
+              if (state.profile.followingUsers.items[followingIdx].stats?.followers === undefined) return;
+              state.profile.followingUsers.items[followingIdx].stats!.followers += isFollowing ? -1 : 1;
+            }
+
+            // If the followed user's profile is the one being viewed, we need to update the state of it
+            if (currentUserId === get().profile.profile?.id && state.profile.profile?.stats?.following !== undefined) {
+              state.profile.profile.stats!.following += isFollowing ? -1 : 1;
+            }
+
+          } else {
+            state.profile.isFollowing = !isFollowing;
+            if (!state.profile.profile || state.profile.profile.stats?.followers == undefined) return;
+            state.profile.profile.stats.followers += isFollowing ? -1 : 1;
+          }
         })
       );
     }
 
     return succeed;
+  },
+  fetchShowcaseLatestPosts: async () => {
+    const profile = get().profile.profile;
+
+    if (!profile) return false;
+
+    const [currentUser,] = await sq.query(q => q.userMe);
+
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseLatestPosts.state = 'loading';
+      })
+    )
+
+    const [posts, postsError] = await sq.query(q => {
+      const user = q.user({ id: get().profile.profile?.id, resourceId: __SNEK_RESOURCE_ID__ }).profile;
+      if (!user) return undefined;
+
+      const posts = user.posts({ first: 2 });
+      return posts.nodes.map(p => buildPostPreview(q, p, currentUser));
+    })
+
+    if (!posts || postsError?.length > 0) return false;
+
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseLatestPosts.state = 'success';
+        state.profile.showcaseLatestPosts.items = posts;
+      })
+    )
+    return true;
+  },
+  fetchShowcaseStarsPosts: async () => {
+    const profile = get().profile.profile;
+
+    if (!profile) return false;
+
+    const [currentUser,] = await sq.query(q => q.userMe);
+
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseStarsPosts.state = 'loading';
+      })
+    )
+
+    const [posts, postsError] = await sq.query(q => {
+      const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 2, filters: { userId: profile.id } });
+      return posts.nodes.map(p => buildPostPreview(q, p, currentUser));
+    })
+
+    if (!posts || postsError?.length > 0) return false;
+
+    set(
+      produce((state: TStoreState) => {
+        state.profile.showcaseStarsPosts.state = 'success';
+        state.profile.showcaseStarsPosts.items = posts;
+      })
+    )
+    return true;
   },
   changeBio: async bio => {
     if (!get().profile.profile) return false;
@@ -348,11 +611,44 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return succeed;
   },
+  changeProfilePicture: (avatarFile) => {
+    if (!get().profile.profile) return false;
+
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(avatarFile);
+
+    fileReader.onload = () => {
+      set(
+        produce((state: TStoreState): void => {
+          state.profile.profile!.avatarUrl = fileReader.result as string;
+        })
+      )
+    }
+    return true;
+  },
   togglePostRating: async (id, source) => {
-    const hasRated =
-      source === 'overview'
-        ? get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated
-        : get().profile.searchPosts.items.find(p => p.id === id)?.hasRated;
+    let hasRated = false;
+
+    switch (source) {
+      case 'overview':
+        hasRated = get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      case 'posts':
+        hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      case 'showcase_latest':
+        hasRated = get().profile.showcaseLatestPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      case 'showcase_stars':
+        hasRated = get().profile.showcaseStarsPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      case 'stars':
+        hasRated = get().profile.starredPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+      default:
+        hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        break;
+    }
 
     if (hasRated === undefined) return false;
 
@@ -361,84 +657,130 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     if (succeed) {
       set(
         produce((state: TStoreState) => {
-          if (source === 'overview') {
-            const post = state.profile.overviewPosts.items.find(
-              p => p.id === id
-            );
+
+          [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.starredPosts.items, state.profile.searchPosts.items].forEach(posts => {
+            const post = ('state' in posts ? posts.items : posts).find(p => p.id === id);
             if (post) {
               post.hasRated = !post.hasRated;
               post.stars += post.hasRated ? 1 : -1;
             }
-          } else {
-            const post = state.profile.searchPosts.items.find(p => p.id === id);
-            if (post) {
-              post.hasRated = !post.hasRated;
-              post.stars += post.hasRated ? 1 : -1;
-            }
-          }
+          });
         })
       );
     }
 
     return succeed;
   },
-  setSearchPostLanguage: language => {
+  setPostListLanguage: (postList = 'all-posts', language) => {
+    const isDefaultPostsList = postList === 'all-posts'; // Temporary until we have more than 2 different post lists
     set(
       produce((state: TStoreState) => {
-        state.profile.searchPostLanguage = language;
-        state.profile.searchPosts.nextCursor = undefined;
+        if (isDefaultPostsList) {
+          state.profile.searchPosts.language = language;
+          state.profile.searchPosts.nextCursor = undefined;
+        } else {
+          state.profile.starredPosts.language = language;
+          state.profile.starredPosts.nextCursor = undefined;
+        }
       })
     );
 
-    get().profile.fetchSearchPosts(
-      get().profile.searchPosts.query,
-      POST_FETCH_LIMIT,
-      0,
-      language
-    );
+    if (isDefaultPostsList) {
+      get().profile.fetchSearchPosts(
+        get().profile.searchPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        language
+      );
+    } else {
+      get().profile.fetchStarredPosts(
+        get().profile.starredPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        language
+      );
+    }
   },
-  setSearchPostsDateRange: (from, to) => {
+  setPostListDateRange: (from, to, postList) => {
+    const isAllPosts = postList === 'all-posts'; // Temporary until we have more than 2 different post lists
     set(
       produce((state: TStoreState) => {
         // null is only used to reset the date
         // undefined is used to keep the current value
         // a date value is used to set the date
-        if (from !== undefined)
-          state.profile.searchPostsDateRange.from = from ?? undefined;
-        if (to !== undefined)
-          state.profile.searchPostsDateRange.to = to ?? undefined;
+        if (from !== undefined) {
+          if (isAllPosts) {
+            if (!state.profile.searchPosts.dateRange) {
+              state.profile.searchPosts.dateRange = {
+                from: from ?? undefined,
+                to: undefined
+              };
+            }
+            state.profile.searchPosts.dateRange.from = from ?? undefined;
+          } else if (!isAllPosts) {
+            if (!state.profile.starredPosts.dateRange) {
+              state.profile.starredPosts.dateRange = {
+                from: from ?? undefined,
+                to: undefined
+              };
+            } else {
+              state.profile.starredPosts.dateRange.from = from ?? undefined;
+            }
+          }
+        }
 
+        if (to !== undefined) {
+          if (isAllPosts) {
+            if (!state.profile.searchPosts.dateRange) {
+              state.profile.searchPosts.dateRange = {
+                from: undefined,
+                to: to ?? undefined
+              };
+            } else {
+              state.profile.searchPosts.dateRange.to = to ?? undefined;
+            }
+            state.profile.searchPosts.dateRange.to = to ?? undefined;
+          } else if (!isAllPosts) {
+            if (!state.profile.starredPosts.dateRange) {
+              state.profile.starredPosts.dateRange = {
+                from: undefined,
+                to: to ?? undefined
+              };
+            } else {
+              state.profile.starredPosts.dateRange.to = to ?? undefined;
+            }
+          }
+        }
         state.profile.searchPosts.nextCursor = undefined;
       })
     );
 
-    const searchPostsDateRange = {
-      from: from ?? get().profile.searchPostsDateRange.from,
-      to: to ?? get().profile.searchPostsDateRange.to
+    const newDateRange = {
+      from: from ?? (isAllPosts ? get().profile.searchPosts.dateRange?.from : get().profile.starredPosts.dateRange?.from),
+      to: to ?? (isAllPosts ? get().profile.searchPosts.dateRange?.to : get().profile.starredPosts.dateRange?.to)
     };
 
-    get().profile.fetchSearchPosts(
-      get().profile.searchPosts.query,
-      POST_FETCH_LIMIT,
-      0,
-      undefined,
-      searchPostsDateRange
-    );
+    if (isAllPosts) {
+      get().profile.fetchSearchPosts(
+        get().profile.searchPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        undefined,
+        newDateRange
+      );
+    } else {
+      get().profile.fetchStarredPosts(
+        get().profile.starredPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        undefined,
+        newDateRange
+      );
+    }
+
   },
   togglePostPrivacy: async (postId, privacy) => {
     if (!get().profile.profile) return false;
-
-    const postIdx = [
-      get().profile.searchPosts.items.findIndex(p => p.id === postId),
-      get().profile.overviewPosts.items.findIndex(p => p.id === postId)
-    ];
-
-    if (
-      get().profile.searchPosts.items[postIdx[0]]?.privacy === privacy ||
-      get().profile.overviewPosts.items[postIdx[1]]?.privacy === privacy
-    )
-      return true;
-
     const [, err] = await sq.mutate(m =>
       m.socialPostUpdate({
         postId,
@@ -450,14 +792,48 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     set(
       produce((state: TStoreState): void => {
-        if (postIdx[0] !== -1)
-          state.profile.searchPosts.items[postIdx[0]].privacy = privacy;
-        if (postIdx[1] !== -1)
-          state.profile.overviewPosts.items[postIdx[1]].privacy = privacy;
+        [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.searchPosts.items].forEach(posts => {
+          const post = ('state' in posts ? posts.items : posts).find(p => p.id === postId);
+          if (!post) return;
+          post.privacy = privacy;
+        });
       })
     );
 
     return true;
+  },
+  deletePost: async (id) => {
+    const succeed = deletePost(id);
+    if (!succeed) return false;
+
+    const doesSectionPostExist = (id: TPostPreview['id'], section: TPaginatedPostListData | TAsyncListData<TPostPreview>) => section.items.findIndex(p => p.id === id) !== -1;
+
+    if (doesSectionPostExist(id, get().profile.overviewPosts)) {
+      get().profile.fetchOverviewPosts();
+    }
+    if (doesSectionPostExist(id, get().profile.searchPosts)) {
+      get().profile.fetchSearchPosts(
+        get().profile.searchPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        get().profile.searchPosts.language,
+        get().profile.searchPosts.dateRange
+      );
+    }
+    if (doesSectionPostExist(id, get().profile.starredPosts)) {
+      get().profile.fetchStarredPosts(
+        get().profile.starredPosts.query,
+        POST_FETCH_LIMIT,
+        0,
+        get().profile.starredPosts.language,
+        get().profile.starredPosts.dateRange
+      );
+    }
+    if (doesSectionPostExist(id, get().profile.showcaseLatestPosts)) {
+      get().profile.fetchShowcaseLatestPosts();
+    }
+
+    return succeed;
   },
   reset: () => {
     set(
@@ -466,8 +842,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         state.profile.overviewPosts = initState.overviewPosts;
         state.profile.profile = initState.profile;
         state.profile.searchPosts = initState.searchPosts;
-        state.profile.searchPostLanguage = initState.searchPostLanguage;
-        state.profile.searchPostsDateRange = initState.searchPostsDateRange;
+        state.profile.starredPosts = initState.starredPosts;
         state.profile.isFollowing = initState.isFollowing;
       })
     );

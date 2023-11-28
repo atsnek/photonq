@@ -1,11 +1,4 @@
-import {
-  FC,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   EnPostLanguage,
   IPostPreviewProps,
@@ -20,7 +13,8 @@ import {
   LinkBoxProps,
   SimpleGrid,
   StackProps,
-  VStack
+  VStack,
+  useDisclosure
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import PostCardPreview from './preview/components/PostCardPreview';
@@ -33,6 +27,9 @@ import { query } from '../../pages';
 import { TPaginationType } from '../../shared/types/pagination';
 import usePagination from '../../shared/hooks/use-pagination';
 import { POST_FETCH_LIMIT } from '../../contents/PostsContent';
+import LoadMoreButton from '../../shared/components/pagination/LoadMoreButton';
+import { TAsyncListData } from '../../shared/types/list';
+import Alert from '../../shared/components/alert/Alert';
 
 interface IPostListProps extends StackProps {
   fetchPosts?: (
@@ -43,7 +40,7 @@ interface IPostListProps extends StackProps {
     dateRange?: TPostDateRange
   ) => void;
   fetchNextPagePosts?: () => void;
-  postData: TPaginatedPostListData;
+  postData: TPaginatedPostListData | TAsyncListData<TPostPreview>;
   itemsPerPage?: number;
   maxItems?: number;
   paginationType?: TPaginationType;
@@ -57,17 +54,15 @@ interface IPostListProps extends StackProps {
   showNoListResult?: boolean;
   showPostPrivacy?: boolean;
   toggleRating: (id: TPostPreview['id']) => void;
-  togglePostPrivacy: (
+  togglePostPrivacy?: (
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => Promise<boolean>;
+  deletePost: (id: TPostPreview['id']) => Promise<boolean>;
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
   dateRange?: { from: Date | undefined; to: Date | undefined };
-  setDateRange?: (
-    from: Date | null | undefined,
-    to: Date | null | undefined
-  ) => void;
+  setDateRange?: (from: Date | null | undefined, to: Date | null | undefined) => void;
 }
 
 /**
@@ -91,6 +86,7 @@ const PostList: FC<IPostListProps> = ({
   toggleRating,
   showPostPrivacy,
   togglePostPrivacy,
+  deletePost,
   filterLanguage,
   setFilterLanguage,
   dateRange,
@@ -103,25 +99,45 @@ const PostList: FC<IPostListProps> = ({
     itemsPerPage: itemsPerPage,
     maxItems: usePages ? maxItems : undefined,
     type: paginationType,
-    hasMoreItems: !!postData.nextCursor || postData.hasMore
+    hasMoreItems: 'nextCursor' in postData && (!!postData.nextCursor || postData.hasMore)
   });
-
+  const deletePostDisclosure = useDisclosure();
+  const [deletePostId, setDeletePostId] = useState<TPostPreview['id']>();
+  const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [isTogglingPostPrivacy, setIsTogglingPostPrivacy] = useState(false);
 
   const handleTogglePostPrivacy = async (
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => {
+    if (!togglePostPrivacy) return;
     setIsTogglingPostPrivacy(true);
     await togglePostPrivacy(id, privacy);
     setIsTogglingPostPrivacy(false);
   };
 
+  const handleDeletePost = (id: TPostPreview['id']) => {
+    if (isDeletingPost) return;
+    setIsDeletingPost(true);
+    setDeletePostId(id);
+    deletePostDisclosure.onOpen();
+  };
+
+  const handleDeletePostConfirmation = async () => {
+    deletePostDisclosure.onClose();
+    if (!deletePostId) return;
+    await deletePost(deletePostId);
+    setIsDeletingPost(false);
+  };
+
+  const handleDeletePostCancel = () => {
+    setDeletePostId(undefined);
+    setIsDeletingPost(false);
+  };
+
   const memoizedPostPreviews = useMemo(() => {
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
-    let PreviewSkeletonComp:
-      | typeof PostCardPreviewSkeleton
-      | typeof PostListItemPreviewSkeleton;
+    let PreviewSkeletonComp: typeof PostCardPreviewSkeleton | typeof PostListItemPreviewSkeleton;
     type ExtractProps<T> = T extends FC<IPostPreviewProps<infer P>> ? P : never;
     let previewCompProps:
       | ExtractProps<typeof PostCardPreview>
@@ -137,15 +153,9 @@ const PostList: FC<IPostListProps> = ({
 
     let previewSkeletons: ReactElement[] = [];
     if (postData.state === 'loading') {
-      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map(
-        (_, i) => (
-          <PreviewSkeletonComp
-            key={i}
-            {...skeletonProps}
-            hideAuthor={hidePostAuthor}
-          />
-        )
-      );
+      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map((_, i) => (
+        <PreviewSkeletonComp key={i} {...skeletonProps} hideAuthor={hidePostAuthor} />
+      ));
     }
 
     let postPreviews: JSX.Element[] = [];
@@ -158,6 +168,8 @@ const PostList: FC<IPostListProps> = ({
           toggleRating={toggleRating}
           togglePostPrivacy={handleTogglePostPrivacy}
           isTogglingPostPrivacy={isTogglingPostPrivacy}
+          deletePost={handleDeletePost}
+          isDeletingPost={postPreview.id === deletePostId && isDeletingPost}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}
           showPrivacy={showPostPrivacy}
@@ -188,11 +200,7 @@ const PostList: FC<IPostListProps> = ({
     }
   }
 
-  const handleFetchPosts = (
-    query: string,
-    offset?: number,
-    language?: EnPostLanguage | null
-  ) => {
+  const handleFetchPosts = (query: string, offset?: number, language?: EnPostLanguage | null) => {
     if (query === currentQuery && postData.state === 'inactive') return; // This prevents the posts from being fetched because only the language has changed wile the feature is inactive
     if (query.length === 0) pagination.setCurrentPage(1);
     if (fetchPosts)
@@ -213,6 +221,7 @@ const PostList: FC<IPostListProps> = ({
     if (
       fetchNextPagePosts &&
       paginationType === 'async-pages' &&
+      'hasMore' in postData &&
       postData.hasMore &&
       pagination.currentPage === pagination.totalPages - 1
     )
@@ -228,82 +237,104 @@ const PostList: FC<IPostListProps> = ({
   };
 
   return (
-    <VStack w="full" gap={5} {...props}>
-      {showControls && fetchPosts && (
-        <PostListControls
-          fetchPosts={handleFetchPosts}
-          defaultQuery={defaultFilterQuery}
-          query={currentQuery ?? ''}
-          setQuery={setFilterQuery}
-          filterLanguage={filterLanguage}
-          setFilterLanguage={handleToggleLanguage}
-          dateRange={dateRange}
-          setDateRange={setDateRange}
-          showCreatePostButton
-        />
-      )}
-      {postData.state !== 'inactive' &&
-        (postPreviews || showNoListResult ? (
-          postPreviews
-        ) : (
-          <PostListNoResults mt={10} />
-        ))}
-      {paginationType === 'pages' ||
-        (paginationType === 'async-pages' &&
-          (pagination.currentPage > 1 ||
-            pagination.currentPage < pagination.totalPages) && (
-            <HStack alignContent="space-around">
-              <Button
-                variant="ghost-hover-outline"
-                size="sm"
-                borderRadius="lg"
-                leftIcon={<ChevronLeftIcon />}
-                isDisabled={pagination.currentPage === 1}
-                onClick={pagination.previousPage}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="ghost-hover-outline"
-                size="sm"
-                borderRadius="lg"
-                rightIcon={<ChevronRightIcon />}
-                isDisabled={
-                  !postData?.hasMore &&
-                  pagination.currentPage === pagination.totalPages
-                }
-                onClick={handleNextPage}
-              >
-                Next
-              </Button>
-            </HStack>
-          ))}
-      {paginationType === 'load-more' &&
-        postData.state !== 'inactive' &&
-        postData.hasMore && (
-          <Button
-            variant="ghost-hover-outline"
-            size="sm"
-            borderRadius="lg"
-            rightIcon={<ChevronRightIcon />}
-            isDisabled={postData.state === 'loading'}
-            onClick={
-              !!fetchPosts
-                ? () => {
-                    fetchPosts(
-                      currentQuery ?? defaultFilterQuery ?? '',
-                      POST_FETCH_LIMIT,
-                      pagination.currentItems.length,
-                      filterLanguage
-                    );
-                  }
-                : undefined
-            }
-          >
-            Load more
-          </Button>
+    <>
+      <VStack w="full" gap={5} {...props}>
+        {showControls && fetchPosts && (
+          <PostListControls
+            fetchPosts={handleFetchPosts}
+            defaultQuery={defaultFilterQuery}
+            query={currentQuery ?? ''}
+            setQuery={setFilterQuery}
+            filterLanguage={filterLanguage}
+            setFilterLanguage={handleToggleLanguage}
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            showCreatePostButton
+          />
         )}
-    </VStack>
+        {postData.state !== 'inactive' &&
+          (postPreviews || showNoListResult ? postPreviews : <PostListNoResults mt={10} />)}
+        {paginationType === 'pages' ||
+          (paginationType === 'async-pages' &&
+            (pagination.currentPage > 1 || pagination.currentPage < pagination.totalPages) && (
+              <HStack alignContent="space-around">
+                <Button
+                  variant="ghost-hover-outline"
+                  size="sm"
+                  borderRadius="lg"
+                  leftIcon={<ChevronLeftIcon />}
+                  isDisabled={pagination.currentPage === 1}
+                  onClick={pagination.previousPage}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="ghost-hover-outline"
+                  size="sm"
+                  borderRadius="lg"
+                  rightIcon={<ChevronRightIcon />}
+                  isDisabled={
+                    'hasMore' in postData &&
+                    !postData?.hasMore &&
+                    pagination.currentPage === pagination.totalPages
+                  }
+                  onClick={handleNextPage}
+                >
+                  Next
+                </Button>
+              </HStack>
+            ))}
+        {paginationType === 'load-more' &&
+          postData.state !== 'inactive' &&
+          'hasMore' in postData &&
+          postData.hasMore && (
+            <LoadMoreButton
+              onClick={
+                !!fetchPosts
+                  ? () => {
+                      fetchPosts(
+                        currentQuery ?? defaultFilterQuery ?? '',
+                        POST_FETCH_LIMIT,
+                        pagination.currentItems.length,
+                        filterLanguage
+                      );
+                    }
+                  : undefined
+              }
+              isDisabled={postData.state === 'loading'}
+            />
+            // <Button
+            //   variant="ghost-hover-outline"
+            //   size="sm"
+            //   borderRadius="lg"
+            //   rightIcon={<ChevronRightIcon />}
+            //   isDisabled={postData.state === 'loading'}
+            //   onClick={
+            //     !!fetchPosts
+            //       ? () => {
+            //           fetchPosts(
+            //             currentQuery ?? defaultFilterQuery ?? '',
+            //             POST_FETCH_LIMIT,
+            //             pagination.currentItems.length,
+            //             filterLanguage
+            //           );
+            //         }
+            //       : undefined
+            //   }
+            // >
+            //   Load more
+            // </Button>
+          )}
+      </VStack>
+      <Alert
+        disclosure={deletePostDisclosure}
+        body="Are you sure you want to delete this post? This action cannot be undone"
+        header="Delete this post?"
+        confirmationAction={handleDeletePostConfirmation}
+        confirmationProps={{ variant: 'filledRed' }}
+        cancelAction={handleDeletePostCancel}
+      />
+    </>
   );
 };
 

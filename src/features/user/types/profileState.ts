@@ -1,3 +1,4 @@
+import { TAsyncListData } from '../../../shared/types/list';
 import { TPaginationData } from '../../../shared/types/pagination';
 import {
   EnPostLanguage,
@@ -7,15 +8,18 @@ import {
   TSearchPostListData
 } from '../../post/types/post';
 import { TActivity } from '../activity/types/activity';
-import { TUser } from './user';
+import { TProfilePostLists, TProfileTab, TUser } from './user';
 
 export interface IProfileStateDefinition {
   profile?: TUser;
   overviewPosts: TPaginatedPostListData;
   searchPosts: TSearchPostListData;
-  searchPostLanguage: EnPostLanguage | undefined;
-  searchPostsDateRange: TPostDateRange;
+  starredPosts: TSearchPostListData;
+  followers: TPaginationData<TUser[]>;
+  followingUsers: TPaginationData<TUser[]>;
   activity: TPaginationData<TActivity[]>;
+  showcaseStarsPosts: TAsyncListData<TPostPreview>;
+  showcaseLatestPosts: TAsyncListData<TPostPreview>;
   isFollowing?: boolean;
 }
 
@@ -30,21 +34,29 @@ export interface IProfileStateActions {
     language?: EnPostLanguage,
     dateRange?: TPostDateRange
   ) => Promise<void>;
-  setSearchPostLanguage: (language?: EnPostLanguage) => void;
-  setSearchPostsDateRange: (
+  setPostListLanguage: (postList?: TProfilePostLists, language?: EnPostLanguage) => void;
+  setPostListDateRange: (
     from: Date | null | undefined,
-    to: Date | null | undefined
+    to: Date | null | undefined,
+    postList?: TProfilePostLists,
   ) => void;
-  toggleFollow: () => Promise<boolean>;
+  fetchStarredPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => Promise<boolean>;
+  fetchFollowers: () => Promise<boolean>;
+  fetchFollowingUsers: () => Promise<boolean>;
+  toggleFollow: (id?: string) => Promise<boolean>;
+  fetchShowcaseStarsPosts: () => Promise<boolean>;
+  fetchShowcaseLatestPosts: () => Promise<boolean>;
   changeBio: (bio: string) => Promise<boolean>;
+  changeProfilePicture: (avatarFile: File) => boolean;
   togglePostRating: (
     id: TPostPreview['id'],
-    source: 'overview' | 'search'
+    source: Extract<TProfileTab, 'posts' | 'overview' | 'stars'> | 'showcase_stars' | 'showcase_latest',
   ) => Promise<boolean>;
   togglePostPrivacy: (
     id: TPostPreview['id'],
     privacy: TPostPreview['privacy']
   ) => Promise<boolean>;
+  deletePost: (id: TPostPreview['id']) => Promise<boolean>;
   reset: () => void;
 }
 

@@ -24,7 +24,7 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles'; // if you are going to use `loadFull`, install the "tsparticles" package too.
@@ -45,20 +45,6 @@ const Page: React.FC<PageProps> = () => {
     message: string | JSX.Element;
     description?: string;
   } | null>(null);
-
-  const onSubmit: SubmitHandler<FormData> = async (data: FormData, e) => {
-    e?.preventDefault();
-
-    try {
-      //   await props.onSignUp(data)
-    } catch (e: any) {
-      setAlert({
-        status: 'error',
-        message: `Unable to sign up.`,
-        description: e.message
-      });
-    }
-  };
 
   const resetAlert = () => {
     setAlert(null);
@@ -255,6 +241,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
     setError,
     reset,
     control,
+    setFocus,
     formState: { errors, isSubmitting, isSubmitted, isSubmitSuccessful }
   } = useForm<SignupFormData>();
 
@@ -268,19 +255,40 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
     description?: string;
   } | null>(null);
 
+  let timer = useRef<NodeJS.Timeout>();
+
+  const completeTypewriterAnimation = () => {
+    setDisplayText(welcomeText);
+    clearTimeout(timer.current);
+    setShowInput(true);
+  };
+
   useEffect(() => {
     if (currentIndex < welcomeText.length) {
-      const timer = setTimeout(() => {
+      timer.current = setTimeout(() => {
         setDisplayText(prevText => prevText + welcomeText[currentIndex]);
         setCurrentIndex(currentIndex + 1);
-      }, 50); // Adjust the speed by changing the delay (e.g., 100ms for 10 characters per second)
+      }, 25); // Adjust the speed by changing the delay (e.g., 100ms for 10 characters per second)
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer.current);
     } else {
       // Typewriter animation is complete
-      setShowInput(true);
+      completeTypewriterAnimation();
     }
   }, [currentIndex, welcomeText]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        // End of typewriter animation
+        completeTypewriterAnimation();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   const [step, setStep] = useState<SignupFormStep>(SignupFormStep.Email);
 
@@ -355,11 +363,24 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
     }
 
     if (shouldJumpToNextStep) {
-      setStep(step + 1);
-
-      // reset isSubmitted
+      const nextStep = step + 1;
+      setStep(nextStep);
     }
   };
+
+  useEffect(() => {
+    if (step === SignupFormStep.Email) {
+      setFocus('email');
+    } else if (step === SignupFormStep.Password) {
+      setFocus('password');
+    } else if (step === SignupFormStep.Username) {
+      setFocus('username');
+    } else if (step === SignupFormStep.Details) {
+      setFocus('details.firstName');
+    } else if (step === SignupFormStep.Terms) {
+      setFocus('terms');
+    }
+  }, [step, setFocus]);
 
   useEffect(() => {
     const submittedData = getValues();
@@ -402,6 +423,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
             </FormLabel>
             <HStack>
               <Input
+                autoFocus
                 type="email"
                 {...register('email', {
                   required: true

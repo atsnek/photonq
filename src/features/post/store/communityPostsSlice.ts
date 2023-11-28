@@ -4,6 +4,7 @@ import { TCommunityPostsSlice } from '../types/communityPostsState';
 import { produce } from 'immer';
 import {
   buildPostPreview,
+  deletePost,
   searchPosts
 } from '../../../shared/utils/features/post';
 import { asEnumKey } from 'snek-query';
@@ -12,7 +13,6 @@ import {
   LanguageInputInput,
   PrivacyInputInput
 } from '@snek-functions/origin/dist/schema.generated';
-import { TPostPreview } from '../types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
 import { snekResourceId } from '@atsnek/jaen';
 
@@ -49,35 +49,12 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       filters.language = asEnumKey(LanguageInputInput, postLanguage);
     }
 
-    const [rawPosts, rawError] = await sq.query(q => {
-      const postComm = q.allSocialPostTrending({
-        first: 4,
-        filters,
-        resourceId: snekResourceId
-      });
-      //! Existing issue: see post utils -> buildPostPreview
-      postComm?.nodes.forEach(pn => {
-        try {
-          pn.stars().edges.map(se => se.node.profile.id);
-          pn.stars().totalCount;
-          for (const key in pn) {
-            pn[key as keyof typeof pn];
-          }
-        } catch {}
-      });
-      return postComm?.nodes ?? [];
+    const [posts, postsError] = await sq.query(q => {
+      const postComm = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 4, filters });
+      return postComm?.nodes.map(pn => buildPostPreview(q, pn, currentUser)) ?? [];
     });
-    // const [posts, buildError] = await sq.query(q => rawPosts?.map((p) => buildPostPreview(q, p, currentUser)));
-    const posts = (await Promise.all(
-      (
-        rawPosts?.map(async p => {
-          if (!p) return;
-          return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
-        }) ?? []
-      ).filter(p => !!p)
-    )) as TPostPreview[];
 
-    if (rawError) return;
+    if (postsError?.length > 0) return;
     set(
       produce((state: TStoreState) => {
         state.communityPosts.featuredPosts = {
@@ -123,9 +100,9 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       );
     }
 
-    const [postConnection, rawError] = await sq.query(q => {
+    const [posts, postsError] = await sq.query(q => {
       const postComm = q.allSocialPost({
-        resourceId: snekResourceId,
+        resourceId: __SNEK_RESOURCE_ID__,
         first: POST_FETCH_LIMIT,
         after:
           get().communityPosts.latestPosts.hasMore && !reload
@@ -133,52 +110,41 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
             : undefined,
         filters
       });
-      //! Existing issue: see post utils -> buildPostPreview
       postComm?.pageInfo.endCursor;
       postComm?.pageInfo.hasNextPage;
       postComm?.pageInfo.hasPreviousPage;
       postComm?.pageInfo.startCursor;
-      postComm?.nodes.forEach(pn => {
-        try {
-          pn.stars().edges.map(se => se.node.profile.id);
-          pn.stars().totalCount;
-          for (const key in pn) {
-            pn[key as keyof typeof pn];
-          }
-        } catch {}
-      });
-      return postComm;
+      return {
+        hasPreviousPage: postComm?.pageInfo.hasPreviousPage,
+        hasNextPage: postComm?.pageInfo.hasNextPage,
+        startCursor: postComm?.pageInfo.startCursor,
+        endCursor: postComm?.pageInfo.endCursor,
+        totalCount: postComm?.totalCount,
+        items: postComm?.nodes.map(pn => buildPostPreview(q, pn, currentUser))
+      }
     });
-    const posts = (await Promise.all(
-      (
-        postConnection?.nodes?.map(async p => {
-          if (!p) return;
-          return (await sq.query(q => buildPostPreview(q, p, currentUser)))[0];
-        }) ?? []
-      ).filter(p => !!p)
-    )) as TPostPreview[];
 
-    if (rawError) return;
+    if (postsError?.length > 0) return;
     set(
       produce((state: TStoreState) => {
         state.communityPosts.latestPosts = {
           state: 'success',
-          items: postConnection?.pageInfo.hasPreviousPage
-            ? [...state.communityPosts.latestPosts.items, ...posts]
-            : posts,
+          items: posts.hasPreviousPage
+            ? [...state.communityPosts.latestPosts.items, ...posts.items]
+            : posts.items,
           itemsPerPage: POST_FETCH_LIMIT,
-          totalCount: posts.length,
+          totalCount: posts.totalCount,
           nextCursor:
-            postConnection?.pageInfo?.hasNextPage &&
-            postConnection.pageInfo.endCursor
-              ? postConnection?.pageInfo.endCursor
+            posts.hasNextPage &&
+              posts.endCursor
+              ? posts.endCursor
               : undefined,
           prevCursor:
-            postConnection?.pageInfo?.hasPreviousPage &&
-            postConnection.pageInfo.startCursor
-              ? postConnection?.pageInfo.startCursor
+            posts.hasPreviousPage &&
+              posts.startCursor
+              ? posts.startCursor
               : undefined,
-          hasMore: postConnection?.pageInfo?.hasNextPage ?? false
+          hasMore: posts.hasNextPage ?? false
         };
       })
     );
@@ -251,6 +217,8 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       ) ||
       get().communityPosts.latestPosts.items.some(
         post => post.id === postId && post.hasRated
+      ) || get().communityPosts.searchPosts.items.some(
+        post => post.id === postId && post.hasRated
       );
 
     set(
@@ -268,6 +236,14 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
         if (latestPost) {
           latestPost.hasRated = !hasRated;
           latestPost.stars += hasRated ? -1 : 1;
+        }
+
+        const searchPosts = state.communityPosts.searchPosts.items.find(
+          post => post.id === postId
+        );
+        if (searchPosts) {
+          searchPosts.hasRated = !hasRated;
+          searchPosts.stars += hasRated ? -1 : 1;
         }
       })
     );
@@ -368,5 +344,17 @@ export const createCommunityPostsSlice: TStoreSlice<TCommunityPostsSlice> = (
       get().communityPosts.postLanguage,
       dateRange
     );
-  }
+  },
+  deletePost: async (id) => {
+    const succeed = await deletePost(id);
+    if (succeed) return false;
+    set(
+      produce((state: TStoreState) => {
+        state.communityPosts.featuredPosts.items = state.communityPosts.featuredPosts.items.filter(p => p.id !== id);
+        state.communityPosts.latestPosts.items = state.communityPosts.latestPosts.items.filter(p => p.id !== id);
+        state.communityPosts.searchPosts.items = state.communityPosts.searchPosts.items.filter(p => p.id !== id);
+      })
+    );
+    return true;
+  },
 });

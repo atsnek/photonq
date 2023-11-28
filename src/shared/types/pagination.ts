@@ -1,3 +1,5 @@
+import { TCommDataState } from "./comm";
+
 /**
  * Page info for pagination
  */
@@ -11,13 +13,14 @@ export type TPaginationPageInfo = {
 /**
  * Data for pagination logic
  */
-export type TPaginationData<I, T = {}> = T & {
+export type TPaginationData<I, T = {}> = {
   items: I;
   itemsPerPage?: number;
   hasMore?: boolean;
   prevCursor?: string;
   nextCursor?: string;
   totalCount: number;
+  state: TCommDataState;
 };
 
 /**

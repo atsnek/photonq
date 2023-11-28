@@ -11,11 +11,11 @@ import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/type
 const links = [
   {
     name: 'Question? Give us feedback',
-    href: 'https://snek.at/'
+    href: '/contact'
   },
   {
     name: 'Edit this page on Jaen',
-    href: '/admin/#/pages',
+    href: '/cms/pages',
     unAuthOnly: true
   }
 ];

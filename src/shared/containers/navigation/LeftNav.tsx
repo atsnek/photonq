@@ -1,4 +1,4 @@
-import { Flex, FlexProps, Spacer } from '@chakra-ui/react';
+import { Flex, FlexProps, PositionProps, Spacer } from '@chakra-ui/react';
 import { Dispatch, FC, ReactNode, SetStateAction } from 'react';
 import MainBottomNav from './MainBottomNav';
 import NavbarControls from './components/NavbarControls';
@@ -22,6 +22,7 @@ const LeftNav: FC<ILeftNavProps> = ({
   ...props
 }) => {
   const navTopOffset = useNavOffset();
+
   return (
     <Flex
       position="sticky"
@@ -36,9 +37,7 @@ const LeftNav: FC<ILeftNavProps> = ({
     >
       {children}
       <Spacer />
-      {!hideControls && (
-        <NavbarControls isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
-      )}
+      {!hideControls && <NavbarControls isExpanded={isExpanded} setIsExpanded={setIsExpanded} />}
     </Flex>
   );
 };

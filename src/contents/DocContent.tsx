@@ -12,11 +12,11 @@ import MdxEditor from '../shared/components/mdx-editor/MdxEditor';
 const links = [
   {
     name: 'Question? Give us feedback',
-    href: 'https://snek.at/'
+    href: '/contact'
   },
   {
     name: 'Edit this page on Jaen',
-    href: '/admin/#/pages'
+    href: '/cms/pages'
   }
 ];
 
@@ -38,11 +38,7 @@ export const DocContent: FC<DocContentProps> = () => {
 
         <Box position="sticky" top={`calc(0px + ${navTopOffset})`}>
           <RightNav>
-            <ChText
-              color="rightNav.titleTop.color"
-              fontWeight="semibold"
-              fontSize="sm"
-            >
+            <ChText color="rightNav.titleTop.color" fontWeight="semibold" fontSize="sm">
               On This Page
             </ChText>
             <Flex as="nav" direction="column" mt={5}>

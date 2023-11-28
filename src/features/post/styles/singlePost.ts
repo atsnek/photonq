@@ -4,6 +4,10 @@ const smtSinglePostPage = {
       default: 'gray.50',
       _dark: 'gray.700'
     },
+    borderColor: {
+      default: 'gray.200',
+      _dark: 'gray.600'
+    },
     rating: {
       bgColor: {
         default: 'gray.200',

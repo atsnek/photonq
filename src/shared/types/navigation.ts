@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { TUser } from '../../features/user/types/user';
-import { BoxProps } from '@chakra-ui/react';
+import { BoxProps, LinkProps } from '@chakra-ui/react';
 
 export type NavMenuItem = {
   name: string;
@@ -29,6 +29,7 @@ export type TLinkData = {
 
 export type TTopNavLinkData = TLinkData & {
   matchMethod: 'exact' | 'includes';
+  style?: LinkProps;
 };
 
 export type TableOfContentItem = {
@@ -43,15 +44,15 @@ export type MainBreadcrumbPart = {
   isDisabled?: boolean;
   isActive?: boolean;
 } & (
-  | {
+    | {
       isUser: true;
       user: TUser | null;
       showUserImage?: boolean;
     }
-  | {
+    | {
       isUser?: false;
     }
-);
+  );
 
 /**
  * Stores the data of the previous and next page

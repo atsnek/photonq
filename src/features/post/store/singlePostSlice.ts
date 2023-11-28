@@ -12,6 +12,7 @@ import { TUser } from '../../user/types/user';
 import {
   Language,
   LanguageInputInput,
+  PostDataInputInput,
   PrivacyInputInput
 } from '@snek-functions/origin/dist/schema.generated';
 import { osg, snekResourceId } from '@atsnek/jaen';
@@ -20,7 +21,16 @@ import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/type
 const initState: ISinglePostStateDefinition = {
   isNewPost: false,
   postAuthor: null,
-  post: undefined
+  post: undefined,
+  madeChanges: {
+    title: false,
+    avatarUrl: false,
+    summary: false,
+    content: false,
+    language: false,
+    privacy: false,
+  },
+  newAvatarUrlFile: undefined, // We need to store the file itself too, because we need to upload it to the storage server once the user saves the post.
 };
 
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
@@ -49,10 +59,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     });
 
     const [author, authorError] = await sq.query((q): TUser => {
-      const user = q.user({
-        id: post?.authorProfileId ?? '',
-        resourceId: snekResourceId
-      });
+      const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: post?.authorProfileId ?? '' });
 
       if (post) {
         post.language = user.profile?.language ?? EnPostLanguage.EN;
@@ -80,29 +87,11 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     const post = get().singlePost.post;
     if (!post || post.content === content) return false;
 
-    if (get().singlePost.isNewPost) {
-      set(
-        produce((state: TStoreState) => {
-          if (!state.singlePost.post) return;
-          state.singlePost.post.content = content;
-        })
-      );
-      return true;
-    }
-
-    const [, error] = await sq.mutate(m =>
-      m.socialPostUpdate({
-        postId: post.id,
-        values: { content: JSON.stringify(content) }
-      })
-    );
-
-    if (error?.length > 0) return false;
-
     set(
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
         state.singlePost.post.content = content;
+        state.singlePost.madeChanges.content = true;
       })
     );
     return true;
@@ -111,23 +100,11 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     const post = get().singlePost.post;
     if (!post || post.summary === summary) return false;
 
-    if (get().singlePost.isNewPost) {
-      set(
-        produce((state: TStoreState) => {
-          if (!state.singlePost.post) return;
-          state.singlePost.post.summary = summary;
-        })
-      );
-      return true;
-    }
-
-    sq.mutate(m =>
-      m.socialPostUpdate({ postId: post.id, values: { summary } })
-    );
     set(
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
         state.singlePost.post.summary = summary;
+        state.singlePost.madeChanges.summary = true;
       })
     );
     return true;
@@ -136,21 +113,11 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     const post = get().singlePost.post;
     if (!post || post.title === title) return false;
 
-    if (get().singlePost.isNewPost) {
-      set(
-        produce((state: TStoreState) => {
-          if (!state.singlePost.post) return;
-          state.singlePost.post.title = title;
-        })
-      );
-      return true;
-    }
-
-    sq.mutate(m => m.socialPostUpdate({ postId: post.id, values: { title } }));
     set(
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
         state.singlePost.post.title = title;
+        state.singlePost.madeChanges.title = true;
       })
     );
     return true;
@@ -158,7 +125,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
   fetchPost: async slug => {
     const [currentUser] = await sq.query(q => q.userMe);
     const [post, postError] = await sq.query((q): TPost | null => {
-      const post = q.socialPost({ resourceId: snekResourceId, slug: slug });
+      const post = q.socialPost({ resourceId: __SNEK_RESOURCE_ID__, slug: slug });
 
       if (!post) return null;
 
@@ -194,10 +161,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     if (postError || post === null) return false;
 
     const [author, authorError] = await sq.query((q): TUser => {
-      const user = q.user({
-        id: post?.authorProfileId ?? '',
-        resourceId: snekResourceId
-      });
+      const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: post?.authorProfileId ?? '' });
       return {
         id: user.id,
         username: user.username,
@@ -275,38 +239,20 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
   updatePreviewImage: async src => {
     if (!get().singlePost.post) return false;
 
-    if (get().singlePost.isNewPost) {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(src);
+    // if (get().singlePost.isNewPost) {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(src);
 
-      fileReader.onload = () => {
-        set(
-          produce((state: TStoreState) => {
-            if (!state.singlePost.post) return;
-            state.singlePost.post.avatarUrl = fileReader.result as string;
-          })
-        );
-      };
-      return true;
-    }
-
-    const { fileUrl } = await osg.uploadFile(src);
-
-    set(
-      produce((state: TStoreState) => {
-        if (!state.singlePost.post) return;
-        state.singlePost.post.avatarUrl = fileUrl;
-      })
-    );
-
-    await sq.mutate(q =>
-      q.socialPostUpdate({
-        postId: get().singlePost.post?.id ?? '',
-        values: { avatarURL: fileUrl }
-      })
-    );
-
-    get().singlePost.fetchPost(get().singlePost.post?.slug ?? '');
+    fileReader.onload = () => {
+      set(
+        produce((state: TStoreState) => {
+          if (!state.singlePost.post) return;
+          state.singlePost.post.avatarUrl = fileReader.result as string;
+          state.singlePost.newAvatarUrlFile = src;
+          state.singlePost.madeChanges.avatarUrl = true;
+        })
+      );
+    };
     return true;
   },
   togglePrivacy: async () => {
@@ -316,44 +262,21 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
         state.singlePost.post.privacy = newPrivacy;
+        state.singlePost.madeChanges.privacy = true;
       })
     );
-
-    if (get().singlePost.isNewPost) return true;
-
-    const postId = get().singlePost.post?.id ?? '';
-    const [, error] = await sq.mutate(m =>
-      m.socialPostUpdate({
-        postId,
-        values: { privacy: asEnumKey(PrivacyInputInput, newPrivacy) }
-      })
-    );
-
-    const updateSucceed = await get().singlePost.fetchPost(
-      get().singlePost.post?.slug ?? ''
-    );
-    return error?.length === 0 && updateSucceed;
+    return true;
   },
   changeLanguage: async language => {
+    console.log("language: ", language);
     set(
       produce((state: TStoreState) => {
         if (!state.singlePost.post) return;
         state.singlePost.post.language = language;
+        state.singlePost.madeChanges.language = true;
       })
     );
-
-    const postId = get().singlePost.post?.id;
-
-    if (!postId) return false;
-
-    const [, error] = await sq.mutate(m =>
-      m.socialPostUpdate({
-        postId,
-        values: { language: asEnumKey(LanguageInputInput, language) }
-      })
-    );
-
-    return !error || error?.length === 0;
+    return true;
   },
   reset: () => {
     set(
@@ -370,7 +293,49 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     if (!postId) return false;
 
     const [, error] = await sq.mutate(m => m.socialPostDelete({ postId }));
+    return !error || error?.length === 0;
+  },
+  savePost: async () => {
+    const post = get().singlePost.post;
+    const madeChanges = get().singlePost.madeChanges;
+    if (!post) return false;
+    const values: PostDataInputInput = { title: post.title };
+
+    if (madeChanges.content) {
+      values.content = JSON.stringify(post.content);
+    }
+    if (madeChanges.summary && post.summary) {
+      values.summary = post.summary;
+    }
+
+    if (madeChanges.title) {
+      values.title = post.title;
+    }
+    const newAvatarUrlFile = get().singlePost.newAvatarUrlFile;
+    if (madeChanges.avatarUrl && newAvatarUrlFile) {
+      const { fileUrl } = await osg.uploadFile(newAvatarUrlFile);
+      values.avatarURL = fileUrl;
+    }
+    if (madeChanges.privacy) {
+      values.privacy = asEnumKey(PrivacyInputInput, post.privacy);
+    }
+    if (madeChanges.language) {
+      values.language = asEnumKey(LanguageInputInput, post.language);
+    }
+
+    const [, error] = await sq.mutate(m => {
+      m.socialPostUpdate({
+        postId: post.id,
+        values
+      })
+    });
+
+    set(
+      produce((state: TStoreState) => {
+        state.singlePost.madeChanges = initState.madeChanges;
+      })
+    )
 
     return !error || error?.length === 0;
-  }
+  },
 });

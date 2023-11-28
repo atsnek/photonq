@@ -82,8 +82,7 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
     useEffect(() => {
       // Focus the input when the user presses the shortcut
       const handleGlobalKeydown = (e: KeyboardEvent) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k')
-          menu.buttonRef.current?.focus();
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') menu.buttonRef.current?.focus();
 
         if (e.key === 'Enter' && menu.isOpen) {
           openFirstLink();
@@ -113,6 +112,10 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
             borderRadius="md"
             backgroundColor="blackAlpha.50"
             borderColor="topNav.input.borderColor"
+            color="topNav.input.color"
+            _placeholder={{
+              color: 'topNav.input.color'
+            }}
             pr="45px"
             _focus={{
               backgroundColor: 'topNav.input.focus.bgColor'
@@ -136,18 +139,14 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
               if (!menu.isOpen && query.length > 0) {
                 menu.onOpen();
               }
-              setSearchQuery(e.currentTarget.value);
+              setSearchQuery(e.currentTarget.value.trim());
             }}
             onKeyDownCapture={e => {
               if (e.key === 'Escape') {
                 // Close the menu and blur the input when the user presses the escape key
                 menu.onClose();
                 e.currentTarget.blur();
-              } else if (
-                e.key === 'Enter' &&
-                menu.isOpen &&
-                menu.focusedIndex === -1
-              ) {
+              } else if (e.key === 'Enter' && menu.isOpen && menu.focusedIndex === -1) {
                 // Open the link from the first result item
                 // and close the menu automatically
                 // when the user presses the enter key
@@ -170,7 +169,7 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
                 </Kbd>
               }
               pr="10px"
-              color="rgb(107, 114, 128)"
+              color="topNav.input.kbd.color"
             />
           )}
         </InputGroup>

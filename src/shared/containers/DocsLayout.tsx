@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import React, { FC, useMemo, useState } from 'react';
 import LeftNav from './navigation/LeftNav';
 import MainBreadcrumb from './navigation/components/MainBreadcrumb';
-import PageDirectory from './navigation/components/PageDirectory';
+import PageDirectory from './navigation/components/page-directory/PageDirectory';
 import MainGrid from './components/MainGrid';
 import { useMenuContext } from '../contexts/menu';
 import { MainBreadcrumbPart } from '../types/navigation';
@@ -32,14 +32,12 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
 
   const memoedChildren = useMemo(() => children, [children]);
 
-  if (isCommunity) return memoedChildren;
-
   return (
-    <MainGrid>
+    <MainGrid isLeftNavExpanded={isExpanded}>
       <Box display={{ base: 'none', md: 'block' }} position="sticky">
         <LeftNav isExpanded={isExpanded} setIsExpanded={setIsExpanded}>
           <Box w={isExpanded ? 'auto' : 0}>
-            <PageDirectory data={menuStructure} isExpanded={isExpanded} />
+            <PageDirectory data={menuStructure} isExpanded={isExpanded} path={path} />
           </Box>
         </LeftNav>
       </Box>

@@ -40,7 +40,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
           transition="color 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
           p={3}
         >
-          Code Preview
+          {headerText}
         </Text>
       )}
       <Box p={3}>
@@ -61,7 +61,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
                   fontSize="sm"
                   color="components.codeResultPreview.noResult.text.color"
                 >
-                  No code to preview
+                  Not run yet
                 </Text>
               </Center>
             )}

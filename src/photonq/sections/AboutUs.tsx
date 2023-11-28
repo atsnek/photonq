@@ -46,10 +46,10 @@ const AboutUs: FC = () => {
       heading: 'Lorem ipsum dolor sit amet',
       text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor neque sed imperdiet nibh lectus feugiat nunc sem.',
       avatar: {
-        src: 'https://avatars.githubusercontent.com/u/55870326?s=200&v=4',
-        name: 'atsnek',
+        src: 'https://avatars.githubusercontent.com/u/148873257?s=200&v=4',
+        name: 'Netsnek',
         title: 'Development Studio',
-        to: 'https://atsnek.com'
+        to: 'https://netsnek.com'
       }
     }
   ];

@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef, useState } from 'react';
+import { ChangeEvent, FC, useRef } from 'react';
 import {
   Box,
   Center,
@@ -20,7 +20,6 @@ interface ImageProps extends ChImageProps {
  */
 const Image: FC<ImageProps> = ({ editable, handleImageChange, isUploading, ...props }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  // const [imageSrc, setImageSrc] = useState<ImageProps['src']>(props.src);
 
   const image = <ChImage objectFit="cover" {...props} />;
   if (!editable) {
@@ -31,7 +30,6 @@ const Image: FC<ImageProps> = ({ editable, handleImageChange, isUploading, ...pr
     if (!e.currentTarget?.files || e.currentTarget.files?.length === 0) return;
     const file = e.currentTarget.files[0];
     if (handleImageChange) handleImageChange(file);
-    // setImageSrc(URL.createObjectURL(file));
   };
 
   return (

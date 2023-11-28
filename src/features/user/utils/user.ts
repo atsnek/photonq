@@ -1,10 +1,9 @@
 import {
   Connection_1_2_3_4_5_6,
-  Edge_1_2_3_4_5_6,
   ObjectAndUser,
   Privacy,
-  Query,
-  User
+  User,
+  User_1
 } from '@snek-functions/origin/dist/schema.generated';
 import { TActivity, TActivityType } from '../activity/types/activity';
 import { t } from 'snek-query';
@@ -21,7 +20,7 @@ import { snekResourceId } from '@atsnek/jaen';
  * @example getDisplayname({ username: "test", details: { lastName: "User" } }) // "User"
  * @example getDisplayname({ username: "test" }) // "test"
  */
-export const getUserDisplayname = (user: ObjectAndUser) => {
+export const getUserDisplayname = (user: ObjectAndUser | User_1) => {
   let displayName: string | undefined = undefined;
   if (user.details?.firstName) {
     displayName = user.details.firstName;
@@ -32,7 +31,7 @@ export const getUserDisplayname = (user: ObjectAndUser) => {
   }
 
   if (!displayName) {
-    displayName = user.username;
+    displayName = user.username ?? '';
   }
   return displayName;
 };
@@ -82,7 +81,8 @@ export const buildUserActivities = async (
     totalCount: activityConnection.totalCount,
     hasMore: activityConnection.pageInfo.hasNextPage,
     nextCursor: activityConnection.pageInfo.endCursor ?? undefined,
-    prevCursor: activityConnection.pageInfo.startCursor ?? undefined
+    prevCursor: activityConnection.pageInfo.startCursor ?? undefined,
+    state: 'success'
   };
 
   const items = activityConnection.edges
@@ -100,8 +100,6 @@ export const buildUserActivities = async (
               ) === -1)))
       )
         return;
-
-      console.log('activity: ', ae.node);
       let title = '';
       let href = '';
       if (type === 'blog_create' && post) {
@@ -123,10 +121,7 @@ export const buildUserActivities = async (
       } else if (type === 'follow_follow') {
         if (!follow || !follow.followed) return;
         const [followedUser, followedUserError] = await sq.query(q => {
-          const user = q.user({
-            id: follow.followed.id,
-            resourceId: snekResourceId
-          });
+          const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: follow.followed.id });
           user.username;
           user.details?.firstName;
           user.details?.lastName;

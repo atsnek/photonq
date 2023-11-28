@@ -29,7 +29,8 @@ const config: GatsbyConfig = {
         pageTemplateFolder: `src/templates`,
         snekResourceId: `a58477a4-6e2a-4dca-80a9-e59d86bcac10`
       }
-    }
+    },
+    `gatsby-jaen-mailpress`
   ]
 };
 

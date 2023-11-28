@@ -4,7 +4,6 @@ import {
   Button,
   ButtonProps,
   Center,
-  CenterProps,
   Flex,
   HStack,
   Image,
@@ -14,27 +13,26 @@ import {
   StackProps,
   VStack,
   useDisclosure,
-  useColorMode
+  DarkMode,
+  LightMode
 } from '@chakra-ui/react';
 import { useLocation } from '@reach/router';
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import SnekIcon from '../../../assets/icons/brand.svg';
-import SearchMenu, { TSearchMenuStyleProps } from '../../../features/search/components/SearchMenu';
+import SearchMenu from '../../../features/search/components/SearchMenu';
 import HamburgerMenuIcon, {
   THamburgerMenuIconStylerProps
 } from '../../components/HamburgerMenuIcon';
 import MemoizedLinks from '../../components/MemoizedLink';
-import GitHub from '../../components/icons/brands/GitHub';
 import useWindowSize from '../../hooks/use-current-window-size';
-import { useNavOffset } from '../../hooks/use-nav-offset';
 import { TTopNavLinkData } from '../../types/navigation';
 import MobileNavDrawer from './MobileNavDrawer';
 import Link from '../../components/Link';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import Logo from '../../../gatsby-plugin-jaen/components/Logo';
 import useScrollPosition from '../../hooks/use-scroll-position';
-import { transferableAbortSignal } from 'util';
 import useMobileDetection from '../../hooks/use-mobile-detection';
+import ThemeChooser from '../../components/theme-chooser/ThemeChooser';
 
 const navLinkProps = {
   display: { base: 'none', md: 'initial' },
@@ -58,11 +56,11 @@ interface ITopNavProps {
   };
   wrapperProps?: StackProps;
   linkProps?: LinkProps;
-  searchProps?: TSearchMenuStyleProps;
   mobileMenuButtonProps?: ButtonProps;
   hamburgerIconProps?: THamburgerMenuIconStylerProps;
   drawerDisclosure: ReturnType<typeof useDisclosure>;
   colorMode?: 'light' | 'dark';
+  showThemeToggle?: boolean;
   children?: React.ReactNode;
 }
 
@@ -73,16 +71,14 @@ const TopNav: FC<ITopNavProps> = ({
   branding,
   wrapperProps,
   linkProps,
-  searchProps,
   mobileMenuButtonProps,
   hamburgerIconProps,
   drawerDisclosure,
   colorMode,
+  showThemeToggle,
   children
 }) => {
-  const { colorMode: chakraColorMode } = useColorMode();
   const [hamburgerClass, setHamburgerClass] = useState('');
-  const [topNavProps, setTopNavProps] = useState<CenterProps>({});
   const { openLoginModal } = useAuthenticationContext();
   const { isOpen, onOpen, onClose } = drawerDisclosure;
 
@@ -92,40 +88,44 @@ const TopNav: FC<ITopNavProps> = ({
   const isMobile = useMemo(() => useMobileDetection(), []);
   const isAuthenticated = useAuthenticationContext().user !== null;
 
-  const stateRef = useRef<{
-    prevScrollPosition: number;
-    translateValue: number;
-  }>({
-    prevScrollPosition: -1,
-    translateValue: 0
-  });
-
-  const links: TTopNavLinkData[] = [
-    {
-      name: 'Home',
-      href: '/',
-      matchMethod: 'exact'
-    },
-    {
-      name: 'Documentation',
-      href: '/docs/',
-      matchMethod: 'includes'
-    },
-    {
-      name: 'Sign In',
-      matchMethod: 'exact',
-      onClick: openLoginModal
-    },
-    {
-      name: 'Sign Up',
-      matchMethod: 'exact',
-      href: '/signup'
-    }
-  ];
+  const links: { left: TTopNavLinkData[]; right: TTopNavLinkData[] } = {
+    left: [
+      {
+        name: 'Home',
+        href: '/',
+        matchMethod: 'exact'
+      },
+      {
+        name: 'Documentation',
+        href: '/docs/',
+        matchMethod: 'includes'
+      }
+    ],
+    right: [
+      {
+        name: 'Sign In',
+        matchMethod: 'exact',
+        onClick: openLoginModal
+      },
+      {
+        name: 'Sign Up',
+        matchMethod: 'exact',
+        href: '/signup',
+        style: {
+          border: '1px solid',
+          borderColor: 'topNav.input.borderColor',
+          borderRadius: 'lg',
+          h: 8,
+          px: 2,
+          lineHeight: 8
+        }
+      }
+    ]
+  };
 
   const activatedLinks = useMemo(() => {
     let activeLinkFound = false;
-    return links.map(link => {
+    return links.left.map(link => {
       if (activeLinkFound) return link;
       const isActive =
         link.href && link.matchMethod
@@ -146,31 +146,6 @@ const TopNav: FC<ITopNavProps> = ({
     if (windowSize.width >= 768 && isOpen) closeDrawer();
   }, [windowSize.width]);
 
-  useEffect(() => {
-    if (isMobile || isAuthenticated) return;
-    if (scrollPosition > stateRef.current.prevScrollPosition) {
-      const translateValue =
-        Math.min(
-          Math.abs(stateRef.current.translateValue) +
-            (scrollPosition - stateRef.current.prevScrollPosition),
-          64
-        ) * -1;
-      stateRef.current.translateValue = translateValue;
-      setTopNavProps({ transform: `translateY(${translateValue}px)` });
-    } else {
-      // user is scrolling up
-      const translateValue =
-        Math.max(
-          Math.abs(stateRef.current.translateValue) +
-            (stateRef.current.prevScrollPosition - scrollPosition) * -1,
-          0
-        ) * -1;
-      stateRef.current.translateValue = translateValue;
-      setTopNavProps({ transform: `translateY(${translateValue}px)` });
-    }
-    stateRef.current.prevScrollPosition = scrollPosition;
-  }, [scrollPosition]);
-
   const openDrawer = () => {
     setHamburgerClass('open');
     onOpen();
@@ -186,13 +161,29 @@ const TopNav: FC<ITopNavProps> = ({
     else openDrawer();
   };
 
+  const search = (() => {
+    console.log('colorMode', colorMode);
+    if (!colorMode) return <SearchMenu />;
+    if (colorMode === 'dark')
+      return (
+        <DarkMode>
+          <SearchMenu />
+        </DarkMode>
+      );
+    if (colorMode === 'light')
+      return (
+        <LightMode>
+          <SearchMenu />
+        </LightMode>
+      );
+  })();
+
   return (
     <>
       <Center
         as="nav"
         position="sticky"
         top={0}
-        {...topNavProps}
         h="64px"
         px={{ base: 5, xl: 0 }}
         borderBottom="1px solid"
@@ -201,9 +192,6 @@ const TopNav: FC<ITopNavProps> = ({
         backdropFilter="blur(10px)"
         zIndex={3}
         {...wrapperProps}
-        _hover={{
-          top: stateRef.current.translateValue * -1 + 'px'
-        }}
         transition="top 0.2s ease-in-out"
       >
         <VStack w="full" spacing={0}>
@@ -227,51 +215,21 @@ const TopNav: FC<ITopNavProps> = ({
                 <Logo forceColorMode={branding?.colorMode} />
               )}
             </Link>
+            <HStack spacing={4} ml={5}>
+              <MemoizedLinks
+                links={activatedLinks}
+                props={{ ...navLinkProps, ...linkProps }}
+                activeProps={{
+                  opacity: 1,
+                  fontWeight: 'semibold',
+                  color: 'topNav.links.active.color'
+                }}
+              />
+            </HStack>
             <Spacer />
             <Center>
               <HStack spacing={4}>
-                {
-                  //! Causes hydration issue
-                }
-                <MemoizedLinks
-                  links={activatedLinks}
-                  props={{ ...navLinkProps, ...linkProps }}
-                  activeProps={{
-                    opacity: 1,
-                    fontWeight: 'semibold',
-                    color: 'topNav.links.active.color'
-                  }}
-                />
-                <Box display={{ base: 'none', md: 'initial' }}>
-                  <SearchMenu
-                    // width base 0 is a hack to prevent the menu from causing a horizontal scrollbar
-                    styleProps={{
-                      ...searchProps,
-                      menuList: {
-                        ...searchProps?.menuList,
-                        width: { base: 0, md: '500px' },
-                        zIndex: 3
-                      }
-                    }}
-                  />
-                </Box>
-                <Link
-                  display="inline-block"
-                  href="https://github.com/atsnek/photonq"
-                  // This doesnt work for some reason (min-width solves it temporarily)
-                  boxSize="32px"
-                  minWidth="32px"
-                  _hover={{
-                    transform: 'scale(1.2)'
-                  }}
-                  transition="transform 0.2s ease-in-out"
-                >
-                  <GitHub
-                    boxSize="32px"
-                    fill={`topNav.${colorMode ?? chakraColorMode}.GitHubFill`}
-                    transition="fill 0.2s ease-in-out"
-                  />
-                </Link>
+                <Box display={{ base: 'none', md: 'initial' }}>{search}</Box>
                 <Button
                   variant="ghost-hover"
                   size="sm"
@@ -284,6 +242,31 @@ const TopNav: FC<ITopNavProps> = ({
                     iconProps={hamburgerIconProps}
                   />
                 </Button>
+              </HStack>
+            </Center>
+            <Center>
+              <HStack spacing={4} ml={4}>
+                <MemoizedLinks
+                  links={links.right}
+                  props={{ ...navLinkProps, ...linkProps }}
+                  activeProps={{
+                    opacity: 1,
+                    fontWeight: 'semibold',
+                    color: 'topNav.links.active.color'
+                  }}
+                />
+                {!isAuthenticated && !isMobile && (
+                  <ThemeChooser
+                    buttonProps={{
+                      variant: 'outline',
+                      color: 'inherit',
+                      borderColor: 'topNav.input.borderColor',
+                      opacity: 0.4,
+                      _hover: { opacity: 1 }
+                    }}
+                    forceMenuColorMode={colorMode}
+                  />
+                )}
               </HStack>
             </Center>
           </Flex>

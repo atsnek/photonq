@@ -6,17 +6,10 @@ import PhotonQ from './sections/PhotonQ';
 import AboutUs from './sections/AboutUs';
 import Footer from './sections/Footer';
 import useScrollPosition from '../shared/hooks/use-scroll-position';
-import {
-  useDisclosure,
-  useColorMode,
-  useColorModeValue
-} from '@chakra-ui/react';
+import { useDisclosure, useColorMode, useColorModeValue } from '@chakra-ui/react';
 
 import AppLayout from '../shared/containers/AppLayout';
-import {
-  TTopNavLinkProps,
-  TTopNavWrapperProps
-} from '../shared/containers/navigation/TopNav';
+import { TTopNavLinkProps, TTopNavWrapperProps } from '../shared/containers/navigation/TopNav';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface ILandingPageContentProps {
@@ -36,9 +29,11 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
     if (!heroHeight) return;
     const heroHeightPx = heroHeight.getBoundingClientRect().height;
     setColorMode(
-      scrollPos < heroHeightPx && !topNavDisclosure.isOpen ? 'dark' : 'light'
+      chakraColorMode === 'dark' || (scrollPos < heroHeightPx && !topNavDisclosure.isOpen)
+        ? 'dark'
+        : 'light'
     );
-  }, [scrollPos, topNavDisclosure.isOpen]);
+  }, [scrollPos, topNavDisclosure.isOpen, chakraColorMode]);
 
   let linkProps: TTopNavLinkProps = { transition: 'opacity 0.2s ease-in-out' };
   let wrapperProps: TTopNavWrapperProps = {
@@ -86,54 +81,16 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
         hamburger: {
           bgColor: `pq.layout.topNav.${colorMode}.hamburger.backgroundColor`
         },
-        searchProps:
-          colorMode === 'dark'
-            ? {
-                input: {
-                  parent: {
-                    _placeholder: {
-                      color:
-                        'pq.layout.topNav.dark.search.input.parent.placeholder.color'
-                    },
-                    borderColor:
-                      'pq.layout.topNav.dark.search.input.parent.borderColor',
-                    _hover: {
-                      borderColor:
-                        'pq.layout.topNav.dark.search.input._hover.borderColor',
-                      bgColor:
-                        'pq.layout.topNav.dark.search.input._hover.bgColor'
-                    },
-                    _focus: {
-                      _placeholder: {
-                        color:
-                          'pq.layout.topNav.dark.search.input._focus.parent.placeholder.color'
-                      },
-                      bgColor:
-                        'pq.layout.topNav.dark.search.input._focus.parent.backgroundColor',
-                      borderColor:
-                        'pq.layout.topNav.dark.search.input._focus.borderColor'
-                    },
-                    focusBorderColor:
-                      'pq.layout.topNav.dark.search.input._focus.parent.borderColor'
-                  },
-                  kbd: {
-                    borderColor:
-                      'pq.layout.topNav.dark.search.input.kbd.borderColor',
-                    color: 'pq.layout.topNav.dark.search.input.kbd.color'
-                  }
-                }
-              }
-            : undefined,
         mobileMenuButtonProps:
           colorMode === 'dark'
             ? {
                 _hover: {
-                  bgColor:
-                    'pq.layout.topNav.dark.mobileMenuButton.backgroundColor'
+                  bgColor: 'pq.layout.topNav.dark.mobileMenuButton.backgroundColor'
                 }
               }
             : undefined,
-        colorMode
+        colorMode,
+        showThemeToggle: true
       }}
       branding={{
         colorMode: colorMode

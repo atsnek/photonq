@@ -15,6 +15,7 @@ import {
 import { Dispatch, FC, SetStateAction } from 'react';
 import React from 'react';
 import HideSidebarIcon from '../../../components/icons/HideSidebar';
+import ThemeChooser from '../../../components/theme-chooser/ThemeChooser';
 
 interface NavbarControlsProps {
   isMobile?: boolean;
@@ -51,7 +52,12 @@ const NavbarControls: FC<NavbarControlsProps> = ({
       alignItems="center"
       {...conditional_props}
     >
-      <Menu
+      <ThemeChooser
+        menuProps={{ matchWidth: isMobile }}
+        buttonIconProps={{ mr: isExpanded ? 2 : 0 }}
+        buttonContent={isExpanded && (isLightColorMode ? 'Light' : 'Dark')}
+      />
+      {/* <Menu
         id="navbar-color-mode-menu"
         placement="top"
         matchWidth={isMobile || !showExpandToggle}
@@ -65,10 +71,7 @@ const NavbarControls: FC<NavbarControlsProps> = ({
           textAlign="left"
           color="shared.text.default"
         >
-          <Icon
-            as={isLightColorMode ? SunIcon : MoonIcon}
-            mr={isExpanded ? 2 : 0}
-          />
+          <Icon as={isLightColorMode ? SunIcon : MoonIcon} mr={isExpanded ? 2 : 0} />
           {isExpanded && (isLightColorMode ? 'Light' : 'Dark')}
         </MenuButton>
         <MenuList>
@@ -77,7 +80,7 @@ const NavbarControls: FC<NavbarControlsProps> = ({
             toggleColorMode={toggleColorMode}
           />
         </MenuList>
-      </Menu>
+      </Menu> */}
       {showExpandToggle && (
         <IconButton
           icon={
@@ -96,47 +99,5 @@ const NavbarControls: FC<NavbarControlsProps> = ({
     </Flex>
   );
 };
-
-/**
- * Memoized color mode menu items.
- */
-const colorModes = ['Light', 'Dark', 'System'];
-//TODO: Fix system color mode toggle (doesnt work - doesnt stay in sync with system)
-const MemoizedColorModeMenuItems = React.memo<{
-  currentColorMode: ColorMode;
-  toggleColorMode: () => void;
-}>(
-  ({ currentColorMode, toggleColorMode }) => {
-    return (
-      <>
-        {colorModes.map((mode, i) => {
-          const isCurrentColorMode =
-            currentColorMode === mode.toLocaleLowerCase();
-          return (
-            <MenuItem
-              key={i}
-              position="relative"
-              disabled={isCurrentColorMode}
-              onClick={!isCurrentColorMode ? toggleColorMode : undefined}
-            >
-              {mode}
-              {isCurrentColorMode && (
-                <CheckIcon
-                  position="absolute"
-                  right={3}
-                  top="50%"
-                  transform="translateY(-50%)"
-                  boxSize="10px"
-                />
-              )}
-            </MenuItem>
-          );
-        })}
-      </>
-    );
-  },
-  (prevProps, nextProps) =>
-    prevProps.currentColorMode === nextProps.currentColorMode
-);
 
 export default NavbarControls;

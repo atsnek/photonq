@@ -18,39 +18,23 @@ const gradientAnimation = keyframes`
  * This is the main page for discovering and searching posts.
  */
 const PostsContent: FC = () => {
-  const featuredPosts = useAppStore(
-    state => state.communityPosts.featuredPosts
-  );
-  const fetchFeaturedPosts = useAppStore(
-    state => state.communityPosts.fetchFeaturedPosts
-  );
+  const featuredPosts = useAppStore(state => state.communityPosts.featuredPosts);
+  const fetchFeaturedPosts = useAppStore(state => state.communityPosts.fetchFeaturedPosts);
   const latestPosts = useAppStore(state => state.communityPosts.latestPosts);
-  const fetchLatestPosts = useAppStore(
-    state => state.communityPosts.fetchLatestPosts
-  );
-  const togglePostRating = useAppStore(
-    state => state.communityPosts.togglePostRating
-  );
-  const togglePostPrivacy = useAppStore(
-    state => state.communityPosts.togglePostPrivacy
-  );
+  const fetchLatestPosts = useAppStore(state => state.communityPosts.fetchLatestPosts);
+  const togglePostRating = useAppStore(state => state.communityPosts.togglePostRating);
+  const togglePostPrivacy = useAppStore(state => state.communityPosts.togglePostPrivacy);
+
+  const deletePost = useAppStore(state => state.communityPosts.deletePost);
 
   const searchPosts = useAppStore(state => state.communityPosts.searchPosts);
-  const fetchSearchPosts = useAppStore(
-    state => state.communityPosts.fetchSearchPosts
-  );
+  const fetchSearchPosts = useAppStore(state => state.communityPosts.fetchSearchPosts);
 
-  const filterLanguage = useAppStore(
-    state => state.communityPosts.postLanguage
-  );
-  const setFilterLanguage = useAppStore(
-    state => state.communityPosts.setPostLanguage
-  );
+  const filterLanguage = useAppStore(state => state.communityPosts.postLanguage);
+  const setFilterLanguage = useAppStore(state => state.communityPosts.setPostLanguage);
 
   const filterDateRange = useAppStore(state => state.communityPosts.dateRange);
-  const setFilterDateRange = useAppStore(
-    state => state.communityPosts.setDateRange
-  );
+  const setFilterDateRange = useAppStore(state => state.communityPosts.setDateRange);
 
   useEffect(() => {
     fetchFeaturedPosts();
@@ -62,13 +46,12 @@ const PostsContent: FC = () => {
   };
 
   return (
-    <Container maxW="7xl" mt={10}>
+    <Container maxW="7xl">
       <VStack>
         <PostListControls
           filterLanguage={filterLanguage}
           setFilterLanguage={setFilterLanguage}
           // setPosts={setPostResults}
-          w={{ base: 'full', md: '75%' }}
           fetchPosts={(query, offset, lang) =>
             fetchSearchPosts(query, POST_FETCH_LIMIT, 0, lang ?? undefined)
           }
@@ -97,11 +80,7 @@ const PostsContent: FC = () => {
                   ml={5}
                   borderRadius="full"
                 >
-                  <Heading
-                    as="h1"
-                    size="lg"
-                    color="pages.posts.featured.title.color"
-                  >
+                  <Heading as="h1" size="lg" color="pages.posts.featured.title.color">
                     Featured Posts
                   </Heading>
                 </Box>
@@ -117,6 +96,7 @@ const PostsContent: FC = () => {
                   }}
                   toggleRating={toggleRating}
                   togglePostPrivacy={togglePostPrivacy}
+                  deletePost={deletePost}
                 />
               </Box>
             </Box>
@@ -130,17 +110,14 @@ const PostsContent: FC = () => {
                 pt={5}
                 previewType="list"
                 itemsPerPage={latestPosts.itemsPerPage}
-                maxItems={
-                  latestPosts.hasMore ?? false
-                    ? undefined
-                    : latestPosts.totalCount
-                }
+                maxItems={latestPosts.hasMore ?? false ? undefined : latestPosts.totalCount}
                 skeletonProps={{
                   w: 'full'
                 }}
                 toggleRating={toggleRating}
                 togglePostPrivacy={togglePostPrivacy}
                 paginationType="async-pages"
+                deletePost={deletePost}
               />
             </Box>
           </>
@@ -148,16 +125,13 @@ const PostsContent: FC = () => {
           <PostList
             mt={10}
             fetchPosts={(query, offset, lang) => {
-              fetchSearchPosts(
-                searchPosts.query,
-                POST_FETCH_LIMIT,
-                searchPosts.items.length
-              );
+              fetchSearchPosts(searchPosts.query, POST_FETCH_LIMIT, searchPosts.items.length);
             }}
             postData={searchPosts}
             toggleRating={toggleRating}
             togglePostPrivacy={togglePostPrivacy}
             paginationType="load-more"
+            deletePost={deletePost}
           />
         )}
       </VStack>

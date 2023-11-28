@@ -84,3 +84,12 @@ export function formatNumber(number: number, precision = 2) {
 export async function wait(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Capitalizes the first letter of a word
+ * @param word - The word to capitalize
+ * @returns The capitalized word
+ */
+export function capitalizeWord([firstLetter, ...rest]: string) {
+  return `${firstLetter.toUpperCase()}${rest.join('')}`;
+}

@@ -1,5 +1,4 @@
 import {
-  List,
   ListItem,
   Table,
   Thead,
@@ -8,9 +7,13 @@ import {
   Th,
   Td,
   Box,
-  Text
+  Text,
+  Stack,
+  Button,
+  UnorderedList,
+  OrderedList,
+  ButtonGroup
 } from '@chakra-ui/react';
-// import { Field } from '@snek-at/jaen';
 import { FC } from 'react';
 import Callout from '../../../features/main-content/callout/components/Callouts';
 import Link from '../Link';
@@ -25,6 +28,13 @@ import ImageCard from '../../../features/main-content/image-card/components/Imag
 import DocsIndex from '../../../features/main-content/docs-index/components/DocsIndex';
 
 import { MdxField, MdxFieldProps } from '@atsnek/jaen-fields-mdx';
+import {
+  useAuthenticationContext,
+  useContentManagement,
+  usePageContext
+} from '@atsnek/jaen';
+import { EditIcon, LinkIcon } from '@chakra-ui/icons';
+import { QASMPlayground } from '../../../features/main-content/qasm-playground/components/qasm-plaground';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -34,8 +44,8 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   // TEXT
   p: props => <Text {...props} />,
   // LIST
-  ul: (props: any) => <List {...props}></List>,
-  ol: (props: any) => <List variant="ordered" {...props}></List>,
+  ul: (props: any) => <UnorderedList {...props}></UnorderedList>,
+  ol: (props: any) => <OrderedList {...props}></OrderedList>,
   li: (props: any) => <ListItem {...props}></ListItem>,
   a: (props: any) => <Link href={props.href} {...props} />,
   // TABLE
@@ -59,36 +69,13 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
     const lang = className?.replace('language-', '') || 'text';
 
     if (playground) {
-      return (
-        <CodePlayground
-          codeEditorProps={{
-            language: lang,
-            ...props
-          }}
-          executeCode={async code => {
-            await new Promise(resolve => setTimeout(resolve, 3000));
-
-            // Fetch some random data from the internet
-            const res = await fetch(
-              'https://jsonplaceholder.typicode.com/todos/1'
-            );
-            const data = await res.json();
-
-            return (
-              <Box>
-                <h1>How cool is that?</h1>
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              </Box>
-            );
-          }}
-          {...props}
-        />
-      );
+      return <QASMPlayground {...props} />;
     }
 
     return <CodeSnippet language={lang} {...props} />;
   },
   // CUSTOM COMPONENTS
+  QASMPlayground,
   Filesystem,
   ImageCard,
   Callout,
@@ -97,32 +84,61 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
+  const { isAuthenticated, user, isLoading } = useAuthenticationContext();
+  const { isEditing, toggleIsEditing } = useContentManagement();
+  const { jaenPage } = usePageContext();
+
+  const canEdit = isAuthenticated && user?.isAdmin ? true : false;
+
   return (
-    <MdxField
-      name="documentation"
-      components={{
-        // TEXT
-        h1: props => (
-          <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h2: props => (
-          <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h3: props => (
-          <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h4: props => (
-          <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h5: props => (
-          <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />
-        ),
-        h6: props => (
-          <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />
-        ),
-        ...mdxEditorComponents
-      }}
-    />
+    <Stack spacing={4}>
+      {canEdit && isLoading === false && (
+        <ButtonGroup>
+          <Link
+            leftIcon={<LinkIcon />}
+            variant="outline"
+            as={Button}
+            to={`/cms/pages/#${btoa(jaenPage.id)}`}
+          >
+            Edit in CMS
+          </Link>
+          <Button
+            leftIcon={<EditIcon />}
+            variant="outline"
+            colorScheme={isEditing ? 'red' : undefined}
+            onClick={() => toggleIsEditing()}
+          >
+            {isEditing ? 'Stop Editing' : 'Edit directly'}
+          </Button>
+        </ButtonGroup>
+      )}
+
+      <MdxField
+        name="documentation"
+        components={{
+          // TEXT
+          h1: props => (
+            <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h2: props => (
+            <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h3: props => (
+            <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h4: props => (
+            <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h5: props => (
+            <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />
+          ),
+          h6: props => (
+            <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />
+          ),
+          ...mdxEditorComponents
+        }}
+      />
+    </Stack>
   );
 };
 

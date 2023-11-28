@@ -17,18 +17,13 @@ import TbDeviceFloppy from '../../../shared/components/icons/tabler/TbDeviceFlop
 
 interface IPostActionToolbarProps {
   viewMode?: TPostViewMode;
-  isNewPost?: boolean;
   toggleViewMode?: () => void;
   toggleRating: () => void;
   hasRated: boolean;
   isRating: boolean;
-  isPublic?: boolean;
   canEdit?: boolean;
-  setPostPreviewImage?: (src: File) => void;
-  handleTogglePrivacy?: () => void;
-  isTogglingPrivacy?: boolean;
-  createNewPost: () => void;
-  isCreatingNewPost: boolean;
+  savePost: () => void;
+  isSavingPost: boolean;
   handleDeletePost?: () => void;
   isDeletingPost?: boolean;
 }
@@ -38,18 +33,13 @@ interface IPostActionToolbarProps {
  */
 const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   viewMode,
-  isNewPost,
   toggleViewMode,
-  isPublic,
   canEdit,
   hasRated,
   toggleRating,
-  setPostPreviewImage,
-  handleTogglePrivacy,
-  isTogglingPrivacy,
-  createNewPost,
-  isCreatingNewPost,
   handleDeletePost,
+  savePost,
+  isSavingPost,
   isDeletingPost
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
@@ -57,71 +47,20 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   const isMobile = useBreakpointValue({ base: true, md: false });
   const previewImageInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.currentTarget?.files || e.currentTarget.files?.length === 0 || !setPostPreviewImage)
-      return;
-    const file = e.currentTarget.files[0];
-    setPostPreviewImage(file);
-  };
-
   const actionToolbarItems: TActionToolbarItem[] = [];
 
   const areActionsDisabled = isDeletingPost;
 
   if (canEdit) {
-    if (handleTogglePrivacy) {
-      actionToolbarItems.push({
-        order: 1,
-        icon: <TbPhoto fontSize="xl" />,
-        onClick: () => previewImageInputRef.current?.click(),
-        tooltip: 'Upload new image',
-        ariaLabel: 'Upload new image',
-        disabled: areActionsDisabled
-      });
-      if (!isNewPost) {
-        actionToolbarItems.push(
-          {
-            order: 2,
-            icon: isPublic ? <TbBookDownload /> : <TbBookUpload />,
-            ariaLabel: isPublic ? 'Unpublish this post' : 'Publish this post',
-            tooltip: isPublic ? 'Unpublish this post' : 'Publish this post',
-            onClick: handleTogglePrivacy,
-            hoverColor: 'components.postEditor.publish.hover.color',
-            disabled: isTogglingPrivacy || areActionsDisabled
-          },
-          {
-            order: 3 // Divider Item
-          },
-          {
-            order: 3,
-            icon: <TbSquareRoundedX />,
-            ariaLabel: 'Delete post',
-            tooltip: 'Delete post',
-            onClick: handleDeletePost,
-            disabled: isDeletingPost || areActionsDisabled,
-            hoverColor: 'components.postEditor.delete.hover.color'
-          },
-          {
-            order: 2,
-            icon: <TbDeviceFloppy />,
-            ariaLabel: 'Save this post',
-            tooltip: 'Posts are saved automatically.',
-            onClick: () => {},
-            hoverColor: 'components.postEditor.save.hover.color'
-          }
-        );
-      } else {
-        actionToolbarItems.push({
-          order: 1,
-          ariaLabel: 'Create new post',
-          tooltip: 'Create new post',
-          icon: <TbDeviceIpadPlus />,
-          onClick: createNewPost,
-          disabled: isCreatingNewPost || areActionsDisabled,
-          hoverColor: 'components.postEditor.save.hover.color'
-        });
-      }
-    }
+    actionToolbarItems.push({
+      order: 3,
+      icon: <TbSquareRoundedX />,
+      ariaLabel: 'Delete post',
+      tooltip: 'Delete post',
+      onClick: handleDeletePost,
+      disabled: isDeletingPost || areActionsDisabled,
+      hoverColor: 'components.postEditor.delete.hover.color'
+    });
   } else {
     if (isAuthenticated) {
       actionToolbarItems.push({
@@ -133,12 +72,24 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
           />
         ),
         onClick: toggleRating,
-        disabled: isTogglingPrivacy || areActionsDisabled,
+        disabled: areActionsDisabled,
         tooltip: hasRated ? 'Unrate this post' : 'Rate this post',
         ariaLabel: hasRated ? 'Unrated this post' : 'Rate this post',
         hoverColor: 'components.postEditor.rate.hover.color'
       });
     }
+  }
+
+  if (viewMode === 'edit' && canEdit) {
+    actionToolbarItems.push({
+      order: 1,
+      ariaLabel: 'Save this post',
+      tooltip: 'Save this post',
+      icon: <TbDeviceFloppy />,
+      onClick: savePost,
+      disabled: areActionsDisabled,
+      hoverColor: 'components.postEditor.save.hover.color'
+    });
   }
 
   if (toggleViewMode && canEdit) {
@@ -157,16 +108,6 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   //TODO: Outsource the image input to a separate component
   return (
     <>
-      <Input
-        type="file"
-        ref={previewImageInputRef}
-        accept=".jpg,.jpeg,.png,.gif"
-        visibility="hidden"
-        display="none"
-        zIndex={-999}
-        opacity={0}
-        onChange={handleImageInputChange}
-      />
       <ActionToolbar
         active={isMobile || scrollPosition > 90 || true}
         actions={[...actionToolbarItems]}

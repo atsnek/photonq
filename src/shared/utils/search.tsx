@@ -4,10 +4,17 @@ import { UseSearchResult, useSearch } from '../../search/use-search';
 import {
   TSearchMetadata,
   TSearchResult,
-  TSearchResultSection
+  TSearchResultSection,
+  TSearchResults
 } from '../types/search';
 import { filterWhitespaceItems } from './utils';
-import { snekResourceId } from '@atsnek/jaen';
+import { getUserDisplayname } from '../../features/user/utils/user';
+import TbIndentIncrease from '../components/icons/tabler/TbIndentIncrease';
+import { SnekUser } from '@atsnek/jaen';
+import { SearchIndex } from '../../search/types';
+import TbBook from '../components/icons/tabler/TbBook';
+import TbBooks from '../components/icons/tabler/TbBooks';
+import TbUser from '../components/icons/tabler/TbUser';
 
 /**
  * Searches the docs for the given query.
@@ -121,8 +128,20 @@ export async function searchDocs(
     pageTitleMatches[i] = 0;
     const pageResult = pageResults[i];
     const searchResultItems: Array<TSearchResult> = [];
+    // searchResults.push({
+    //   _page_matches: pageTitleMatches[i],
+    //   _section_matches: 0,
+    //   title: pageResult.doc.title,
+    //   results: [
+    //     {
+    //       title: pageResult.doc.title,
+    //       description: pageResult.doc.content ?? pageResult.doc.title,
+    //       href: pageResult.doc.url ?? '#'
+    //     }
+    //   ]
+    // });
 
-    // Search for hits in the sections of the page.
+    //Search for hits in the sections of the page.
     const sectionResults =
       sectionIndex.search(query, 5, {
         // offset: i * 5,
@@ -133,7 +152,7 @@ export async function searchDocs(
       })[0]?.result ?? [];
 
     const occured: Record<string, boolean> = {};
-    //* We set an additional limit since flexsearch doesn't seem to work with the offset and either ot both limit parameters.
+    // We set an additional limit since flexsearch doesn't seem to work with the offset and either ot both limit parameters.
     for (let j = 0; j < Math.min(sectionResults.length, 5); j++) {
       const sectionResult = sectionResults[j];
       if (sectionResult.doc.display !== undefined) {
@@ -141,9 +160,7 @@ export async function searchDocs(
       }
 
       const key =
-        sectionResult.doc.url +
-        '@' +
-        (sectionResult.doc.display ?? sectionResult.doc.content);
+        sectionResult.doc.url + '@' + (sectionResult.doc.display ?? sectionResult.doc.content);
 
       if (occured[key]) {
         continue;
@@ -151,7 +168,7 @@ export async function searchDocs(
       occured[key] = true;
 
       searchResultItems.push({
-        title: sectionResult.doc.title,
+        title: sectionResult.doc.content ?? sectionResult.doc.title ?? pageResult.doc.title,
         description: sectionResult.doc.content ?? sectionResult.doc.title,
         href: sectionResult.doc.url
       });
@@ -166,23 +183,47 @@ export async function searchDocs(
       });
     }
 
-    // Add the result section to the search results.
+    //Add the result section to the search results.
     searchResults.push({
       _page_matches: pageTitleMatches[i],
       _section_matches: sectionResults.length,
       title: pageResult.doc.title,
-      results: searchResultItems
+      results: searchResultItems,
+      resultIcon: <TbIndentIncrease />
     });
   }
   const res = searchResults.sort((a, b) => {
     if (a._page_matches !== b._page_matches) {
       return b._page_matches - a._page_matches;
     }
-    return a._section_matches === b._section_matches
-      ? 0
-      : b._section_matches - a._section_matches;
+    return a._section_matches === b._section_matches ? 0 : b._section_matches - a._section_matches;
   });
   return res;
+}
+
+export async function getDefaultSearchDocs(
+  data: UseSearchResult['searchIndex']
+): Promise<TSearchResultSection[]> {
+  const results: TSearchResultSection[] = [];
+  Object.keys(data).forEach(key => {
+    if (!key.startsWith('/docs/') || key === '/docs/') return;
+    const item = data[key];
+    const summary = Object.keys(item.data)
+      .find(key => key.length > 0 && item.data[key].length > 0)
+      ?.slice(0, 100);
+    results.push({
+      title: item.title,
+      results: [
+        {
+          description: summary ?? item.title ?? '',
+          href: key,
+          title: item.title ?? ''
+        }
+      ],
+      resultIcon: <TbIndentIncrease />
+    });
+  });
+  return results;
 }
 
 /**
@@ -190,30 +231,130 @@ export async function searchDocs(
  * @param query The query to search for
  * @returns  The search results
  */
-export async function searchSocialPosts(
-  query: string
-): Promise<TSearchResultSection[]> {
-  const [searchResult, error] = await sq.query(q => {
-    const posts = q.allSocialPost({
-      resourceId: snekResourceId,
-      filters: { query }
-    });
+export async function searchSocialPosts(query?: string): Promise<TSearchResultSection[]> {
+  const [posts, postsError] = await sq.query(q => {
+    const posts =
+      query && query.length > 0
+        ? q.allSocialPost({ resourceId: __SNEK_RESOURCE_ID__, filters: { query }, first: 10 })
+        : q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 10 });
 
     const sections: TSearchResultSection[] = [];
-    posts.nodes.map(post => {
+    posts.nodes.map(pn => {
+      const username = pn.profile?.user?.username ?? '';
       sections.push({
-        title: post.title,
+        title: pn.title,
         results: [
           {
-            description: post.matchingQuery ?? post.summary ?? post.title,
-            href: `/post/${post.slug}`,
-            title: post.title
+            description: pn.matchingQuery ?? pn.summary ?? pn.title,
+            href: `/post/${pn.slug}`,
+            title: `${username}/${pn.title}`
           }
         ]
       });
     });
+
     return sections;
   });
 
-  return searchResult;
+  return !postsError || postsError?.length === 0 ? posts : [];
+}
+
+/**
+ * Search the users for the given query.
+ * @param query The query to search for
+ * @returns  The users matching the query
+ */
+export async function searchUser(query: string): Promise<TSearchResultSection[]> {
+  const [searchResult, error] = await sq.query(q => {
+    const user = q.user({ login: query, resourceId: __SNEK_RESOURCE_ID__ });
+
+    const sections: TSearchResultSection[] = [];
+    if (!user) sections;
+
+    sections.push({
+      title: user.username,
+      results: [
+        {
+          avatarURL: user.details?.avatarURL ?? undefined,
+          description: user.profile?.bio ?? user.username,
+          href: `/user/${user.username}`,
+          title: getUserDisplayname(user)
+        }
+      ]
+    });
+    return sections;
+  });
+
+  return !error || error?.length === 0 ? searchResult : [];
+}
+
+/**
+ * Get the default search results for the given user.
+ * @param currentUserId  The id of the current user
+ * @returns  The default search results
+ */
+export async function getDefaultSearchUsers(
+  currentUserId: string
+): Promise<TSearchResultSection[]> {
+  if (!currentUserId) return [];
+  const [followerCon, followerConError] = await sq.query(q => {
+    const followers = q
+      .user({ resourceId: __SNEK_RESOURCE_ID__, id: currentUserId })
+      .profile?.followers({ first: 5 });
+    followers?.nodes.map(fn => fn.follower.id);
+    return followers;
+  });
+  if (!followerCon || followerConError?.length > 0) return [];
+
+  const results = await Promise.all(
+    followerCon.nodes.map(async (fn): Promise<TSearchResult> => {
+      const [follower] = await sq.query(q => {
+        const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: fn.follower.id });
+        user.details?.firstName;
+        user.details?.lastName;
+        user.username;
+        return user;
+      });
+      return {
+        description: follower.profile?.bio ?? follower.username,
+        href: `/user/${follower.username}`,
+        title: getUserDisplayname(follower)
+      };
+    })
+  );
+
+  return [
+    {
+      title: 'Users',
+      results
+    }
+  ];
+}
+
+/**
+ * Get the default search results for the given user.
+ * @param currentUserId  The id of the current user
+ * @param searchIndex  The search index to use
+ * @returns  The default search results
+ */
+export async function fetchDefaultSearchresult(
+  userId: SnekUser['id'] | undefined,
+  searchIndex: SearchIndex
+): Promise<TSearchResults> {
+  const userResults: TSearchResultSection[] = userId
+    ? await getDefaultSearchUsers(userId)
+    : [
+        {
+          title: 'users',
+          results: [{ title: 'Create an account', href: '/signup', description: '' }]
+        }
+      ];
+  const docsResults = await getDefaultSearchDocs(searchIndex);
+  const socialPostResults = await searchSocialPosts();
+
+  return {
+    docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
+    community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+    user: { title: 'Users', sections: userResults, icon: <TbUser /> }
+  };
 }
