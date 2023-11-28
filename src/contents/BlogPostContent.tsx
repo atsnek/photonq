@@ -60,24 +60,20 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     let historyListener: HistoryUnsubscribe | undefined = undefined;
     if (madeChanges) {
       window.addEventListener('beforeunload', handleBeforeUnload);
-      historyListener = globalHistory.listen(
-        ({ action, location: historyLocation }) => {
-          if (location.pathname === historyLocation.pathname) return;
+      historyListener = globalHistory.listen(({ action, location: historyLocation }) => {
+        if (location.pathname === historyLocation.pathname) return;
+        if (
+          action === 'PUSH' &&
+          (location.pathname === '/community/new-post/' || location.pathname.includes('/post/')) &&
+          !isSavingPost
+        ) {
           if (
-            action === 'PUSH' &&
-            location.pathname === '/community/new-post/' &&
-            !isSavingPost
+            !window.confirm('Are you sure you want to leave this page? Your changes will be lost.')
           ) {
-            if (
-              !window.confirm(
-                'Are you sure you want to leave this page? Your changes will be lost.'
-              )
-            ) {
-              globalHistory.navigate(location.pathname);
-            }
+            globalHistory.navigate(location.pathname);
           }
         }
-      );
+      });
     }
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
