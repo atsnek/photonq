@@ -45,7 +45,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({ isOwnProfile, togglePostPr
   //   [showcaseStarPosts, showcaseLatestPosts]
   // );
   return (
-    <VStack gap={hasOverviewPosts || postData.state === 'loading' ? 12 : 0}>
+    <VStack gap={12}>
       <PostList
         postData={postData}
         previewType="card"
