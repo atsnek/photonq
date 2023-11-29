@@ -9,8 +9,9 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/
   publish-container:
     runs-on: ubuntu-latest
+    environment: photonq-internal
     env:
-      GATSBY_ORIGIN_API_URL: http://services-photonq-org/graphql
+      GATSBY_ORIGIN_API_URL: ${{ vars.GATSBY_ORIGIN_API_URL }}
     permissions:
       packages: write
       contents: read
