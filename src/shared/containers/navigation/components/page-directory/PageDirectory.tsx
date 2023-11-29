@@ -32,10 +32,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
   const { isAuthenticated, openLoginModal } = useAuthenticationContext();
-  const isSmallScreen = useBreakpointValue(
-    { base: true, md: false },
-    { fallback: 'false' }
-  );
+  const isSmallScreen = useBreakpointValue({ base: true, md: false }, { fallback: 'false' });
 
   const updateExpandedIdx = (idx: number, mode: 'toggle' | 'set') => {
     const isIncluded = expandedIdx.includes(idx);
@@ -47,6 +44,15 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   };
 
   const baseMenuItems: NavMenuSection[] = [
+    {
+      name: 'Navigation',
+      items: [
+        {
+          name: 'Documentation',
+          href: '/docs'
+        }
+      ]
+    },
     {
       name: 'Community',
       icon: <TbUsers />,
@@ -71,15 +77,12 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   ];
 
   if (isSmallScreen && !isAuthenticated) {
-    baseMenuItems.unshift({
-      name: '',
-      items: [
-        {
-          name: 'Sign In',
-          onClick: openLoginModal
-        }
-      ]
-    });
+    baseMenuItems
+      .find(bmi => bmi.name === 'Navigation')
+      ?.items.unshift({
+        name: 'Sign In',
+        onClick: openLoginModal
+      });
   }
 
   let menuRootExpandedIdx = 0;

@@ -17,11 +17,7 @@ interface MobileNavDrawerProps {
  * The mobile navigation drawer.
  * This is used for mobile devices and contains all core menus and search functionalities.
  */
-const MobileNavDrawer: FC<MobileNavDrawerProps> = ({
-  isOpen,
-  onOpen,
-  onClose
-}) => {
+const MobileNavDrawer: FC<MobileNavDrawerProps> = ({ isOpen, onOpen, onClose }) => {
   const { menuStructure } = useMenuContext();
   const navOffset = useNavOffset();
 
@@ -44,20 +40,9 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({
             pt={9}
             px={9}
           >
-            <SearchMenu
-              styleProps={{
-                menu: {
-                  matchWidth: true
-                }
-              }}
-              onItemClickCapture={onClose}
-            />
+            <SearchMenu />
             <Box mt={5}>
-              <PageDirectory
-                isMobile
-                closeMobileDrawer={onClose}
-                data={menuStructure}
-              />
+              <PageDirectory isMobile closeMobileDrawer={onClose} data={menuStructure} />
             </Box>
             <Spacer />
             <NavbarControls isMobile />

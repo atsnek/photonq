@@ -62,10 +62,6 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   }, []);
 
   useEffect(() => {
-    console.log('searchData', searchData);
-  });
-
-  useEffect(() => {
     // Focus the input when the user presses the shortcut
     const handleGlobalKeydown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') modalDisclosure.onOpen();
