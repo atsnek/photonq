@@ -11,12 +11,8 @@ interface GatsbyLinkProps extends LinkProps {
  * Custom link component combining Chakra UI's and Gatsby's Link.
  */
 
-const Link = forwardRef<typeof JaenLink, GatsbyLinkProps>(
-  ({ href = '#', ...props }, ref) => {
-    console.log('Link href', href, props);
-
-    return <JaenLink ref={ref as any} to={href} {...props} />;
-  }
-);
+const Link = forwardRef<typeof JaenLink, GatsbyLinkProps>(({ href = '#', ...props }, ref) => {
+  return <JaenLink ref={ref as any} to={href} {...props} />;
+});
 
 export default Link;

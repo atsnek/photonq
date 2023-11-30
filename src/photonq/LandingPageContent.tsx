@@ -28,11 +28,11 @@ export const LandingPageContent: FC<ILandingPageContentProps> = ({ path }) => {
     const heroHeight = document.querySelector<HTMLDivElement>('#hero');
     if (!heroHeight) return;
     const heroHeightPx = heroHeight.getBoundingClientRect().height;
-    setColorMode(
+    const newColorMode =
       chakraColorMode === 'dark' || (scrollPos < heroHeightPx && !topNavDisclosure.isOpen)
         ? 'dark'
-        : 'light'
-    );
+        : 'light';
+    if (newColorMode !== colorMode) setColorMode(newColorMode);
   }, [scrollPos, topNavDisclosure.isOpen, chakraColorMode]);
 
   let linkProps: TTopNavLinkProps = { transition: 'opacity 0.2s ease-in-out' };

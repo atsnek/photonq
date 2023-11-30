@@ -162,7 +162,6 @@ const TopNav: FC<ITopNavProps> = ({
   };
 
   const search = (() => {
-    console.log('colorMode', colorMode);
     if (!colorMode) return <SearchMenu />;
     if (colorMode === 'dark')
       return (
