@@ -58,7 +58,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
 }) => {
   const isAuthenticated = useAuthenticationContext().user !== null;
   const isAuthor = useAuthenticationContext().user?.id === post.profile.id;
-  const manageBtnDisplay = useBreakpointValue({ base: 'none', md: 'initial' });
+  const manageBtnDisplay = useBreakpointValue({ base: 'none', xl: 'initial' });
   const [isRating, setIsRating] = useState(false);
 
   const handleRating = async () => {
@@ -112,7 +112,7 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             objectFit="cover"
           />
         )}
-        <Box maxW="63%">
+        <Box maxW="55%">
           {!hideAuthor && (
             <Link
               variant="hover-theme"
@@ -129,6 +129,9 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             transition="color 0.2s ease-in-out"
             flex={1}
             w={{ base: 'full', md: 'auto' }}
+            textOverflow="ellipsis"
+            overflow="hidden"
+            whiteSpace="nowrap"
           >
             <LinkOverlay href={`/post/${post.slug}`}>{post.title}</LinkOverlay>
           </Heading>
