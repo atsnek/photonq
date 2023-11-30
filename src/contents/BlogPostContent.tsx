@@ -8,11 +8,12 @@ import MainGrid from '../shared/containers/components/MainGrid';
 import PostEditor from '../features/post/components/PostEditor';
 import PostActionToolbar from '../features/post/components/PostActionToolbar';
 import Alert from '../shared/components/alert/Alert';
-import { useDisclosure, useToast } from '@chakra-ui/react';
+import { useBreakpointValue, useDisclosure, useToast } from '@chakra-ui/react';
 import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { HistoryUnsubscribe, globalHistory, navigate, useLocation } from '@reach/router';
 import { wait } from '../shared/utils/utils';
+import PostMobileMetaEditor from '../features/post/components/PostMobileMetaEditor';
 
 const handleBeforeUnload = (e: BeforeUnloadEvent) => {
   e.preventDefault();
@@ -32,11 +33,16 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [viewMode, setViewMode] = useState<TPostViewMode>(isNewPost ? 'edit' : 'read');
   const [madeChanges, setMadeChanges] = useState(false);
   const [isRating, setIsRating] = useState(false);
-  const deletePostDisclosure = useDisclosure();
+  const [isSavingPost, setIsSavingPost] = useState(false);
+  const [newPostPreviewImage, setNewPostPreviewImage] = useState<File>();
+  const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
+
+  const deletePostDisclosure = useDisclosure();
   const isAuthenticated = useAuthenticationContext().user !== null;
   const saveToast = useToast();
   const location = useLocation();
+  const showMobileMetaEditor = useBreakpointValue({ base: true, md: false });
 
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
@@ -47,11 +53,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const editTitle = useAppStore(state => state.singlePost.editTitle);
   const updatePreviewImage = useAppStore(state => state.singlePost.updatePreviewImage);
   const changeLanguage = useAppStore(state => state.singlePost.changeLanguage);
-  const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
   const createNewPost = useAppStore(state => state.singlePost.createNewPost);
   const savePost = useAppStore(state => state.singlePost.savePost);
-  const [isSavingPost, setIsSavingPost] = useState(false);
-  const [newPostPreviewImage, setNewPostPreviewImage] = useState<File>();
 
   const deletePost = useAppStore(state => state.singlePost.deletePost);
 
@@ -173,6 +176,19 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         setMode={setViewMode}
         savePost={handleSavePost}
       />
+      {!isDeletingPost && showMobileMetaEditor && (
+        <PostMobileMetaEditor
+          handleTitleChange={handleTitleChange}
+          handleSummaryChange={handleSummaryChange}
+          setPostPreviewImage={setPostPreviewImage}
+          canEdit={canEditPost && !isDeletingPost}
+          isAuthor={isPostAuthor}
+          post={post}
+          isPostPreviewImageUploading={isPreviewImageUploading}
+          handleLanguageChange={handleLanguageChange}
+          handleTogglePrivacy={handleTogglePrivacy}
+        />
+      )}
       <MainWrapper>
         <PostLeftNav
           setViewMode={setViewMode}

@@ -52,9 +52,10 @@ const Image: FC<ImageProps> = ({ editable, handleImageChange, isUploading, ...pr
             }
           : {}
       }
+      boxSize={props.boxSize}
       cursor={editable ? 'pointer' : 'default'}
       onClick={() => inputRef.current?.click()}
-      borderRadius="full"
+      borderRadius={props.borderRadius ?? 'full'}
       overflow="hidden"
     >
       <Input

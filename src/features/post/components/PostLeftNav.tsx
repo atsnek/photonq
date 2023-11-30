@@ -77,6 +77,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
       minH="420px"
       h={`calc(100vh - 100px  - ${navOffset})`}
       mr={10}
+      ml={{ base: 5, xl: 0 }}
     >
       <VStack
         spacing={4}
