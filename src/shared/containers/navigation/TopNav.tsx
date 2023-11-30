@@ -255,7 +255,7 @@ const TopNav: FC<ITopNavProps> = ({
                     color: 'topNav.links.active.color'
                   }}
                 />
-                {!isAuthenticated && !isMobile && (
+                {showThemeToggle && !isAuthenticated && !isMobile && (
                   <ThemeChooser
                     buttonProps={{
                       variant: 'outline',
