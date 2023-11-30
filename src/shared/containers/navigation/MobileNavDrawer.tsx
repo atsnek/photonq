@@ -6,6 +6,7 @@ import { Global } from '@emotion/react';
 import SearchMenu from '../../../features/search/components/SearchMenu';
 import { useNavOffset } from '../../hooks/use-nav-offset';
 import { useMenuContext } from '../../contexts/menu';
+import { useLocation } from '@reach/router';
 
 interface MobileNavDrawerProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ interface MobileNavDrawerProps {
 const MobileNavDrawer: FC<MobileNavDrawerProps> = ({ isOpen, onOpen, onClose }) => {
   const { menuStructure } = useMenuContext();
   const navOffset = useNavOffset();
+  const { pathname } = useLocation();
 
   return (
     <>
@@ -42,7 +44,12 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({ isOpen, onOpen, onClose }) 
           >
             <SearchMenu />
             <Box mt={5}>
-              <PageDirectory isMobile closeMobileDrawer={onClose} data={menuStructure} />
+              <PageDirectory
+                isMobile
+                closeMobileDrawer={onClose}
+                data={menuStructure}
+                path={pathname}
+              />
             </Box>
             <Spacer />
             <NavbarControls isMobile />

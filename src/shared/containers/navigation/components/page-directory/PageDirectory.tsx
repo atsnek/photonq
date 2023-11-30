@@ -45,15 +45,6 @@ const PageDirectory: FC<PageDirectoryProps> = ({
 
   const baseMenuItems: NavMenuSection[] = [
     {
-      name: 'Navigation',
-      items: [
-        {
-          name: 'Documentation',
-          href: '/docs'
-        }
-      ]
-    },
-    {
       name: 'Community',
       icon: <TbUsers />,
       items: [
@@ -76,13 +67,33 @@ const PageDirectory: FC<PageDirectoryProps> = ({
     }
   ];
 
+  if (path === '/') {
+    baseMenuItems.unshift({
+      name: 'Navigation',
+      items: [
+        {
+          name: 'Documentation',
+          href: '/docs'
+        }
+      ]
+    });
+  }
+
   if (isSmallScreen && !isAuthenticated) {
-    baseMenuItems
-      .find(bmi => bmi.name === 'Navigation')
-      ?.items.unshift({
-        name: 'Sign In',
-        onClick: openLoginModal
+    const item = {
+      name: 'Sign In',
+      onClick: openLoginModal
+    };
+    const section = baseMenuItems.find(bmi => bmi.name === 'Navigation');
+
+    if (section) {
+      section.items.unshift(item);
+    } else {
+      baseMenuItems.unshift({
+        name: 'Navigation',
+        items: [item]
       });
+    }
   }
 
   let menuRootExpandedIdx = 0;
