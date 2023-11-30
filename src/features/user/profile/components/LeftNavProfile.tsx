@@ -67,7 +67,7 @@ export const leftNavProfileStyling = {
   },
   stats: {
     grid: {
-      templateColumns: { base: 'repeat(4, auto)', md: '1fr' },
+      templateColumns: { base: 'repeat(2, auto)', sm: 'repeat(4, auto)', md: '1fr' },
       gap: { base: 4, md: 1 },
       mt: { base: 2, md: 2 }
     } as GridProps,
