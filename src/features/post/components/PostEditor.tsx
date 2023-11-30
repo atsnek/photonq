@@ -1,9 +1,8 @@
-import { Dispatch, FC, SetStateAction, useRef } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import { TPost } from '../types/post';
-import { Stack, Box, useToast } from '@chakra-ui/react';
+import { Stack, Box, useBreakpointValue } from '@chakra-ui/react';
 import UncontrolledMdxEditor from '../../../shared/components/mdx-editor/UncontrolledMdxEditor';
 import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
-import { TDebounceData } from '../../../shared/types/comm';
 import { useAppStore } from '../../../shared/store/store';
 
 interface IPostEditorProps {
@@ -19,23 +18,10 @@ const PostEditor: FC<IPostEditorProps> = ({
   madeChanges,
   setMadeChanges
 }) => {
-  const stateRef = useRef<TDebounceData>({
-    state: 'inactive',
-    timeout: undefined
-  });
+  const editorMargin = useBreakpointValue({ base: { mx: 5 }, xl: { mx: 0, mr: 5 } });
   const updatePostContent = useAppStore(state => state.singlePost.editContent);
 
   const handleEditorChange = async (value: MdastRoot) => {
-    // clearTimeout(stateRef.current.timeout);
-    // stateRef.current.timeout = setTimeout(async () => {
-    //   setIsSavingPost(true);
-    //   await updatePostContent(value);
-    //   setIsSavingPost(false);
-    //   if (!madeChanges) setMadeChanges(true);
-    // }, 1500);
-
-    // There is no need to debounce the content update because there is no autosave feature
-    // and the user has to click the save button to save the changes
     setIsSavingPost(true);
     await updatePostContent(value);
     setIsSavingPost(false);
@@ -46,7 +32,7 @@ const PostEditor: FC<IPostEditorProps> = ({
   return (
     <>
       <Stack direction="row" position="relative" flex={1} overflow="hidden">
-        <Box w="full">
+        <Box w="full" {...editorMargin}>
           <UncontrolledMdxEditor
             onUpdateValue={handleEditorChange}
             isEditing
