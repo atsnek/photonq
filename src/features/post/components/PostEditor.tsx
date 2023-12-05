@@ -1,19 +1,23 @@
-import { Dispatch, FC, SetStateAction } from 'react';
+import { Dispatch, FC, RefObject, SetStateAction } from 'react';
 import { TPost } from '../types/post';
-import { Stack, Box, useBreakpointValue } from '@chakra-ui/react';
+import { Stack, Box, useBreakpointValue, Heading, Input, VStack } from '@chakra-ui/react';
 import UncontrolledMdxEditor from '../../../shared/components/mdx-editor/UncontrolledMdxEditor';
 import { MdastRoot } from '@atsnek/jaen-fields-mdx/dist/MdxField/components/types';
 import { useAppStore } from '../../../shared/store/store';
 
 interface IPostEditorProps {
+  titleRef: RefObject<HTMLInputElement>;
   post?: TPost;
+  handleTitleChange: (title: string) => void;
   setIsSavingPost: Dispatch<SetStateAction<boolean>>;
   madeChanges: boolean;
   setMadeChanges: Dispatch<SetStateAction<boolean>>;
 }
 
 const PostEditor: FC<IPostEditorProps> = ({
+  titleRef,
   post,
+  handleTitleChange,
   setIsSavingPost,
   madeChanges,
   setMadeChanges
@@ -30,8 +34,45 @@ const PostEditor: FC<IPostEditorProps> = ({
   };
 
   return (
-    <>
-      <Stack direction="row" position="relative" flex={1} overflow="hidden">
+    <VStack w="full" gap={10}>
+      <Box
+        position="relative"
+        w="full"
+        _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          my: 'auto',
+          w: '2px',
+          h: 0,
+          bg: 'gray.300',
+          borderRadius: '2px',
+          transition: 'height 0.2s ease-in-out'
+        }}
+        _hover={{
+          _before: {
+            h: '50%'
+          }
+        }}
+        _focusWithin={{
+          _before: {
+            h: '80%'
+          }
+        }}
+      >
+        <Input
+          ref={titleRef}
+          variant="unstyled"
+          type="text"
+          fontWeight="bold"
+          placeholder="My Post"
+          fontSize="4xl"
+          ml={2}
+          onChange={e => handleTitleChange(e.target.value)}
+        />
+      </Box>
+      <Stack direction="row" position="relative" flex={1} overflow="hidden" w="full">
         <Box w="full" {...editorMargin}>
           <UncontrolledMdxEditor
             onUpdateValue={handleEditorChange}
@@ -40,7 +81,7 @@ const PostEditor: FC<IPostEditorProps> = ({
           />
         </Box>
       </Stack>
-    </>
+    </VStack>
   );
 };
 

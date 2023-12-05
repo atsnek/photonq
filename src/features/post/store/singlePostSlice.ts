@@ -51,8 +51,8 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
         privacy: 'PRIVATE',
         stars: 0,
         hasRated: false,
-        summary: 'A short cool summary',
-        title: 'My new post',
+        summary: '',
+        title: '',
         canManage: true,
         language: EnPostLanguage.EN
       };
@@ -134,7 +134,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
         if (post.content) {
           jsonContent = JSON.parse(post.content) as MdastRoot;
         }
-      } catch {}
+      } catch { }
 
       return {
         authorProfileId: post.profileId,
@@ -186,7 +186,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
   createNewPost: async file => {
     const post = get().singlePost.post;
 
-    if (!post) return undefined;
+    if (!post || post.title.trim().length === 0) return undefined;
 
     let previewImage: string = '';
     if (file) {
@@ -198,7 +198,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
     let content: string = '';
     try {
       content = JSON.stringify(post.content);
-    } catch {}
+    } catch { }
 
     const [newPost, error] = await sq.mutate(q =>
       q.socialPostCreate({

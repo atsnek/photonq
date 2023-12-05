@@ -29,9 +29,7 @@ interface IPostLeftNavProps {
   post?: TPost;
   canEdit?: boolean;
   isAuthor: boolean;
-  viewMode: TPostViewMode;
   setViewMode: Dispatch<SetStateAction<TPostViewMode>>;
-  handleTitleChange: (title: string) => void;
   handleSummaryChange: (summary: string) => void;
   setPostPreviewImage: (src: File) => void;
   isPostPreviewImageUploading: boolean;
@@ -47,9 +45,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
   post,
   canEdit,
   isAuthor,
-  viewMode,
   setViewMode,
-  handleTitleChange,
   handleSummaryChange,
   handleLanguageChange,
   setPostPreviewImage,
@@ -112,36 +108,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             }
           }}
         >
-          {canEdit ? (
-            <>
-              <Input
-                variant="outline"
-                size="sm"
-                placeholder="My Post"
-                defaultValue={post.title ?? 'My Post'}
-                textAlign="center"
-                px={8}
-                fontWeight="semibold"
-                borderRadius="md"
-                onBlur={e => handleTitleChange(e.target.value)}
-                colorScheme="brand"
-                _focusVisible={{
-                  borderWidth: 2,
-                  borderColor: 'brand.500'
-                }}
-              />
-              <TbEdit
-                id="editor-left-nav-edit-title-icon"
-                position="absolute"
-                top={0}
-                right={2}
-                bottom={0}
-                margin="auto 0"
-                opacity={0}
-                transition="opacity 0.2s ease-in-out"
-              />
-            </>
-          ) : (
+          {!canEdit && (
             <Text size="sm" fontWeight="semibold">
               {post.title}
             </Text>

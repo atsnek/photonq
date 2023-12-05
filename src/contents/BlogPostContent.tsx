@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import PostTopNav from '../features/post/components/PostTopNav';
 import { useAppStore } from '../shared/store/store';
 import PostLeftNav from '../features/post/components/PostLeftNav';
@@ -37,6 +37,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const [newPostPreviewImage, setNewPostPreviewImage] = useState<File>();
   const [isPreviewImageUploading, setIsPreviewImageUploading] = useState(false);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
+
+  const titleRef = useRef<HTMLInputElement>(null);
 
   const deletePostDisclosure = useDisclosure();
   const isAuthenticated = useAuthenticationContext().user !== null;
@@ -143,7 +145,10 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     if (!madeChanges) return;
     setIsSavingPost(true);
     if (isNewPost) {
-      1;
+      if (post?.title.trim().length === 0) {
+        titleRef.current?.focus();
+        return;
+      }
       const slug = await createNewPost(newPostPreviewImage);
       if (slug) {
         await wait(750); // Make sure the new post is created before navigating to it
@@ -192,12 +197,10 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       <MainWrapper>
         <PostLeftNav
           setViewMode={setViewMode}
-          handleTitleChange={handleTitleChange}
           handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
           canEdit={canEditPost && !isDeletingPost}
           isAuthor={isPostAuthor}
-          viewMode={viewMode}
           post={post}
           isPostPreviewImageUploading={isPreviewImageUploading}
           handleLanguageChange={handleLanguageChange}
@@ -206,7 +209,9 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
         />
         {canEditPost ? (
           <PostEditor
+            titleRef={titleRef}
             post={post}
+            handleTitleChange={handleTitleChange}
             setIsSavingPost={setIsSavingPost}
             madeChanges={madeChanges}
             setMadeChanges={setMadeChanges}
