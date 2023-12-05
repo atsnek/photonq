@@ -55,6 +55,7 @@ const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
     <Button
       display="flex"
       size="sm"
+      minH="9"
       variant="outline"
       bgColor="blackAlpha.50"
       color="topNav.input.color"
@@ -74,18 +75,19 @@ const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
       }}
       onClick={openModal}
     >
-      <Box as="span">Search</Box>
-
+      Type{' '}
       <Kbd
         borderBottomWidth={1}
-        background="transparent"
         borderRadius={4}
         py={0.5}
-        ml={3}
-        opacity={0.7}
+        mx={2}
+        bgColor={'transparent'}
+        borderColor={'topNav.input.borderColor'}
+        variant="outline"
       >
         /
       </Kbd>
+      to search
     </Button>
   );
 };
