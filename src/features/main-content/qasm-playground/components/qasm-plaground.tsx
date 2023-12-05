@@ -22,7 +22,7 @@ export interface QASMPlaygroundProps {}
 
 export const QASMPlayground: React.FC<QASMPlaygroundProps> = () => {
   const [qasmCode, setQasmCode] = useState<string>(
-    'OPENQASM 2.0;\nimport "qelib1.inc";\nqreg q[2];\nh q[0];\ncx q[0],q[1];\n'
+    'OPENQASM 2.0;\ninclude "qelib1.inc";\nqreg q[2];\nh q[0];\ncx q[0],q[1];\n'
   );
 
   const diagram = useRef<HTMLDivElement>(null);
