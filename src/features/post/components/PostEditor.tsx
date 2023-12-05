@@ -70,6 +70,7 @@ const PostEditor: FC<IPostEditorProps> = ({
           fontSize="4xl"
           ml={2}
           onChange={e => handleTitleChange(e.target.value)}
+          defaultValue={post?.title}
         />
       </Box>
       <Stack direction="row" position="relative" flex={1} overflow="hidden" w="full">
