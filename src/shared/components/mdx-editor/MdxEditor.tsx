@@ -33,7 +33,7 @@ import {
   useContentManagement,
   usePageContext
 } from '@atsnek/jaen';
-import { EditIcon, LinkIcon } from '@chakra-ui/icons';
+import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { QASMPlayground } from '../../../features/main-content/qasm-playground/components/qasm-plaground';
 
 interface IMdxEditorProps {
@@ -94,22 +94,23 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
     <Stack spacing={4}>
       {canEdit && isLoading === false && (
         <ButtonGroup>
-          <Link
-            leftIcon={<LinkIcon />}
-            variant="outline"
-            as={Button}
-            to={`/cms/pages/#${btoa(jaenPage.id)}`}
-          >
-            Edit in CMS
-          </Link>
           <Button
             leftIcon={<EditIcon />}
             variant="outline"
             colorScheme={isEditing ? 'red' : undefined}
             onClick={() => toggleIsEditing()}
           >
-            {isEditing ? 'Stop Editing' : 'Edit directly'}
+            {isEditing ? 'Stop Editing' : 'Edit'}
           </Button>
+
+          <Link
+            leftIcon={<SettingsIcon />}
+            variant="outline"
+            as={Button}
+            to={`/cms/pages/#${btoa(jaenPage.id)}`}
+          >
+            Page Settings
+          </Link>
         </ButtonGroup>
       )}
 
