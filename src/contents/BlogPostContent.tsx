@@ -144,11 +144,11 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const handleSavePost = async () => {
     if (!madeChanges) return;
     setIsSavingPost(true);
+    if (post?.title.trim().length === 0) {
+      titleRef.current?.focus();
+      return;
+    }
     if (isNewPost) {
-      if (post?.title.trim().length === 0) {
-        titleRef.current?.focus();
-        return;
-      }
       const slug = await createNewPost(newPostPreviewImage);
       if (slug) {
         await wait(750); // Make sure the new post is created before navigating to it
