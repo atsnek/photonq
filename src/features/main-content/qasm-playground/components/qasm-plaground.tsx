@@ -116,6 +116,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
         <CodeResultPreview
           isStandalone
           headerText="Translation"
+          headerTextRight="Powered by Perceval, Qiskit, PyZX"
           isExecuting={translator.isLoading}
           result={
             translator.result ? (
