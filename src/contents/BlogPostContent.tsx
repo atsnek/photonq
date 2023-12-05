@@ -143,11 +143,11 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
 
   const handleSavePost = async () => {
     if (!madeChanges) return;
-    setIsSavingPost(true);
     if (post?.title.trim().length === 0) {
       titleRef.current?.focus();
       return;
     }
+    setIsSavingPost(true);
     if (isNewPost) {
       const slug = await createNewPost(newPostPreviewImage);
       if (slug) {
