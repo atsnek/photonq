@@ -1,4 +1,11 @@
-import { Button, Box, Container, Center, Wrap, WrapItem } from '@chakra-ui/react';
+import {
+  Button,
+  Box,
+  Container,
+  Center,
+  Wrap,
+  WrapItem
+} from '@chakra-ui/react';
 import { Field } from '@atsnek/jaen';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
@@ -16,10 +23,10 @@ const AboutUs: FC = () => {
       heading: 'Lorem ipsum dolor sit amet',
       text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor neque sed imperdiet nibh lectus feugiat nunc sem.',
       avatar: {
-        src: 'https://i1.rgstatic.net/ii/profile.image/11431281181196403-1691945466424_Q128/Felix-Zilk.jpg',
-        name: 'Felix Zilk',
+        src: 'https://c5.rgstatic.net/m/437738464651637/images/template/default/profile/profile_default_l.jpg',
+        name: 'Tobias Guggemos',
         title: '',
-        to: 'https://www.researchgate.net/profile/Felix-Zilk'
+        to: 'https://www.researchgate.net/profile/Tobias-Guggemos'
       }
     },
     {
@@ -36,20 +43,20 @@ const AboutUs: FC = () => {
       heading: 'Lorem ipsum dolor sit amet',
       text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor neque sed imperdiet nibh lectus feugiat nunc sem.',
       avatar: {
-        src: 'https://c5.rgstatic.net/m/437738464651637/images/template/default/profile/profile_default_l.jpg',
-        name: 'Tobias Guggemos',
-        title: '',
-        to: 'https://www.researchgate.net/profile/Tobias-Guggemos'
+        src: 'https://avatars.githubusercontent.com/u/148873257?s=200&v=4',
+        name: 'Netsnek',
+        title: 'Development Studio',
+        to: 'https://netsnek.com'
       }
     },
     {
       heading: 'Lorem ipsum dolor sit amet',
       text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor neque sed imperdiet nibh lectus feugiat nunc sem.',
       avatar: {
-        src: 'https://avatars.githubusercontent.com/u/148873257?s=200&v=4',
-        name: 'Netsnek',
-        title: 'Development Studio',
-        to: 'https://netsnek.com'
+        src: 'https://i1.rgstatic.net/ii/profile.image/11431281181196403-1691945466424_Q128/Felix-Zilk.jpg',
+        name: 'Felix Zilk',
+        title: '',
+        to: 'https://www.researchgate.net/profile/Felix-Zilk'
       }
     }
   ];
@@ -92,7 +99,10 @@ const AboutUs: FC = () => {
                   />
                 </TestimonialHeading>
                 <TestimonialText>
-                  <Field.Text name={`TestimonialText${index}`} defaultValue={testimonial.text} />
+                  <Field.Text
+                    name={`TestimonialText${index}`}
+                    defaultValue={testimonial.text}
+                  />
                 </TestimonialText>
               </TestimonialContent>
               <TestimonialAvatar
