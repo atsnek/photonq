@@ -18,12 +18,36 @@ import { useQasmSimulate } from '../use-qasm-simulate';
 import { useQasmTranslate } from '../use-qasm-translate';
 import DiagramPreview from './diagram-preview';
 
-export interface QASMPlaygroundProps {}
+import React, { isValidElement } from 'react';
 
-export const QASMPlayground: React.FC<QASMPlaygroundProps> = () => {
-  const [qasmCode, setQasmCode] = useState<string>(
-    'OPENQASM 2.0;\ninclude "qelib1.inc";\nqreg q[2];\nh q[0];\ncx q[0],q[1];\n'
-  );
+const hasChildren = (element: React.ReactNode) =>
+  isValidElement(element) && Boolean(element.props.children);
+
+const ReactChildrenText = (children: any): string => {
+  if (hasChildren(children)) return ReactChildrenText(children.props.children);
+  return children;
+};
+
+export interface QASMPlaygroundProps {
+  children?: string;
+}
+
+const defaultQASMCode = `
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[2];
+h q[0];
+cx q[0],q[1];
+`;
+
+export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
+  children = defaultQASMCode
+}) => {
+  const [qasmCode, setQasmCode] = useState<string>(ReactChildrenText(children));
+
+  useEffect(() => {
+    setQasmCode(ReactChildrenText(children));
+  }, [children]);
 
   const diagram = useRef<HTMLDivElement>(null);
 
@@ -121,4 +145,6 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = () => {
 };
 
 QASMPlayground.displayName = 'QASMPlayground';
-QASMPlayground.defaultProps = {};
+QASMPlayground.defaultProps = {
+  children: defaultQASMCode
+};

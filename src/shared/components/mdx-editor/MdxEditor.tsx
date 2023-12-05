@@ -64,7 +64,6 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   }: {
     playground?: boolean;
     className?: string;
-    children: string;
   }) => {
     const lang = className?.replace('language-', '') || 'text';
 
