@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   ButtonGroup,
@@ -24,7 +26,10 @@ const hasChildren = (element: React.ReactNode) =>
   isValidElement(element) && Boolean(element.props.children);
 
 const ReactChildrenText = (children: any): string => {
+  if (typeof children === 'string') return children;
+
   if (hasChildren(children)) return ReactChildrenText(children.props.children);
+
   return children;
 };
 
@@ -51,13 +56,29 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
 
   const diagram = useRef<HTMLDivElement>(null);
 
+  const [diagramError, setDiagramError] = useState<string>();
+
   useEffect(() => {
-    circuit.importQASM(qasmCode);
+    try {
+      circuit.importQASM(qasmCode);
 
-    const svg = circuit.exportSVG();
+      const svg = circuit.exportSVG();
 
-    if (diagram.current) {
-      diagram.current.innerHTML = svg;
+      if (diagram.current) {
+        diagram.current.innerHTML = svg;
+      }
+
+      setDiagramError(undefined);
+    } catch (e) {
+      setDiagramError(
+        'There was an error while rendering the diagram. Please check your QASM code.'
+      );
+
+      if (diagram.current) {
+        diagram.current.innerHTML = '';
+      }
+
+      console.log(e);
     }
   }, [qasmCode]);
 
@@ -69,6 +90,12 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
       <Stack w="full">
         <DiagramPreview isStandalone headerText="Diagram">
           <Box ref={diagram} overflowY="scroll"></Box>
+          {diagramError && (
+            <Alert status="warning">
+              <AlertIcon />
+              {diagramError}
+            </Alert>
+          )}
         </DiagramPreview>
 
         <CodeSnippet
