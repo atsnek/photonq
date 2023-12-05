@@ -115,9 +115,9 @@ const TopNav: FC<ITopNavProps> = ({
           border: '1px solid',
           borderColor: 'topNav.input.borderColor',
           borderRadius: 'lg',
-          h: 8,
+          h: 9,
           px: 2,
-          lineHeight: 8
+          lineHeight: 9
         }
       }
     ]
