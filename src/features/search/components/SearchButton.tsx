@@ -1,14 +1,6 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  Kbd,
-  useBreakpointValue,
-  useMediaQuery
-} from '@chakra-ui/react';
-import { FC, useEffect, useState } from 'react';
-import { getPlatform } from '../../../shared/utils/utils';
 import { SearchIcon } from '@chakra-ui/icons';
+import { Box, Button, IconButton, Kbd, useMediaQuery } from '@chakra-ui/react';
+import { FC } from 'react';
 
 interface ISearchButtonProps {
   openModal: () => void;
@@ -19,13 +11,7 @@ interface ISearchButtonProps {
  * Search button component - shows a button that opens the search menu
  */
 const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
-  const [kbd, setKbd] = useState<string | null>(null);
-
   const [isMobile] = useMediaQuery('(max-width: 768px)'); // Adjust the breakpoint as needed
-
-  useEffect(() => {
-    setKbd(getPlatform() === 'mac' ? '⌘ K' : 'Ctrl+K');
-  }, [kbd]);
 
   const onKeyPress = (e: any) => {
     if (e.key === 'Enter') {
@@ -59,7 +45,7 @@ const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
           ml={3}
           opacity={0.7}
         >
-          {kbd}
+          /
         </Kbd>
       </IconButton>
     );
@@ -98,7 +84,7 @@ const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
         ml={3}
         opacity={0.7}
       >
-        {kbd}
+        /
       </Kbd>
     </Button>
   );

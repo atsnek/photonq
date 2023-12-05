@@ -1,5 +1,20 @@
-import { Center, Divider, ThemeProvider, VStack, useDisclosure, Text } from '@chakra-ui/react';
-import { FC, Fragment, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Center,
+  Divider,
+  ThemeProvider,
+  VStack,
+  useDisclosure,
+  Text
+} from '@chakra-ui/react';
+import {
+  FC,
+  Fragment,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import { TSearchResults } from '../../../shared/types/search';
 import {
@@ -11,7 +26,10 @@ import {
 import { SearchProvider } from '../../../search/search-provider';
 import { useSearch } from '../../../search/use-search';
 import theme from '../../../styles/theme/theme';
-import { SearchResultSection, SearchResultSectionTitle } from './SearchResultSection';
+import {
+  SearchResultSection,
+  SearchResultSectionTitle
+} from './SearchResultSection';
 import TbBook from '../../../shared/components/icons/tabler/TbBook';
 import SearchButton from './SearchButton';
 import SearchModal from './SearchModal';
@@ -31,7 +49,10 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const { data: searchData, setSearchData } = useSearchContext();
   const [navigateIdx, setNavigateIdx] = useState<number>(-1);
   const modalDisclosure = useDisclosure();
-  const ref = useRef<{ searchTimout: NodeJS.Timeout | undefined; changedQuery: boolean }>({
+  const ref = useRef<{
+    searchTimout: NodeJS.Timeout | undefined;
+    changedQuery: boolean;
+  }>({
     searchTimout: undefined,
     changedQuery: false // We use this to prevent the menu from fetching the default search results on first render since this is already done in the context provider
   });
@@ -47,7 +68,9 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     } else {
       if (ref.current.searchTimout) clearTimeout(ref.current.searchTimout);
       if (ref.current.changedQuery)
-        fetchDefaultSearchresult(currentUserId, search.searchIndex).then(setSearchData);
+        fetchDefaultSearchresult(currentUserId, search.searchIndex).then(
+          setSearchData
+        );
     }
   }, [searchQuery]);
 
@@ -64,7 +87,21 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   useEffect(() => {
     // Focus the input when the user presses the shortcut
     const handleGlobalKeydown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') modalDisclosure.onOpen();
+      if (e.key === '/') {
+        const el = document.activeElement as HTMLElement;
+
+        // Check if the current active element is not contenteditable
+        if (
+          el.isContentEditable ||
+          el.tagName === 'INPUT' ||
+          el.tagName === 'TEXTAREA'
+        )
+          return;
+
+        modalDisclosure.onOpen();
+
+        e.preventDefault();
+      }
     };
     window.addEventListener('keydown', handleGlobalKeydown);
 
@@ -79,8 +116,16 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     const userResult = await searchUser(searchQuery);
 
     setSearchData({
-      docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-      community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+      docs: {
+        title: 'Documentation',
+        sections: docsResults,
+        icon: <TbBooks />
+      },
+      community: {
+        title: 'Community Posts',
+        sections: socialPostResults,
+        icon: <TbBook />
+      },
       user: { title: 'Users', sections: userResult, icon: <TbUser /> }
     });
     setNavigateIdx(0);
@@ -94,11 +139,18 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     let itemIdx = 0;
     let sectionIdx = 0;
 
-    const haveSomeResults = Object.values(searchData).some(section => section.sections.length > 0);
+    const haveSomeResults = Object.values(searchData).some(
+      section => section.sections.length > 0
+    );
 
     if (!haveSomeResults && searchQuery.length > 0) {
       return [
-        <Center w="full" my={3} fontSize="sm" color="features.search.noResults.text.color">
+        <Center
+          w="full"
+          my={3}
+          fontSize="sm"
+          color="features.search.noResults.text.color"
+        >
           No results found for "
           <Text as="span" fontStyle="italic">
             {searchQuery}
@@ -215,7 +267,10 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   return (
     <ThemeProvider theme={theme}>
       <SearchProvider>
-        <SearchButton openModal={modalDisclosure.onOpen} navigate={handleNavigate} />
+        <SearchButton
+          openModal={modalDisclosure.onOpen}
+          navigate={handleNavigate}
+        />
       </SearchProvider>
       <SearchModal
         defaultQuery={searchQuery}
