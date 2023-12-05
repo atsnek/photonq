@@ -1,4 +1,11 @@
-import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import {
   EnPostLanguage,
   IPostPreviewProps,
@@ -13,6 +20,7 @@ import {
   LinkBoxProps,
   SimpleGrid,
   StackProps,
+  Text,
   VStack,
   useDisclosure
 } from '@chakra-ui/react';
@@ -44,6 +52,7 @@ interface IPostListProps extends StackProps {
   itemsPerPage?: number;
   maxItems?: number;
   paginationType?: TPaginationType;
+  isOwnProfile?: boolean;
   showControls?: boolean;
   hidePostAuthor?: boolean;
   previewType?: 'card' | 'list';
@@ -52,7 +61,6 @@ interface IPostListProps extends StackProps {
   currentQuery?: string;
   setFilterQuery?: (query: string) => void;
   showNoListResult?: boolean;
-  showPostPrivacy?: boolean;
   toggleRating: (id: TPostPreview['id']) => void;
   togglePostPrivacy?: (
     id: TPostPreview['id'],
@@ -62,7 +70,10 @@ interface IPostListProps extends StackProps {
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
   dateRange?: { from: Date | undefined; to: Date | undefined };
-  setDateRange?: (from: Date | null | undefined, to: Date | null | undefined) => void;
+  setDateRange?: (
+    from: Date | null | undefined,
+    to: Date | null | undefined
+  ) => void;
 }
 
 /**
@@ -76,6 +87,7 @@ const PostList: FC<IPostListProps> = ({
   maxItems,
   paginationType = 'pages',
   showControls,
+  isOwnProfile,
   hidePostAuthor,
   previewType = 'list',
   skeletonProps,
@@ -84,7 +96,6 @@ const PostList: FC<IPostListProps> = ({
   setFilterQuery,
   showNoListResult = true,
   toggleRating,
-  showPostPrivacy,
   togglePostPrivacy,
   deletePost,
   filterLanguage,
@@ -99,7 +110,8 @@ const PostList: FC<IPostListProps> = ({
     itemsPerPage: itemsPerPage,
     maxItems: usePages ? maxItems : undefined,
     type: paginationType,
-    hasMoreItems: 'nextCursor' in postData && (!!postData.nextCursor || postData.hasMore)
+    hasMoreItems:
+      'nextCursor' in postData && (!!postData.nextCursor || postData.hasMore)
   });
   const deletePostDisclosure = useDisclosure();
   const [deletePostId, setDeletePostId] = useState<TPostPreview['id']>();
@@ -137,7 +149,9 @@ const PostList: FC<IPostListProps> = ({
 
   const memoizedPostPreviews = useMemo(() => {
     let PreviewComp: typeof PostCardPreview | typeof PostListItemPreview;
-    let PreviewSkeletonComp: typeof PostCardPreviewSkeleton | typeof PostListItemPreviewSkeleton;
+    let PreviewSkeletonComp:
+      | typeof PostCardPreviewSkeleton
+      | typeof PostListItemPreviewSkeleton;
     type ExtractProps<T> = T extends FC<IPostPreviewProps<infer P>> ? P : never;
     let previewCompProps:
       | ExtractProps<typeof PostCardPreview>
@@ -153,9 +167,15 @@ const PostList: FC<IPostListProps> = ({
 
     let previewSkeletons: ReactElement[] = [];
     if (postData.state === 'loading') {
-      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map((_, i) => (
-        <PreviewSkeletonComp key={i} {...skeletonProps} hideAuthor={hidePostAuthor} />
-      ));
+      previewSkeletons = Array.from({ length: pagination.itemsPerPage }).map(
+        (_, i) => (
+          <PreviewSkeletonComp
+            key={i}
+            {...skeletonProps}
+            hideAuthor={hidePostAuthor}
+          />
+        )
+      );
     }
 
     let postPreviews: JSX.Element[] = [];
@@ -172,7 +192,7 @@ const PostList: FC<IPostListProps> = ({
           isDeletingPost={postPreview.id === deletePostId && isDeletingPost}
           {...previewCompProps}
           hideAuthor={hidePostAuthor}
-          showPrivacy={showPostPrivacy}
+          showPrivacy={isOwnProfile}
           wrapperProps={{ minW: '33%' }}
         />
       ));
@@ -200,7 +220,11 @@ const PostList: FC<IPostListProps> = ({
     }
   }
 
-  const handleFetchPosts = (query: string, offset?: number, language?: EnPostLanguage | null) => {
+  const handleFetchPosts = (
+    query: string,
+    offset?: number,
+    language?: EnPostLanguage | null
+  ) => {
     if (query === currentQuery && postData.state === 'inactive') return; // This prevents the posts from being fetched because only the language has changed wile the feature is inactive
     if (query.length === 0) pagination.setCurrentPage(1);
     if (fetchPosts)
@@ -249,14 +273,19 @@ const PostList: FC<IPostListProps> = ({
             setFilterLanguage={handleToggleLanguage}
             dateRange={dateRange}
             setDateRange={setDateRange}
-            showCreatePostButton
+            showCreatePostButton={!!isOwnProfile}
           />
         )}
         {postData.state !== 'inactive' &&
-          (postPreviews || showNoListResult ? postPreviews : <PostListNoResults mt={10} />)}
+          (postPreviews || showNoListResult ? (
+            postPreviews
+          ) : (
+            <PostListNoResults mt={10} />
+          ))}
         {paginationType === 'pages' ||
           (paginationType === 'async-pages' &&
-            (pagination.currentPage > 1 || pagination.currentPage < pagination.totalPages) && (
+            (pagination.currentPage > 1 ||
+              pagination.currentPage < pagination.totalPages) && (
               <HStack alignContent="space-around">
                 <Button
                   variant="ghost-hover-outline"

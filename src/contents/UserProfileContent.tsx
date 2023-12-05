@@ -1,5 +1,12 @@
 import { Box, Button, HStack, Stack, Tag } from '@chakra-ui/react';
-import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import MainGrid from '../shared/containers/components/MainGrid';
 import LeftNavProfile from '../features/user/profile/components/LeftNavProfile';
 import PostList from '../features/post/PostList';
@@ -15,7 +22,11 @@ import { TProfileTab } from '../features/user/types/user';
 import { formatNumber } from '../shared/utils/utils';
 import UserList from '../features/user/user-list/components/UserList';
 
-const tabNavItems: Array<{ label: string; value: TProfileTab; icon: ReactElement }> = [
+const tabNavItems: Array<{
+  label: string;
+  value: TProfileTab;
+  icon: ReactElement;
+}> = [
   {
     label: 'Overview',
     value: 'overview',
@@ -43,26 +54,39 @@ interface IUserProfileContent {
 const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { hash } = useLocation();
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
-  const [activeTab, setActiveTab] = useState<(typeof tabNavItems)[number]['value']>('posts');
+  const [activeTab, setActiveTab] =
+    useState<(typeof tabNavItems)[number]['value']>('posts');
   const { user } = useAuthenticationContext();
 
   const resetProfile = useAppStore(state => state.profile.reset);
   const profile = useAppStore(state => state.profile.profile);
   const fetchProfile = useAppStore(state => state.profile.fetchProfile);
-  const fetchOverviewPosts = useAppStore(state => state.profile.fetchOverviewPosts);
+  const fetchOverviewPosts = useAppStore(
+    state => state.profile.fetchOverviewPosts
+  );
   const fetchActivitiy = useAppStore(state => state.profile.fetchActivity);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const searchPosts = useAppStore(state => state.profile.searchPosts);
   const fetchSearchPosts = useAppStore(state => state.profile.fetchSearchPosts);
-  const setPostListLanguage = useAppStore(state => state.profile.setPostListLanguage);
+  const setPostListLanguage = useAppStore(
+    state => state.profile.setPostListLanguage
+  );
   const togglePostRating = useAppStore(state => state.profile.togglePostRating);
-  const togglePostPrivacy = useAppStore(state => state.profile.togglePostPrivacy);
-  const setPostListDateRange = useAppStore(state => state.profile.setPostListDateRange);
+  const togglePostPrivacy = useAppStore(
+    state => state.profile.togglePostPrivacy
+  );
+  const setPostListDateRange = useAppStore(
+    state => state.profile.setPostListDateRange
+  );
   const starredPosts = useAppStore(state => state.profile.starredPosts);
-  const fetchStarredPosts = useAppStore(state => state.profile.fetchStarredPosts);
+  const fetchStarredPosts = useAppStore(
+    state => state.profile.fetchStarredPosts
+  );
   const fetchFollowers = useAppStore(state => state.profile.fetchFollowers);
   const followers = useAppStore(state => state.profile.followers);
-  const fetchFollowingUsers = useAppStore(state => state.profile.fetchFollowingUsers);
+  const fetchFollowingUsers = useAppStore(
+    state => state.profile.fetchFollowingUsers
+  );
   const followingUsers = useAppStore(state => state.profile.followingUsers);
   const toggleFollow = useAppStore(state => state.profile.toggleFollow);
   const deletePost = useAppStore(state => state.profile.deletePost);
@@ -99,7 +123,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   }, [username]);
 
   useEffect(() => {
-    if (activeTab === 'posts' && searchPosts.items.length === 0 && searchPosts.query.length === 0) {
+    if (
+      activeTab === 'posts' &&
+      searchPosts.items.length === 0 &&
+      searchPosts.query.length === 0
+    ) {
       fetchSearchPosts('', POST_FETCH_LIMIT, 0);
     } else if (
       activeTab === 'stars' &&
@@ -126,7 +154,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         let label: ReactNode = item.label;
 
         if (item.value === 'stars' || item.value === 'posts') {
-          const count = profile?.stats?.[item.value === 'stars' ? 'starred' : 'posts'] ?? 0;
+          const count =
+            profile?.stats?.[item.value === 'stars' ? 'starred' : 'posts'] ?? 0;
           if (count > 0) {
             label = (
               <>
@@ -187,13 +216,17 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           toggleRating={id => togglePostRating(id, 'posts')}
           hidePostAuthor
           showControls
+          isOwnProfile={isOwnProfile}
           maxItems={POST_FETCH_LIMIT}
-          showPostPrivacy={isOwnProfile}
           togglePostPrivacy={togglePostPrivacy}
           filterLanguage={searchPosts.language}
-          setFilterLanguage={language => setPostListLanguage('all-posts', language)}
+          setFilterLanguage={language =>
+            setPostListLanguage('all-posts', language)
+          }
           dateRange={searchPosts.dateRange}
-          setDateRange={(from, to) => setPostListDateRange(from, to, 'all-posts')}
+          setDateRange={(from, to) =>
+            setPostListDateRange(from, to, 'all-posts')
+          }
           deletePost={deletePost}
         />
       );
@@ -207,13 +240,18 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           }
           toggleRating={id => togglePostRating(id, 'stars')}
           showControls
+          isOwnProfile={isOwnProfile}
           previewType="list"
           paginationType="load-more"
           maxItems={POST_FETCH_LIMIT}
           filterLanguage={starredPosts.language}
-          setFilterLanguage={language => setPostListLanguage('starred-posts', language)}
+          setFilterLanguage={language =>
+            setPostListLanguage('starred-posts', language)
+          }
           dateRange={starredPosts.dateRange}
-          setDateRange={(from, to) => setPostListDateRange(from, to, 'starred-posts')}
+          setDateRange={(from, to) =>
+            setPostListDateRange(from, to, 'starred-posts')
+          }
           defaultFilterQuery={starredPosts.query}
           deletePost={deletePost}
         />
@@ -221,7 +259,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       break;
     case 'followers':
       mainContent = (
-        <UserList listData={followers} toggleFollow={toggleFollow} fetchItems={fetchFollowers} />
+        <UserList
+          listData={followers}
+          toggleFollow={toggleFollow}
+          fetchItems={fetchFollowers}
+        />
       );
       break;
     case 'following':
@@ -235,7 +277,10 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       break;
     default:
       mainContent = (
-        <ProfileOverview isOwnProfile={isOwnProfile} togglePostPrivacy={togglePostPrivacy} />
+        <ProfileOverview
+          isOwnProfile={isOwnProfile}
+          togglePostPrivacy={togglePostPrivacy}
+        />
       );
       break;
   }
@@ -247,9 +292,16 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
       </HStack>
       <MainGrid mt={10}>
         <Box>
-          <LeftNavProfile isOwnProfile={isOwnProfile} setActiveTab={setActiveTab} />
+          <LeftNavProfile
+            isOwnProfile={isOwnProfile}
+            setActiveTab={setActiveTab}
+          />
         </Box>
-        <Stack verticalAlign="top" spacing={{ base: 0, xl: 12 }} direction="row">
+        <Stack
+          verticalAlign="top"
+          spacing={{ base: 0, xl: 12 }}
+          direction="row"
+        >
           <Box w="full">{mainContent}</Box>
         </Stack>
       </MainGrid>

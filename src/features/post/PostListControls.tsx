@@ -30,7 +30,11 @@ import { formatPostDate } from '../../shared/utils/features/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
 
 interface IPostListControlsProps extends StackProps {
-  fetchPosts: (query: string, offset?: number, language?: EnPostLanguage | null) => void;
+  fetchPosts: (
+    query: string,
+    offset?: number,
+    language?: EnPostLanguage | null
+  ) => void;
   enableAdvancedSearch?: boolean;
   showCreatePostButton?: boolean;
   defaultQuery?: string;
@@ -39,7 +43,10 @@ interface IPostListControlsProps extends StackProps {
   filterLanguage?: EnPostLanguage;
   setFilterLanguage?: (language: EnPostLanguage) => void;
   dateRange?: { from: Date | undefined; to: Date | undefined };
-  setDateRange?: (from: Date | null | undefined, to: Date | null | undefined) => void;
+  setDateRange?: (
+    from: Date | null | undefined,
+    to: Date | null | undefined
+  ) => void;
 }
 
 const PostListControls: FC<IPostListControlsProps> = ({
@@ -127,7 +134,8 @@ const PostListControls: FC<IPostListControlsProps> = ({
 
   const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
     if (!setFilterLanguage) return;
-    const language = EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage];
+    const language =
+      EnPostLanguage[e.currentTarget.value as keyof typeof EnPostLanguage];
     setFilterLanguage(language);
     fetchPosts(query, 0, language ?? null);
   };
@@ -191,7 +199,11 @@ const PostListControls: FC<IPostListControlsProps> = ({
           </Button>
         )}
       </HStack>
-      <Collapse in={isAdvancedSearchOpen} animateOpacity style={{ width: '75%' }}>
+      <Collapse
+        in={isAdvancedSearchOpen}
+        animateOpacity
+        style={{ width: '75%' }}
+      >
         <HStack gap={5} w="full">
           {!!setDateRange && (
             <InputGroup size="sm">
@@ -206,13 +218,19 @@ const PostListControls: FC<IPostListControlsProps> = ({
                   if (!date) return;
 
                   let dateTo: Date | null | undefined = undefined;
-                  if (date.getTime() > (dateToRef.current?.valueAsDate?.getTime() ?? Infinity)) {
+                  if (
+                    date.getTime() >
+                    (dateToRef.current?.valueAsDate?.getTime() ?? Infinity)
+                  ) {
                     if (!dateToRef.current) return;
                     dateToRef.current.value = '';
                     dateTo = null;
                   }
                   console.log('date', date, dateTo);
-                  setDateRange(isNaN(date.getTime()) ? undefined : date, dateTo);
+                  setDateRange(
+                    isNaN(date.getTime()) ? undefined : date,
+                    dateTo
+                  );
                 }}
               />
               <InputRightAddon>Date to</InputRightAddon>
@@ -225,12 +243,18 @@ const PostListControls: FC<IPostListControlsProps> = ({
                   date?.setMonth(date.getMonth() + 1);
                   if (!date) return;
                   let dateFrom: Date | null | undefined = undefined;
-                  if (date.getTime() < (dateFromRef.current?.valueAsDate?.getTime() ?? 0)) {
+                  if (
+                    date.getTime() <
+                    (dateFromRef.current?.valueAsDate?.getTime() ?? 0)
+                  ) {
                     if (!dateFromRef.current) return;
                     dateFromRef.current.value = '';
                     dateFrom = null;
                   }
-                  setDateRange(dateFrom, isNaN(date.getTime()) ? undefined : date);
+                  setDateRange(
+                    dateFrom,
+                    isNaN(date.getTime()) ? undefined : date
+                  );
                 }}
               />
             </InputGroup>
