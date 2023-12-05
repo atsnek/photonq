@@ -82,7 +82,8 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
     useEffect(() => {
       // Focus the input when the user presses the shortcut
       const handleGlobalKeydown = (e: KeyboardEvent) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') menu.buttonRef.current?.focus();
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k')
+          menu.buttonRef.current?.focus();
 
         if (e.key === 'Enter' && menu.isOpen) {
           openFirstLink();
@@ -108,7 +109,7 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
           <Input
             type="text"
             htmlSize={20}
-            placeholder="Search documentation"
+            placeholder="Search"
             borderRadius="md"
             backgroundColor="blackAlpha.50"
             borderColor="topNav.input.borderColor"
@@ -146,7 +147,11 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
                 // Close the menu and blur the input when the user presses the escape key
                 menu.onClose();
                 e.currentTarget.blur();
-              } else if (e.key === 'Enter' && menu.isOpen && menu.focusedIndex === -1) {
+              } else if (
+                e.key === 'Enter' &&
+                menu.isOpen &&
+                menu.focusedIndex === -1
+              ) {
                 // Open the link from the first result item
                 // and close the menu automatically
                 // when the user presses the enter key

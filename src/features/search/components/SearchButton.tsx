@@ -47,7 +47,7 @@ const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
         borderColor="topNav.input.borderColor"
         fontWeight="normal"
         icon={<SearchIcon />}
-        aria-label="Search documentation"
+        aria-label="Search"
         onClick={openModal}
         onKeyDown={onKeyPress}
       >
@@ -88,7 +88,7 @@ const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
       }}
       onClick={openModal}
     >
-      <Box as="span">Search documentation</Box>
+      <Box as="span">Search</Box>
 
       <Kbd
         borderBottomWidth={1}
