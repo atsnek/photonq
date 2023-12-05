@@ -183,12 +183,13 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       />
       {!isDeletingPost && showMobileMetaEditor && (
         <PostMobileMetaEditor
+          post={post}
+          titleRef={titleRef}
           handleTitleChange={handleTitleChange}
           handleSummaryChange={handleSummaryChange}
           setPostPreviewImage={setPostPreviewImage}
           canEdit={canEditPost && !isDeletingPost}
           isAuthor={isPostAuthor}
-          post={post}
           isPostPreviewImageUploading={isPreviewImageUploading}
           handleLanguageChange={handleLanguageChange}
           handleTogglePrivacy={handleTogglePrivacy}

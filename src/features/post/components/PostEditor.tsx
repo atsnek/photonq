@@ -24,6 +24,7 @@ const PostEditor: FC<IPostEditorProps> = ({
 }) => {
   const editorMargin = useBreakpointValue({ base: { mx: 5 }, xl: { mx: 0, mr: 5 } });
   const updatePostContent = useAppStore(state => state.singlePost.editContent);
+  const showTitle = useBreakpointValue({ base: false, md: true });
 
   const handleEditorChange = async (value: MdastRoot) => {
     setIsSavingPost(true);
@@ -61,17 +62,19 @@ const PostEditor: FC<IPostEditorProps> = ({
           }
         }}
       >
-        <Input
-          ref={titleRef}
-          variant="unstyled"
-          type="text"
-          fontWeight="bold"
-          placeholder="My Post"
-          fontSize="4xl"
-          ml={2}
-          onChange={e => handleTitleChange(e.target.value)}
-          defaultValue={post?.title}
-        />
+        {showTitle && (
+          <Input
+            ref={titleRef}
+            variant="unstyled"
+            type="text"
+            fontWeight="bold"
+            placeholder="My Post"
+            fontSize="4xl"
+            ml={2}
+            onChange={e => handleTitleChange(e.target.value)}
+            defaultValue={post?.title}
+          />
+        )}
       </Box>
       <Stack direction="row" position="relative" flex={1} overflow="hidden" w="full">
         <Box w="full" {...editorMargin}>

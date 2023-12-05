@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, RefObject } from 'react';
 import { TPost, EnPostLanguage } from '../types/post';
 import {
   Box,
@@ -10,7 +10,8 @@ import {
   VStack,
   Text,
   Textarea,
-  Divider
+  Divider,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import Image from '../../../shared/components/image/Image';
 import TbEdit from '../../../shared/components/icons/tabler/TbEdit';
@@ -20,6 +21,7 @@ interface IPostMobileMetaEditorProps {
   post?: TPost;
   canEdit?: boolean;
   isAuthor: boolean;
+  titleRef: RefObject<HTMLInputElement>;
   handleTitleChange: (title: string) => void;
   handleSummaryChange: (summary: string) => void;
   setPostPreviewImage: (src: File) => void;
@@ -32,6 +34,7 @@ const PostMobileMetaEditor: FC<IPostMobileMetaEditorProps> = ({
   post,
   canEdit,
   isAuthor,
+  titleRef,
   handleTitleChange,
   handleSummaryChange,
   setPostPreviewImage,
@@ -41,6 +44,7 @@ const PostMobileMetaEditor: FC<IPostMobileMetaEditorProps> = ({
 }) => {
   const isPublic = post?.privacy === 'PUBLIC';
   const privacyLabel = isPublic ? 'public' : 'private';
+  const showInlineTitle = useBreakpointValue({ md: false, xl: true });
 
   return (
     <VStack
@@ -50,10 +54,23 @@ const PostMobileMetaEditor: FC<IPostMobileMetaEditorProps> = ({
       spacing={5}
       mt={3}
     >
-      <HStack spacing={5} w={canEdit ? 'full' : 'initial'} h="full">
+      {canEdit && (
+        <Input
+          ref={titleRef}
+          variant="unstyled"
+          type="text"
+          fontWeight="bold"
+          placeholder="My Post"
+          fontSize="4xl"
+          ml={2}
+          onChange={e => handleTitleChange(e.target.value)}
+          defaultValue={post?.title}
+        />
+      )}
+      <HStack spacing={5} w={canEdit ? 'full' : 'initial'} h="full" align="start">
         <Image
           src={post?.avatarUrl || 'https://api.dicebear.com/7.x/shapes/svg'}
-          boxSize="138px"
+          boxSize="77px"
           borderRadius="lg"
           _hover={{
             transform: 'scale(1.05)'
@@ -75,40 +92,13 @@ const PostMobileMetaEditor: FC<IPostMobileMetaEditorProps> = ({
             }}
             w="full"
           >
-            {canEdit ? (
-              <>
-                <Input
-                  variant="outline"
-                  size="sm"
-                  placeholder="My Post"
-                  defaultValue={post?.title ?? 'My Post'}
-                  textAlign="center"
-                  px={8}
-                  fontWeight="semibold"
-                  borderRadius="md"
-                  onBlur={e => handleTitleChange(e.target.value)}
-                  colorScheme="brand"
-                  _focusVisible={{
-                    borderWidth: 2,
-                    borderColor: 'brand.500'
-                  }}
-                />
-                <TbEdit
-                  id="editor-left-nav-edit-title-icon"
-                  position="absolute"
-                  top={0}
-                  right={2}
-                  bottom={0}
-                  margin="auto 0"
-                  opacity={0}
-                  transition="opacity 0.2s ease-in-out"
-                />
-              </>
-            ) : (
+            {!canEdit && (
               <Box w="full">
-                <Text size="sm" fontWeight="semibold">
-                  {post?.title}
-                </Text>
+                {showInlineTitle && (
+                  <Text size="sm" fontWeight="semibold">
+                    {post?.title}
+                  </Text>
+                )}
                 <Text fontSize="sm" opacity={0.5}>
                   {post?.summary}
                 </Text>
