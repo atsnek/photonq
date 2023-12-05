@@ -7675,6 +7675,7 @@ gatsby-jaen-mailpress@^0.0.1:
     isomorphic-dompurify "^1.9.0"
     react-hook-form "^7.46.1"
     snek-query "^0.0.83"
+
 gatsby-jaen-resource@^0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/gatsby-jaen-resource/-/gatsby-jaen-resource-0.0.8.tgz#d68e1d01dbdc0b7b1ecf4b9ed80b9dd333ccfce1"
@@ -7769,10 +7770,10 @@ gatsby-plugin-image@^3.11.0:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.64:
-  version "1.0.0-rc.64"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.64.tgz#0565a59b1d174b1c60114d2fa51a13728f86f842"
-  integrity sha512-AKANvVz+1NoJH+pNH3ljAx1E/kSaT3hh7cfWfFJu99gAKCFaelIbUHLdWnlDZL6jsFp6ZDVFLopBmhzXZKsOkQ==
+gatsby-plugin-jaen@^1.0.0-rc.65:
+  version "1.0.0-rc.65"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.65.tgz#ebc4fa72f3c1a33d8dcf1f689ebb1d9d3840e878"
+  integrity sha512-xOw8if1jwleq0H2jpwbm0PpKA/AmxD577OB9eNBp7l/FSFxlkQ/Yl7B9maLDTOpsHOfMqP4G/WA3ax5en9z48A==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
