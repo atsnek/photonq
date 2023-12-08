@@ -13,7 +13,11 @@ export interface IUseQasmTranslateArgs {
 export interface IUseQasmTranslate {
   isLoading: boolean;
   error: any;
-  result: (Translation | null)[] | null;
+  data: {
+    translation: (Translation | null)[] | null;
+    errors: string[];
+    warnings: string[];
+  } | null;
 
   run: () => void;
 }
@@ -23,12 +27,12 @@ export const useQasmTranslate = ({
 }: IUseQasmTranslateArgs): IUseQasmTranslate => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<IUseQasmTranslate['result']>(null);
+  const [data, setData] = useState<IUseQasmTranslate['data']>(null);
 
   const run = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    setResult(null);
+    setData(null);
 
     try {
       const base64Code = btoa(code);
@@ -53,6 +57,8 @@ export const useQasmTranslate = ({
         status: COMPLETED_WAITING_ACTIVE_DELAYED_FAILED_PAUSED_STUCK | null;
         data: {
           translation: (Translation | null)[];
+          errors: string[];
+          warnings: string[];
         };
       };
       do {
@@ -66,7 +72,9 @@ export const useQasmTranslate = ({
             id: t.id,
             status: t.status,
             data: {
-              translation: t.data.translation || []
+              translation: t.data.result?.translation || [],
+              errors: t.data.result?.errors || [],
+              warnings: t.data.result?.warnings || []
             }
           };
         });
@@ -81,7 +89,7 @@ export const useQasmTranslate = ({
         // Check the status, and update the state accordingly
         if (translate.status === 'completed') {
           // Simulation completed successfully
-          setResult(translate.data.translation);
+          setData(translate.data);
         } else if (translate.status === 'failed') {
           // Simulation failed
           setError('Simulation failed');
@@ -102,7 +110,7 @@ export const useQasmTranslate = ({
   return {
     isLoading,
     error,
-    result,
+    data,
     run
   };
 };

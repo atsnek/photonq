@@ -145,13 +145,18 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
           headerText="Translation"
           headerTextRight="Powered by Perceval, Qiskit, PyZX"
           isExecuting={translator.isLoading}
+          warnings={translator.data?.warnings}
+          errors={translator.data?.errors}
           result={
-            translator.result ? (
+            translator.data ? (
               <>
-                {translator.result?.map(translation => (
+                {translator.data.translation?.map(translation => (
                   <>
                     {translation ? (
-                      <img src={translation.svg} alt={translation.name || ''} />
+                      <img
+                        src={translation.dataUri}
+                        alt={translation.name || ''}
+                      />
                     ) : (
                       <p>Translation failed</p>
                     )}

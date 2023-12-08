@@ -1,8 +1,19 @@
-import { Box, ButtonSpinner, Center, HStack, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  ButtonSpinner,
+  Center,
+  HStack,
+  Text
+} from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
+
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
 
 interface ICodeResultPreviewProps {
+  errors?: string[];
+  warnings?: string[];
   result?: ReactNode;
   isStandalone?: boolean;
   headerText?: string;
@@ -12,6 +23,8 @@ interface ICodeResultPreviewProps {
 }
 
 const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
+  errors,
+  warnings,
   result,
   isStandalone,
   headerText,
@@ -60,6 +73,27 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
           </Center>
         ) : (
           <>
+            {errors && errors.length > 0 && (
+              <Alert status="error" my={2}>
+                <AlertIcon />
+                {errors.map((error, index) => (
+                  <Text key={index} fontSize="sm">
+                    {error}
+                  </Text>
+                ))}
+              </Alert>
+            )}
+            {warnings && warnings.length > 0 && (
+              <Alert status="warning" my={2}>
+                <AlertIcon />
+                {warnings.map((warning, index) => (
+                  <Text key={index} fontSize="sm">
+                    {warning}
+                  </Text>
+                ))}
+              </Alert>
+            )}
+
             {result ? (
               result
             ) : (
