@@ -1,5 +1,6 @@
 import {
   Alert,
+  AlertDescription,
   AlertIcon,
   Box,
   ButtonSpinner,
@@ -76,21 +77,25 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
             {errors && errors.length > 0 && (
               <Alert status="error" my={2}>
                 <AlertIcon />
-                {errors.map((error, index) => (
-                  <Text key={index} fontSize="sm">
-                    {error}
-                  </Text>
-                ))}
+                <AlertDescription overflowX="scroll">
+                  {errors.map((error, index) => (
+                    <Text key={index} fontSize="sm">
+                      {error}
+                    </Text>
+                  ))}
+                </AlertDescription>
               </Alert>
             )}
             {warnings && warnings.length > 0 && (
               <Alert status="warning" my={2}>
                 <AlertIcon />
-                {warnings.map((warning, index) => (
-                  <Text key={index} fontSize="sm">
-                    {warning}
-                  </Text>
-                ))}
+                <AlertDescription overflowX="scroll">
+                  {warnings.map((warning, index) => (
+                    <Text key={index} fontSize="sm">
+                      {warning}
+                    </Text>
+                  ))}
+                </AlertDescription>
               </Alert>
             )}
 
