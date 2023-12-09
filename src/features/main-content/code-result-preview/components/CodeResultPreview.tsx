@@ -77,7 +77,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
             {errors && errors.length > 0 && (
               <Alert status="error" my={2}>
                 <AlertIcon />
-                <AlertDescription overflowX="scroll">
+                <AlertDescription overflowX="auto">
                   {errors.map((error, index) => (
                     <Text key={index} fontSize="sm">
                       {error}
@@ -89,7 +89,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
             {warnings && warnings.length > 0 && (
               <Alert status="warning" my={2}>
                 <AlertIcon />
-                <AlertDescription overflowX="scroll">
+                <AlertDescription overflowX="auto">
                   {warnings.map((warning, index) => (
                     <Text key={index} fontSize="sm">
                       {warning}
