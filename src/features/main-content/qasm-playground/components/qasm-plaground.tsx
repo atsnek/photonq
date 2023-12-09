@@ -6,6 +6,8 @@ import {
   ButtonGroup,
   Card,
   Flex,
+  Heading,
+  Image,
   Stack,
   Tooltip
 } from '@chakra-ui/react';
@@ -149,20 +151,23 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
           errors={translator.data?.errors}
           result={
             translator.data ? (
-              <>
+              <Stack spacing="4">
                 {translator.data.translation?.map(translation => (
-                  <>
+                  <Stack>
                     {translation ? (
-                      <img
-                        src={translation.dataUri}
-                        alt={translation.name || ''}
-                      />
+                      <>
+                        <Heading size="sm">{translation.name}</Heading>
+                        <Image
+                          src={translation.dataUri}
+                          alt={translation.name + ' diagram'}
+                        />
+                      </>
                     ) : (
                       <p>Translation failed</p>
                     )}
-                  </>
+                  </Stack>
                 ))}
-              </>
+              </Stack>
             ) : null
           }
         />
