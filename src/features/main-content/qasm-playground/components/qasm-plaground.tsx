@@ -23,6 +23,7 @@ import { useQasmTranslate } from '../use-qasm-translate';
 import DiagramPreview from './diagram-preview';
 
 import React, { isValidElement } from 'react';
+import { Link } from 'gatsby-plugin-jaen';
 
 const hasChildren = (element: React.ReactNode) =>
   isValidElement(element) && Boolean(element.props.children);
@@ -152,14 +153,27 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
           result={
             translator.data ? (
               <Stack spacing="4">
-                {translator.data.translation?.map(translation => (
-                  <Stack>
+                {translator.data.translation?.map((translation, index) => (
+                  <Stack key={index}>
                     {translation ? (
                       <>
-                        <Heading size="sm">{translation.name}</Heading>
+                        <Flex justify="space-between" align="center">
+                          <Heading size="md">{translation.name}</Heading>
+                          <Link
+                            as={Button}
+                            variant="link"
+                            onClick={() =>
+                              openImageInNewTab(translation.dataUri)
+                            }
+                          >
+                            View in New Tab
+                          </Link>
+                        </Flex>
                         <Image
                           src={translation.dataUri}
                           alt={translation.name + ' diagram'}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => openImageInNewTab(translation.dataUri)}
                         />
                       </>
                     ) : (
@@ -181,6 +195,35 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
     </Card>
   );
 };
+
+function openImageInNewTab(imageSrc: string) {
+  const newWindow = window.open();
+
+  if (!newWindow) return;
+
+  newWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body {
+            margin: 0;
+            overflow: hidden;
+          }
+          img {
+            width: 100%;
+            height: 100vh;
+            object-fit: contain;
+            #background-color: green;
+          }
+        </style>
+      </head>
+      <body>
+        <img src="${imageSrc}" alt="Diagram" />
+      </body>
+    </html>
+  `);
+}
 
 QASMPlayground.displayName = 'QASMPlayground';
 QASMPlayground.defaultProps = {
