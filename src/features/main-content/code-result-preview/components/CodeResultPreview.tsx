@@ -6,6 +6,7 @@ import {
   ButtonSpinner,
   Center,
   HStack,
+  Stack,
   Text
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
@@ -73,7 +74,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
             />
           </Center>
         ) : (
-          <>
+          <Stack>
             {errors && errors.length > 0 && (
               <Alert status="error" my={2}>
                 <AlertIcon />
@@ -111,7 +112,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
                 </Text>
               </Center>
             )}
-          </>
+          </Stack>
         )}
       </Box>
     </Box>
