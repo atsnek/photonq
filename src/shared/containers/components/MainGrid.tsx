@@ -28,6 +28,7 @@ const MainGrid: FC<IMainGridProps> = ({ children, isLeftNavExpanded = true, ...p
       gap={isLeftNavExpanded ? 10 : 0}
       px={{ base: 7, xl: 0 }}
       color="shared.text.bright"
+      padding={{ base: 3, sm: 3 }}
       {...props}
     >
       {children}

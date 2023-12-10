@@ -1,8 +1,6 @@
 import { Box, Button } from '@chakra-ui/react';
 import { FC, ReactNode, useEffect, useState } from 'react';
-import CodeSnippet, {
-  ICodeSnippetProps
-} from '../../code-snippet/components/CodeSnippet';
+import CodeSnippet, { ICodeSnippetProps } from '../../code-snippet/components/CodeSnippet';
 import CodeResultPreview from '../../code-result-preview/components/CodeResultPreview';
 import ReactDOM from 'react-dom/server';
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
@@ -49,14 +47,14 @@ const CodePlayground: FC<ICodePlaygroundProps> = ({
           isStandalone={false}
           toolbar={toolbar}
           onChange={setCode}
-          isEditable={true}
+          // isEditable={true}
         />
       </Box>
       <CodeResultPreview
         isStandalone
         headerText="Code Preview"
-        isExecuting={isExecuting}
-        result={result}
+        // isExecuting={isExecuting}
+        // result={result}
       />
     </>
   );

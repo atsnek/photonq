@@ -28,11 +28,7 @@ import ImageCard from '../../../features/main-content/image-card/components/Imag
 import DocsIndex from '../../../features/main-content/docs-index/components/DocsIndex';
 
 import { MdxField, MdxFieldProps } from '@atsnek/jaen-fields-mdx';
-import {
-  useAuthenticationContext,
-  useContentManagement,
-  usePageContext
-} from '@atsnek/jaen';
+import { useAuthenticationContext, useContentManagement, usePageContext } from '@atsnek/jaen';
 import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { QASMPlayground } from '../../../features/main-content/qasm-playground/components/qasm-plaground';
 
@@ -56,15 +52,7 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   th: (props: any) => <Th {...props} />,
   td: (props: any) => <Td {...props} />,
   // MISC
-  //@ts-expect-error
-  code: ({
-    className,
-    playground,
-    ...props
-  }: {
-    playground?: boolean;
-    className?: string;
-  }) => {
+  code: ({ className, playground, ...props }: { playground?: boolean; className?: string }) => {
     const lang = className?.replace('language-', '') || 'text';
 
     if (playground) {
@@ -117,24 +105,12 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
         name="documentation"
         components={{
           // TEXT
-          h1: props => (
-            <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />
-          ),
-          h2: props => (
-            <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />
-          ),
-          h3: props => (
-            <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />
-          ),
-          h4: props => (
-            <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />
-          ),
-          h5: props => (
-            <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />
-          ),
-          h6: props => (
-            <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />
-          ),
+          h1: props => <Heading variant="h1" {...props} noAnchor={hideHeadingHash} />,
+          h2: props => <Heading variant="h2" {...props} noAnchor={hideHeadingHash} />,
+          h3: props => <Heading variant="h3" {...props} noAnchor={hideHeadingHash} />,
+          h4: props => <Heading variant="h4" {...props} noAnchor={hideHeadingHash} />,
+          h5: props => <Heading variant="h5" {...props} noAnchor={hideHeadingHash} />,
+          h6: props => <Heading variant="h6" {...props} noAnchor={hideHeadingHash} />,
           ...mdxEditorComponents
         }}
       />

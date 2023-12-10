@@ -50,12 +50,12 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   /**
    * Copy code to clipboard.
    */
-  const copyToClipboard = () => {
-    setButtonIcon('check');
-    clearTimeout(timeout);
-    navigator.clipboard.writeText(children);
-    timeout = setTimeout(() => setButtonIcon('copy'), 2000);
-  };
+  // const copyToClipboard = () => {
+  //   setButtonIcon('check');
+  //   clearTimeout(timeout);
+  //   navigator.clipboard.writeText(children);
+  //   timeout = setTimeout(() => setButtonIcon('copy'), 2000);
+  // };
 
   let baseProps = {};
   if (isStandalone) baseProps = mainComponentBaseStyle.baseProps;
