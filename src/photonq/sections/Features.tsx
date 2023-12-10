@@ -1,19 +1,11 @@
-import {
-  Box,
-  BoxProps,
-  Button,
-  Center,
-  Container,
-  HStack,
-  VStack
-} from '@chakra-ui/react';
+import { Box, BoxProps, Button, Center, Container, HStack, VStack } from '@chakra-ui/react';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
 import { Field } from '@atsnek/jaen';
 import { TextFieldProps } from '@atsnek/jaen/dist/fields/TextField/TextField';
 import Link from '../../shared/components/Link';
 import CodePlayground from '../../features/main-content/code-playground/components/CodePlayground';
-import { QASMPlayground } from '../../features/main-content/qasm-playground/components/qasm-plaground';
+import { QASMPlayground } from '../../features/main-content/qasm-playground/components/qasm-playground';
 
 const Features: FC = () => {
   const cardProps: BoxProps = {
@@ -103,12 +95,7 @@ const Features: FC = () => {
                     ></Field.Text>
                   </Button>
                 </Box>
-                <Box
-                  w="90%"
-                  ml="auto"
-                  borderTopLeftRadius="lg"
-                  overflow="hidden"
-                >
+                <Box w="90%" ml="auto" borderTopLeftRadius="lg" overflow="hidden">
                   <Field.Image name="RightCardImage" />
                 </Box>
               </Box>

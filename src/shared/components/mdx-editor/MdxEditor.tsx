@@ -30,7 +30,7 @@ import DocsIndex from '../../../features/main-content/docs-index/components/Docs
 import { MdxField, MdxFieldProps } from '@atsnek/jaen-fields-mdx';
 import { useAuthenticationContext, useContentManagement, usePageContext } from '@atsnek/jaen';
 import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
-import { QASMPlayground } from '../../../features/main-content/qasm-playground/components/qasm-plaground';
+import { QASMPlayground } from '../../../features/main-content/qasm-playground/components/qasm-playground';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
