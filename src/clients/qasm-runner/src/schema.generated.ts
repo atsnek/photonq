@@ -31,14 +31,23 @@ export class Translate {
 export class JobData {
     __typename: t.String;
     base64Qasm: t.String;
-    translation: t.Nullable<Translation>[];
-    constructor() { this.__typename = ""; this.base64Qasm = ""; this.translation = arrayProxy(Translation); }
+    result: t.Nullable<Result>;
+    constructor() { this.__typename = ""; this.base64Qasm = ""; this.result = proxy(Result); }
+}
+export class Result {
+    __typename: t.String;
+    errors: t.String[];
+    warnings: t.String[];
+    translation: Translation[];
+    constructor() { this.__typename = ""; this.errors = []; this.warnings = []; this.translation = arrayProxy(Translation); }
 }
 export class Translation {
     __typename: t.String;
-    svg: t.String;
+    mimeType: t.String;
+    value: t.String;
+    dataUri: t.String;
     name: t.Nullable<t.String>;
-    constructor() { this.__typename = ""; this.svg = ""; this.name = null; }
+    constructor() { this.__typename = ""; this.mimeType = ""; this.value = ""; this.dataUri = ""; this.name = null; }
 }
 export class Mutation {
     __typename: t.String;

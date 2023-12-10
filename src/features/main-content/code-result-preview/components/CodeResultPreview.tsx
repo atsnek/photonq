@@ -1,8 +1,21 @@
-import { Box, ButtonSpinner, Center, HStack, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  Box,
+  ButtonSpinner,
+  Center,
+  HStack,
+  Stack,
+  Text
+} from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
+
 import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
 
 interface ICodeResultPreviewProps {
+  errors?: string[];
+  warnings?: string[];
   result?: ReactNode;
   isStandalone?: boolean;
   headerText?: string;
@@ -12,6 +25,8 @@ interface ICodeResultPreviewProps {
 }
 
 const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
+  errors,
+  warnings,
   result,
   isStandalone,
   headerText,
@@ -59,7 +74,32 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
             />
           </Center>
         ) : (
-          <>
+          <Stack>
+            {errors && errors.length > 0 && (
+              <Alert status="error" my={2}>
+                <AlertIcon />
+                <AlertDescription overflowX="auto">
+                  {errors.map((error, index) => (
+                    <Text key={index} fontSize="sm">
+                      {error}
+                    </Text>
+                  ))}
+                </AlertDescription>
+              </Alert>
+            )}
+            {warnings && warnings.length > 0 && (
+              <Alert status="warning" my={2}>
+                <AlertIcon />
+                <AlertDescription overflowX="auto">
+                  {warnings.map((warning, index) => (
+                    <Text key={index} fontSize="sm">
+                      {warning}
+                    </Text>
+                  ))}
+                </AlertDescription>
+              </Alert>
+            )}
+
             {result ? (
               result
             ) : (
@@ -72,7 +112,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
                 </Text>
               </Center>
             )}
-          </>
+          </Stack>
         )}
       </Box>
     </Box>
