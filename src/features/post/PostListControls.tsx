@@ -189,7 +189,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
         )}
         {showCreatePostButton && isAuthenticated && (
           <Button
-            aria-label="Create new experiment"
+            aria-label="New experiment"
             as={Link}
             href="/new/experiment"
             size="sm"
