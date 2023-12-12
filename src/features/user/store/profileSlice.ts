@@ -43,7 +43,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       followers: 0,
       following: 0,
       views: 0,
-      posts: 0,
+      experiments: 0,
       starred: 0
     };
 
@@ -69,7 +69,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           stats.followers = profile.followers().totalCount;
           stats.following = profile.following().totalCount;
           stats.views = profile.views;
-          stats.posts = profile.posts().totalCount;
+          stats.experiments = profile.posts().totalCount;
         }
 
         return {
@@ -83,7 +83,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             followers: profile?.followers().totalCount ?? 0,
             following: profile?.following().totalCount ?? 0,
             views: profile?.views ?? 0,
-            posts: profile?.posts().totalCount ?? 0,
+            experiments: profile?.posts().totalCount ?? 0,
             starred: profile?.starredPosts().totalCount ?? 0
           },
           username: username
@@ -414,7 +414,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             stats: {
               followers: user.profile?.followers().totalCount ?? 0,
               following: 0,
-              posts: user.profile?.posts().totalCount ?? 0,
+              experiments: user.profile?.posts().totalCount ?? 0,
               starred: 0,
               views: user.profile?.views ?? 0
             },
@@ -506,7 +506,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             stats: {
               followers: user.profile?.followers().totalCount ?? 0,
               following: 0,
-              posts: user.profile?.posts().totalCount ?? 0,
+              experiments: user.profile?.posts().totalCount ?? 0,
               starred: 0,
               views: user.profile?.views ?? 0
             },
@@ -734,7 +734,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated ??
           false;
         break;
-      case 'posts':
+      case 'experiments':
         hasRated =
           get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ??
           false;
@@ -789,8 +789,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return succeed;
   },
-  setPostListLanguage: (postList = 'all-posts', language) => {
-    const isDefaultPostsList = postList === 'all-posts'; // Temporary until we have more than 2 different post lists
+  setPostListLanguage: (postList = 'all-experiments', language) => {
+    const isDefaultPostsList = postList === 'all-experiments'; // Temporary until we have more than 2 different post lists
     set(
       produce((state: TStoreState) => {
         if (isDefaultPostsList) {
@@ -820,7 +820,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     }
   },
   setPostListDateRange: (from, to, postList) => {
-    const isAllPosts = postList === 'all-posts'; // Temporary until we have more than 2 different post lists
+    const isAllPosts = postList === 'all-experiments'; // Temporary until we have more than 2 different post lists
     set(
       produce((state: TStoreState) => {
         // null is only used to reset the date

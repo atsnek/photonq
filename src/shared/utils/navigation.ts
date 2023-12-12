@@ -45,7 +45,7 @@ export function createPageTree(
     });
   };
   indexPages(
-    docsTree.children.filter(page => page.label.toLocaleLowerCase() != 'posts')
+    docsTree.children.filter(page => page.label.toLocaleLowerCase() != 'experiments')
   );
 
   // Recursively build a menu item from a page

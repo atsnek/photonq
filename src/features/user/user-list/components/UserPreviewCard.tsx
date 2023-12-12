@@ -69,7 +69,7 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
     for (const key in {
       followers: user.stats.followers,
       views: user.stats.views,
-      posts: user.stats.posts
+      experiments: user.stats.experiments
     }) {
       const label = capitalizeWord(key);
       const IconComp = userStatIcons[key as TProfileStatType];

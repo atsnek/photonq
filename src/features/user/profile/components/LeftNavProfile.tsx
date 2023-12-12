@@ -164,7 +164,7 @@ const LeftNavProfile: FC<LeftNavProfileProps> = ({ isOwnProfile, setActiveTab })
         </Text>
       );
 
-      if (key === 'followers' || key === 'following' || key === 'posts') {
+      if (key === 'followers' || key === 'following' || key === 'experiments') {
         output.push(
           <GridItem key={key} {...leftNavProfileStyling.stats.gridItems} as={HStack}>
             {icon}

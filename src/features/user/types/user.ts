@@ -30,7 +30,7 @@ export type TProfile = {
  */
 export type TProfileTab =
   | 'overview'
-  | 'posts'
+  | 'experiments'
   | 'stars'
   | 'followers'
   | 'following';
@@ -42,10 +42,10 @@ export type TProfileStatType =
   | 'following'
   | 'followers'
   | 'views'
-  | 'posts'
+  | 'experiments'
   | 'starred';
 
-export type TProfilePostLists = 'all-posts' | 'starred-posts';
+export type TProfilePostLists = 'all-experiments' | 'starred-experiments';
 
 /**
  * This represents all the stats of a user.

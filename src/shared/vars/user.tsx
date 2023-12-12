@@ -19,5 +19,5 @@ export const userStatIcons: Partial<{
   followers: TbUsers,
   following: TbUserShare,
   views: TbEye,
-  posts: FaFlaskIcon
+  experiments: FaFlaskIcon
 };

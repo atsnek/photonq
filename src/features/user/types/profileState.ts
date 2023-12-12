@@ -60,7 +60,7 @@ export interface IProfileStateActions {
   togglePostRating: (
     id: TPostPreview['id'],
     source:
-      | Extract<TProfileTab, 'posts' | 'overview' | 'stars'>
+      | Extract<TProfileTab, 'experiments' | 'overview' | 'stars'>
       | 'showcase_stars'
       | 'showcase_latest'
   ) => Promise<boolean>;

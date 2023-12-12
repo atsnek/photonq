@@ -34,7 +34,7 @@ const tabNavItems: Array<{
   },
   {
     label: 'Experiments',
-    value: 'posts',
+    value: 'experiments',
     icon: <FaFlask />
   },
   {
@@ -55,7 +55,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
   const { hash } = useLocation();
   const [postFilterQuery, setPostFilterQuery] = useState<string>();
   const [activeTab, setActiveTab] =
-    useState<(typeof tabNavItems)[number]['value']>('posts');
+    useState<(typeof tabNavItems)[number]['value']>('experiments');
   const { user } = useAuthenticationContext();
 
   const resetProfile = useAppStore(state => state.profile.reset);
@@ -99,7 +99,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
     switch (hash) {
       case '#experiments':
       case '#experiments':
-        tab = 'posts';
+        tab = 'experiments';
         break;
       case '#stars':
       case '#star':
@@ -124,7 +124,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   useEffect(() => {
     if (
-      activeTab === 'posts' &&
+      activeTab === 'experiments' &&
       searchPosts.items.length === 0 &&
       searchPosts.query.length === 0
     ) {
@@ -153,9 +153,9 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
         const isActive = item.value === activeTab;
         let label: ReactNode = item.label;
 
-        if (item.value === 'stars' || item.value === 'posts') {
+        if (item.value === 'stars' || item.value === 'experiments') {
           const count =
-            profile?.stats?.[item.value === 'stars' ? 'starred' : 'posts'] ?? 0;
+            profile?.stats?.[item.value === 'stars' ? 'starred' : 'experiments'] ?? 0;
           if (count > 0) {
             label = (
               <>
@@ -201,7 +201,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
   let mainContent: ReactNode;
   switch (activeTab) {
-    case 'posts':
+    case 'experiments':
       mainContent = (
         <PostList
           fetchPosts={(query, limit, offset, language) =>
@@ -213,7 +213,7 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           defaultFilterQuery={postFilterQuery}
           setFilterQuery={setPostFilterQuery}
           currentQuery={postFilterQuery}
-          toggleRating={id => togglePostRating(id, 'posts')}
+          toggleRating={id => togglePostRating(id, 'experiments')}
           hidePostAuthor
           showControls
           isOwnProfile={isOwnProfile}
@@ -221,11 +221,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           togglePostPrivacy={togglePostPrivacy}
           filterLanguage={searchPosts.language}
           setFilterLanguage={language =>
-            setPostListLanguage('all-posts', language)
+            setPostListLanguage('all-experiments', language)
           }
           dateRange={searchPosts.dateRange}
           setDateRange={(from, to) =>
-            setPostListDateRange(from, to, 'all-posts')
+            setPostListDateRange(from, to, 'all-experiments')
           }
           deletePost={deletePost}
         />
@@ -246,11 +246,11 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
           maxItems={POST_FETCH_LIMIT}
           filterLanguage={starredPosts.language}
           setFilterLanguage={language =>
-            setPostListLanguage('starred-posts', language)
+            setPostListLanguage('starred-experiments', language)
           }
           dateRange={starredPosts.dateRange}
           setDateRange={(from, to) =>
-            setPostListDateRange(from, to, 'starred-posts')
+            setPostListDateRange(from, to, 'starred-experiments')
           }
           defaultFilterQuery={starredPosts.query}
           deletePost={deletePost}
