@@ -75,9 +75,35 @@ const AppLayout: FC<AppLayoutProps> = ({
   const search = useSearch();
   const [searchData, setSearchData] = useState<TSearchResults>({});
 
-  useEffect(() => {
-    if (!isAuthenticated) fetchDefaultSearchResults();
-  }, []);
+  const fetchDefaultSearchResults = async () => {
+    const userResults: TSearchResultSection[] = currentUserId
+      ? await getDefaultSearchUsers(currentUserId)
+      : [
+          {
+            title: 'users',
+            results: [
+              { title: 'Create an account', href: '/signup', description: '' }
+            ]
+          }
+        ];
+
+    const docsResults = await getDefaultSearchDocs(search.searchIndex);
+    const socialPostResults = await searchSocialPosts();
+
+    setSearchData({
+      docs: {
+        title: 'Documentation',
+        sections: docsResults,
+        icon: <TbBooks />
+      },
+      posts: {
+        title: 'Experiments',
+        sections: socialPostResults,
+        icon: <FaFlask />
+      },
+      user: { title: 'Users', sections: userResults, icon: <TbUser /> }
+    });
+  };
 
   // This generates the menu structure from the page tree that is used over the whole app by accessing the context.
   const menuStructure = useMemo(
@@ -101,34 +127,9 @@ const AppLayout: FC<AppLayoutProps> = ({
     childrenElmnt = children;
   }
 
-  const fetchDefaultSearchResults = async () => {
-    const userResults: TSearchResultSection[] = currentUserId
-      ? await getDefaultSearchUsers(currentUserId)
-      : [
-          {
-            title: 'users',
-            results: [
-              { title: 'Create an account', href: '/signup', description: '' }
-            ]
-          }
-        ];
-    const docsResults = await getDefaultSearchDocs(search.searchIndex);
-    const socialPostResults = await searchSocialPosts();
-
-    setSearchData({
-      docs: {
-        title: 'Documentation',
-        sections: docsResults,
-        icon: <TbBooks />
-      },
-      posts: {
-        title: 'Experiments',
-        sections: socialPostResults,
-        icon: <FaFlask />
-      },
-      user: { title: 'Users', sections: userResults, icon: <TbUser /> }
-    });
-  };
+  useEffect(() => {
+    if (!isAuthenticated) fetchDefaultSearchResults();
+  }, [isAuthenticated, currentUserId, search.searchIndex]);
 
   return (
     <SearchContext.Provider value={{ data: searchData, setSearchData }}>

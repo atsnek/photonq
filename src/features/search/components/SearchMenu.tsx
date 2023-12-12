@@ -72,7 +72,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
           setSearchData
         );
     }
-  }, [searchQuery]);
+  }, [searchQuery, currentUserId, search.searchIndex]);
 
   useEffect(() => {
     if (

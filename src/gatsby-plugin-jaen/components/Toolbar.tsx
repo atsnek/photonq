@@ -16,7 +16,7 @@ export const Toolbar: React.FC<ToolbarProps> = () => {
 
   useEffect(() => {
     getDefaultSearchResults();
-  }, []);
+  }, [currentUserId, search.searchIndex]);
 
   const getDefaultSearchResults = async () => {
     const res = await fetchDefaultSearchresult(
