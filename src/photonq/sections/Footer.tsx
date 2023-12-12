@@ -177,7 +177,7 @@ const Footer: FC = () => {
               mb={3}
               href={isAuthenticated ? '/new/experiment' : '/signup'}
             >
-              {isAuthenticated ? 'Create a experiment' : 'Register Now'}
+              {isAuthenticated ? 'New experiment' : 'Register Now'}
             </Button>
           </Flex>
           <Field.Text
