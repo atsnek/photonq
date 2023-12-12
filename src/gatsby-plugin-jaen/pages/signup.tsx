@@ -22,7 +22,8 @@ import {
   InputRightElement,
   Progress,
   Stack,
-  Text
+  Text,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -77,7 +78,7 @@ const Page: React.FC<PageProps> = () => {
           fullScreen: true,
           background: {
             color: {
-              value: '#0d47a1'
+              value: useColorModeValue('#F6F7FA', '#0d47a1')
             }
           },
           fpsLimit: 120,
@@ -105,10 +106,10 @@ const Page: React.FC<PageProps> = () => {
           },
           particles: {
             color: {
-              value: '#ffffff'
+              value: useColorModeValue('#0d47a1', '#FFFFFF')
             },
             links: {
-              color: '#ffffff',
+              color: useColorModeValue('#0d47a1', '#FFFFFF'),
               distance: 150,
               enable: true,
               opacity: 0.5,
@@ -160,12 +161,12 @@ const Page: React.FC<PageProps> = () => {
               </HStack>
 
               <Stack spacing={{ base: '2', md: '3' }} textAlign="center">
-                <Heading size={{ base: 'xs', md: 'sm' }} color="white">
+                <Heading size={{ base: 'xs', md: 'sm' }}>
                   Create your account
                 </Heading>
-                <Text color="fg.inverted">
+                <Text >
                   Already a user?{' '}
-                  <Link to="/login" color="fg.inverted">
+                  <Link to="/login">
                     Login
                   </Link>
                 </Text>
