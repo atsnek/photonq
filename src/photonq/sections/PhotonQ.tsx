@@ -17,7 +17,7 @@ const PhotonQ: FC = () => {
     >
       <Flex maxW="7xl" mx="auto" wrap="wrap">
         <Box
-          maxW="50%"
+          maxW={{base: "100%" , lg: "50%"}}
           order={{ base: 2, sm: 0 }}
           mx="auto"
           mt={{ base: 5, sm: 0 }}
@@ -48,6 +48,7 @@ const PhotonQ: FC = () => {
           h="30vw"
           minH="200px"
           maxH="316px"
+          w={{base: "100%" , lg: "50%"}}
           _hover={{
             transform: 'scale(1.05)'
           }}
