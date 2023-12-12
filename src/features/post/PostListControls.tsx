@@ -145,7 +145,7 @@ const PostListControls: FC<IPostListControlsProps> = ({
       <HStack spacing={3} w="full" {...props}>
         <Input
           flex="1"
-          placeholder="Find a post..."
+          placeholder="Find a experiment..."
           size="sm"
           borderRadius="lg"
           defaultValue={defaultQuery}
@@ -189,9 +189,9 @@ const PostListControls: FC<IPostListControlsProps> = ({
         )}
         {showCreatePostButton && isAuthenticated && (
           <Button
-            aria-label="Create new post"
+            aria-label="Create new experiment"
             as={Link}
-            href="/community/new-post"
+            href="/new/experiment"
             size="sm"
             leftIcon={<TbPlus />}
           >

@@ -1,3 +1,5 @@
+import { Box, Flex, useDisclosure } from '@chakra-ui/react';
+import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import TopNav, {
   TBrandImage,
@@ -5,30 +7,28 @@ import TopNav, {
   TTopNavLinkProps,
   TTopNavWrapperProps
 } from './navigation/TopNav';
-import { Box, Flex, useDisclosure } from '@chakra-ui/react';
-import Footer from './Footer';
-import DocsLayout from './DocsLayout';
+
+import {
+  useAuthenticationContext,
+  useCMSManagementContext
+} from '@atsnek/jaen';
 import { useLocation } from '@reach/router';
+import { useSearch } from '../../search/use-search';
 import { THamburgerMenuIconStylerProps } from '../components/HamburgerMenuIcon';
+import TbBooks from '../components/icons/tabler/TbBooks';
+import TbUser from '../components/icons/tabler/TbUser';
 import { MenuContext } from '../contexts/menu';
-import { useAuthenticationContext, useCMSManagementContext } from '@atsnek/jaen';
-import { createPageTree } from '../utils/navigation';
-import CommunityLayout from './CommunityLayout';
 import { SearchContext } from '../contexts/search';
 import { TSearchResultSection, TSearchResults } from '../types/search';
+import { createPageTree } from '../utils/navigation';
 import {
   getDefaultSearchDocs,
   getDefaultSearchUsers,
-  searchDocs,
-  searchSocialPosts,
-  searchUser
+  searchSocialPosts
 } from '../utils/search';
-import search from '../../pages/search';
-import TbBook from '../components/icons/tabler/TbBook';
-import TbBooks from '../components/icons/tabler/TbBooks';
-import TbUser from '../components/icons/tabler/TbUser';
-import { useSearch } from '../../search/use-search';
-import { SearchIndex } from '../../search/types';
+import CommunityLayout from './CommunityLayout';
+import DocsLayout from './DocsLayout';
+import Footer from './Footer';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -107,15 +107,25 @@ const AppLayout: FC<AppLayoutProps> = ({
       : [
           {
             title: 'users',
-            results: [{ title: 'Create an account', href: '/signup', description: '' }]
+            results: [
+              { title: 'Create an account', href: '/signup', description: '' }
+            ]
           }
         ];
     const docsResults = await getDefaultSearchDocs(search.searchIndex);
     const socialPostResults = await searchSocialPosts();
 
     setSearchData({
-      docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-      community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+      docs: {
+        title: 'Documentation',
+        sections: docsResults,
+        icon: <TbBooks />
+      },
+      posts: {
+        title: 'Experiments',
+        sections: socialPostResults,
+        icon: <FaFlask />
+      },
       user: { title: 'Users', sections: userResults, icon: <TbUser /> }
     });
   };
@@ -123,7 +133,13 @@ const AppLayout: FC<AppLayoutProps> = ({
   return (
     <SearchContext.Provider value={{ data: searchData, setSearchData }}>
       <MenuContext.Provider value={{ menuStructure }}>
-        <Flex minW="210px" h="max(100%, 100vh)" minH="100vh" direction="column" pb={5}>
+        <Flex
+          minW="210px"
+          h="max(100%, 100vh)"
+          minH="100vh"
+          direction="column"
+          pb={5}
+        >
           {!isAuthenticated && topNavProps?.isVisible && (
             <TopNav
               drawerDisclosure={customTopNavDisclosure ?? topNavDisclosure}

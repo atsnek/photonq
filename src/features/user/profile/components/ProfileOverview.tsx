@@ -85,7 +85,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({
         showcaseStarPosts.items.length > 0) && (
         <Box w="full">
           <Heading size={'md'} mb={5}>
-            Popular Posts
+            Popular Experiments
           </Heading>
           <PostList
             postData={showcaseStarPosts}
@@ -104,7 +104,7 @@ const ProfileOverview: FC<IProfileOverviewProps> = ({
         showcaseLatestPosts.items.length > 0) && (
         <Box w="full">
           <Heading size={'md'} mb={5}>
-            Latest Posts
+            Latest Experiments
           </Heading>
           <PostList
             postData={showcaseLatestPosts}

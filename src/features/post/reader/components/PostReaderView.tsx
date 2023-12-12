@@ -77,8 +77,8 @@ const PostReaderView: FC<IPostReaderViewProps> = ({ slug }) => {
       showUserImage: true
     },
     {
-      name: 'Posts',
-      href: `${authorProfilePath}#posts`
+      name: 'Experiments',
+      href: `${authorProfilePath}#experiments`
     },
     {
       name: post?.title ?? '',

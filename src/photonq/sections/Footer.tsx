@@ -175,9 +175,9 @@ const Footer: FC = () => {
               mr="auto"
               ml={{ base: 'auto', lg: 'initial' }}
               mb={3}
-              href={isAuthenticated ? '/community/new-post' : '/signup'}
+              href={isAuthenticated ? '/new/experiment' : '/signup'}
             >
-              {isAuthenticated ? 'Create a Post' : 'Register Now'}
+              {isAuthenticated ? 'Create a experiment' : 'Register Now'}
             </Button>
           </Flex>
           <Field.Text

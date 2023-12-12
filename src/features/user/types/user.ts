@@ -28,14 +28,24 @@ export type TProfile = {
 /**
  * All the possible tabs in the profile page.
  */
-export type TProfileTab = 'overview' | 'posts' | 'stars' | 'followers' | 'following';
+export type TProfileTab =
+  | 'overview'
+  | 'posts'
+  | 'stars'
+  | 'followers'
+  | 'following';
 
 /**
  * This represents a single stat of a user.
  */
-export type TProfileStatType = 'following' | 'followers' | 'views' | 'posts' | 'starred';
+export type TProfileStatType =
+  | 'following'
+  | 'followers'
+  | 'views'
+  | 'posts'
+  | 'starred';
 
-export type TProfilePostLists = 'all-posts' | 'starred-posts'
+export type TProfilePostLists = 'all-posts' | 'starred-posts';
 
 /**
  * This represents all the stats of a user.

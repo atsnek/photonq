@@ -12,8 +12,8 @@ const IndexPage: React.FC<PageProps> = () => {
 export default IndexPage;
 
 export const pageConfig: PageConfig = {
-  label: 'Community',
-  icon: 'FaUsers',
+  label: 'Experiments',
+  icon: 'FaFlask',
   menu: {
     type: 'app',
     order: 200,

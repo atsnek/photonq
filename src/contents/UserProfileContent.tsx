@@ -13,7 +13,7 @@ import PostList from '../features/post/PostList';
 import ProfileOverview from '../features/user/profile/components/ProfileOverview';
 import { navigate, useLocation } from '@reach/router';
 import TbUser from '../shared/components/icons/tabler/TbUser';
-import TbBook from '../shared/components/icons/tabler/TbBook';
+import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import { useAuthenticationContext } from '@atsnek/jaen';
 import { useAppStore } from '../shared/store/store';
 import { POST_FETCH_LIMIT } from './PostsContent';
@@ -33,9 +33,9 @@ const tabNavItems: Array<{
     icon: <TbUser />
   },
   {
-    label: 'Posts',
+    label: 'Experiments',
     value: 'posts',
-    icon: <TbBook />
+    icon: <FaFlask />
   },
   {
     label: 'Stars',
@@ -97,8 +97,8 @@ const UserProfileContent: FC<IUserProfileContent> = ({ username }) => {
 
     let tab: TProfileTab = 'overview';
     switch (hash) {
-      case '#posts':
-      case '#post':
+      case '#experiments':
+      case '#experiments':
         tab = 'posts';
         break;
       case '#stars':

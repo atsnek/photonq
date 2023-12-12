@@ -15,6 +15,7 @@ import {
   useRef,
   useState
 } from 'react';
+import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 
 import { TSearchResults } from '../../../shared/types/search';
 import {
@@ -30,7 +31,6 @@ import {
   SearchResultSection,
   SearchResultSectionTitle
 } from './SearchResultSection';
-import TbBook from '../../../shared/components/icons/tabler/TbBook';
 import SearchButton from './SearchButton';
 import SearchModal from './SearchModal';
 import TbBooks from '../../../shared/components/icons/tabler/TbBooks';
@@ -115,16 +115,18 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     const socialPostResults = await searchSocialPosts(searchQuery);
     const userResult = await searchUser(searchQuery);
 
+    console.log('docsResults', docsResults, search.searchIndex);
+
     setSearchData({
       docs: {
         title: 'Documentation',
         sections: docsResults,
         icon: <TbBooks />
       },
-      community: {
-        title: 'Community Posts',
+      posts: {
+        title: 'Experiments',
         sections: socialPostResults,
-        icon: <TbBook />
+        icon: <FaFlask />
       },
       user: { title: 'Users', sections: userResult, icon: <TbUser /> }
     });

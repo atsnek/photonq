@@ -63,9 +63,9 @@ const Hero: FC = () => {
                 px={5}
                 borderRadius="xl"
                 bgColor="rgba(2, 116, 192, 0.07)"
-                href={isAuthenticated ? '/community/new-post' : '/signup'}
+                href={isAuthenticated ? '/new/experiment' : '/signup'}
               >
-                {isAuthenticated ? 'Create a Post' : 'Register Now'}
+                {isAuthenticated ? 'Create a experiment' : 'Register Now'}
               </Button>
               <Center>
                 <Box mt={20} w="50vw" maxW="512px" minW="250px">

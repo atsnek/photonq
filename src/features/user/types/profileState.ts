@@ -34,13 +34,22 @@ export interface IProfileStateActions {
     language?: EnPostLanguage,
     dateRange?: TPostDateRange
   ) => Promise<void>;
-  setPostListLanguage: (postList?: TProfilePostLists, language?: EnPostLanguage) => void;
+  setPostListLanguage: (
+    postList?: TProfilePostLists,
+    language?: EnPostLanguage
+  ) => void;
   setPostListDateRange: (
     from: Date | null | undefined,
     to: Date | null | undefined,
-    postList?: TProfilePostLists,
+    postList?: TProfilePostLists
   ) => void;
-  fetchStarredPosts: (query: string, limit: number, offset: number, language?: EnPostLanguage, dateRange?: TPostDateRange) => Promise<boolean>;
+  fetchStarredPosts: (
+    query: string,
+    limit: number,
+    offset: number,
+    language?: EnPostLanguage,
+    dateRange?: TPostDateRange
+  ) => Promise<boolean>;
   fetchFollowers: () => Promise<boolean>;
   fetchFollowingUsers: () => Promise<boolean>;
   toggleFollow: (id?: string) => Promise<boolean>;
@@ -50,7 +59,10 @@ export interface IProfileStateActions {
   changeProfilePicture: (avatarFile: File) => boolean;
   togglePostRating: (
     id: TPostPreview['id'],
-    source: Extract<TProfileTab, 'posts' | 'overview' | 'stars'> | 'showcase_stars' | 'showcase_latest',
+    source:
+      | Extract<TProfileTab, 'posts' | 'overview' | 'stars'>
+      | 'showcase_stars'
+      | 'showcase_latest'
   ) => Promise<boolean>;
   togglePostPrivacy: (
     id: TPostPreview['id'],

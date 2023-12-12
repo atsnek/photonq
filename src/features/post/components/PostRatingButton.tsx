@@ -51,13 +51,18 @@ const PostRatingButton: FC<IPostRatingButtonProps> = ({
     let label = '';
 
     if (canRate) {
-      label = `${hasRated ? 'Unr' : 'R'}ate this post`;
+      label = `${hasRated ? 'Unr' : 'R'}ate this experiment`;
     } else {
-      label = 'You must be logged in to rate this post';
+      label = 'You must be logged in to rate this experiment';
     }
 
     return (
-      <Tooltip label={label} aria-label={label} placement="bottom" openDelay={500}>
+      <Tooltip
+        label={label}
+        aria-label={label}
+        placement="bottom"
+        openDelay={500}
+      >
         {rating}
       </Tooltip>
     );

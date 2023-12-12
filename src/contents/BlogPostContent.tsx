@@ -11,7 +11,12 @@ import Alert from '../shared/components/alert/Alert';
 import { useBreakpointValue, useDisclosure, useToast } from '@chakra-ui/react';
 import { EnPostLanguage, TPostViewMode } from '../features/post/types/post';
 import { useAuthenticationContext } from '@atsnek/jaen';
-import { HistoryUnsubscribe, globalHistory, navigate, useLocation } from '@reach/router';
+import {
+  HistoryUnsubscribe,
+  globalHistory,
+  navigate,
+  useLocation
+} from '@reach/router';
 import { wait } from '../shared/utils/utils';
 import PostMobileMetaEditor from '../features/post/components/PostMobileMetaEditor';
 
@@ -30,7 +35,9 @@ export interface IBlogPostContentProps {
  * Content for the blog post page (reading and editing).
  */
 const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
-  const [viewMode, setViewMode] = useState<TPostViewMode>(isNewPost ? 'edit' : 'read');
+  const [viewMode, setViewMode] = useState<TPostViewMode>(
+    isNewPost ? 'edit' : 'read'
+  );
   const [madeChanges, setMadeChanges] = useState(false);
   const [isRating, setIsRating] = useState(false);
   const [isSavingPost, setIsSavingPost] = useState(false);
@@ -49,11 +56,17 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
   const author = useAppStore(state => state.singlePost.postAuthor);
   const currentUser = useAppStore(state => state.currentUser.userMe);
   const post = useAppStore(state => state.singlePost.post);
-  const togglePostRating = useAppStore(state => state.singlePost.togglePostRating);
-  const togglePostPrivacy = useAppStore(state => state.singlePost.togglePrivacy);
+  const togglePostRating = useAppStore(
+    state => state.singlePost.togglePostRating
+  );
+  const togglePostPrivacy = useAppStore(
+    state => state.singlePost.togglePrivacy
+  );
   const editSummary = useAppStore(state => state.singlePost.editSummary);
   const editTitle = useAppStore(state => state.singlePost.editTitle);
-  const updatePreviewImage = useAppStore(state => state.singlePost.updatePreviewImage);
+  const updatePreviewImage = useAppStore(
+    state => state.singlePost.updatePreviewImage
+  );
   const changeLanguage = useAppStore(state => state.singlePost.changeLanguage);
   const createNewPost = useAppStore(state => state.singlePost.createNewPost);
   const savePost = useAppStore(state => state.singlePost.savePost);
@@ -65,20 +78,25 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     let historyListener: HistoryUnsubscribe | undefined = undefined;
     if (madeChanges) {
       window.addEventListener('beforeunload', handleBeforeUnload);
-      historyListener = globalHistory.listen(({ action, location: historyLocation }) => {
-        if (location.pathname === historyLocation.pathname) return;
-        if (
-          action === 'PUSH' &&
-          (location.pathname === '/community/new-post/' || location.pathname.includes('/post/')) &&
-          !isSavingPost
-        ) {
+      historyListener = globalHistory.listen(
+        ({ action, location: historyLocation }) => {
+          if (location.pathname === historyLocation.pathname) return;
           if (
-            !window.confirm('Are you sure you want to leave this page? Your changes will be lost.')
+            action === 'PUSH' &&
+            (location.pathname === '/new/experiment' ||
+              location.pathname.includes('/post/')) &&
+            !isSavingPost
           ) {
-            globalHistory.navigate(location.pathname);
+            if (
+              !window.confirm(
+                'Are you sure you want to leave this page? Your changes will be lost.'
+              )
+            ) {
+              globalHistory.navigate(location.pathname);
+            }
           }
         }
-      });
+      );
     }
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -136,7 +154,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
     setIsDeletingPost(false);
   };
 
-  const isPostAuthor = isNewPost || (!!currentUser && currentUser?.id === author?.id);
+  const isPostAuthor =
+    isNewPost || (!!currentUser && currentUser?.id === author?.id);
   const canEditPost = isPostAuthor && viewMode === 'edit'; //TODO: Maybe we find a better name for this variable
 
   const MainWrapper = viewMode === 'read' ? MainGrid : MainFlex;
@@ -152,7 +171,7 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       const slug = await createNewPost(newPostPreviewImage);
       if (slug) {
         await wait(750); // Make sure the new post is created before navigating to it
-        navigate(`/post/${slug}/`);
+        navigate(`/experiments/${slug}/`);
       }
       if (slug) window.removeEventListener('beforeunload', handleBeforeUnload);
     } else {
@@ -240,8 +259,8 @@ const BlogPostContent: FC<IBlogPostContentProps> = ({ isNewPost, slug }) => {
       />
       <Alert
         disclosure={deletePostDisclosure}
-        body="Are you sure you want to delete this post? This action cannot be undone."
-        header="Delete this post?"
+        body="Are you sure you want to delete this experiment? This action cannot be undone!"
+        header="Delete this experiment?"
         confirmationAction={handleDeletePostConfirmation}
         confirmationProps={{ variant: 'filledRed' }}
       />

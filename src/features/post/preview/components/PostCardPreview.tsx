@@ -133,7 +133,9 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             overflow="hidden"
             whiteSpace="nowrap"
           >
-            <LinkOverlay href={`/post/${post.slug}`}>{post.title}</LinkOverlay>
+            <LinkOverlay href={`/experiments/${post.slug}`}>
+              {post.title}
+            </LinkOverlay>
           </Heading>
         </Box>
         <Spacer />
@@ -142,7 +144,10 @@ const PostCardPreview: FC<IPostPreviewProps<LinkBoxProps>> = ({
             postId={post.id}
             postPrivacy={post.privacy}
             togglePostPrivacy={id =>
-              togglePostPrivacy(id, post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC')
+              togglePostPrivacy(
+                id,
+                post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC'
+              )
             }
             isTogglingPostPrivacy={isTogglingPostPrivacy}
             display={manageBtnDisplay}

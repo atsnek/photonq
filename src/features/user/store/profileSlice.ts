@@ -4,12 +4,16 @@ import { snekResourceId } from '@atsnek/jaen';
 import { produce } from 'immer';
 import { TStoreSlice, TStoreState } from '../../../shared/types/store';
 import { IProfileStateDefinition, TProfileSlice } from '../types/profileState';
-import { buildUserActivities, changeUserFollowingState, getUserDisplayname } from '../utils/user';
+import {
+  buildUserActivities,
+  changeUserFollowingState,
+  getUserDisplayname
+} from '../utils/user';
 import {
   buildPostPreview,
   deletePost,
   searchPosts,
-  togglePostRating,
+  togglePostRating
 } from '../../../shared/utils/features/post';
 import { TPaginatedPostListData, TPostPreview } from '../../post/types/post';
 import { POST_FETCH_LIMIT } from '../../../contents/PostsContent';
@@ -40,7 +44,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
       following: 0,
       views: 0,
       posts: 0,
-      starred: 0,
+      starred: 0
     };
 
     const [currentUser, currentUserError] = await sq.query(q => q.userMe);
@@ -80,7 +84,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
             following: profile?.following().totalCount ?? 0,
             views: profile?.views ?? 0,
             posts: profile?.posts().totalCount ?? 0,
-            starred: profile?.starredPosts().totalCount ?? 0,
+            starred: profile?.starredPosts().totalCount ?? 0
           },
           username: username
         };
@@ -104,8 +108,17 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const userId = get().profile.profile?.id;
     const [rawPosts, error] = await sq.query(q => {
-      const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, filters: { userId }, first: 6 });
-      return posts.nodes.filter(p => p.privacy === 'PUBLIC' || (!!currentUser && userId === currentUser.id))
+      const posts = q.allSocialPostTrending({
+        resourceId: __SNEK_RESOURCE_ID__,
+        filters: { userId },
+        first: 6
+      });
+      return posts.nodes
+        .filter(
+          p =>
+            p.privacy === 'PUBLIC' ||
+            (!!currentUser && userId === currentUser.id)
+        )
         .map(p => buildPostPreview(q, p, currentUser));
     });
 
@@ -170,16 +183,14 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
           state.profile.activity.totalCount === 0
             ? activities
             : {
-              items: [
-                ...state.profile.activity.items,
-                ...activities.items
-              ],
-              totalCount: state.profile.activity.totalCount,
-              nextCursor: activities.nextCursor,
-              hasMore: activities.hasMore,
-              state: 'success'
-            };
-      }));
+                items: [...state.profile.activity.items, ...activities.items],
+                totalCount: state.profile.activity.totalCount,
+                nextCursor: activities.nextCursor,
+                hasMore: activities.hasMore,
+                state: 'success'
+              };
+      })
+    );
 
     return true;
   },
@@ -279,14 +290,19 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
   fetchStarredPosts: async (query, limit, offset, language, dateRange) => {
     set(
       produce((state: TStoreState) => {
-        if (query !== state.profile.starredPosts.query || (dateRange && dateRange?.from !== state.profile.starredPosts.dateRange?.from || dateRange?.to !== state.profile.starredPosts.dateRange?.to)) {
+        if (
+          query !== state.profile.starredPosts.query ||
+          (dateRange &&
+            dateRange?.from !== state.profile.starredPosts.dateRange?.from) ||
+          dateRange?.to !== state.profile.starredPosts.dateRange?.to
+        ) {
           // Reset the state if the query changed
           state.profile.starredPosts = {
             query,
             state: 'loading',
             items: [],
             hasMore: false,
-            totalCount: 0,
+            totalCount: 0
           };
         } else {
           state.profile.starredPosts.state = 'loading';
@@ -299,30 +315,50 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     const [currentUser] = await sq.query(q => q.userMe);
 
-    const posts = await searchPosts(query, limit, 'PUBLIC', offset === 0 ? undefined : get().profile.starredPosts.nextCursor, currentUser, profile.id, language ?? get().profile.searchPosts.language, dateRange ?? get().profile.searchPosts.dateRange, 'starred');
+    const posts = await searchPosts(
+      query,
+      limit,
+      'PUBLIC',
+      offset === 0 ? undefined : get().profile.starredPosts.nextCursor,
+      currentUser,
+      profile.id,
+      language ?? get().profile.searchPosts.language,
+      dateRange ?? get().profile.searchPosts.dateRange,
+      'starred'
+    );
 
-    set(produce((state: TStoreState) => {
-      state.profile.starredPosts = {
-        query,
-        state: 'success',
-        items: offset === 0 ? posts.items : [...state.profile.starredPosts.items, ...posts.items],
-        hasMore: posts.hasMore,
-        totalCount: posts.totalCount,
-        nextCursor: posts.nextCursor,
-        dateRange: dateRange ?? get().profile.starredPosts.dateRange,
-        language: language ?? get().profile.starredPosts.language,
-      };
-      // Update the starred count in the profile stats if the current locale value is different from the remote one (which means that the user has starred or unstarred a post in the meantime on another tab)
-      if (state.profile?.profile?.stats && state.profile.profile.stats.starred !== posts.totalCount) {
-        state.profile.profile.stats.starred = posts.totalCount;
-      }
-    }))
+    set(
+      produce((state: TStoreState) => {
+        state.profile.starredPosts = {
+          query,
+          state: 'success',
+          items:
+            offset === 0
+              ? posts.items
+              : [...state.profile.starredPosts.items, ...posts.items],
+          hasMore: posts.hasMore,
+          totalCount: posts.totalCount,
+          nextCursor: posts.nextCursor,
+          dateRange: dateRange ?? get().profile.starredPosts.dateRange,
+          language: language ?? get().profile.starredPosts.language
+        };
+        // Update the starred count in the profile stats if the current locale value is different from the remote one (which means that the user has starred or unstarred a post in the meantime on another tab)
+        if (
+          state.profile?.profile?.stats &&
+          state.profile.profile.stats.starred !== posts.totalCount
+        ) {
+          state.profile.profile.stats.starred = posts.totalCount;
+        }
+      })
+    );
     return true;
   },
   fetchFollowers: async () => {
-    set(produce((state: TStoreState) => {
-      state.profile.followers.state = "loading";
-    }))
+    set(
+      produce((state: TStoreState) => {
+        state.profile.followers.state = 'loading';
+      })
+    );
 
     const [currentUser] = await sq.query(q => q.userMe);
 
@@ -330,74 +366,90 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     if (!profile) return false;
 
     const [followerConn, followerConnError] = await sq.query(q => {
-      const followers = q.user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ }).profile?.followers({ first: USER_FETCH_LIMIT, after: get().profile.followers?.nextCursor });
+      const followers = q
+        .user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ })
+        .profile?.followers({
+          first: USER_FETCH_LIMIT,
+          after: get().profile.followers?.nextCursor
+        });
 
       followers?.pageInfo.hasNextPage;
       followers?.pageInfo.endCursor;
       followers?.edges.map(fe => fe.node.follower.id);
 
       return followers;
-    })
+    });
     if (followerConnError?.length > 0) return false;
 
-    const followers = await Promise.all((followerConn?.edges ?? [])
-      .map(fe => fe.node.follower.id)
-      .map(async (id): Promise<TUser | undefined> => {
-        const [user, userError] = await sq.query(q => {
-          const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
+    const followers = (await Promise.all(
+      (followerConn?.edges ?? [])
+        .map(fe => fe.node.follower.id)
+        .map(async (id): Promise<TUser | undefined> => {
+          const [user, userError] = await sq.query(q => {
+            const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
 
-          user.id;
-          user.details?.firstName;
-          user.details?.lastName;
-          user.details?.avatarURL;
-          user.profile?.bio;
-          user.username;
-          user.profile?.followers().edges.map(fe => fe.node.follower.id);
-          user.profile?.views;
-          user.profile?.posts().totalCount;
-          user.profile?.stars().totalCount;
-          user.profile?.followers().totalCount;
+            user.id;
+            user.details?.firstName;
+            user.details?.lastName;
+            user.details?.avatarURL;
+            user.profile?.bio;
+            user.username;
+            user.profile?.followers().edges.map(fe => fe.node.follower.id);
+            user.profile?.views;
+            user.profile?.posts().totalCount;
+            user.profile?.stars().totalCount;
+            user.profile?.followers().totalCount;
 
-          return user;
-        });
+            return user;
+          });
 
-        if (!user || userError?.length > 0) return undefined;
+          if (!user || userError?.length > 0) return undefined;
 
-        return {
-          id: user.id,
-          avatarUrl: user.details?.avatarURL ?? '',
-          bio: user.profile?.bio ?? null,
-          displayName: getUserDisplayname(user),
-          username: user.username,
-          stats: {
-            followers: user.profile?.followers().totalCount ?? 0,
-            following: 0,
-            posts: user.profile?.posts().totalCount ?? 0,
-            starred: 0,
-            views: user.profile?.views ?? 0,
-          },
-          isFollowing: currentUser && !!user.profile?.followers().edges.find(fe => fe.node.follower.id === currentUser.id),
-          isOwnProfile: currentUser?.id === user.id,
-        }
-      }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
+          return {
+            id: user.id,
+            avatarUrl: user.details?.avatarURL ?? '',
+            bio: user.profile?.bio ?? null,
+            displayName: getUserDisplayname(user),
+            username: user.username,
+            stats: {
+              followers: user.profile?.followers().totalCount ?? 0,
+              following: 0,
+              posts: user.profile?.posts().totalCount ?? 0,
+              starred: 0,
+              views: user.profile?.views ?? 0
+            },
+            isFollowing:
+              currentUser &&
+              !!user.profile
+                ?.followers()
+                .edges.find(fe => fe.node.follower.id === currentUser.id),
+            isOwnProfile: currentUser?.id === user.id
+          };
+        })
+        .filter(f => !!f)
+    )) as TUser[]; // We need to tell TS that the filter will remove all undefined values
     if (!followers) return false;
 
-    set(produce((state: TStoreState) => {
-      state.profile.followers = {
-        items: get().profile.followers?.items.concat(followers) ?? followers,
-        totalCount: get().profile.followers?.totalCount ?? followers.length,
-        nextCursor: followerConn?.pageInfo.endCursor ?? undefined,
-        hasMore: followerConn?.pageInfo.hasNextPage ?? false,
-        state: 'success',
-      }
-    }));
+    set(
+      produce((state: TStoreState) => {
+        state.profile.followers = {
+          items: get().profile.followers?.items.concat(followers) ?? followers,
+          totalCount: get().profile.followers?.totalCount ?? followers.length,
+          nextCursor: followerConn?.pageInfo.endCursor ?? undefined,
+          hasMore: followerConn?.pageInfo.hasNextPage ?? false,
+          state: 'success'
+        };
+      })
+    );
 
     return true;
   },
   fetchFollowingUsers: async () => {
-    set(produce((state: TStoreState) => {
-      state.profile.followingUsers.state = "loading";
-    }))
+    set(
+      produce((state: TStoreState) => {
+        state.profile.followingUsers.state = 'loading';
+      })
+    );
 
     const [currentUser] = await sq.query(q => q.userMe);
 
@@ -406,85 +458,104 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     const isUserOnOwnProfile = currentUser?.id === profile.id;
 
     const [followingConn, followingConnError] = await sq.query(q => {
-      const following = q.user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ }).profile?.following({ first: USER_FETCH_LIMIT, after: get().profile.followingUsers?.nextCursor });
+      const following = q
+        .user({ id: profile.id, resourceId: __SNEK_RESOURCE_ID__ })
+        .profile?.following({
+          first: USER_FETCH_LIMIT,
+          after: get().profile.followingUsers?.nextCursor
+        });
 
       following?.pageInfo.hasNextPage;
       following?.pageInfo.endCursor;
       following?.edges.map(fe => fe.node.followed.id);
 
       return following;
-    })
+    });
     if (followingConnError?.length > 0) return false;
 
-    const followingUsers = await Promise.all((followingConn?.edges ?? [])
-      .map(fe => fe.node.followed.id)
-      .map(async (id): Promise<TUser | undefined> => {
-        const [user, userError] = await sq.query(q => {
-          const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
+    const followingUsers = (await Promise.all(
+      (followingConn?.edges ?? [])
+        .map(fe => fe.node.followed.id)
+        .map(async (id): Promise<TUser | undefined> => {
+          const [user, userError] = await sq.query(q => {
+            const user = q.user({ id, resourceId: __SNEK_RESOURCE_ID__ });
 
-          user.id;
-          user.details?.firstName;
-          user.details?.lastName;
-          user.details?.avatarURL;
-          user.profile?.bio;
-          user.username;
-          user.profile?.views;
-          user.profile?.posts().totalCount;
-          user.profile?.stars().totalCount;
-          user.profile?.followers().totalCount;
-          user.profile?.following().nodes.map(n => n.followed.id);
+            user.id;
+            user.details?.firstName;
+            user.details?.lastName;
+            user.details?.avatarURL;
+            user.profile?.bio;
+            user.username;
+            user.profile?.views;
+            user.profile?.posts().totalCount;
+            user.profile?.stars().totalCount;
+            user.profile?.followers().totalCount;
+            user.profile?.following().nodes.map(n => n.followed.id);
 
-          return user;
-        });
+            return user;
+          });
 
-        if (!user || userError?.length > 0) return undefined;
+          if (!user || userError?.length > 0) return undefined;
 
-        return {
-          id: user.id,
-          avatarUrl: user.details?.avatarURL ?? '',
-          bio: user.profile?.bio ?? null,
-          displayName: getUserDisplayname(user),
-          username: user.username,
-          stats: {
-            followers: user.profile?.followers().totalCount ?? 0,
-            following: 0,
-            posts: user.profile?.posts().totalCount ?? 0,
-            starred: 0,
-            views: user.profile?.views ?? 0,
-          },
-          isFollowing: isUserOnOwnProfile || (currentUser && !!user.profile?.following().nodes.find(fe => fe.followed.id === currentUser.id)),
-          isOwnProfile: user.id === currentUser.id,
-        }
-      }).filter(f => !!f)) as TUser[]; // We need to tell TS that the filter will remove all undefined values
+          return {
+            id: user.id,
+            avatarUrl: user.details?.avatarURL ?? '',
+            bio: user.profile?.bio ?? null,
+            displayName: getUserDisplayname(user),
+            username: user.username,
+            stats: {
+              followers: user.profile?.followers().totalCount ?? 0,
+              following: 0,
+              posts: user.profile?.posts().totalCount ?? 0,
+              starred: 0,
+              views: user.profile?.views ?? 0
+            },
+            isFollowing:
+              isUserOnOwnProfile ||
+              (currentUser &&
+                !!user.profile
+                  ?.following()
+                  .nodes.find(fe => fe.followed.id === currentUser.id)),
+            isOwnProfile: user.id === currentUser.id
+          };
+        })
+        .filter(f => !!f)
+    )) as TUser[]; // We need to tell TS that the filter will remove all undefined values
     if (!followingUsers) return false;
 
-    set(produce((state: TStoreState) => {
-      state.profile.followingUsers = {
-        items: get().profile.followingUsers?.items.concat(followingUsers) ?? followingUsers,
-        totalCount: get().profile.followingUsers?.totalCount ?? followingUsers.length,
-        nextCursor: followingConn?.pageInfo.endCursor ?? undefined,
-        hasMore: followingConn?.pageInfo.hasNextPage ?? false,
-        state: 'success',
-      }
-    }));
+    set(
+      produce((state: TStoreState) => {
+        state.profile.followingUsers = {
+          items:
+            get().profile.followingUsers?.items.concat(followingUsers) ??
+            followingUsers,
+          totalCount:
+            get().profile.followingUsers?.totalCount ?? followingUsers.length,
+          nextCursor: followingConn?.pageInfo.endCursor ?? undefined,
+          hasMore: followingConn?.pageInfo.hasNextPage ?? false,
+          state: 'success'
+        };
+      })
+    );
 
     return true;
   },
-  toggleFollow: async (id) => {
+  toggleFollow: async id => {
     const [currentUserId] = await sq.query(q => q.userMe.id);
-    const [targetUser, targetUserErro] = await sq.query(
-      q => {
-        const user = q.user({
-          resourceId: __SNEK_RESOURCE_ID__,
-          id: id ?? get().profile.profile?.id
-        });
-        user.id;
-        user.details?.lastName;
-        user.profile?.followers().nodes.map(n => n.follower.id);
-        return user;
-      }
-    );
-    const isFollowing = targetUser?.profile?.followers().nodes.findIndex(f => f.follower.id === currentUserId) !== -1;
+    const [targetUser, targetUserErro] = await sq.query(q => {
+      const user = q.user({
+        resourceId: __SNEK_RESOURCE_ID__,
+        id: id ?? get().profile.profile?.id
+      });
+      user.id;
+      user.details?.lastName;
+      user.profile?.followers().nodes.map(n => n.follower.id);
+      return user;
+    });
+    const isFollowing =
+      targetUser?.profile
+        ?.followers()
+        .nodes.findIndex(f => f.follower.id === currentUserId) !== -1;
 
     if (
       targetUserErro ||
@@ -494,38 +565,58 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     )
       return false;
 
-    const succeed = await changeUserFollowingState(
-      targetUser.id,
-      isFollowing
-    );
+    const succeed = await changeUserFollowingState(targetUser.id, isFollowing);
 
     if (succeed) {
       set(
         produce((state: TStoreState): void => {
           if (id) {
             // If id is defined, we are following a different profile than the one being viewed
-            const followerIdx = state.profile.followers.items.findIndex(f => f.id === id);
+            const followerIdx = state.profile.followers.items.findIndex(
+              f => f.id === id
+            );
             if (followerIdx !== -1) {
-              state.profile.followers.items[followerIdx].isFollowing = !isFollowing;
-              if (state.profile.followers.items[followerIdx].stats?.followers === undefined) return;
-              state.profile.followers.items[followerIdx].stats!.followers += isFollowing ? -1 : 1;
+              state.profile.followers.items[followerIdx].isFollowing =
+                !isFollowing;
+              if (
+                state.profile.followers.items[followerIdx].stats?.followers ===
+                undefined
+              )
+                return;
+              state.profile.followers.items[followerIdx].stats!.followers +=
+                isFollowing ? -1 : 1;
             }
 
-            const followingIdx = state.profile.followingUsers.items.findIndex(f => f.id === id);
+            const followingIdx = state.profile.followingUsers.items.findIndex(
+              f => f.id === id
+            );
             if (followingIdx !== -1) {
-              state.profile.followingUsers.items[followingIdx].isFollowing = !state.profile.followingUsers.items[followingIdx].isFollowing;
-              if (state.profile.followingUsers.items[followingIdx].stats?.followers === undefined) return;
-              state.profile.followingUsers.items[followingIdx].stats!.followers += isFollowing ? -1 : 1;
+              state.profile.followingUsers.items[followingIdx].isFollowing =
+                !state.profile.followingUsers.items[followingIdx].isFollowing;
+              if (
+                state.profile.followingUsers.items[followingIdx].stats
+                  ?.followers === undefined
+              )
+                return;
+              state.profile.followingUsers.items[
+                followingIdx
+              ].stats!.followers += isFollowing ? -1 : 1;
             }
 
             // If the followed user's profile is the one being viewed, we need to update the state of it
-            if (currentUserId === get().profile.profile?.id && state.profile.profile?.stats?.following !== undefined) {
+            if (
+              currentUserId === get().profile.profile?.id &&
+              state.profile.profile?.stats?.following !== undefined
+            ) {
               state.profile.profile.stats!.following += isFollowing ? -1 : 1;
             }
-
           } else {
             state.profile.isFollowing = !isFollowing;
-            if (!state.profile.profile || state.profile.profile.stats?.followers == undefined) return;
+            if (
+              !state.profile.profile ||
+              state.profile.profile.stats?.followers == undefined
+            )
+              return;
             state.profile.profile.stats.followers += isFollowing ? -1 : 1;
           }
         })
@@ -539,21 +630,24 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     if (!profile) return false;
 
-    const [currentUser,] = await sq.query(q => q.userMe);
+    const [currentUser] = await sq.query(q => q.userMe);
 
     set(
       produce((state: TStoreState) => {
         state.profile.showcaseLatestPosts.state = 'loading';
       })
-    )
+    );
 
     const [posts, postsError] = await sq.query(q => {
-      const user = q.user({ id: get().profile.profile?.id, resourceId: __SNEK_RESOURCE_ID__ }).profile;
+      const user = q.user({
+        id: get().profile.profile?.id,
+        resourceId: __SNEK_RESOURCE_ID__
+      }).profile;
       if (!user) return undefined;
 
       const posts = user.posts({ first: 2 });
       return posts.nodes.map(p => buildPostPreview(q, p, currentUser));
-    })
+    });
 
     if (!posts || postsError?.length > 0) return false;
 
@@ -562,7 +656,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         state.profile.showcaseLatestPosts.state = 'success';
         state.profile.showcaseLatestPosts.items = posts;
       })
-    )
+    );
     return true;
   },
   fetchShowcaseStarsPosts: async () => {
@@ -570,18 +664,22 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     if (!profile) return false;
 
-    const [currentUser,] = await sq.query(q => q.userMe);
+    const [currentUser] = await sq.query(q => q.userMe);
 
     set(
       produce((state: TStoreState) => {
         state.profile.showcaseStarsPosts.state = 'loading';
       })
-    )
+    );
 
     const [posts, postsError] = await sq.query(q => {
-      const posts = q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 2, filters: { userId: profile.id } });
+      const posts = q.allSocialPostTrending({
+        resourceId: __SNEK_RESOURCE_ID__,
+        first: 2,
+        filters: { userId: profile.id }
+      });
       return posts.nodes.map(p => buildPostPreview(q, p, currentUser));
-    })
+    });
 
     if (!posts || postsError?.length > 0) return false;
 
@@ -590,7 +688,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         state.profile.showcaseStarsPosts.state = 'success';
         state.profile.showcaseStarsPosts.items = posts;
       })
-    )
+    );
     return true;
   },
   changeBio: async bio => {
@@ -612,7 +710,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return succeed;
   },
-  changeProfilePicture: (avatarFile) => {
+  changeProfilePicture: avatarFile => {
     if (!get().profile.profile) return false;
 
     const fileReader = new FileReader();
@@ -623,8 +721,8 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         produce((state: TStoreState): void => {
           state.profile.profile!.avatarUrl = fileReader.result as string;
         })
-      )
-    }
+      );
+    };
     return true;
   },
   togglePostRating: async (id, source) => {
@@ -632,22 +730,34 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     switch (source) {
       case 'overview':
-        hasRated = get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        hasRated =
+          get().profile.overviewPosts.items.find(p => p.id === id)?.hasRated ??
+          false;
         break;
       case 'posts':
-        hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        hasRated =
+          get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ??
+          false;
         break;
       case 'showcase_latest':
-        hasRated = get().profile.showcaseLatestPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        hasRated =
+          get().profile.showcaseLatestPosts.items.find(p => p.id === id)
+            ?.hasRated ?? false;
         break;
       case 'showcase_stars':
-        hasRated = get().profile.showcaseStarsPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        hasRated =
+          get().profile.showcaseStarsPosts.items.find(p => p.id === id)
+            ?.hasRated ?? false;
         break;
       case 'stars':
-        hasRated = get().profile.starredPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        hasRated =
+          get().profile.starredPosts.items.find(p => p.id === id)?.hasRated ??
+          false;
         break;
       default:
-        hasRated = get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ?? false;
+        hasRated =
+          get().profile.searchPosts.items.find(p => p.id === id)?.hasRated ??
+          false;
         break;
     }
 
@@ -658,9 +768,16 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     if (succeed) {
       set(
         produce((state: TStoreState) => {
-
-          [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.starredPosts.items, state.profile.searchPosts.items].forEach(posts => {
-            const post = ('state' in posts ? posts.items : posts).find(p => p.id === id);
+          [
+            state.profile.overviewPosts.items,
+            state.profile.showcaseStarsPosts,
+            state.profile.showcaseLatestPosts,
+            state.profile.starredPosts.items,
+            state.profile.searchPosts.items
+          ].forEach(posts => {
+            const post = ('state' in posts ? posts.items : posts).find(
+              p => p.id === id
+            );
             if (post) {
               post.hasRated = !post.hasRated;
               post.stars += post.hasRated ? 1 : -1;
@@ -757,8 +874,16 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     );
 
     const newDateRange = {
-      from: from ?? (isAllPosts ? get().profile.searchPosts.dateRange?.from : get().profile.starredPosts.dateRange?.from),
-      to: to ?? (isAllPosts ? get().profile.searchPosts.dateRange?.to : get().profile.starredPosts.dateRange?.to)
+      from:
+        from ??
+        (isAllPosts
+          ? get().profile.searchPosts.dateRange?.from
+          : get().profile.starredPosts.dateRange?.from),
+      to:
+        to ??
+        (isAllPosts
+          ? get().profile.searchPosts.dateRange?.to
+          : get().profile.starredPosts.dateRange?.to)
     };
 
     if (isAllPosts) {
@@ -778,7 +903,6 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
         newDateRange
       );
     }
-
   },
   togglePostPrivacy: async (postId, privacy) => {
     if (!get().profile.profile) return false;
@@ -793,8 +917,15 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     set(
       produce((state: TStoreState): void => {
-        [state.profile.overviewPosts.items, state.profile.showcaseStarsPosts, state.profile.showcaseLatestPosts, state.profile.searchPosts.items].forEach(posts => {
-          const post = ('state' in posts ? posts.items : posts).find(p => p.id === postId);
+        [
+          state.profile.overviewPosts.items,
+          state.profile.showcaseStarsPosts,
+          state.profile.showcaseLatestPosts,
+          state.profile.searchPosts.items
+        ].forEach(posts => {
+          const post = ('state' in posts ? posts.items : posts).find(
+            p => p.id === postId
+          );
           if (!post) return;
           post.privacy = privacy;
         });
@@ -803,11 +934,14 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
 
     return true;
   },
-  deletePost: async (id) => {
+  deletePost: async id => {
     const succeed = deletePost(id);
     if (!succeed) return false;
 
-    const doesSectionPostExist = (id: TPostPreview['id'], section: TPaginatedPostListData | TAsyncListData<TPostPreview>) => section.items.findIndex(p => p.id === id) !== -1;
+    const doesSectionPostExist = (
+      id: TPostPreview['id'],
+      section: TPaginatedPostListData | TAsyncListData<TPostPreview>
+    ) => section.items.findIndex(p => p.id === id) !== -1;
 
     if (doesSectionPostExist(id, get().profile.overviewPosts)) {
       get().profile.fetchOverviewPosts();

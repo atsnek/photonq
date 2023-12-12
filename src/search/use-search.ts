@@ -49,6 +49,8 @@ export const useSearch = (): UseSearchResult => {
       } else {
         const builtSearchIndex = await getBuiltSearchIndex();
 
+        console.log('builtSearchIndex', builtSearchIndex);
+
         if (builtSearchIndex) {
           builtSearchIndexRef.current = builtSearchIndex; // Cache the builtSearchIndex
         }

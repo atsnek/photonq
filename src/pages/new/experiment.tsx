@@ -27,8 +27,8 @@ const NewPostPage: React.FC<PageProps> = () => {
 export default NewPostPage;
 
 export const pageConfig: PageConfig = {
-  label: 'New post',
-  icon: 'FaBook',
+  label: 'New experiment',
+  icon: 'FaFlask',
   breadcrumbs: [
     // async () => {
     //   let [username] = await sq.query(q => q.userMe?.username);
@@ -36,13 +36,16 @@ export const pageConfig: PageConfig = {
     //   return { label: username, path: `/user/${username}` };
     // },
     {
-      label: 'New post',
-      path: '/community/new-post/'
+      label: 'New experiment',
+      path: '/new/experiment'
     }
   ],
   menu: {
     type: 'user',
-    label: 'New community post'
+    label: 'New experiment'
+  },
+  auth: {
+    isRequired: true
   }
 };
 

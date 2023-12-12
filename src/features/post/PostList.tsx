@@ -357,8 +357,8 @@ const PostList: FC<IPostListProps> = ({
       </VStack>
       <Alert
         disclosure={deletePostDisclosure}
-        body="Are you sure you want to delete this post? This action cannot be undone"
-        header="Delete this post?"
+        body="Are you sure you want to delete this experiment? This action cannot be undone!"
+        header="Delete this experiment?"
         confirmationAction={handleDeletePostConfirmation}
         confirmationProps={{ variant: 'filledRed' }}
         cancelAction={handleDeletePostCancel}

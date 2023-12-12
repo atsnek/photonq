@@ -37,14 +37,16 @@ export function createPageTree(
     [key: string]: ReturnType<typeof useCMSManagementContext>['tree'][0];
   } = {};
 
-  // Since the tree is not flat, we need to index all pages by their id to be able to find them later 
-  const indexPages = (pages: typeof docsTree['children']): void => {
+  // Since the tree is not flat, we need to index all pages by their id to be able to find them later
+  const indexPages = (pages: (typeof docsTree)['children']): void => {
     pages.forEach(page => {
       pageMap[page.id] = page;
       if (page.children.length > 0) indexPages(page.children);
-    })
-  }
-  indexPages(docsTree.children.filter(page => page.label.toLocaleLowerCase() != 'community'));
+    });
+  };
+  indexPages(
+    docsTree.children.filter(page => page.label.toLocaleLowerCase() != 'posts')
+  );
 
   // Recursively build a menu item from a page
   const buildMenuItem = (pageId: string): NavMenuItem | undefined => {
@@ -54,7 +56,7 @@ export function createPageTree(
     const href = manager.pagePath(page.id);
     const children: NavMenuItem[] = page.children
       .map(({ id }) => {
-        const item = buildMenuItem(id)
+        const item = buildMenuItem(id);
         return item;
       })
       .filter((item): item is NavMenuItem => !!item);

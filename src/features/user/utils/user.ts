@@ -113,7 +113,7 @@ export const buildUserActivities = async (
           title = `Created a blog post \"${post.title?.substring(0, 20)}${
             post.title?.length > 20 ? '...' : ''
           }\"`;
-          href = '/post/' + post.slug;
+          href = '/experiments/' + post.slug;
         }
       } else if (type === 'profile_create') {
         title = `Joined the community`;
@@ -121,7 +121,10 @@ export const buildUserActivities = async (
       } else if (type === 'follow_follow') {
         if (!follow || !follow.followed) return;
         const [followedUser, followedUserError] = await sq.query(q => {
-          const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: follow.followed.id });
+          const user = q.user({
+            resourceId: __SNEK_RESOURCE_ID__,
+            id: follow.followed.id
+          });
           user.username;
           user.details?.firstName;
           user.details?.lastName;
@@ -138,7 +141,7 @@ export const buildUserActivities = async (
         title = `Starred a post \"${post.title?.substring(0, 20)}${
           post.title?.length > 20 ? '...' : ''
         }\"`;
-        href = '/post/' + post.slug;
+        href = '/experiments/' + post.slug;
       }
 
       if (Object.isSealed(activityList.items)) {

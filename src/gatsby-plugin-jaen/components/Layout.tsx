@@ -4,7 +4,7 @@ import { useLocation } from '@reach/router';
 import { CMSManagement, useJaenFrameMenuContext } from 'gatsby-plugin-jaen';
 import { useEffect } from 'react';
 import { useAppStore } from '../../shared/store/store';
-import TbBook from '../../shared/components/icons/tabler/TbBook';
+import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 
 const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
   const path = useLocation().pathname;
@@ -17,10 +17,10 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
 
   useEffect(() => {
     jaenFrame.extendAddMenu({
-      test: {
-        label: 'New post',
-        icon: TbBook,
-        path: '/community/new-post/'
+      experimentNew: {
+        label: 'New experiment',
+        icon: FaFlask,
+        path: '/new/experiment'
       }
     });
 
@@ -36,12 +36,14 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
       <AppLayout
         isDocs={
           docsPaths.some(docsPath => path.startsWith(docsPath)) ||
-          ['/community/', '/community'].includes(path)
+          ['/experiments/', '/experiments'].includes(path)
         }
-        isCommunity={path.startsWith('/community')}
+        isCommunity={path.startsWith('/experiments')}
         path={path}
         topNavProps={{
-          isVisible: !hiddenTopNavPaths.some(hiddenPath => path.startsWith(hiddenPath))
+          isVisible: !hiddenTopNavPaths.some(hiddenPath =>
+            path.startsWith(hiddenPath)
+          )
         }}
       >
         {children}

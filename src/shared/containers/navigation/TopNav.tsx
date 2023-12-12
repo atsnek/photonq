@@ -99,6 +99,11 @@ const TopNav: FC<ITopNavProps> = ({
         name: 'Documentation',
         href: '/docs/',
         matchMethod: 'includes'
+      },
+      {
+        name: 'Experiments',
+        href: '/experiments/',
+        matchMethod: 'includes'
       }
     ],
     right: [

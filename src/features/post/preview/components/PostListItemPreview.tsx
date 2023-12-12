@@ -99,7 +99,7 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
           <VStack alignItems="flex-start">
             <HStack>
               <LinkOverlay
-                href={`/post/${post.slug}`}
+                href={`/experiments/${post.slug}`}
                 _hover={{
                   h5: {
                     color: 'components.postPreview.listItem._hover.title.color'
@@ -118,10 +118,15 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
               <PostPreviewLanguage language={post.language} />
             </HStack>
             <HStack>
-              <Text color="components.postPreview.listItem.initial.date.color" fontSize="sm">
+              <Text
+                color="components.postPreview.listItem.initial.date.color"
+                fontSize="sm"
+              >
                 {post.createdAt}
               </Text>
-              {showPrivacy && <PostPreviewPrivacy privacy={post.privacy} opacity={0.8} />}
+              {showPrivacy && (
+                <PostPreviewPrivacy privacy={post.privacy} opacity={0.8} />
+              )}
             </HStack>
           </VStack>
           <Spacer />
@@ -131,7 +136,10 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
               minW="fit-content"
               postPrivacy={post.privacy}
               togglePostPrivacy={id =>
-                togglePostPrivacy(id, post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC')
+                togglePostPrivacy(
+                  id,
+                  post.privacy === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC'
+                )
               }
               isTogglingPostPrivacy={isTogglingPostPrivacy}
               deletePost={deletePost}
@@ -140,7 +148,10 @@ const PostListItemPreview: FC<IPostPreviewProps<StackProps>> = ({
             />
           )}
         </HStack>
-        <Text maxW="75%" color="components.postPreview.listItem.initial.summary.color">
+        <Text
+          maxW="75%"
+          color="components.postPreview.listItem.initial.summary.color"
+        >
           {post.summary}
         </Text>
         <HStack {...postListItemPreviewStyling.bottomHStack}>

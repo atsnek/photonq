@@ -1,9 +1,18 @@
-import { Accordion, Box, HStack, Text, useBreakpointValue } from '@chakra-ui/react';
+import {
+  Accordion,
+  Box,
+  HStack,
+  Text,
+  useBreakpointValue
+} from '@chakra-ui/react';
 import { FC, Fragment, useMemo, useState } from 'react';
 import { NavMenuSection, NavMenuItem } from '../../../../types/navigation';
-import { createPageTree, getExpandedMenuItemIndices } from '../../../../utils/navigation';
+import {
+  createPageTree,
+  getExpandedMenuItemIndices
+} from '../../../../utils/navigation';
 import { useAuthenticationContext } from '@atsnek/jaen';
-import TbBook from '../../../../components/icons/tabler/TbBook';
+import { FaLink } from '@react-icons/all-files/fa/FaLink';
 import TbUsers from '../../../../components/icons/tabler/TbUsers';
 import { generateMenuItem } from './utils/pageDirectory';
 
@@ -32,7 +41,10 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
   const { isAuthenticated, openLoginModal } = useAuthenticationContext();
-  const isSmallScreen = useBreakpointValue({ base: true, md: false }, { fallback: 'false' });
+  const isSmallScreen = useBreakpointValue(
+    { base: true, md: false },
+    { fallback: 'false' }
+  );
 
   const updateExpandedIdx = (idx: number, mode: 'toggle' | 'set') => {
     const isIncluded = expandedIdx.includes(idx);
@@ -45,19 +57,19 @@ const PageDirectory: FC<PageDirectoryProps> = ({
 
   const baseMenuItems: NavMenuSection[] = [
     {
-      name: 'Community',
+      name: 'Research',
       icon: <TbUsers />,
       items: [
         {
-          name: 'Posts',
-          href: '/community',
-          isActive: path?.startsWith('/community')
+          name: 'Experiments',
+          href: '/experiments',
+          isActive: path?.startsWith('/experiments')
         }
       ]
     },
     {
       name: 'More',
-      icon: <TbBook />,
+      icon: <FaLink />,
       items: [
         {
           name: 'PhotonQ',

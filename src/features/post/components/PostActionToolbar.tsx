@@ -55,8 +55,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
     actionToolbarItems.push({
       order: 3,
       icon: <TbSquareRoundedX />,
-      ariaLabel: 'Delete post',
-      tooltip: 'Delete post',
+      ariaLabel: 'Delete experiment',
+      tooltip: 'Delete experiment',
       onClick: handleDeletePost,
       disabled: isDeletingPost || areActionsDisabled,
       hoverColor: 'components.postEditor.delete.hover.color'
@@ -73,8 +73,10 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
         ),
         onClick: toggleRating,
         disabled: areActionsDisabled,
-        tooltip: hasRated ? 'Unrate this post' : 'Rate this post',
-        ariaLabel: hasRated ? 'Unrated this post' : 'Rate this post',
+        tooltip: hasRated ? 'Unrate this experiment' : 'Rate this experiment',
+        ariaLabel: hasRated
+          ? 'Unrated this experiment'
+          : 'Rate this experiment',
         hoverColor: 'components.postEditor.rate.hover.color'
       });
     }
@@ -83,8 +85,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
   if (viewMode === 'edit' && canEdit) {
     actionToolbarItems.push({
       order: 1,
-      ariaLabel: 'Save this post',
-      tooltip: 'Save this post',
+      ariaLabel: 'Save this experiment',
+      tooltip: 'Save this experiment',
       icon: <TbDeviceFloppy />,
       onClick: savePost,
       disabled: areActionsDisabled,
@@ -97,8 +99,8 @@ const PostActionToolbar: FC<IPostActionToolbarProps> = ({
     actionToolbarItems.push({
       order: 0,
       icon: isEditing ? <TbEye /> : <TbEdit />,
-      ariaLabel: isEditing ? 'Preview this post' : 'Edit this post',
-      tooltip: isEditing ? 'Preview this post' : 'Edit this post',
+      ariaLabel: isEditing ? 'Preview this experiment' : 'Edit this experiment',
+      tooltip: isEditing ? 'Preview this experiment' : 'Edit this experiment',
       onClick: toggleViewMode,
       disabled: areActionsDisabled,
       hoverColor: 'components.postEditor.viewMode.hover.color'

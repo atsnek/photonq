@@ -1,5 +1,6 @@
 const FlexSearch = require('flexsearch');
 import { sq } from '@snek-functions/origin';
+import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import { UseSearchResult, useSearch } from '../../search/use-search';
 import {
   TSearchMetadata,
@@ -12,7 +13,6 @@ import { getUserDisplayname } from '../../features/user/utils/user';
 import TbIndentIncrease from '../components/icons/tabler/TbIndentIncrease';
 import { SnekUser } from '@atsnek/jaen';
 import { SearchIndex } from '../../search/types';
-import TbBook from '../components/icons/tabler/TbBook';
 import TbBooks from '../components/icons/tabler/TbBooks';
 import TbUser from '../components/icons/tabler/TbUser';
 
@@ -160,7 +160,9 @@ export async function searchDocs(
       }
 
       const key =
-        sectionResult.doc.url + '@' + (sectionResult.doc.display ?? sectionResult.doc.content);
+        sectionResult.doc.url +
+        '@' +
+        (sectionResult.doc.display ?? sectionResult.doc.content);
 
       if (occured[key]) {
         continue;
@@ -168,7 +170,10 @@ export async function searchDocs(
       occured[key] = true;
 
       searchResultItems.push({
-        title: sectionResult.doc.content ?? sectionResult.doc.title ?? pageResult.doc.title,
+        title:
+          sectionResult.doc.content ??
+          sectionResult.doc.title ??
+          pageResult.doc.title,
         description: sectionResult.doc.content ?? sectionResult.doc.title,
         href: sectionResult.doc.url
       });
@@ -196,7 +201,9 @@ export async function searchDocs(
     if (a._page_matches !== b._page_matches) {
       return b._page_matches - a._page_matches;
     }
-    return a._section_matches === b._section_matches ? 0 : b._section_matches - a._section_matches;
+    return a._section_matches === b._section_matches
+      ? 0
+      : b._section_matches - a._section_matches;
   });
   return res;
 }
@@ -227,16 +234,25 @@ export async function getDefaultSearchDocs(
 }
 
 /**
- * Search the community posts for the given query.
+ * Search the experiments for the given query.
  * @param query The query to search for
  * @returns  The search results
  */
-export async function searchSocialPosts(query?: string): Promise<TSearchResultSection[]> {
+export async function searchSocialPosts(
+  query?: string
+): Promise<TSearchResultSection[]> {
   const [posts, postsError] = await sq.query(q => {
     const posts =
       query && query.length > 0
-        ? q.allSocialPost({ resourceId: __SNEK_RESOURCE_ID__, filters: { query }, first: 10 })
-        : q.allSocialPostTrending({ resourceId: __SNEK_RESOURCE_ID__, first: 10 });
+        ? q.allSocialPost({
+            resourceId: __SNEK_RESOURCE_ID__,
+            filters: { query },
+            first: 10
+          })
+        : q.allSocialPostTrending({
+            resourceId: __SNEK_RESOURCE_ID__,
+            first: 10
+          });
 
     const sections: TSearchResultSection[] = [];
     posts.nodes.map(pn => {
@@ -246,7 +262,7 @@ export async function searchSocialPosts(query?: string): Promise<TSearchResultSe
         results: [
           {
             description: pn.matchingQuery ?? pn.summary ?? pn.title,
-            href: `/post/${pn.slug}`,
+            href: `/experiments/${pn.slug}`,
             title: `${username}/${pn.title}`
           }
         ]
@@ -264,7 +280,9 @@ export async function searchSocialPosts(query?: string): Promise<TSearchResultSe
  * @param query The query to search for
  * @returns  The users matching the query
  */
-export async function searchUser(query: string): Promise<TSearchResultSection[]> {
+export async function searchUser(
+  query: string
+): Promise<TSearchResultSection[]> {
   const [searchResult, error] = await sq.query(q => {
     const user = q.user({ login: query, resourceId: __SNEK_RESOURCE_ID__ });
 
@@ -309,7 +327,10 @@ export async function getDefaultSearchUsers(
   const results = await Promise.all(
     followerCon.nodes.map(async (fn): Promise<TSearchResult> => {
       const [follower] = await sq.query(q => {
-        const user = q.user({ resourceId: __SNEK_RESOURCE_ID__, id: fn.follower.id });
+        const user = q.user({
+          resourceId: __SNEK_RESOURCE_ID__,
+          id: fn.follower.id
+        });
         user.details?.firstName;
         user.details?.lastName;
         user.username;
@@ -346,7 +367,9 @@ export async function fetchDefaultSearchresult(
     : [
         {
           title: 'users',
-          results: [{ title: 'Create an account', href: '/signup', description: '' }]
+          results: [
+            { title: 'Create an account', href: '/signup', description: '' }
+          ]
         }
       ];
   const docsResults = await getDefaultSearchDocs(searchIndex);
@@ -354,7 +377,11 @@ export async function fetchDefaultSearchresult(
 
   return {
     docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-    community: { title: 'Community Posts', sections: socialPostResults, icon: <TbBook /> },
+    posts: {
+      title: 'Experiments',
+      sections: socialPostResults,
+      icon: <FaFlask />
+    },
     user: { title: 'Users', sections: userResults, icon: <TbUser /> }
   };
 }

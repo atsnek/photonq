@@ -107,7 +107,9 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
               }}
             >
               {statValue}
-              <LinkOverlay href={`/user/${user.username}#followers`}>{label}</LinkOverlay>
+              <LinkOverlay href={`/user/${user.username}#followers`}>
+                {label}
+              </LinkOverlay>
             </LinkBox>
           </Box>
         );
@@ -140,20 +142,32 @@ const UserPreviewCard: FC<IUserPreviewCardProps> = ({ user, toggleFollow }) => {
       transition="all 0.2s cubic-bezier(.17,.67,.83,.67)"
     >
       <HStack {...userPreviewCardStyling.outerHStack}>
-        <Avatar name={user.username} src={user.avatarUrl} {...userPreviewCardStyling.avatar} />
+        <Avatar
+          name={user.username}
+          src={user.avatarUrl}
+          {...userPreviewCardStyling.avatar}
+        />
         <VStack {...userPreviewCardStyling.vstack}>
           <HStack>
             <Heading as="h5" size="sm" transition="color 0.2s ease-in-out">
               {user.displayName}
             </Heading>
-            <LinkOverlay href={`/user/${user.username}`} fontSize="sm" color="gray.500">
+            <LinkOverlay
+              href={`/user/${user.username}`}
+              fontSize="sm"
+              color="gray.500"
+            >
               @{user.username}
             </LinkOverlay>
           </HStack>
           <Text fontSize="12px" color="gray.500">
             {user.bio}
           </Text>
-          <HStack fontSize="12px" color="gray.500" {...userPreviewCardStyling.stats.hstack}>
+          <HStack
+            fontSize="12px"
+            color="gray.500"
+            {...userPreviewCardStyling.stats.hstack}
+          >
             {stats}
           </HStack>
         </VStack>
