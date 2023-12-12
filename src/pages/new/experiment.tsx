@@ -36,7 +36,7 @@ export const pageConfig: PageConfig = {
     //   return { label: username, path: `/user/${username}` };
     // },
     {
-      label: 'New experiment',
+      label: 'New Experiment',
       path: '/new/experiment'
     }
   ],
