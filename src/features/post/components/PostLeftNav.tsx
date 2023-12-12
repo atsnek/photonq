@@ -132,7 +132,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 />
               </HStack>
               <Text size="sm" color="gray.500" w="full" mt={2}>
-                Your post is {isPublic ? 'visible to everyone.' : 'only visible to you.'}
+                Your experiment is {isPublic ? 'visible to everyone.' : 'only visible to you.'}
               </Text>
             </Box>
             <Box w="full" mt={2}>
@@ -175,8 +175,8 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
         )}
         {canEdit ? (
           <Textarea
-            defaultValue={post.summary ?? 'Short summary of your post'}
-            placeholder="Short summary of your post"
+            defaultValue={post.summary ?? 'Short summary of your experiment'}
+            placeholder="Short summary of your experiment"
             outline="1px solid"
             outlineColor="components.textarea.borderColor"
             size="sm"

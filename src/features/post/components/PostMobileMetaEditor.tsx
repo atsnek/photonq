@@ -155,8 +155,8 @@ const PostMobileMetaEditor: FC<IPostMobileMetaEditorProps> = ({
       </HStack>
       {canEdit ? (
         <Textarea
-          defaultValue={post?.summary ?? 'Short summary of your post'}
-          placeholder="Short summary of your post"
+          defaultValue={post?.summary ?? 'Short summary of your experiment'}
+          placeholder="Short summary of your experiment"
           outline="1px solid"
           outlineColor="components.textarea.borderColor"
           size="sm"
