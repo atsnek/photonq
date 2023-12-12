@@ -2,7 +2,11 @@ import { ComponentStyleConfig } from '@chakra-ui/react';
 
 const themeButtonComponent: ComponentStyleConfig = {
   variants: {
+    solid: {
+      textTransform: 'capitalize',
+    },
     invisible: {
+      textTransform: 'capitalize',
       bgColor: 'transparent',
       border: 'none',
       _hover: {
@@ -18,6 +22,7 @@ const themeButtonComponent: ComponentStyleConfig = {
       paddingInline: 3
     },
     'ghost-hover': {
+      textTransform: 'capitalize',
       bgColor: 'transparent',
       opacity: 0.7,
       _hover: {
@@ -30,6 +35,7 @@ const themeButtonComponent: ComponentStyleConfig = {
       }
     },
     'ghost-hover-opacity': {
+      textTransform: 'capitalize',
       bgColor: 'transparent',
       opacity: 0.5,
       _hover: {
@@ -38,6 +44,7 @@ const themeButtonComponent: ComponentStyleConfig = {
       }
     },
     'outline-hover-filled': {
+      textTransform: 'capitalize',
       bgColor: 'transparent',
       border: '1px solid',
       borderColor: 'components.button.outline.borderColor',
@@ -52,6 +59,7 @@ const themeButtonComponent: ComponentStyleConfig = {
         'background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out'
     },
     'ghost-hover-outline': {
+      textTransform: 'capitalize',
       bgColor: 'transparent',
       border: '1px solid',
       borderColor: 'transparent',
@@ -71,6 +79,7 @@ const themeButtonComponent: ComponentStyleConfig = {
         'background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out'
     },
     'pq-outline': {
+      textTransform: 'capitalize',
       bgColor: 'rgba(2, 116, 192, 0.07)',
       border: '1px solid',
       borderColor: 'brand.500',
@@ -86,6 +95,7 @@ const themeButtonComponent: ComponentStyleConfig = {
         'background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out'
     },
     'pq-solid': {
+      textTransform: 'capitalize',
       bgColor: 'brand.500',
       color: 'white',
       px: 5,
@@ -98,6 +108,7 @@ const themeButtonComponent: ComponentStyleConfig = {
         'background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out'
     },
     'pq-ghost': {
+      textTransform: 'capitalize',
       bgColor: 'transparent',
       color: 'brand.500',
       px: 5,
