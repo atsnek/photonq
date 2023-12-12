@@ -114,27 +114,65 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             </Text>
           )}
         </Box>
+        <Divider mt={3} mb={3} />
+        {canEdit && (
+          <Heading as="h6" fontSize="sm" color="brand.500" fontWeight="medium">
+            Post Summary
+          </Heading>
+        )}
+        {canEdit ? (
+          <Textarea
+            defaultValue={post.summary ?? 'Short summary of your experiment'}
+            placeholder="Short summary of your experiment"
+            outline="1px solid"
+            outlineColor="components.textarea.borderColor"
+            size="sm"
+            borderRadius="lg"
+            textAlign="center"
+            variant="ghost"
+            maxH="300px"
+            onBlur={e => handleSummaryChange(e.target.value)}
+            _hover={{
+              outlineColor: 'components.textarea._hover.borderColor'
+            }}
+            _focusVisible={{
+              outlineWidth: 2,
+              outlineColor: 'components.textarea._focus.borderColor'
+            }}
+            transition="outline 0.1s ease-in-out"
+          />
+        ) : (
+          <Text
+            size="sm"
+            color="pages.singlePost.leftNav.summary.color"
+            textAlign="justify"
+          >
+            {post.summary}
+          </Text>
+        )}
+
+        <Box w="full">
+          <HStack mt={3}>
+            <Text fontSize="sm" fontWeight="medium">
+              Post Privacy
+            </Text>
+            <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
+              {privacyLabel}
+            </Tag>
+            <Spacer />
+            <Switch
+              variant="privacy"
+              defaultChecked={isPublic}
+              onChange={handleTogglePrivacy}
+            />
+          </HStack>
+          <Text size="sm" color="gray.500" w="full" mt={2}>
+            Your experiment is{' '}
+            {isPublic ? 'visible to everyone.' : 'only visible to you.'}
+          </Text>
+        </Box>
         {canEdit && (
           <>
-            <Box w="full">
-              <HStack mt={3}>
-                <Text fontSize="sm" fontWeight="medium">
-                  Post Privacy
-                </Text>
-                <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
-                  {privacyLabel}
-                </Tag>
-                <Spacer />
-                <Switch
-                  variant="privacy"
-                  defaultChecked={isPublic}
-                  onChange={handleTogglePrivacy}
-                />
-              </HStack>
-              <Text size="sm" color="gray.500" w="full" mt={2}>
-                Your experiment is {isPublic ? 'visible to everyone.' : 'only visible to you.'}
-              </Text>
-            </Box>
             <Box w="full" mt={2}>
               <HStack alignItems="center">
                 <Text fontSize="sm" fontWeight="medium">
@@ -165,41 +203,10 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
                 />
               </HStack>
             </Box>
-            <Divider mt={3} mb={3} />
+            
           </>
         )}
-        {post.summary && canEdit && (
-          <Heading as="h6" fontSize="sm" color="brand.500" fontWeight="medium">
-            Post Summary
-          </Heading>
-        )}
-        {canEdit ? (
-          <Textarea
-            defaultValue={post.summary ?? 'Short summary of your experiment'}
-            placeholder="Short summary of your experiment"
-            outline="1px solid"
-            outlineColor="components.textarea.borderColor"
-            size="sm"
-            borderRadius="lg"
-            textAlign="center"
-            variant="ghost"
-            maxH="300px"
-            onBlur={e => handleSummaryChange(e.target.value)}
-            _hover={{
-              outlineColor: 'components.textarea._hover.borderColor'
-            }}
-            _focusVisible={{
-              outlineWidth: 2,
-              outlineColor: 'components.textarea._focus.borderColor'
-            }}
-            transition="outline 0.1s ease-in-out"
-          />
-        ) : (
-          <Text size="sm" color="pages.singlePost.leftNav.summary.color" textAlign="justify">
-            {post.summary}
-          </Text>
-        )}
-        {isAuthor && (
+        {/* {isAuthor && (
           <Button
             w="full"
             colorScheme="gray"
@@ -212,7 +219,7 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           >
             {canEdit ? 'Finish editing' : 'Edit post'}
           </Button>
-        )}
+        )} */}
       </VStack>
     </LeftNav>
   );
