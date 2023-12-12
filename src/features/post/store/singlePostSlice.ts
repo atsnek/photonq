@@ -33,6 +33,42 @@ const initState: ISinglePostStateDefinition = {
   newAvatarUrlFile: undefined, // We need to store the file itself too, because we need to upload it to the storage server once the user saves the post.
 };
 
+const DEFAULT_POST_CONTENT: MdastRoot  = {
+  "type": "root",
+  "children": [
+      {
+          "type": "code",
+          "lang": "qasm",
+          "meta": "playground",
+          "value": "// quantum ripple-carry adder from Cuccaro et al, quant-ph/0410184\nOPENQASM 2.0;\ninclude \"qelib1.inc\";\ngate majority a,b,c \n{ \n  cx c,b; \n  cx c,a; \n  ccx a,b,c; \n}\ngate unmaj a,b,c \n{ \n  ccx a,b,c; \n  cx c,a; \n  cx a,b; \n}\nqreg cin[1];\nqreg a[4];\nqreg b[4];\nqreg cout[1];\ncreg ans[5];\n// set input states\nx a[0]; // a = 0001\nx b;    // b = 1111\n// add a to b, storing result in b\nmajority cin[0],b[0],a[0];\nmajority a[0],b[1],a[1];\nmajority a[1],b[2],a[2];\nmajority a[2],b[3],a[3];\ncx a[3],cout[0];\nunmaj a[2],b[3],a[3];\nunmaj a[1],b[2],a[2];\nunmaj a[0],b[1],a[1];\nunmaj cin[0],b[0],a[0];\nmeasure b[0] -> ans[0];\nmeasure b[1] -> ans[1];\nmeasure b[2] -> ans[2];\nmeasure b[3] -> ans[3];\nmeasure cout[0] -> ans[4];",
+          "position": {
+              "start": {
+                  "line": 1,
+                  "column": 1,
+                  "offset": 0
+              },
+              "end": {
+                  "line": 40,
+                  "column": 4,
+                  "offset": 735
+              }
+          }
+      }
+  ],
+  "position": {
+      "start": {
+          "line": 1,
+          "column": 1,
+          "offset": 0
+      },
+      "end": {
+          "line": 41,
+          "column": 1,
+          "offset": 736
+      }
+  }
+};
+
 export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
   set,
   get
@@ -44,7 +80,7 @@ export const createSinglePostSlice: TStoreSlice<TSinglePostSlice> = (
       return {
         authorProfileId: q.userMe.id,
         avatarUrl: null,
-        content: undefined,
+        content: DEFAULT_POST_CONTENT,
         createdAt: '',
         id: '',
         slug: '',
