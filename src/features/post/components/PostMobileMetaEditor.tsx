@@ -60,7 +60,7 @@ const PostMobileMetaEditor: FC<IPostMobileMetaEditorProps> = ({
           variant="unstyled"
           type="text"
           fontWeight="bold"
-          placeholder="My Post"
+          placeholder="My Experiment"
           fontSize="4xl"
           ml={2}
           onChange={e => handleTitleChange(e.target.value)}
