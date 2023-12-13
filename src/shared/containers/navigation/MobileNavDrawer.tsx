@@ -37,10 +37,11 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({ isOpen, onOpen, onClose }) 
           <Flex
             direction="column"
             w="100vw"
-            h={`calc(100vh - ${navOffset} - 64px)`}
+            h={`calc(100vh - ${navOffset})`}
             bg="shared.body.bgColor"
             pt={9}
             px={9}
+            overflowY="scroll"
           >
             <SearchMenu />
             <Box mt={5}>

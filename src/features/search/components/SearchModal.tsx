@@ -8,15 +8,7 @@ import {
   ModalOverlay,
   VStack
 } from '@chakra-ui/react';
-import {
-  Dispatch,
-  FC,
-  KeyboardEvent,
-  ReactNode,
-  SetStateAction,
-  useEffect,
-  useRef
-} from 'react';
+import { Dispatch, FC, KeyboardEvent, ReactNode, SetStateAction, useEffect, useRef } from 'react';
 import TbSearch from '../../../shared/components/icons/tabler/TbSearch';
 
 interface ISearchModalProps {
@@ -65,7 +57,7 @@ const SearchModal: FC<ISearchModalProps> = ({
       <ModalContent
         top="10px"
         m={0}
-        w="75vw"
+        w={{ base: '95vw', md: '75vw' }}
         h="fit-content"
         minH={0}
         borderRadius="lg"
