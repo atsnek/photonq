@@ -14,6 +14,7 @@ export const pageConfig: PageConfig = {
   label: 'Documentation',
   icon: 'FaBook',
   childTemplates: ['DocPage'],
+  withoutJaenFrameStickyHeader: true,
   menu: {
     type: 'app',
     order: 100,

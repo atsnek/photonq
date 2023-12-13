@@ -13,7 +13,8 @@ export { Head } from '@atsnek/jaen';
 
 export const pageConfig: PageConfig = {
   label: 'DocPage',
-  childTemplates: ['DocPage']
+  childTemplates: ['DocPage'],
+  withoutJaenFrameStickyHeader: true
 };
 
 export const query = graphql`
