@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atsnek/jaen": "^1.0.0-rc.38",
+    "@atsnek/jaen": "^1.0.0-rc.39",
     "@atsnek/jaen-fields-mdx": "^1.0.0-rc.4",
     "@chakra-ui/anatomy": "^2.2.0",
     "@chakra-ui/icons": "^2.1.0",
@@ -32,7 +32,7 @@
     "gatsby": "^5.11.0",
     "gatsby-jaen-lens": "^0.0.17",
     "gatsby-jaen-mailpress": "^0.0.1",
-    "gatsby-plugin-jaen": "^1.0.0-rc.65",
+    "gatsby-plugin-jaen": "^1.0.0-rc.66",
     "immer": "^10.0.2",
     "prismjs": "^1.29.0",
     "quantum-circuit": "^0.9.218",
