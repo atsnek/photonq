@@ -108,11 +108,9 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
             }
           }}
         >
-          {!canEdit && (
-            <Text size="sm" fontWeight="semibold">
-              {post.title}
-            </Text>
-          )}
+          <Text size="sm" fontWeight="semibold">
+            {post.title}
+          </Text>
         </Box>
         <Divider mt={3} mb={3} />
         {canEdit && (
@@ -151,61 +149,73 @@ const PostLeftNav: FC<IPostLeftNavProps> = ({
           </Text>
         )}
 
-        <Box w="full">
-          <HStack mt={3}>
-            <Text fontSize="sm" fontWeight="medium">
-              Post Privacy
-            </Text>
-            <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
-              {privacyLabel}
-            </Tag>
-            <Spacer />
-            <Switch
-              variant="privacy"
-              defaultChecked={isPublic}
-              onChange={handleTogglePrivacy}
-            />
-          </HStack>
-          <Text size="sm" color="gray.500" w="full" mt={2}>
-            Your experiment is{' '}
-            {isPublic ? 'visible to everyone.' : 'only visible to you.'}
-          </Text>
-        </Box>
-        {canEdit && (
-          <>
-            <Box w="full" mt={2}>
-              <HStack alignItems="center">
-                <Text fontSize="sm" fontWeight="medium">
-                  Post Language
-                </Text>
-                <Spacer />
-                <SelectMenu
-                  items={[
-                    { label: 'EN', value: 'EN' },
-                    { label: 'DE', value: 'DE' }
-                  ]}
-                  defaultValue={post.language}
-                  onChange={lang =>
-                    handleLanguageChange(
-                      lang in EnPostLanguage
-                        ? EnPostLanguage[lang as keyof typeof EnPostLanguage]
-                        : EnPostLanguage.EN
-                    )
-                  }
-                  buttonLabel="Language"
-                  buttonProps={{
-                    size: 'sm',
-                    colorScheme: 'gray'
-                  }}
-                  listProps={{
-                    minW: 'fit-content'
-                  }}
-                />
-              </HStack>
-            </Box>
-            
-          </>
+        {isAuthor && (
+          <Box w="full">
+            <HStack mt={3}>
+              <Text fontSize="sm" fontWeight="medium">
+                Post Privacy
+              </Text>
+              <Spacer />
+              <Tag colorScheme={isPublic ? 'green' : 'yellow'} size="sm">
+                {privacyLabel}
+              </Tag>
+
+              {canEdit && (
+                <>
+                  <Spacer />
+                  <Switch
+                    variant="privacy"
+                    defaultChecked={isPublic}
+                    onChange={handleTogglePrivacy}
+                  />
+                </>
+              )}
+            </HStack>
+            {canEdit && (
+              <Text size="sm" color="gray.500" w="full" mt={2}>
+                Your experiment is{' '}
+                {isPublic ? 'visible to everyone.' : 'only visible to you.'}
+              </Text>
+            )}
+          </Box>
         )}
+
+        <Box w="full" mt={2}>
+          <HStack alignItems="center">
+            <Text fontSize="sm" fontWeight="medium">
+              Post Language
+            </Text>
+            <Spacer />
+            {canEdit ? (
+              <SelectMenu
+                items={[
+                  { label: 'EN', value: 'EN' },
+                  { label: 'DE', value: 'DE' }
+                ]}
+                defaultValue={post.language}
+                onChange={lang =>
+                  handleLanguageChange(
+                    lang in EnPostLanguage
+                      ? EnPostLanguage[lang as keyof typeof EnPostLanguage]
+                      : EnPostLanguage.EN
+                  )
+                }
+                buttonLabel="Language"
+                buttonProps={{
+                  size: 'sm',
+                  colorScheme: 'gray'
+                }}
+                listProps={{
+                  minW: 'fit-content'
+                }}
+              />
+            ) : (
+              <Tag size="sm">{Language[post.language]}</Tag>
+            )}
+          </HStack>
+        </Box>
+
+        {canEdit && <></>}
         {/* {isAuthor && (
           <Button
             w="full"
