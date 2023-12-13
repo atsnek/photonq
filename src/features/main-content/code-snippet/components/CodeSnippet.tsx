@@ -8,6 +8,7 @@ import { IMainContentComponentBaseProps } from '../../types/mainContent';
 import '../styles/prism-one-dark.css';
 
 export interface ICodeSnippetProps extends IMainContentComponentBaseProps {
+  parentRef?: React.RefObject<HTMLDivElement>;
   children?: string;
   language?: string;
   headerText?: string;
@@ -23,6 +24,7 @@ export interface ICodeSnippetProps extends IMainContentComponentBaseProps {
  * Code snippet component for displaying code examples.
  */
 const CodeSnippet: FC<ICodeSnippetProps> = ({
+  parentRef,
   children = '',
   language = 'js',
   headerText,
@@ -57,8 +59,43 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
   //   timeout = setTimeout(() => setButtonIcon('copy'), 2000);
   // };
 
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const [isCodeBlock, setIsCodeBlock] = useState(false);
+
+  useEffect(() => {
+    const r = parentRef || ref;
+
+    if (r?.current) {
+      const parent = r.current.parentElement;
+      if (parent) {
+        const parentTag = parent.tagName.toLowerCase();
+
+        console.log(r.current, parent);
+
+        if (parentTag === 'pre') {
+          setIsCodeBlock(true);
+        }
+      }
+    }
+  }, []);
+
   let baseProps = {};
   if (isStandalone) baseProps = mainComponentBaseStyle.baseProps;
+
+  if (!isCodeBlock) {
+    return (
+      <Box
+        as="code"
+        ref={ref}
+        bgColor="components.codeSnippet.header.bgColor"
+        paddingInline=".4125ex"
+        paddingBlock=".825ex"
+      >
+        {children}
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -116,7 +153,6 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
           style={{
             flex: 1,
             fontFamily: 'monospace',
-            minHeight: '100px',
             margin: '10px'
           }}
         />
@@ -124,6 +160,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
     </Box>
   );
 };
+
 CodeSnippet.defaultProps = {
   children: '',
   headerText: undefined

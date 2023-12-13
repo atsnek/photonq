@@ -48,7 +48,9 @@ h q[0];
 cx q[0],q[1];
 `;
 
-export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({ children = defaultQASMCode }) => {
+export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
+  children = defaultQASMCode
+}) => {
   const [qasmCode, setQasmCode] = useState<string>(ReactChildrenText(children));
 
   useEffect(() => {
@@ -86,8 +88,11 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({ children = defau
   const simulator = useQasmSimulate({ code: qasmCode });
   const translator = useQasmTranslate({ code: qasmCode });
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
   return (
     <Card
+      ref={parentRef}
       my={4}
       p={{ base: 0, sm: 4 }}
       borderRadius="md"
@@ -107,6 +112,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({ children = defau
         </DiagramPreview>
 
         <CodeSnippet
+          parentRef={parentRef}
           language="qasm"
           headerText="QASM 2.0"
           onChange={setQasmCode}
@@ -191,7 +197,11 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({ children = defau
           }
         />
 
-        <CodeResultPreview isStandalone headerText="Simulation" isExecuting={simulator.isLoading} />
+        <CodeResultPreview
+          isStandalone
+          headerText="Simulation"
+          isExecuting={simulator.isLoading}
+        />
       </Stack>
     </Card>
   );
