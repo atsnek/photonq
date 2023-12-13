@@ -20,13 +20,8 @@ export const query = graphql`
   query ($jaenPageId: String!) {
     jaenPage(id: { eq: $jaenPageId }) {
       ...JaenPageData
-    }
-    allJaenPage(filter: { id: { eq: "JaenPage /docs/" } }) {
-      nodes {
-        id
-        childPages {
-          ...JaenPageChildrenData
-        }
+      childPages {
+        ...JaenPageChildrenData
       }
     }
   }
