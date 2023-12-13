@@ -70,10 +70,10 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.39":
-  version "1.0.0-rc.39"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.39.tgz#124485361442e83e1d7b4949a435706a246f617b"
-  integrity sha512-V7JLUtm4UZqQc+DklQ+B3AaBc57LDL9xwZVl/qPFDG3VeyvmW88BlRaYTN7SvQVrFz5F0hnGxG0QPL76U97tYQ==
+"@atsnek/jaen@^1.0.0-rc.40":
+  version "1.0.0-rc.40"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.40.tgz#8a85477481bcc77400c591a81fb08392be3c99b2"
+  integrity sha512-hlXea71RHwcgVgq0bEmbyZKxH1yIo3232dJ59tU3bGdMRVKxm+20UDI5D3cgbXjRw4SSwLusFW5jig/JbbW++g==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
