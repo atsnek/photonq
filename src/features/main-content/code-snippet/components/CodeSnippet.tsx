@@ -115,8 +115,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
           padding={5}
           style={{
             flex: 1,
-            fontFamily:
-              '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"',
+            fontFamily: 'monospace',
             minHeight: '100px',
             margin: '10px'
           }}
