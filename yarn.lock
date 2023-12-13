@@ -3630,9 +3630,9 @@
     lodash.deburr "^4.1.0"
 
 "@snek-functions/origin@^0.9.0", "@snek-functions/origin@^0.9.6":
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.9.6.tgz#00d082bc560cf2589eaf1d628b54e96d3b695a5e"
-  integrity sha512-7G+JviaI1u6bd5JHSPZHopfMz87hKNFGhA+gI+XlIukbO4Y/QBxgopRuXSc4E37nXGGNal4xIrFyc81XUXAFLw==
+  version "0.9.7"
+  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.9.7.tgz#5de1242d95029450c4f79581d27b45df81ec894f"
+  integrity sha512-Vb49ib67GZLG79SmXcPwrwffRP+YeBgVe6cE7GobA6m/2wOMoah2ulEMgPOKEYAKqR1V0xyZw5PdWGMDzImuCg==
   dependencies:
     snek-query "*"
 
