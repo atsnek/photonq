@@ -153,7 +153,14 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
           style={{
             flex: 1,
             fontFamily: 'monospace',
-            margin: '10px'
+            margin: '10px',
+            // All cildren of the editor white-space is set to pre
+            // so that the code is displayed as is
+            // this is needed to display the code snippet correctly
+            // in the editor
+            whiteSpace: 'pre',
+            wordBreak: 'keep-all',
+            overflowWrap: 'normal',
           }}
         />
       </Flex>
