@@ -170,14 +170,15 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
                   <Stack key={index}>
                     {translation ? (
                       <>
-                        <Flex justify="space-between" align="center">
-                          <Heading size="md">{translation.name}</Heading>
+                        <Flex justify="space-between" align="center" wrap="wrap">
+                          <Heading size="md" w={{ base: 'full', md: 'fit-content' }}>
+                            {translation.name}
+                          </Heading>
                           <Link
+                            align="left"
                             as={Button}
                             variant="link"
-                            onClick={() =>
-                              openImageInNewTab(translation.dataUri)
-                            }
+                            onClick={() => openImageInNewTab(translation.dataUri)}
                           >
                             View in New Tab
                           </Link>
@@ -199,11 +200,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
           }
         />
 
-        <CodeResultPreview
-          isStandalone
-          headerText="Simulation"
-          isExecuting={simulator.isLoading}
-        />
+        <CodeResultPreview isStandalone headerText="Simulation" isExecuting={simulator.isLoading} />
       </Stack>
     </Card>
   );
