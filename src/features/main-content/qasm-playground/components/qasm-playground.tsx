@@ -37,6 +37,7 @@ const ReactChildrenText = (children: any): string => {
 };
 
 export interface QASMPlaygroundProps {
+  wrapWithPre?: boolean;
   children?: string;
 }
 
@@ -49,6 +50,7 @@ cx q[0],q[1];
 `;
 
 export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
+  wrapWithPre = true,
   children = defaultQASMCode
 }) => {
   const [qasmCode, setQasmCode] = useState<string>(ReactChildrenText(children));
@@ -90,7 +92,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
 
   const parentRef = useRef<HTMLDivElement>(null);
 
-  return (
+  const element = (
     <Card
       ref={parentRef}
       my={4}
@@ -205,6 +207,12 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
       </Stack>
     </Card>
   );
+
+  if (wrapWithPre) {
+    return <pre>{element}</pre>;
+  }
+
+  return element;
 };
 
 function openImageInNewTab(imageSrc: string) {
