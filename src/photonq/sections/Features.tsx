@@ -29,7 +29,6 @@ const Features: FC = () => {
     color: 'pq.components.featureCard.title.color'
   };
 
-  //! Causes hydration issue
   return (
     <Box
       as="section"
@@ -50,7 +49,7 @@ const Features: FC = () => {
         />
         <Box mt={10}>
           <VStack>
-            <HStack gap={10} wrap={{ base: 'wrap', md: 'nowrap' }}>
+            <HStack gap={10} wrap={{ base: 'wrap', md: 'nowrap' }} alignItems="stretch">
               <Box {...cardProps}>
                 <Box w="75%" mx="auto">
                   <Field.Image name="LeftCardImage" />
