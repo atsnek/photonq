@@ -68,7 +68,7 @@ const Hero: FC = () => {
                 {isAuthenticated ? 'New experiment' : 'Register Now'}
               </Button>
               <Center>
-                <Box mt={20} w="50vw" maxW="512px" minW="250px">
+                <Box mt={20} w="50vw" maxW="300px" minW="250px">
                   <Field.Image name="heroImage" />
                 </Box>
               </Center>
