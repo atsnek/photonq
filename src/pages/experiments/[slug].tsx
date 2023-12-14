@@ -49,7 +49,8 @@ export default DocsPage;
 
 export const pageConfig: PageConfig = {
   label: 'Blog Post',
-  icon: 'FaBlog'
+  icon: 'FaBlog',
+  withoutJaenFrameStickyHeader: true,
 };
 
 export const query = graphql`

@@ -14,6 +14,7 @@ export default IndexPage;
 export const pageConfig: PageConfig = {
   label: 'Experiments',
   icon: 'FaFlask',
+  withoutJaenFrameStickyHeader: true,
   menu: {
     type: 'app',
     order: 200,

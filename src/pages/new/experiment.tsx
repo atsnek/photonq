@@ -29,6 +29,7 @@ export default NewPostPage;
 export const pageConfig: PageConfig = {
   label: 'New experiment',
   icon: 'FaFlask',
+  withoutJaenFrameStickyHeader: true,
   breadcrumbs: [
     // async () => {
     //   let [username] = await sq.query(q => q.userMe?.username);
