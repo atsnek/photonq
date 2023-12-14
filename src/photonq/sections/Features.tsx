@@ -73,7 +73,7 @@ const Features: FC = () => {
                   ></Field.Text>
                 </Button>
               </Box>
-              <Box {...cardProps} p={0}>
+              <Box {...cardProps}>
                 <Box m={10}>
                   <Field.Text
                     name="RightCardTitle"
