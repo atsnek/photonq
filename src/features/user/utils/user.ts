@@ -107,12 +107,11 @@ export const buildUserActivities = async (
           post.privacy === Privacy.PRIVATE &&
           post.profileId !== currentUser?.id
         ) {
-          title = 'Created a private blog post';
+          title = 'Created a private experiment';
           href = '#';
         } else {
-          title = `Created a blog post \"${post.title?.substring(0, 20)}${
-            post.title?.length > 20 ? '...' : ''
-          }\"`;
+          title = `Created a new experiment \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+            }\"`;
           href = '/experiments/' + post.slug;
         }
       } else if (type === 'profile_create') {
@@ -138,9 +137,8 @@ export const buildUserActivities = async (
         title = `Followed ${getUserDisplayname(followedUser)}`;
         href = follow.followed?.id ? '/user/' + followedUser.username : '#';
       } else if (type === 'star_star' && post) {
-        title = `Starred a post \"${post.title?.substring(0, 20)}${
-          post.title?.length > 20 ? '...' : ''
-        }\"`;
+        title = `Starred an experiment \"${post.title?.substring(0, 20)}${post.title?.length > 20 ? '...' : ''
+          }\"`;
         href = '/experiments/' + post.slug;
       }
 
