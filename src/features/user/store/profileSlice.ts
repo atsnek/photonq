@@ -695,7 +695,7 @@ export const createProfileSlice: TStoreSlice<TProfileSlice> = (set, get) => ({
     if (!get().profile.profile) return false;
     if (bio === get().profile.profile?.bio) return true;
     const [, err] = await sq.mutate(m =>
-      m.socialProfileUpdate({ values: { bio } })
+      m.socialProfileUpdate({ resourceId: snekResourceId, values: { bio } })
     );
 
     const succeed = !err || err.length === 0;
