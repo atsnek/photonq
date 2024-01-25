@@ -16,6 +16,7 @@ const config: GatsbyConfig = {
     DEV_SSR: false
   },
   plugins: [
+    `gatsby-plugin-cloudflare-pages`,
     {
       resolve: `gatsby-jaen-lens`,
       options: {
