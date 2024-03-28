@@ -114,10 +114,6 @@ const AboutUs: FC = () => {
             </Testimonial>
           ))}
         </Wrap>
-
-        <Center h="10vw" minH="35px" maxH="150px" mt={10}>
-          <Field.Image name="AboutUsImage" objectFit="contain" />
-        </Center>
       </Container>
     </Box>
   );

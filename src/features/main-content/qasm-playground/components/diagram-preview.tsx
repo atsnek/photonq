@@ -21,7 +21,6 @@ const DiagramPreview: FC<ICodeResultPreviewProps> = ({
   return (
     <Box
       {...baseProps}
-      mt={4}
       color="components.codeResultPreview.text.color"
       borderRadius={isStandalone ? 'md' : 'none'}
       border="1px solid"
@@ -42,7 +41,18 @@ const DiagramPreview: FC<ICodeResultPreviewProps> = ({
           {headerText}
         </Text>
       )}
-      <Box p={3}>{children}</Box>
+      <Box
+        p="1"
+        maxH={{
+          base: 'xs',
+          sm: 'sm',
+          md: 'md',
+          lg: 'lg'
+        }}
+        overflowY="scroll"
+      >
+        {children}
+      </Box>
     </Box>
   );
 };

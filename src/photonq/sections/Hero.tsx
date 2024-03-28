@@ -20,7 +20,15 @@ const Hero: FC = () => {
       overflow="hidden"
       p={{ base: 5, lg: 0 }}
     >
-      <Box w="full" flexGrow={1} color="white" pt="64px">
+      <Box
+        w="full"
+        flexGrow={1}
+        color="white"
+        pt={{
+          base: 20,
+          md: 40
+        }}
+      >
         <Center h="full">
           <Box textAlign="center" position="relative">
             <Box
@@ -46,12 +54,19 @@ const Hero: FC = () => {
             <Box position="relative">
               <Field.Text
                 name="heroTitle"
-                fontSize="6xl"
+                fontSize={{
+                  base: '4xl',
+                  md: '5xl',
+                  lg: '6xl'
+                }}
                 defaultValue="Start quantum computing with us"
               />
               <Field.Text
                 name="heroSubtitle"
-                fontSize="xl"
+                fontSize={{
+                  base: 'lg',
+                  md: 'xl'
+                }}
                 mt={5}
                 defaultValue="Learn quantum computing and run your circuits on your photonic quantum hardawre"
               />

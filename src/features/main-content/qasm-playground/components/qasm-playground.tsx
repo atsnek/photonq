@@ -2,9 +2,11 @@ import {
   Alert,
   AlertIcon,
   Box,
+  BoxProps,
   Button,
   ButtonGroup,
   Card,
+  Center,
   Flex,
   Heading,
   Image,
@@ -24,6 +26,7 @@ import DiagramPreview from './diagram-preview';
 
 import React, { isValidElement } from 'react';
 import { Link } from 'gatsby-plugin-jaen';
+import { Field } from '@atsnek/jaen';
 
 const hasChildren = (element: React.ReactNode) =>
   isValidElement(element) && Boolean(element.props.children);
@@ -53,6 +56,29 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
   wrapWithPre = true,
   children = defaultQASMCode
 }) => {
+  const cardProps: BoxProps = {
+    bgColor: 'pq.sections.features.card.bgColor',
+    boxShadow: '4px 2px 16px -12px rgba(0,0,0,0.25)',
+    padding: {
+      base: 2,
+      sm: 10
+    },
+    borderRadius: '3xl',
+    overflow: 'hidden',
+    _hover: {
+      transform: {
+        base: 'none',
+        sm: 'scale(1.01)'
+      },
+      boxShadow: {
+        base: 'none',
+        sm: '6px 4px 20px -12px rgba(0,0,0,0.25)'
+      }
+    },
+    transition:
+      'transform 0.2s cubic-bezier(.17,.67,.83,.67), box-shadow 0.2s cubic-bezier(.17,.67,.83,.67)'
+  };
+
   const [qasmCode, setQasmCode] = useState<string>(ReactChildrenText(children));
 
   useEffect(() => {
@@ -94,17 +120,18 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
 
   const element = (
     <Card
-      ref={parentRef}
-      my={4}
+      my="4"
+      py={4}
       p={{ base: 0, sm: 4 }}
       borderRadius="md"
       variant="outline"
       w="full"
       borderWidth={{ base: 0, sm: 1 }}
+      {...cardProps}
     >
       <Stack w="full">
         <DiagramPreview isStandalone headerText="Diagram">
-          <Box ref={diagram} overflowY="scroll"></Box>
+          <Box ref={diagram}></Box>
           {diagramError && (
             <Alert status="warning">
               <AlertIcon />
@@ -113,48 +140,50 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
           )}
         </DiagramPreview>
 
-        <CodeSnippet
-          parentRef={parentRef}
-          language="qasm"
-          headerText="QASM 2.0"
-          onChange={setQasmCode}
-          toolbar={
-            <Flex flex="1" justifyContent="end">
-              <ButtonGroup>
-                <Button
-                  size="sm"
-                  my="auto"
-                  variant="outline"
-                  _hover={{
-                    transform: 'scale(1.05)'
-                  }}
-                  transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                  isLoading={translator.isLoading}
-                  onClick={translator.run}
-                >
-                  Translate
-                </Button>
-
-                <Tooltip label="We are working hard to implement this feature!">
+        <pre>
+          <Box ref={parentRef}>
+            <CodeSnippet
+              parentRef={parentRef}
+              language="qasm"
+              headerText="QASM 2.0"
+              onChange={setQasmCode}
+              toolbar={
+                <ButtonGroup>
                   <Button
                     size="sm"
                     my="auto"
+                    variant="outline"
                     _hover={{
                       transform: 'scale(1.05)'
                     }}
                     transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                    isLoading={simulator.isLoading}
-                    onClick={simulator.run}
-                    isDisabled
+                    isLoading={translator.isLoading}
+                    onClick={translator.run}
                   >
-                    Simulate
+                    Translate
                   </Button>
-                </Tooltip>
-              </ButtonGroup>
-            </Flex>
-          }
-          children={qasmCode}
-        />
+
+                  <Tooltip label="We are working hard to implement this feature!">
+                    <Button
+                      size="sm"
+                      my="auto"
+                      _hover={{
+                        transform: 'scale(1.05)'
+                      }}
+                      transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
+                      isLoading={simulator.isLoading}
+                      onClick={simulator.run}
+                      isDisabled
+                    >
+                      Simulate
+                    </Button>
+                  </Tooltip>
+                </ButtonGroup>
+              }
+              children={qasmCode}
+            />
+          </Box>
+        </pre>
 
         <CodeResultPreview
           isStandalone
@@ -170,19 +199,24 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
                   <Stack key={index}>
                     {translation ? (
                       <>
-                        <Flex justify="space-between" align="center" wrap="wrap">
-                          <Heading size="md" w={{ base: 'full', md: 'fit-content' }}>
-                            {translation.name}
-                          </Heading>
+                        <Stack
+                          justify="space-between"
+                          align="center"
+                          justifyContent="center"
+                          wrap="wrap"
+                        >
+                          <Heading size="md">{translation.name}</Heading>
                           <Link
                             align="left"
                             as={Button}
                             variant="link"
-                            onClick={() => openImageInNewTab(translation.dataUri)}
+                            onClick={() =>
+                              openImageInNewTab(translation.dataUri)
+                            }
                           >
                             View in New Tab
                           </Link>
-                        </Flex>
+                        </Stack>
                         <Image
                           src={translation.dataUri}
                           alt={translation.name + ' diagram'}
@@ -200,14 +234,14 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
           }
         />
 
-        <CodeResultPreview isStandalone headerText="Simulation" isExecuting={simulator.isLoading} />
+        <CodeResultPreview
+          isStandalone
+          headerText="Simulation"
+          isExecuting={simulator.isLoading}
+        />
       </Stack>
     </Card>
   );
-
-  if (wrapWithPre) {
-    return <pre>{element}</pre>;
-  }
 
   return element;
 };

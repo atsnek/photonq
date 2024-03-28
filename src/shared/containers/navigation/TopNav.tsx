@@ -203,6 +203,7 @@ const TopNav: FC<ITopNavProps> = ({
             <Link
               h="60px"
               href="/"
+              w="150px"
               _hover={{
                 transform: 'scale(1.1)'
               }}
@@ -219,7 +220,14 @@ const TopNav: FC<ITopNavProps> = ({
                 <Logo forceColorMode={branding?.colorMode} />
               )}
             </Link>
-            <HStack spacing={4} ml={5}>
+            <HStack
+              spacing={4}
+              ml={5}
+              display={{
+                base: 'none',
+                md: 'flex'
+              }}
+            >
               <MemoizedLinks
                 links={activatedLinks}
                 props={{ ...navLinkProps, ...linkProps }}
@@ -249,7 +257,14 @@ const TopNav: FC<ITopNavProps> = ({
               </HStack>
             </Center>
             <Center>
-              <HStack spacing={4} ml={4}>
+              <HStack
+                spacing={4}
+                ml={4}
+                display={{
+                  base: 'none',
+                  md: 'flex'
+                }}
+              >
                 <MemoizedLinks
                   links={links.right}
                   props={{ ...navLinkProps, ...linkProps }}

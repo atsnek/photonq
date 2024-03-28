@@ -5,6 +5,7 @@ import {
   Box,
   ButtonSpinner,
   Center,
+  Flex,
   HStack,
   Stack,
   Text
@@ -47,7 +48,8 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
       borderColor="components.codeResultPreview.borderColor"
     >
       {headerText && (
-        <HStack
+        <Stack
+          flexDir={{ base: 'column', md: 'row' }}
           justifyContent="space-between"
           w="full"
           fontSize="xs"
@@ -63,7 +65,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
           <Text>{headerText}</Text>
 
           <Text>{headerTextRight}</Text>
-        </HStack>
+        </Stack>
       )}
       <Box p={3}>
         {isExecuting ? (

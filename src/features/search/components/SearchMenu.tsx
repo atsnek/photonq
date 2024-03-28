@@ -4,7 +4,8 @@ import {
   ThemeProvider,
   VStack,
   useDisclosure,
-  Text
+  Text,
+  Box
 } from '@chakra-ui/react';
 import {
   FC,

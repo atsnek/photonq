@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Stack, Text } from '@chakra-ui/react';
 import 'highlight.js/styles/atom-one-dark.css';
 import { highlight, languages } from 'prismjs';
 import React, { FC, useEffect, useMemo, useState } from 'react';
@@ -113,7 +113,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
       {...containerProps}
     >
       {(headerText || toolbar) && (
-        <Flex
+        <Stack
           bgColor="components.codeSnippet.header.bgColor"
           color="components.codeSnippet.header.text.color"
           _hover={{
@@ -129,7 +129,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
             </Text>
           )}
           {toolbar}
-        </Flex>
+        </Stack>
       )}
       <Flex
         fontSize="sm"
@@ -141,6 +141,14 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
             outline: 'none'
           }
         }}
+        p="1"
+        maxH={{
+          base: 'xs',
+          sm: 'sm',
+          md: 'md',
+          lg: 'lg'
+        }}
+        overflowY="scroll"
       >
         <Editor
           value={code}
@@ -149,7 +157,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
             setCode(code);
             if (onChange) onChange(code);
           }}
-          padding={5}
+          // padding={5}
           style={{
             flex: 1,
             fontFamily: 'monospace',
@@ -160,7 +168,7 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
             // in the editor
             whiteSpace: 'pre',
             wordBreak: 'keep-all',
-            overflowWrap: 'normal',
+            overflowWrap: 'normal'
           }}
         />
       </Flex>

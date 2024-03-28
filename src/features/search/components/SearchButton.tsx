@@ -23,33 +23,33 @@ const SearchButton: FC<ISearchButtonProps> = ({ openModal, navigate }) => {
     }
   };
 
-  if (isMobile) {
-    return (
-      <IconButton
-        size="sm"
-        variant="outline"
-        bgColor="blackAlpha.50"
-        color="topNav.input.color"
-        borderColor="topNav.input.borderColor"
-        fontWeight="normal"
-        icon={<SearchIcon />}
-        aria-label="Search"
-        onClick={openModal}
-        onKeyDown={onKeyPress}
-      >
-        <Kbd
-          borderBottomWidth={1}
-          background="transparent"
-          borderRadius={4}
-          py={0.5}
-          ml={3}
-          opacity={0.7}
-        >
-          /
-        </Kbd>
-      </IconButton>
-    );
-  }
+  // if (isMobile) {
+  //   return (
+  //     <IconButton
+  //       size="sm"
+  //       variant="outline"
+  //       bgColor="blackAlpha.50"
+  //       color="topNav.input.color"
+  //       borderColor="topNav.input.borderColor"
+  //       fontWeight="normal"
+  //       icon={<SearchIcon />}
+  //       aria-label="Search"
+  //       onClick={openModal}
+  //       onKeyDown={onKeyPress}
+  //     >
+  //       <Kbd
+  //         borderBottomWidth={1}
+  //         background="transparent"
+  //         borderRadius={4}
+  //         py={0.5}
+  //         ml={3}
+  //         opacity={0.7}
+  //       >
+  //         /
+  //       </Kbd>
+  //     </IconButton>
+  //   );
+  // }
 
   return (
     <Button

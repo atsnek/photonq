@@ -148,7 +148,11 @@ const Footer: FC = () => {
               <Field.Text
                 name="FooterTitleLine1"
                 defaultValue="Exploring"
-                fontSize="6xl"
+                fontSize={{
+                  base: '4xl',
+                  md: '5xl',
+                  lg: '6xl'
+                }}
                 fontWeight="500"
                 w={{ base: 'full', lg: 'fit-content' }}
                 display={{ base: 'block', lg: 'initial' }}
@@ -157,7 +161,11 @@ const Footer: FC = () => {
               <Field.Text
                 name="FooterTitleLine2"
                 defaultValue="Quantum Frontiers"
-                fontSize="6xl"
+                fontSize={{
+                  base: '4xl',
+                  md: '5xl',
+                  lg: '6xl'
+                }}
                 fontWeight="500"
                 w={{ base: 'full', lg: 'fit-content' }}
                 display={{ base: 'block', lg: 'initial' }}
@@ -185,12 +193,12 @@ const Footer: FC = () => {
             defaultValue="Join us on our journey to push the boundaries of quantum computing and unlock the potential of this transformative technology, as we strive to make quantum accessible to all and shape the future of computing."
             mt={10}
             maxW={{ base: 'full', lg: '50%' }}
-            fontSize="xl"
+            fontSize={{ base: 'lg', lg: 'xl' }}
             textAlign={{ base: 'center', lg: 'initial' }}
           />
         </Box>
         <Flex mt={20} color="white" wrap={{ base: 'wrap', sm: 'nowrap' }}>
-          <Image h="50px" src={UniWienLogo}></Image>
+          <Image minH="35px" maxH="150px" src={UniWienLogo}></Image>
           <Spacer minW={{ base: '5rem', lg: '25%' }} />
           <HStack
             alignItems="start"

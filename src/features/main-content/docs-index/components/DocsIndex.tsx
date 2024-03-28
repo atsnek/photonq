@@ -1,5 +1,5 @@
 import { useJaenPageIndex } from '@atsnek/jaen';
-import { SimpleGrid } from '@chakra-ui/react';
+import { Box, SimpleGrid } from '@chakra-ui/react';
 import ImageCard from '../../image-card/components/ImageCard';
 
 const DocsIndex: React.FC = () => {
@@ -7,8 +7,10 @@ const DocsIndex: React.FC = () => {
     jaenPageId: 'JaenPage /docs/'
   });
 
+  console.log('index', index);
+
   return (
-    <SimpleGrid columns={[1, null, 2]} spacing="4" gap="4">
+    <SimpleGrid columns={{ base: 1, sm: 2 }} spacing="4" gap="4">
       {index.childPages.map((child, index) => {
         return (
           <ImageCard

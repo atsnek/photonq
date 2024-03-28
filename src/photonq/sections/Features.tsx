@@ -1,4 +1,13 @@
-import { Box, BoxProps, Button, Center, Container, HStack, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Button,
+  Center,
+  Container,
+  HStack,
+  Stack,
+  VStack
+} from '@chakra-ui/react';
 import { FC } from 'react';
 import SectionTitle from '../../features/photonq/SectionTitle';
 import { Field } from '@atsnek/jaen';
@@ -11,7 +20,10 @@ const Features: FC = () => {
   const cardProps: BoxProps = {
     bgColor: 'pq.sections.features.card.bgColor',
     boxShadow: '4px 2px 16px -12px rgba(0,0,0,0.25)',
-    padding: 10,
+    padding: {
+      base: 4,
+      sm: 10
+    },
     borderRadius: '3xl',
     overflow: 'hidden',
     _hover: {
@@ -38,86 +50,95 @@ const Features: FC = () => {
       color="pq.shared.section.color"
     >
       <Container maxW="7xl">
-        <SectionTitle
-          label="Features"
-          labelFieldname="featuresLabel"
-          title="Explore Quantum Computing"
-          alignItems
-          titleProps={{
-            color: 'pq.components.sectionTitle.color'
-          }}
-        />
-        <Box mt={10}>
-          <VStack>
-            <HStack gap={10} wrap={{ base: 'wrap', md: 'nowrap' }} alignItems="stretch">
-              <Box {...cardProps}>
-                <Box w="75%" mx="auto">
-                  <Field.Image name="LeftCardImage" />
-                </Box>
+        <VStack spacing="10">
+          <SectionTitle
+            label="Features"
+            labelFieldname="featuresLabel"
+            title="Explore Quantum Computing"
+            alignItems
+            titleProps={{
+              color: 'pq.components.sectionTitle.color'
+            }}
+          />
+          <HStack
+            gap={10}
+            wrap={{ base: 'wrap', md: 'nowrap' }}
+            alignItems="stretch"
+          >
+            <Box {...cardProps}>
+              <Box w="75%" mx="auto">
+                <Field.Image name="LeftCardImage" />
+              </Box>
+              <Field.Text
+                {...cardTitleProps}
+                name="leftCardTitle"
+                defaultValue="Run intuitive experiments"
+              />
+              <Field.Text
+                name="LeftCardText"
+                defaultValue="Unleash your curiosity and dive into the realm of quantum experimentation with our intuitive tools, empowering you to design and run your own insightful quantum experiments with ease and precision."
+                color="pq.components.featureCard.color"
+                mt={3}
+              />
+              <Button as={Link} my={5} variant="pq-solid" href="/docs">
                 <Field.Text
+                  as="span"
+                  name="LeftCardButtonText"
+                  defaultValue="Get Started"
+                ></Field.Text>
+              </Button>
+            </Box>
+            <Box {...cardProps}>
+              <Box>
+                <Field.Text
+                  name="RightCardTitle"
                   {...cardTitleProps}
-                  name="leftCardTitle"
-                  defaultValue="Run intuitive experiments"
+                  defaultValue="Get results for your experiments"
                 />
                 <Field.Text
-                  name="LeftCardText"
-                  defaultValue="Unleash your curiosity and dive into the realm of quantum experimentation with our intuitive tools, empowering you to design and run your own insightful quantum experiments with ease and precision."
+                  name="RightCardText"
+                  defaultValue="Unlock profound discoveries and gain valuable insights from your quantum experiments with PhotonQ's powerful computational capabilities, delivering fast and precise results for your research endeavors."
                   color="pq.components.featureCard.color"
                   mt={3}
                 />
                 <Button as={Link} my={5} variant="pq-solid" href="/docs">
                   <Field.Text
                     as="span"
-                    name="LeftCardButtonText"
+                    name="RightCardButtonText"
                     defaultValue="Get Started"
                   ></Field.Text>
                 </Button>
               </Box>
-              <Box {...cardProps}>
-                <Box m={10}>
-                  <Field.Text
-                    name="RightCardTitle"
-                    {...cardTitleProps}
-                    defaultValue="Get results for your experiments"
-                  />
-                  <Field.Text
-                    name="RightCardText"
-                    defaultValue="Unlock profound discoveries and gain valuable insights from your quantum experiments with PhotonQ's powerful computational capabilities, delivering fast and precise results for your research endeavors."
-                    color="pq.components.featureCard.color"
-                    mt={3}
-                  />
-                  <Button as={Link} my={5} variant="pq-solid" href="/docs">
-                    <Field.Text
-                      as="span"
-                      name="RightCardButtonText"
-                      defaultValue="Get Started"
-                    ></Field.Text>
-                  </Button>
-                </Box>
-                <Box w="90%" ml="auto" borderTopLeftRadius="lg" overflow="hidden">
-                  <Field.Image name="RightCardImage" />
-                </Box>
+              <Box w="90%" ml="auto" borderTopLeftRadius="lg" overflow="hidden">
+                <Field.Image name="RightCardImage" />
               </Box>
-            </HStack>
-            <Box {...cardProps} w="100%" mt={7}>
-              <Center>
-                <Field.Text
-                  {...cardTitleProps}
-                  name="codeCardTitle"
-                  defaultValue="Quantum Code Playground"
-                />
-              </Center>
-              <Center>
-                <Field.Text
-                  name="CodeCardText"
-                  defaultValue="Dive into the world of quantum computing with our interactive platform. Write and run quantum code, experiment with quantum algorithms, and unlock the potential of this cutting-edge technology"
-                  mt={3}
-                  maxW={{ base: 'full', md: '50%' }}
-                  textAlign="center"
-                />
-              </Center>
-              <QASMPlayground
-                children={`// quantum ripple-carry adder from Cuccaro et al, quant-ph/0410184
+            </Box>
+          </HStack>
+        </VStack>
+      </Container>
+
+      <Box>
+        <Container maxW="8xl" py="10">
+          <Stack spacing="4">
+            <VStack w="full">
+              <Field.Text
+                {...cardTitleProps}
+                fontSize={{ base: 'xl', md: '2xl' }}
+                name="codeCardTitle"
+                defaultValue="Quantum Code Playground"
+              />
+              <Field.Text
+                name="CodeCardText"
+                defaultValue="Dive into the world of quantum computing with our interactive platform. Write and run quantum code, experiment with quantum algorithms, and unlock the potential of this cutting-edge technology"
+                mt={3}
+                maxW={{ base: 'full', md: '50%' }}
+                textAlign="center"
+                color="pq.components.featureCard.color"
+              />
+            </VStack>
+
+            <QASMPlayground
+              children={`// quantum ripple-carry adder from Cuccaro et al, quant-ph/0410184
 OPENQASM 2.0;
 include "qelib1.inc";
 gate majority a,b,c 
@@ -155,9 +176,12 @@ measure b[1] -> ans[1];
 measure b[2] -> ans[2];
 measure b[3] -> ans[3];
 measure cout[0] -> ans[4];`}
-              />
-            </Box>
-            <Box {...cardProps} w="100%" mt={7}>
+            />
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* <Box {...cardProps} w="100%" mt={7}>
               <Box w="30%" minW={{ base: '100px', md: '300px' }} m="auto">
                 <Field.Image name="BottomCardImage" />
               </Box>
@@ -191,7 +215,7 @@ measure cout[0] -> ans[4];`}
             </Box>
           </VStack>
         </Box>
-      </Container>
+      </Container> */}
     </Box>
   );
 };
