@@ -3,9 +3,9 @@ import { Box, SimpleGrid } from '@chakra-ui/react';
 import ImageCard from '../../image-card/components/ImageCard';
 
 const DocsIndex: React.FC = () => {
-  const index = useJaenPageIndex({
-    jaenPageId: 'JaenPage /docs/'
-  });
+  type?: 'card' | 'toc';
+}> = ({ type = 'card' }) => {
+  const index = useJaenPageIndex({});
 
   console.log('index', index);
 
