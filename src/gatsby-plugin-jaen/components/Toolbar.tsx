@@ -1,17 +1,15 @@
-import { useAuthenticationContext } from '@atsnek/jaen';
 import { useEffect, useState } from 'react';
-import SearchMenu from '../../features/search/components/SearchMenu';
-import { SearchContext } from '../../shared/contexts/search';
-import { TSearchResults } from '../../shared/types/search';
-import { fetchDefaultSearchresult } from '../../shared/utils/search';
-
-import { useSearch } from '../../search/use-search';
+import SearchMenu from '../../components/search-menu';
+import { SearchContext } from '../../contexts/search';
+import useSearch from '../../hooks/use-search';
+import { fetchDefaultSearchresult } from '../../utils/search';
+import { TSearchResults } from '../../utils/search/types';
 
 export interface ToolbarProps {}
 
 export const Toolbar: React.FC<ToolbarProps> = () => {
   const [searchData, setSearchData] = useState<TSearchResults>({});
-  const currentUserId = useAuthenticationContext().user?.id;
+  const currentUserId = '1';
   const search = useSearch();
 
   useEffect(() => {

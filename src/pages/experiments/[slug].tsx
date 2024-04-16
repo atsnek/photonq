@@ -1,56 +1,465 @@
-import { PageConfig, PageProps } from '@atsnek/jaen';
+import {
+  PageConfig,
+  PageProps,
+  osg,
+  useAuth,
+  useNotificationsContext
+} from '@atsnek/jaen';
+import {
+  AspectRatio,
+  Avatar,
+  Box,
+  Button,
+  ButtonGroup,
+  Card,
+  CardBody,
+  Center,
+  Flex,
+  HStack,
+  IconButton,
+  Image,
+  Input,
+  Stack,
+  Text,
+  Wrap
+} from '@chakra-ui/react';
 
-import { graphql } from 'gatsby';
-import * as React from 'react';
-import BlogPostContent from '../../contents/BlogPostContent';
-import { useEffect } from 'react';
-import { useAppStore } from '../../shared/store/store';
-import { navigate } from '@reach/router';
+import { FaImage } from '@react-icons/all-files/fa/FaImage';
+import { FaRocket } from '@react-icons/all-files/fa/FaRocket';
+
+import { sq } from '@/clients/social';
+import { PrivacyInput } from '@/clients/social/src/schema.generated';
+import { CheckIcon, DeleteIcon } from '@chakra-ui/icons';
+import { graphql, navigate } from 'gatsby';
+import { Link } from 'gatsby-plugin-jaen';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { asEnumKey } from 'snek-query';
+import { useLazyQuery } from 'snek-query/react-hooks';
+import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEditor';
+import { useTOCContext } from '../../contexts/toc';
+import PostCardRating from '../../components/post/PostCardRating';
+import { TextControl } from '../../components/TextControl';
 
 const DocsPage: React.FC<PageProps> = ({ params }) => {
-  const slug = params.slug?.trim();
-  const post = useAppStore(state => state.singlePost.post);
+  const notify = useNotificationsContext();
 
-  const resetStoreState = useAppStore(state => state.singlePost.reset);
-  const fetchPost = useAppStore(state => state.singlePost.fetchPost);
+  const [_, { data, isLoading, refetch, isSafe }] = useLazyQuery(sq);
 
-  useEffect(() => {
-    resetStoreState();
-    if (slug) {
-      fetchPost(slug).then(succeed => {
-        if (!succeed) navigate('/docs/');
-      });
-    }
-  }, [slug]);
+  const toc = useTOCContext();
 
   useEffect(() => {
-    const prevTitle = document.title;
-    if (post) {
-      document.title = post.title;
-    }
+    refetch();
+  }, [params.slug]);
 
-    return () => {
-      document.title = prevTitle;
-    };
+  const post = data.post({ where: { slug: params.slug } });
+
+  const [values, setValues] = useState({
+    title: post.title,
+    summary: post.summary,
+    content: post.content
+  });
+
+  useEffect(() => {
+    setValues({
+      title: post.title,
+      summary: post.summary,
+      content: post.content
+    });
   }, [post]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (values.content) {
+      try {
+        toc.setValue(JSON.parse(values.content));
+      } catch {
+        toc.setValue(undefined);
+      }
+    } else {
+      toc.setValue(undefined);
+    }
+  }, [values.content]);
 
-  if (!slug) {
-    //? This could currently cause some issues with the SSR
-    navigate('/docs/');
-    return;
-  }
+  const hasChanges = useMemo(() => {
+    return (
+      isSafe &&
+      (values.title !== post.title ||
+        values.summary !== post.summary ||
+        values.content !== post.content)
+    );
+  }, [values, post, isSafe]);
 
-  return <BlogPostContent slug={slug} />;
+  const [isSaving, setIsSaving] = useState(false);
+
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
+  const parsedContent = useMemo(() => {
+    try {
+      return JSON.parse(values.content || '');
+    } catch {
+      return undefined;
+    }
+  }, [values.content]);
+
+  return (
+    <Stack key={post.id} spacing={4}>
+      <Card variant="outline" display={post.isOwner ? 'block' : 'none'}>
+        <CardBody as={Flex} justifyContent="space-between" alignItems="center">
+          {post.privacy === 'PRIVATE' ? (
+            <Button
+              leftIcon={<FaRocket />}
+              variant="link"
+              fontWeight="normal"
+              onClick={async () => {
+                const confirm = await notify.confirm({
+                  title: 'Publish Experiment',
+                  message: 'Are you sure you want to publish this experiment?'
+                });
+
+                if (confirm) {
+                  const [_, errors] = await sq.mutate(m =>
+                    m.postUpdate({
+                      id: post.id,
+                      values: {
+                        privacy: asEnumKey(PrivacyInput, 'PUBLIC')
+                      }
+                    })
+                  );
+
+                  refetch();
+
+                  if (errors) {
+                    notify.toast({
+                      title: 'Error',
+                      status: 'error',
+                      description:
+                        'An error occurred while publishing the experiment.'
+                    });
+                  } else {
+                    notify.toast({
+                      title: 'Experiment Published',
+                      status: 'success',
+                      description:
+                        'The experiment has been successfully published.'
+                    });
+                  }
+                }
+              }}
+            >
+              Publish
+            </Button>
+          ) : (
+            <Button
+              leftIcon={<CheckIcon color="green.500" />}
+              variant="link"
+              colorScheme="green"
+              fontWeight="normal"
+              color="gray.500"
+              onClick={async () => {
+                const confirm = await notify.confirm({
+                  title: 'Unpublish Experiment',
+                  message: 'Are you sure you want to unpublish this experiment?'
+                });
+
+                if (confirm) {
+                  const [_, errors] = await sq.mutate(m =>
+                    m.postUpdate({
+                      id: post.id,
+                      values: {
+                        privacy: asEnumKey(PrivacyInput, 'PRIVATE')
+                      }
+                    })
+                  );
+
+                  refetch();
+
+                  if (errors) {
+                    notify.toast({
+                      title: 'Error',
+                      status: 'error',
+                      description:
+                        'An error occurred while unpublishing the experiment.'
+                    });
+                  } else {
+                    notify.toast({
+                      title: 'Experiment Unpublished',
+                      status: 'success',
+                      description:
+                        'The experiment has been successfully unpublished.'
+                    });
+                  }
+                }
+              }}
+            >
+              Published
+            </Button>
+          )}
+
+          <ButtonGroup flexDir={['column', 'row']}>
+            <Button
+              variant="outline"
+              isDisabled={!hasChanges}
+              isLoading={isSaving}
+              onClick={async () => {
+                setIsSaving(true);
+
+                const [_, errors] = await sq.mutate(m =>
+                  m.postUpdate({
+                    id: post.id,
+                    values: {
+                      title: values.title,
+                      summary: values.summary || undefined,
+                      content: values.content || undefined
+                    }
+                  })
+                );
+
+                refetch();
+
+                setIsSaving(false);
+
+                if (errors) {
+                  notify.toast({
+                    title: 'Error',
+                    status: 'error',
+                    description:
+                      'An error occurred while saving the experiment.'
+                  });
+                } else {
+                  notify.toast({
+                    title: 'Experiment Saved',
+                    status: 'success',
+                    description: 'The experiment has been successfully saved.'
+                  });
+                }
+              }}
+            >
+              Save
+            </Button>
+
+            {hasChanges && (
+              <Button
+                variant="ghost"
+                colorScheme="red"
+                onClick={() => {
+                  setValues({
+                    title: post.title,
+                    summary: post.summary,
+                    content: post.content
+                  });
+                }}
+              >
+                Cancel
+              </Button>
+            )}
+
+            <IconButton
+              isLoading={isImageUploading}
+              icon={<FaImage />}
+              variant="ghost"
+              onClick={() => {
+                imageInputRef.current?.click();
+              }}
+              aria-label="Upload Image"
+            />
+
+            <Input
+              type="file"
+              ref={imageInputRef}
+              display="none"
+              onChange={async e => {
+                const file = e.target.files?.[0];
+
+                if (file) {
+                  setIsImageUploading(true);
+                  const { fileUrl } = await osg.uploadFile(file);
+
+                  const [_, errors] = await sq.mutate(m =>
+                    m.postUpdate({
+                      id: post.id,
+                      values: {
+                        avatarURL: fileUrl
+                      }
+                    })
+                  );
+
+                  refetch();
+
+                  if (errors) {
+                    notify.toast({
+                      title: 'Error',
+                      status: 'error',
+                      description:
+                        'An error occurred while uploading the image.'
+                    });
+                  } else {
+                    notify.toast({
+                      title: 'Image Uploaded',
+                      status: 'success',
+                      description: 'The image has been successfully uploaded.'
+                    });
+
+                    setIsImageUploading(false);
+                  }
+                }
+              }}
+            />
+
+            <IconButton
+              icon={<DeleteIcon />}
+              aria-label="Delete"
+              variant="ghost"
+              colorScheme="red"
+              onClick={async () => {
+                const confirm = await notify.confirm({
+                  title: 'Delete Experiment',
+                  message: 'Are you sure you want to delete this experiment?'
+                });
+
+                if (confirm) {
+                  const [_, errors] = await sq.mutate(m =>
+                    m.postDelete({ id: post.id })
+                  );
+
+                  if (errors) {
+                    notify.toast({
+                      title: 'Error',
+                      status: 'error',
+                      description:
+                        'An error occurred while deleting the experiment.'
+                    });
+                  } else {
+                    notify.toast({
+                      title: 'Experiment Deleted',
+                      status: 'success',
+                      description:
+                        'The experiment has been successfully deleted.'
+                    });
+
+                    navigate(`/users/${post.user().id}`);
+                  }
+                }
+              }}
+            />
+          </ButtonGroup>
+        </CardBody>
+      </Card>
+
+      <Wrap justify="space-between" align="center">
+        <TextControl
+          key={values.title}
+          text={values.title}
+          onSubmit={title => {
+            setValues({
+              ...values,
+              title
+            });
+          }}
+          type="heading"
+          editable={post.isOwner}
+        />
+
+        <HStack>
+          <Text fontSize="sm" color="gray.600">
+            {post.language}
+          </Text>
+
+          <PostCardRating
+            id={post.id}
+            likes={post.stars().totalCount || 0}
+            hasRated={!!post.hasStarred}
+            toggleRating={async (id: string) => {
+              if (post.hasStarred === false) {
+                await sq.mutate(m => m.postStar({ postId: id }));
+              } else if (post.hasStarred === true) {
+                await sq.mutate(m => m.postUnstar({ postId: id }));
+              }
+            }}
+          />
+        </HStack>
+      </Wrap>
+
+      <Flex alignItems="center">
+        <Avatar
+          size="md"
+          src={post.user().profile.avatarUrl || ''}
+          name={post.user().profile.displayName}
+        />
+        <Box ml={2}>
+          <Link to={`/users/${post.user().id}`}>
+            {post.user().profile.displayName}
+          </Link>
+          <Text fontSize="sm" color="gray.600">
+            @{post.user().profile.userName} &bull;
+            {post.createdAt !== post.updatedAt ? (
+              <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
+            ) : (
+              <> Created: {new Date(post.createdAt).toLocaleString()}</>
+            )}
+          </Text>
+        </Box>
+      </Flex>
+
+      <TextControl
+        key={values.summary}
+        text={values.summary || undefined}
+        onSubmit={summary => {
+          setValues({
+            ...values,
+            summary
+          });
+        }}
+        type="text"
+        editable={post.isOwner}
+      />
+
+      <AspectRatio
+        ratio={16 / 9}
+        borderWidth="1px"
+        borderRadius="lg"
+        display={!post.avatarURL && !post.isOwner ? 'none' : 'block'}
+        cursor={post.isOwner ? 'pointer' : 'default'}
+        onClick={() => {
+          if (post.isOwner) {
+            imageInputRef.current?.click();
+          }
+        }}
+      >
+        <Image
+          src={post.avatarURL}
+          alt="Post Image"
+          fallback={
+            <Center>
+              <Text>Click to upload an image</Text>
+            </Center>
+          }
+        />
+      </AspectRatio>
+
+      {/* Placeholder for Editor Component */}
+      <UncontrolledMdxEditor
+        value={parsedContent}
+        isEditing={post.isOwner}
+        onUpdateValue={value => {
+          toc.setValue(value);
+
+          setValues({
+            ...values,
+            content: JSON.stringify(value)
+          });
+        }}
+      />
+    </Stack>
+  );
 };
 
 export default DocsPage;
 
 export const pageConfig: PageConfig = {
-  label: 'Blog Post',
-  icon: 'FaBlog',
-  withoutJaenFrameStickyHeader: true,
+  label: 'Experiment',
+  icon: 'FaFlask',
+  withoutJaenFrameStickyHeader: true
 };
 
 export const query = graphql`
