@@ -91,7 +91,7 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
       {
         name: 'Sign Up',
         matchMethod: 'exact',
-        href: '/signup',
+        onClick: () => signinRedirect({ prompt: 'create' }),
         style: {
           border: '1px solid',
           borderColor: 'topNav.input.borderColor',

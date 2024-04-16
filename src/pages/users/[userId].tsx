@@ -9,6 +9,7 @@ import {
 import {
   Avatar,
   Box,
+  BoxProps,
   Button,
   Card,
   CardBody,
@@ -46,24 +47,48 @@ import TbUsers from '../../components/icons/tabler/TbUsers';
 import PostList from '../../components/post/PostList';
 import TbUser from '../../components/icons/tabler/TbUser';
 import TbStar from '../../components/icons/tabler/TbStar';
-import { SortOrderInput } from '@/clients/social/src/schema.generated';
+import {
+  Activity,
+  ActivityType,
+  SortOrderInput
+} from '@/clients/social/src/schema.generated';
 import { asEnumKey } from 'snek-query';
 import PostCard from '../../components/post/PostCard';
 import { Link } from 'gatsby-plugin-jaen';
 import { useEffect, useRef, useState } from 'react';
 import UserCard from '../../components/user/UserCard';
 import useNavOffset from '../../hooks/use-nav-offset';
+import Stepper from '../../components/Stepper';
+import TbConfetti from '../../components/icons/tabler/TbConfetti';
+import TbInfoCircle from '../../components/icons/tabler/TbInfoCircle';
+import TbUserMinus from '../../components/icons/tabler/TbUserMinus';
+import TbUserPlus from '../../components/icons/tabler/TbUserPlus';
+import TbPencilPlus from '../../components/icons/tabler/TbPencilPlus';
 
 const AvatarImage: React.FC<{
   src: string | undefined;
   displayName: string;
+  cursor?: BoxProps['cursor'];
   onClick?: () => void;
-}> = ({ src, displayName, onClick }) => {
+}> = ({ src, displayName, onClick, cursor }) => {
   return (
     <Image
       src={src}
+      cursor={cursor}
       fallback={
-        <Center>
+        <Center
+          onClick={onClick}
+          cursor={cursor}
+          aspectRatio={1}
+          h="max-content"
+          bg="gray.100"
+          _hover={{
+            boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
+            transform: 'scale(1.02)'
+          }}
+          borderRadius="full"
+          transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
+        >
           <Text>
             {displayName
               .split(' ')
@@ -97,6 +122,7 @@ const EditableImage: React.FC<{
   displayName: string;
   userId: string;
 }> = ({ avatarUrl, userId, displayName }) => {
+  const auth = useAuth();
   const authUser = useAuthUser();
 
   const imageRef = useRef<HTMLInputElement>(null);
@@ -126,6 +152,7 @@ const EditableImage: React.FC<{
       <AvatarImage
         src={avatarUrl || undefined}
         displayName={displayName}
+        cursor={userId === authUser.user.id ? 'pointer' : 'default'}
         onClick={() => {
           if (userId === authUser.user.id) {
             imageRef.current?.click();
@@ -133,6 +160,175 @@ const EditableImage: React.FC<{
         }}
       />
     </>
+  );
+};
+
+const ActivityList: React.FC<{
+  activities: Activity[];
+}> = props => {
+  type ResolvedActivity = {
+    createdAt: string;
+    post?: {
+      slug: string;
+      title: string;
+    };
+    type: ActivityType;
+    relatedUser?: {
+      id: string;
+      profile: {
+        displayName: string;
+      };
+    };
+  };
+
+  const groupByDate = props.activities.reduce<{
+    [key: string]: ResolvedActivity[];
+  }>((acc, activity) => {
+    const date = new Date(activity.createdAt);
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+
+    acc[key].push({
+      createdAt: activity.createdAt,
+      post: activity.post()
+        ? {
+            slug: activity.post()!.slug,
+            title: activity.post()!.title
+          }
+        : undefined,
+      type: activity.type!,
+      relatedUser: activity.relatedUser()
+        ? {
+            id: activity.relatedUser()!.id,
+            profile: {
+              displayName: activity.relatedUser()!.profile.displayName
+            }
+          }
+        : undefined
+    });
+
+    return acc;
+  }, {});
+
+  console.log(groupByDate);
+
+  const [batch, setBatch] = useState(0);
+
+  const generateDetails = (
+    activity: ResolvedActivity
+  ): {
+    title: string;
+    icon: React.ReactNode;
+    to?: string;
+  } => {
+    const post = activity.post;
+    const relatedUser = activity.relatedUser;
+
+    switch (activity.type) {
+      case ActivityType.USER_CREATED:
+        return {
+          title: 'Joined the community',
+          icon: <TbConfetti />
+        };
+      case ActivityType.POST_CREATED:
+        if (post) {
+          return {
+            title: `Created a new experiment: "${post.title}"`,
+            icon: <TbPencilPlus />,
+            to: `/experiments/${post.slug}`
+          };
+        }
+
+        return {
+          title: 'Created a new private experiment',
+          icon: <TbPencilPlus />
+        };
+      case ActivityType.STAR:
+        if (post) {
+          return {
+            title: `Starred an experiment: "${post.title}"`,
+            icon: <TbStar />,
+            to: `/experiments/${post.slug}`
+          };
+        }
+
+        return {
+          title: 'Starred an private experiment',
+          icon: <TbStar />
+        };
+      case ActivityType.UNSTAR:
+        const postTitleUnstar = activity.post?.title;
+
+        if (post) {
+          return {
+            title: `Unstarred an experiment: "${postTitleUnstar}"`,
+            icon: <TbStar />,
+            to: `/experiments/${post.slug}`
+          };
+        }
+
+        return {
+          title: 'Unstarred an private experiment',
+          icon: <TbStar />
+        };
+      case ActivityType.FOLLOW:
+        if (relatedUser) {
+          return {
+            title: `Followed ${relatedUser.profile.displayName}`,
+            icon: <TbUserPlus />,
+            to: `/users/${relatedUser.id}`
+          };
+        }
+
+        return {
+          title: 'Followed an unknown user',
+          icon: <TbUserPlus />
+        };
+      case ActivityType.UNFOLLOW:
+        if (relatedUser) {
+          return {
+            title: `Unfollowed ${relatedUser.profile.displayName}`,
+            icon: <TbUserMinus />,
+            to: `/users/${relatedUser.id}`
+          };
+        }
+
+        return {
+          title: 'Unfollowed an unknown user',
+          icon: <TbUserMinus />
+        };
+
+      default:
+        return {
+          title: 'Unknown activity',
+          icon: <TbInfoCircle />
+        };
+    }
+  };
+
+  return (
+    <Stepper
+      sections={Object.keys(groupByDate).map(key => {
+        return {
+          title: new Date(key).toLocaleDateString('default', {
+            month: 'long',
+            year: 'numeric'
+          }),
+          items: groupByDate[key].map(activity => {
+            const details = generateDetails(activity);
+
+            return {
+              title: details.title,
+              icon: details.icon,
+              to: details.to
+            };
+          })
+        };
+      })}
+    />
   );
 };
 
@@ -345,6 +541,20 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                       ))}
                   </SimpleGrid>
                 </Stack>
+
+                <Stack spacing="8">
+                  <Heading size="md">Activity</Heading>
+
+                  <ActivityList
+                    activities={
+                      user.activities({
+                        orderBy: [
+                          { createdAt: asEnumKey(SortOrderInput, 'desc') }
+                        ]
+                      }).nodes
+                    }
+                  />
+                </Stack>
               </Stack>
             </TabPanel>
 
@@ -363,20 +573,22 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             </TabPanel>
 
             <TabPanel>
-              {user.followers().nodes.map(follow => (
-                <UserCard
-                  key={follow.id}
-                  id={follow.follower().id}
-                  avatarUrl={follow.follower().profile.avatarUrl}
-                  displayName={follow.follower().profile.displayName}
-                  userName={follow.follower().profile.userName}
-                  stats={{
-                    posts: follow.follower().posts().totalCount,
-                    followers: follow.follower().followers().totalCount,
-                    following: follow.follower().followings().totalCount
-                  }}
-                />
-              ))}
+              <Stack spacing={4}>
+                {user.followers().nodes.map(follow => (
+                  <UserCard
+                    key={follow.id}
+                    id={follow.follower().id}
+                    avatarUrl={follow.follower().profile.avatarUrl}
+                    displayName={follow.follower().profile.displayName}
+                    userName={follow.follower().profile.userName}
+                    stats={{
+                      posts: follow.follower().posts().totalCount,
+                      followers: follow.follower().followers().totalCount,
+                      following: follow.follower().followings().totalCount
+                    }}
+                  />
+                ))}
+              </Stack>
 
               {user.followers().totalCount === 0 && (
                 <Text>No followers yet</Text>
@@ -384,6 +596,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             </TabPanel>
 
             <TabPanel>
+              <Stack spacing={4}></Stack>
               {user.followings().nodes.map(follow => (
                 <UserCard
                   key={follow.id}

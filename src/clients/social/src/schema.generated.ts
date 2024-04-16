@@ -19,6 +19,14 @@ export enum Privacy {
     PRIVATE = "PRIVATE",
     FRIENDS = "FRIENDS"
 }
+export enum ActivityType {
+    USER_CREATED = "USER_CREATED",
+    POST_CREATED = "POST_CREATED",
+    FOLLOW = "FOLLOW",
+    UNFOLLOW = "UNFOLLOW",
+    STAR = "STAR",
+    UNSTAR = "UNSTAR"
+}
 export enum PrivacyInput {
     PUBLIC = "PUBLIC",
     PRIVATE = "PRIVATE",
@@ -27,6 +35,14 @@ export enum PrivacyInput {
 export enum LanguageInput {
     EN = "EN",
     DE = "DE"
+}
+export enum ActivityTypeInput {
+    USER_CREATED = "USER_CREATED",
+    POST_CREATED = "POST_CREATED",
+    FOLLOW = "FOLLOW",
+    UNFOLLOW = "UNFOLLOW",
+    STAR = "STAR",
+    UNSTAR = "UNSTAR"
 }
 export enum SortOrderInput {
     asc = "asc",
@@ -51,22 +67,20 @@ export enum StarOrderByRelevanceFieldEnumInput {
     postId = "postId",
     userId = "userId"
 }
-export enum FollowOrderByRelevanceFieldEnumInput {
-    id = "id",
-    followerId = "followerId",
-    followedId = "followedId"
-}
 export enum ActivityOrderByRelevanceFieldEnumInput {
     id = "id",
     postId = "postId",
     userId = "userId",
-    type = "type",
-    starId = "starId",
-    followId = "followId"
+    relatedUserId = "relatedUserId"
 }
 export enum PostViewOrderByRelevanceFieldEnumInput {
     postId = "postId",
     viewedById = "viewedById"
+}
+export enum FollowOrderByRelevanceFieldEnumInput {
+    id = "id",
+    followerId = "followerId",
+    followedId = "followedId"
 }
 export enum UserViewOrderByRelevanceFieldEnumInput {
     userId = "userId",
@@ -89,6 +103,7 @@ export type UserWhereInputInput = {
     followings?: FollowListRelationFilterInput;
     starredPosts?: StarListRelationFilterInput;
     activities?: ActivityListRelationFilterInput;
+    relatedActivities?: ActivityListRelationFilterInput;
     receivedUserViews?: UserViewListRelationFilterInput;
     performedUserViews?: UserViewListRelationFilterInput;
     performedPostViews?: PostViewListRelationFilterInput;
@@ -169,6 +184,7 @@ export type WithoutInput_16AndUserWhereInputInput = {
     followings?: FollowListRelationFilterInput;
     starredPosts?: StarListRelationFilterInput;
     activities?: ActivityListRelationFilterInput;
+    relatedActivities?: ActivityListRelationFilterInput;
     receivedUserViews?: UserViewListRelationFilterInput;
     performedUserViews?: UserViewListRelationFilterInput;
     performedPostViews?: PostViewListRelationFilterInput;
@@ -188,28 +204,22 @@ export type FollowWhereInputInput = {
     createdAt?: t.String;
     follower?: WithoutInput_16AndUserWhereInputInput;
     followed?: WithoutInput_16AndUserWhereInputInput;
-    activities?: ActivityListRelationFilterInput;
 };
-export type ActivityListRelationFilterInput = {
-    every?: ActivityWhereInputInput;
-    some?: ActivityWhereInputInput;
-    none?: ActivityWhereInputInput;
+export type StarListRelationFilterInput = {
+    every?: StarWhereInputInput;
+    some?: StarWhereInputInput;
+    none?: StarWhereInputInput;
 };
-export type ActivityWhereInputInput = {
-    AND?: ActivityWhereInputInput[];
-    OR?: ActivityWhereInputInput[];
-    NOT?: ActivityWhereInputInput[];
+export type StarWhereInputInput = {
+    AND?: StarWhereInputInput[];
+    OR?: StarWhereInputInput[];
+    NOT?: StarWhereInputInput[];
     id?: t.String;
-    type?: t.String;
-    createdAt?: t.String;
-    userId?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    userId?: t.String;
+    createdAt?: t.String;
     user?: WithoutInput_16AndUserWhereInputInput;
     post?: WithoutInput_18AndPostWhereInputInput;
-    star?: WithoutInput_20AndStarWhereInputInput;
-    follow?: WithoutInput_22AndFollowWhereInputInput;
 };
 export type WithoutInput_18AndPostWhereInputInput = {
     is?: PostWhereInputInput;
@@ -233,22 +243,69 @@ export type WithoutInput_18AndPostWhereInputInput = {
     activities?: ActivityListRelationFilterInput;
     views?: PostViewListRelationFilterInput;
 };
-export type StarListRelationFilterInput = {
-    every?: StarWhereInputInput;
-    some?: StarWhereInputInput;
-    none?: StarWhereInputInput;
+export type ActivityListRelationFilterInput = {
+    every?: ActivityWhereInputInput;
+    some?: ActivityWhereInputInput;
+    none?: ActivityWhereInputInput;
 };
-export type StarWhereInputInput = {
-    AND?: StarWhereInputInput[];
-    OR?: StarWhereInputInput[];
-    NOT?: StarWhereInputInput[];
+export type ActivityWhereInputInput = {
+    AND?: ActivityWhereInputInput[];
+    OR?: ActivityWhereInputInput[];
+    NOT?: ActivityWhereInputInput[];
     id?: t.String;
-    postId?: t.String;
-    userId?: t.String;
+    type?: EnumActivityTypeFilterInput;
     createdAt?: t.String;
+    userId?: t.String;
+    postId?: t.String;
+    relatedUserId?: t.String;
     user?: WithoutInput_16AndUserWhereInputInput;
     post?: WithoutInput_18AndPostWhereInputInput;
+    relatedUser?: WithoutInput_20AndUserWhereInputInput;
+};
+export type EnumActivityTypeFilterInput = {
+    equals?: t.String;
+    in?: ActivityTypeInput[];
+    notIn?: ActivityTypeInput[];
+    not?: t.String;
+};
+export type WithoutInput_20AndUserWhereInputInput = {
+    is?: UserWhereInputInput;
+    isNot?: UserWhereInputInput;
+    AND?: UserWhereInputInput[];
+    OR?: UserWhereInputInput[];
+    NOT?: UserWhereInputInput[];
+    id?: t.String;
+    organizationId?: t.String;
+    bio?: t.String;
+    createdAt?: t.String;
+    updatedAt?: t.String;
+    language?: t.String;
+    organization?: WithoutInput_14AndOrganizationWhereInputInput;
+    posts?: PostListRelationFilterInput;
+    followers?: FollowListRelationFilterInput;
+    followings?: FollowListRelationFilterInput;
+    starredPosts?: StarListRelationFilterInput;
     activities?: ActivityListRelationFilterInput;
+    relatedActivities?: ActivityListRelationFilterInput;
+    receivedUserViews?: UserViewListRelationFilterInput;
+    performedUserViews?: UserViewListRelationFilterInput;
+    performedPostViews?: PostViewListRelationFilterInput;
+};
+export type UserViewListRelationFilterInput = {
+    every?: UserViewWhereInputInput;
+    some?: UserViewWhereInputInput;
+    none?: UserViewWhereInputInput;
+};
+export type UserViewWhereInputInput = {
+    AND?: UserViewWhereInputInput[];
+    OR?: UserViewWhereInputInput[];
+    NOT?: UserViewWhereInputInput[];
+    id?: t.Number;
+    userId?: t.String;
+    viewedById?: t.String;
+    createdAt?: t.String;
+    user?: WithoutInput_16AndUserWhereInputInput;
+    viewedBy?: WithoutInput_16AndUserWhereInputInput;
 };
 export type PostViewListRelationFilterInput = {
     every?: PostViewWhereInputInput;
@@ -263,10 +320,10 @@ export type PostViewWhereInputInput = {
     postId?: t.String;
     viewedById?: t.String;
     createdAt?: t.String;
-    post?: WithoutInput_24AndPostWhereInputInput;
+    post?: WithoutInput_22AndPostWhereInputInput;
     viewedBy?: WithoutInput_16AndUserWhereInputInput;
 };
-export type WithoutInput_24AndPostWhereInputInput = {
+export type WithoutInput_22AndPostWhereInputInput = {
     is?: PostWhereInputInput;
     isNot?: PostWhereInputInput;
     AND?: PostWhereInputInput[];
@@ -288,50 +345,6 @@ export type WithoutInput_24AndPostWhereInputInput = {
     activities?: ActivityListRelationFilterInput;
     views?: PostViewListRelationFilterInput;
 };
-export type WithoutInput_20AndStarWhereInputInput = {
-    is?: StarWhereInputInput;
-    isNot?: StarWhereInputInput;
-    AND?: StarWhereInputInput[];
-    OR?: StarWhereInputInput[];
-    NOT?: StarWhereInputInput[];
-    id?: t.String;
-    postId?: t.String;
-    userId?: t.String;
-    createdAt?: t.String;
-    user?: WithoutInput_16AndUserWhereInputInput;
-    post?: WithoutInput_18AndPostWhereInputInput;
-    activities?: ActivityListRelationFilterInput;
-};
-export type WithoutInput_22AndFollowWhereInputInput = {
-    is?: FollowWhereInputInput;
-    isNot?: FollowWhereInputInput;
-    AND?: FollowWhereInputInput[];
-    OR?: FollowWhereInputInput[];
-    NOT?: FollowWhereInputInput[];
-    id?: t.String;
-    followerId?: t.String;
-    followedId?: t.String;
-    createdAt?: t.String;
-    follower?: WithoutInput_16AndUserWhereInputInput;
-    followed?: WithoutInput_16AndUserWhereInputInput;
-    activities?: ActivityListRelationFilterInput;
-};
-export type UserViewListRelationFilterInput = {
-    every?: UserViewWhereInputInput;
-    some?: UserViewWhereInputInput;
-    none?: UserViewWhereInputInput;
-};
-export type UserViewWhereInputInput = {
-    AND?: UserViewWhereInputInput[];
-    OR?: UserViewWhereInputInput[];
-    NOT?: UserViewWhereInputInput[];
-    id?: t.Number;
-    userId?: t.String;
-    viewedById?: t.String;
-    createdAt?: t.String;
-    user?: WithoutInput_16AndUserWhereInputInput;
-    viewedBy?: WithoutInput_16AndUserWhereInputInput;
-};
 export type UserOrderByWithRelationAndSearchRelevanceInputInput = {
     id?: SortOrderInput;
     organizationId?: SortOrderInput;
@@ -345,6 +358,7 @@ export type UserOrderByWithRelationAndSearchRelevanceInputInput = {
     followings?: FollowOrderByRelationAggregateInputInput;
     starredPosts?: StarOrderByRelationAggregateInputInput;
     activities?: ActivityOrderByRelationAggregateInputInput;
+    relatedActivities?: ActivityOrderByRelationAggregateInputInput;
     receivedUserViews?: UserViewOrderByRelationAggregateInputInput;
     performedUserViews?: UserViewOrderByRelationAggregateInputInput;
     performedPostViews?: PostViewOrderByRelationAggregateInputInput;
@@ -386,7 +400,7 @@ export type UserOrderByRelevanceInputInput = {
     sort: SortOrderInput;
     search: t.String;
 };
-export type OmitInput_18 = {
+export type OmitInput_20 = {
     organizationId?: t.String;
     bio?: t.String;
     createdAt?: t.String;
@@ -398,6 +412,7 @@ export type OmitInput_18 = {
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
@@ -443,24 +458,23 @@ export type ObjectAndPostUncheckedCreateWithoutUserInputInput = {
     views?: PostViewUncheckedCreateNestedManyWithoutPostInputInput;
 };
 export type StarUncheckedCreateNestedManyWithoutPostInputInput = {
-    create?: WithoutInput_26AndStarUncheckedCreateWithoutPostInputInput;
+    create?: WithoutInput_24AndStarUncheckedCreateWithoutPostInputInput;
     connectOrCreate?: StarCreateOrConnectWithoutPostInputInput[];
     createMany?: StarCreateManyPostInputEnvelopeInput;
     connect?: WhereInput_16AndWhereInput_15;
 };
-export type WithoutInput_26AndStarUncheckedCreateWithoutPostInputInput = {
+export type WithoutInput_24AndStarUncheckedCreateWithoutPostInputInput = {
     user?: UserCreateNestedOneWithoutStarredPostsInputInput;
     id?: t.String;
     userId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutStarInputInput;
 };
 export type UserCreateNestedOneWithoutStarredPostsInputInput = {
-    create?: WithoutInput_28AndUserUncheckedCreateWithoutStarredPostsInputInput;
+    create?: WithoutInput_26AndUserUncheckedCreateWithoutStarredPostsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutStarredPostsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
 };
-export type WithoutInput_28AndUserUncheckedCreateWithoutStarredPostsInputInput = {
+export type WithoutInput_26AndUserUncheckedCreateWithoutStarredPostsInputInput = {
     organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
     id: t.String;
     organizationId?: t.String;
@@ -472,29 +486,29 @@ export type WithoutInput_28AndUserUncheckedCreateWithoutStarredPostsInputInput =
     followers?: FollowUncheckedCreateNestedManyWithoutFollowedInputInput;
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
 };
 export type FollowUncheckedCreateNestedManyWithoutFollowedInputInput = {
-    create?: WithoutInput_30AndFollowUncheckedCreateWithoutFollowedInputInput;
+    create?: WithoutInput_28AndFollowUncheckedCreateWithoutFollowedInputInput;
     connectOrCreate?: FollowCreateOrConnectWithoutFollowedInputInput[];
     createMany?: FollowCreateManyFollowedInputEnvelopeInput;
     connect?: WhereInput_12AndWhereInput_11;
 };
-export type WithoutInput_30AndFollowUncheckedCreateWithoutFollowedInputInput = {
+export type WithoutInput_28AndFollowUncheckedCreateWithoutFollowedInputInput = {
     follower?: UserCreateNestedOneWithoutFollowingsInputInput;
     id?: t.String;
     followerId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutFollowInputInput;
 };
 export type UserCreateNestedOneWithoutFollowingsInputInput = {
-    create?: WithoutInput_32AndUserUncheckedCreateWithoutFollowingsInputInput;
+    create?: WithoutInput_30AndUserUncheckedCreateWithoutFollowingsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutFollowingsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
 };
-export type WithoutInput_32AndUserUncheckedCreateWithoutFollowingsInputInput = {
+export type WithoutInput_30AndUserUncheckedCreateWithoutFollowingsInputInput = {
     organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
     id: t.String;
     organizationId?: t.String;
@@ -506,29 +520,29 @@ export type WithoutInput_32AndUserUncheckedCreateWithoutFollowingsInputInput = {
     followers?: FollowUncheckedCreateNestedManyWithoutFollowedInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
 };
 export type StarUncheckedCreateNestedManyWithoutUserInputInput = {
-    create?: WithoutInput_34AndStarUncheckedCreateWithoutUserInputInput;
+    create?: WithoutInput_32AndStarUncheckedCreateWithoutUserInputInput;
     connectOrCreate?: StarCreateOrConnectWithoutUserInputInput[];
     createMany?: StarCreateManyUserInputEnvelopeInput;
     connect?: WhereInput_16AndWhereInput_15;
 };
-export type WithoutInput_34AndStarUncheckedCreateWithoutUserInputInput = {
+export type WithoutInput_32AndStarUncheckedCreateWithoutUserInputInput = {
     post?: PostCreateNestedOneWithoutStarsInputInput;
     id?: t.String;
     postId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutStarInputInput;
 };
 export type PostCreateNestedOneWithoutStarsInputInput = {
-    create?: WithoutInput_36AndPostUncheckedCreateWithoutStarsInputInput;
+    create?: WithoutInput_34AndPostUncheckedCreateWithoutStarsInputInput;
     connectOrCreate?: PostCreateOrConnectWithoutStarsInputInput;
     connect?: WhereInput_6AndWhereInput_7;
 };
-export type WithoutInput_36AndPostUncheckedCreateWithoutStarsInputInput = {
+export type WithoutInput_34AndPostUncheckedCreateWithoutStarsInputInput = {
     user?: UserCreateNestedOneWithoutPostsInputInput;
     id?: t.String;
     slug: t.String;
@@ -545,11 +559,11 @@ export type WithoutInput_36AndPostUncheckedCreateWithoutStarsInputInput = {
     views?: PostViewUncheckedCreateNestedManyWithoutPostInputInput;
 };
 export type UserCreateNestedOneWithoutPostsInputInput = {
-    create?: WithoutInput_38AndUserUncheckedCreateWithoutPostsInputInput;
+    create?: WithoutInput_36AndUserUncheckedCreateWithoutPostsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutPostsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
 };
-export type WithoutInput_38AndUserUncheckedCreateWithoutPostsInputInput = {
+export type WithoutInput_36AndUserUncheckedCreateWithoutPostsInputInput = {
     organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
     id: t.String;
     organizationId?: t.String;
@@ -561,29 +575,29 @@ export type WithoutInput_38AndUserUncheckedCreateWithoutPostsInputInput = {
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
 };
 export type FollowUncheckedCreateNestedManyWithoutFollowerInputInput = {
-    create?: WithoutInput_40AndFollowUncheckedCreateWithoutFollowerInputInput;
+    create?: WithoutInput_38AndFollowUncheckedCreateWithoutFollowerInputInput;
     connectOrCreate?: FollowCreateOrConnectWithoutFollowerInputInput[];
     createMany?: FollowCreateManyFollowerInputEnvelopeInput;
     connect?: WhereInput_12AndWhereInput_11;
 };
-export type WithoutInput_40AndFollowUncheckedCreateWithoutFollowerInputInput = {
+export type WithoutInput_38AndFollowUncheckedCreateWithoutFollowerInputInput = {
     followed?: UserCreateNestedOneWithoutFollowersInputInput;
     id?: t.String;
     followedId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutFollowInputInput;
 };
 export type UserCreateNestedOneWithoutFollowersInputInput = {
-    create?: WithoutInput_42AndUserUncheckedCreateWithoutFollowersInputInput;
+    create?: WithoutInput_40AndUserUncheckedCreateWithoutFollowersInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutFollowersInputInput;
     connect?: WhereInput_27AndWhereInput_28;
 };
-export type WithoutInput_42AndUserUncheckedCreateWithoutFollowersInputInput = {
+export type WithoutInput_40AndUserUncheckedCreateWithoutFollowersInputInput = {
     organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
     id: t.String;
     organizationId?: t.String;
@@ -595,33 +609,32 @@ export type WithoutInput_42AndUserUncheckedCreateWithoutFollowersInputInput = {
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
 };
 export type ActivityUncheckedCreateNestedManyWithoutUserInputInput = {
-    create?: WithoutInput_44AndActivityUncheckedCreateWithoutUserInputInput;
+    create?: WithoutInput_42AndActivityUncheckedCreateWithoutUserInputInput;
     connectOrCreate?: ActivityCreateOrConnectWithoutUserInputInput[];
     createMany?: ActivityCreateManyUserInputEnvelopeInput;
     connect?: WhereInput_20AndWhereInput_19;
 };
-export type WithoutInput_44AndActivityUncheckedCreateWithoutUserInputInput = {
+export type WithoutInput_42AndActivityUncheckedCreateWithoutUserInputInput = {
     post?: PostCreateNestedOneWithoutActivitiesInputInput;
-    star?: StarCreateNestedOneWithoutActivitiesInputInput;
-    follow?: FollowCreateNestedOneWithoutActivitiesInputInput;
+    relatedUser?: UserCreateNestedOneWithoutRelatedActivitiesInputInput;
     id?: t.String;
-    type: t.String;
+    type: ActivityTypeInput;
     createdAt?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
 export type PostCreateNestedOneWithoutActivitiesInputInput = {
-    create?: WithoutInput_46AndPostUncheckedCreateWithoutActivitiesInputInput;
+    create?: WithoutInput_44AndPostUncheckedCreateWithoutActivitiesInputInput;
     connectOrCreate?: PostCreateOrConnectWithoutActivitiesInputInput;
     connect?: WhereInput_6AndWhereInput_7;
 };
-export type WithoutInput_46AndPostUncheckedCreateWithoutActivitiesInputInput = {
+export type WithoutInput_44AndPostUncheckedCreateWithoutActivitiesInputInput = {
     user?: UserCreateNestedOneWithoutPostsInputInput;
     id?: t.String;
     slug: t.String;
@@ -638,23 +651,23 @@ export type WithoutInput_46AndPostUncheckedCreateWithoutActivitiesInputInput = {
     views?: PostViewUncheckedCreateNestedManyWithoutPostInputInput;
 };
 export type PostViewUncheckedCreateNestedManyWithoutPostInputInput = {
-    create?: WithoutInput_48AndPostViewUncheckedCreateWithoutPostInputInput;
+    create?: WithoutInput_46AndPostViewUncheckedCreateWithoutPostInputInput;
     connectOrCreate?: PostViewCreateOrConnectWithoutPostInputInput[];
     createMany?: PostViewCreateManyPostInputEnvelopeInput;
     connect?: WhereInput_26AndWhereInput_25;
 };
-export type WithoutInput_48AndPostViewUncheckedCreateWithoutPostInputInput = {
+export type WithoutInput_46AndPostViewUncheckedCreateWithoutPostInputInput = {
     viewedBy?: UserCreateNestedOneWithoutPerformedPostViewsInputInput;
     id?: t.Number;
     viewedById?: t.String;
     createdAt?: t.String;
 };
 export type UserCreateNestedOneWithoutPerformedPostViewsInputInput = {
-    create?: WithoutInput_50AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
+    create?: WithoutInput_48AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutPerformedPostViewsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
 };
-export type WithoutInput_50AndUserUncheckedCreateWithoutPerformedPostViewsInputInput = {
+export type WithoutInput_48AndUserUncheckedCreateWithoutPerformedPostViewsInputInput = {
     organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
     id: t.String;
     organizationId?: t.String;
@@ -667,27 +680,65 @@ export type WithoutInput_50AndUserUncheckedCreateWithoutPerformedPostViewsInputI
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
 };
+export type ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput = {
+    create?: WithoutInput_50AndActivityUncheckedCreateWithoutRelatedUserInputInput;
+    connectOrCreate?: ActivityCreateOrConnectWithoutRelatedUserInputInput[];
+    createMany?: ActivityCreateManyRelatedUserInputEnvelopeInput;
+    connect?: WhereInput_20AndWhereInput_19;
+};
+export type WithoutInput_50AndActivityUncheckedCreateWithoutRelatedUserInputInput = {
+    user?: UserCreateNestedOneWithoutActivitiesInputInput;
+    post?: PostCreateNestedOneWithoutActivitiesInputInput;
+    id?: t.String;
+    type: ActivityTypeInput;
+    createdAt?: t.String;
+    userId?: t.String;
+    postId?: t.String;
+};
+export type UserCreateNestedOneWithoutActivitiesInputInput = {
+    create?: WithoutInput_52AndUserUncheckedCreateWithoutActivitiesInputInput;
+    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInputInput;
+    connect?: WhereInput_27AndWhereInput_28;
+};
+export type WithoutInput_52AndUserUncheckedCreateWithoutActivitiesInputInput = {
+    organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
+    id: t.String;
+    organizationId?: t.String;
+    bio?: t.String;
+    createdAt?: t.String;
+    updatedAt?: t.String;
+    language?: LanguageInput;
+    posts?: PostUncheckedCreateNestedManyWithoutUserInputInput;
+    followers?: FollowUncheckedCreateNestedManyWithoutFollowedInputInput;
+    followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
+    starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
+    receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
+    performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
+    performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
+};
 export type UserViewUncheckedCreateNestedManyWithoutViewedByInputInput = {
-    create?: WithoutInput_52AndUserViewUncheckedCreateWithoutViewedByInputInput;
+    create?: WithoutInput_54AndUserViewUncheckedCreateWithoutViewedByInputInput;
     connectOrCreate?: UserViewCreateOrConnectWithoutViewedByInputInput[];
     createMany?: UserViewCreateManyViewedByInputEnvelopeInput;
     connect?: WhereInput_23AndWhereInput_22;
 };
-export type WithoutInput_52AndUserViewUncheckedCreateWithoutViewedByInputInput = {
+export type WithoutInput_54AndUserViewUncheckedCreateWithoutViewedByInputInput = {
     user?: UserCreateNestedOneWithoutPerformedUserViewsInputInput;
     id?: t.Number;
     userId?: t.String;
     createdAt?: t.String;
 };
 export type UserCreateNestedOneWithoutPerformedUserViewsInputInput = {
-    create?: WithoutInput_54AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
+    create?: WithoutInput_56AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutPerformedUserViewsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
 };
-export type WithoutInput_54AndUserUncheckedCreateWithoutPerformedUserViewsInputInput = {
+export type WithoutInput_56AndUserUncheckedCreateWithoutPerformedUserViewsInputInput = {
     organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
     id: t.String;
     organizationId?: t.String;
@@ -700,27 +751,28 @@ export type WithoutInput_54AndUserUncheckedCreateWithoutPerformedUserViewsInputI
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
 };
 export type PostViewUncheckedCreateNestedManyWithoutViewedByInputInput = {
-    create?: WithoutInput_56AndPostViewUncheckedCreateWithoutViewedByInputInput;
+    create?: WithoutInput_58AndPostViewUncheckedCreateWithoutViewedByInputInput;
     connectOrCreate?: PostViewCreateOrConnectWithoutViewedByInputInput[];
     createMany?: PostViewCreateManyViewedByInputEnvelopeInput;
     connect?: WhereInput_26AndWhereInput_25;
 };
-export type WithoutInput_56AndPostViewUncheckedCreateWithoutViewedByInputInput = {
+export type WithoutInput_58AndPostViewUncheckedCreateWithoutViewedByInputInput = {
     post?: PostCreateNestedOneWithoutViewsInputInput;
     id?: t.Number;
     postId?: t.String;
     createdAt?: t.String;
 };
 export type PostCreateNestedOneWithoutViewsInputInput = {
-    create?: WithoutInput_58AndPostUncheckedCreateWithoutViewsInputInput;
+    create?: WithoutInput_60AndPostUncheckedCreateWithoutViewsInputInput;
     connectOrCreate?: PostCreateOrConnectWithoutViewsInputInput;
     connect?: WhereInput_6AndWhereInput_7;
 };
-export type WithoutInput_58AndPostUncheckedCreateWithoutViewsInputInput = {
+export type WithoutInput_60AndPostUncheckedCreateWithoutViewsInputInput = {
     user?: UserCreateNestedOneWithoutPostsInputInput;
     id?: t.String;
     slug: t.String;
@@ -737,61 +789,26 @@ export type WithoutInput_58AndPostUncheckedCreateWithoutViewsInputInput = {
     activities?: ActivityUncheckedCreateNestedManyWithoutPostInputInput;
 };
 export type ActivityUncheckedCreateNestedManyWithoutPostInputInput = {
-    create?: WithoutInput_60AndActivityUncheckedCreateWithoutPostInputInput;
+    create?: WithoutInput_62AndActivityUncheckedCreateWithoutPostInputInput;
     connectOrCreate?: ActivityCreateOrConnectWithoutPostInputInput[];
     createMany?: ActivityCreateManyPostInputEnvelopeInput;
     connect?: WhereInput_20AndWhereInput_19;
 };
-export type WithoutInput_60AndActivityUncheckedCreateWithoutPostInputInput = {
+export type WithoutInput_62AndActivityUncheckedCreateWithoutPostInputInput = {
     user?: UserCreateNestedOneWithoutActivitiesInputInput;
-    star?: StarCreateNestedOneWithoutActivitiesInputInput;
-    follow?: FollowCreateNestedOneWithoutActivitiesInputInput;
+    relatedUser?: UserCreateNestedOneWithoutRelatedActivitiesInputInput;
     id?: t.String;
-    type: t.String;
+    type: ActivityTypeInput;
     createdAt?: t.String;
     userId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
-export type UserCreateNestedOneWithoutActivitiesInputInput = {
-    create?: WithoutInput_62AndUserUncheckedCreateWithoutActivitiesInputInput;
-    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInputInput;
+export type UserCreateNestedOneWithoutRelatedActivitiesInputInput = {
+    create?: WithoutInput_64AndUserUncheckedCreateWithoutRelatedActivitiesInputInput;
+    connectOrCreate?: UserCreateOrConnectWithoutRelatedActivitiesInputInput;
     connect?: WhereInput_27AndWhereInput_28;
 };
-export type WithoutInput_62AndUserUncheckedCreateWithoutActivitiesInputInput = {
-    organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
-    id: t.String;
-    organizationId?: t.String;
-    bio?: t.String;
-    createdAt?: t.String;
-    updatedAt?: t.String;
-    language?: LanguageInput;
-    posts?: PostUncheckedCreateNestedManyWithoutUserInputInput;
-    followers?: FollowUncheckedCreateNestedManyWithoutFollowedInputInput;
-    followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
-    starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
-    receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
-    performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
-    performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
-};
-export type UserViewUncheckedCreateNestedManyWithoutUserInputInput = {
-    create?: WithoutInput_64AndUserViewUncheckedCreateWithoutUserInputInput;
-    connectOrCreate?: UserViewCreateOrConnectWithoutUserInputInput[];
-    createMany?: UserViewCreateManyUserInputEnvelopeInput;
-    connect?: WhereInput_23AndWhereInput_22;
-};
-export type WithoutInput_64AndUserViewUncheckedCreateWithoutUserInputInput = {
-    viewedBy?: UserCreateNestedOneWithoutReceivedUserViewsInputInput;
-    id?: t.Number;
-    viewedById?: t.String;
-    createdAt?: t.String;
-};
-export type UserCreateNestedOneWithoutReceivedUserViewsInputInput = {
-    create?: WithoutInput_66AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
-    connectOrCreate?: UserCreateOrConnectWithoutReceivedUserViewsInputInput;
-    connect?: WhereInput_27AndWhereInput_28;
-};
-export type WithoutInput_66AndUserUncheckedCreateWithoutReceivedUserViewsInputInput = {
+export type WithoutInput_64AndUserUncheckedCreateWithoutRelatedActivitiesInputInput = {
     organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
     id: t.String;
     organizationId?: t.String;
@@ -804,12 +821,47 @@ export type WithoutInput_66AndUserUncheckedCreateWithoutReceivedUserViewsInputIn
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
+    performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
+    performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
+};
+export type UserViewUncheckedCreateNestedManyWithoutUserInputInput = {
+    create?: WithoutInput_66AndUserViewUncheckedCreateWithoutUserInputInput;
+    connectOrCreate?: UserViewCreateOrConnectWithoutUserInputInput[];
+    createMany?: UserViewCreateManyUserInputEnvelopeInput;
+    connect?: WhereInput_23AndWhereInput_22;
+};
+export type WithoutInput_66AndUserViewUncheckedCreateWithoutUserInputInput = {
+    viewedBy?: UserCreateNestedOneWithoutReceivedUserViewsInputInput;
+    id?: t.Number;
+    viewedById?: t.String;
+    createdAt?: t.String;
+};
+export type UserCreateNestedOneWithoutReceivedUserViewsInputInput = {
+    create?: WithoutInput_68AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
+    connectOrCreate?: UserCreateOrConnectWithoutReceivedUserViewsInputInput;
+    connect?: WhereInput_27AndWhereInput_28;
+};
+export type WithoutInput_68AndUserUncheckedCreateWithoutReceivedUserViewsInputInput = {
+    organization?: OrganizationCreateNestedOneWithoutUsersInputInput;
+    id: t.String;
+    organizationId?: t.String;
+    bio?: t.String;
+    createdAt?: t.String;
+    updatedAt?: t.String;
+    language?: LanguageInput;
+    posts?: PostUncheckedCreateNestedManyWithoutUserInputInput;
+    followers?: FollowUncheckedCreateNestedManyWithoutFollowedInputInput;
+    followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
+    starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
+    activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
 };
 export type UserCreateOrConnectWithoutReceivedUserViewsInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_66AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
+    create: WithoutInput_68AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
 };
 export type WhereInput_27AndWhereInput_28 = {
     id?: t.String;
@@ -827,13 +879,14 @@ export type WhereInput_27AndWhereInput_28 = {
     followings?: FollowListRelationFilterInput;
     starredPosts?: StarListRelationFilterInput;
     activities?: ActivityListRelationFilterInput;
+    relatedActivities?: ActivityListRelationFilterInput;
     receivedUserViews?: UserViewListRelationFilterInput;
     performedUserViews?: UserViewListRelationFilterInput;
     performedPostViews?: PostViewListRelationFilterInput;
 };
 export type UserViewCreateOrConnectWithoutUserInputInput = {
     where: WhereInput_21AndWhereInput_22;
-    create: WithoutInput_64AndUserViewUncheckedCreateWithoutUserInputInput;
+    create: WithoutInput_66AndUserViewUncheckedCreateWithoutUserInputInput;
 };
 export type WhereInput_21AndWhereInput_22 = {
     id?: t.Number;
@@ -866,97 +919,27 @@ export type WhereInput_23AndWhereInput_22 = {
     user?: WithoutInput_16AndUserWhereInputInput;
     viewedBy?: WithoutInput_16AndUserWhereInputInput;
 };
-export type UserCreateOrConnectWithoutActivitiesInputInput = {
+export type UserCreateOrConnectWithoutRelatedActivitiesInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_62AndUserUncheckedCreateWithoutActivitiesInputInput;
-};
-export type StarCreateNestedOneWithoutActivitiesInputInput = {
-    create?: WithoutInput_68AndStarUncheckedCreateWithoutActivitiesInputInput;
-    connectOrCreate?: StarCreateOrConnectWithoutActivitiesInputInput;
-    connect?: WhereInput_14AndWhereInput_15;
-};
-export type WithoutInput_68AndStarUncheckedCreateWithoutActivitiesInputInput = {
-    user?: UserCreateNestedOneWithoutStarredPostsInputInput;
-    post?: PostCreateNestedOneWithoutStarsInputInput;
-    id?: t.String;
-    postId?: t.String;
-    userId?: t.String;
-    createdAt?: t.String;
-};
-export type StarCreateOrConnectWithoutActivitiesInputInput = {
-    where: WhereInput_14AndWhereInput_15;
-    create: WithoutInput_68AndStarUncheckedCreateWithoutActivitiesInputInput;
-};
-export type WhereInput_14AndWhereInput_15 = {
-    id?: t.String;
-    postId_userId?: StarPostIdUserIdCompoundUniqueInputInput;
-    AND?: StarWhereInputInput[];
-    OR?: StarWhereInputInput[];
-    NOT?: StarWhereInputInput[];
-    postId?: t.String;
-    userId?: t.String;
-    createdAt?: t.String;
-    user?: WithoutInput_16AndUserWhereInputInput;
-    post?: WithoutInput_18AndPostWhereInputInput;
-    activities?: ActivityListRelationFilterInput;
-};
-export type StarPostIdUserIdCompoundUniqueInputInput = {
-    postId: t.String;
-    userId: t.String;
-};
-export type FollowCreateNestedOneWithoutActivitiesInputInput = {
-    create?: WithoutInput_70AndFollowUncheckedCreateWithoutActivitiesInputInput;
-    connectOrCreate?: FollowCreateOrConnectWithoutActivitiesInputInput;
-    connect?: WhereInput_10AndWhereInput_11;
-};
-export type WithoutInput_70AndFollowUncheckedCreateWithoutActivitiesInputInput = {
-    follower?: UserCreateNestedOneWithoutFollowingsInputInput;
-    followed?: UserCreateNestedOneWithoutFollowersInputInput;
-    id?: t.String;
-    followerId?: t.String;
-    followedId?: t.String;
-    createdAt?: t.String;
-};
-export type FollowCreateOrConnectWithoutActivitiesInputInput = {
-    where: WhereInput_10AndWhereInput_11;
-    create: WithoutInput_70AndFollowUncheckedCreateWithoutActivitiesInputInput;
-};
-export type WhereInput_10AndWhereInput_11 = {
-    id?: t.String;
-    followerId_followedId?: FollowFollowerIdFollowedIdCompoundUniqueInputInput;
-    AND?: FollowWhereInputInput[];
-    OR?: FollowWhereInputInput[];
-    NOT?: FollowWhereInputInput[];
-    followerId?: t.String;
-    followedId?: t.String;
-    createdAt?: t.String;
-    follower?: WithoutInput_16AndUserWhereInputInput;
-    followed?: WithoutInput_16AndUserWhereInputInput;
-    activities?: ActivityListRelationFilterInput;
-};
-export type FollowFollowerIdFollowedIdCompoundUniqueInputInput = {
-    followerId: t.String;
-    followedId: t.String;
+    create: WithoutInput_64AndUserUncheckedCreateWithoutRelatedActivitiesInputInput;
 };
 export type ActivityCreateOrConnectWithoutPostInputInput = {
     where: WhereInput_18AndWhereInput_19;
-    create: WithoutInput_60AndActivityUncheckedCreateWithoutPostInputInput;
+    create: WithoutInput_62AndActivityUncheckedCreateWithoutPostInputInput;
 };
 export type WhereInput_18AndWhereInput_19 = {
     id?: t.String;
     AND?: ActivityWhereInputInput[];
     OR?: ActivityWhereInputInput[];
     NOT?: ActivityWhereInputInput[];
-    type?: t.String;
+    type?: EnumActivityTypeFilterInput;
     createdAt?: t.String;
     userId?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
     user?: WithoutInput_16AndUserWhereInputInput;
     post?: WithoutInput_18AndPostWhereInputInput;
-    star?: WithoutInput_20AndStarWhereInputInput;
-    follow?: WithoutInput_22AndFollowWhereInputInput;
+    relatedUser?: WithoutInput_20AndUserWhereInputInput;
 };
 export type ActivityCreateManyPostInputEnvelopeInput = {
     data?: ActivityCreateManyPostInputInput[];
@@ -964,31 +947,28 @@ export type ActivityCreateManyPostInputEnvelopeInput = {
 };
 export type ActivityCreateManyPostInputInput = {
     id?: t.String;
-    type: t.String;
+    type: ActivityTypeInput;
     createdAt?: t.String;
     userId: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
 export type WhereInput_20AndWhereInput_19 = {
     id?: t.String;
     AND?: ActivityWhereInputInput[];
     OR?: ActivityWhereInputInput[];
     NOT?: ActivityWhereInputInput[];
-    type?: t.String;
+    type?: EnumActivityTypeFilterInput;
     createdAt?: t.String;
     userId?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
     user?: WithoutInput_16AndUserWhereInputInput;
     post?: WithoutInput_18AndPostWhereInputInput;
-    star?: WithoutInput_20AndStarWhereInputInput;
-    follow?: WithoutInput_22AndFollowWhereInputInput;
+    relatedUser?: WithoutInput_20AndUserWhereInputInput;
 };
 export type PostCreateOrConnectWithoutViewsInputInput = {
     where: WhereInput_6AndWhereInput_7;
-    create: WithoutInput_58AndPostUncheckedCreateWithoutViewsInputInput;
+    create: WithoutInput_60AndPostUncheckedCreateWithoutViewsInputInput;
 };
 export type WhereInput_6AndWhereInput_7 = {
     id?: t.String;
@@ -1012,7 +992,7 @@ export type WhereInput_6AndWhereInput_7 = {
 };
 export type PostViewCreateOrConnectWithoutViewedByInputInput = {
     where: WhereInput_24AndWhereInput_25;
-    create: WithoutInput_56AndPostViewUncheckedCreateWithoutViewedByInputInput;
+    create: WithoutInput_58AndPostViewUncheckedCreateWithoutViewedByInputInput;
 };
 export type WhereInput_24AndWhereInput_25 = {
     id?: t.Number;
@@ -1022,7 +1002,7 @@ export type WhereInput_24AndWhereInput_25 = {
     postId?: t.String;
     viewedById?: t.String;
     createdAt?: t.String;
-    post?: WithoutInput_24AndPostWhereInputInput;
+    post?: WithoutInput_22AndPostWhereInputInput;
     viewedBy?: WithoutInput_16AndUserWhereInputInput;
 };
 export type PostViewCreateManyViewedByInputEnvelopeInput = {
@@ -1042,16 +1022,16 @@ export type WhereInput_26AndWhereInput_25 = {
     postId?: t.String;
     viewedById?: t.String;
     createdAt?: t.String;
-    post?: WithoutInput_24AndPostWhereInputInput;
+    post?: WithoutInput_22AndPostWhereInputInput;
     viewedBy?: WithoutInput_16AndUserWhereInputInput;
 };
 export type UserCreateOrConnectWithoutPerformedUserViewsInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_54AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
+    create: WithoutInput_56AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
 };
 export type UserViewCreateOrConnectWithoutViewedByInputInput = {
     where: WhereInput_21AndWhereInput_22;
-    create: WithoutInput_52AndUserViewUncheckedCreateWithoutViewedByInputInput;
+    create: WithoutInput_54AndUserViewUncheckedCreateWithoutViewedByInputInput;
 };
 export type UserViewCreateManyViewedByInputEnvelopeInput = {
     data?: UserViewCreateManyViewedByInputInput[];
@@ -1062,13 +1042,32 @@ export type UserViewCreateManyViewedByInputInput = {
     userId: t.String;
     createdAt?: t.String;
 };
+export type UserCreateOrConnectWithoutActivitiesInputInput = {
+    where: WhereInput_27AndWhereInput_28;
+    create: WithoutInput_52AndUserUncheckedCreateWithoutActivitiesInputInput;
+};
+export type ActivityCreateOrConnectWithoutRelatedUserInputInput = {
+    where: WhereInput_18AndWhereInput_19;
+    create: WithoutInput_50AndActivityUncheckedCreateWithoutRelatedUserInputInput;
+};
+export type ActivityCreateManyRelatedUserInputEnvelopeInput = {
+    data?: ActivityCreateManyRelatedUserInputInput[];
+    skipDuplicates?: t.Boolean;
+};
+export type ActivityCreateManyRelatedUserInputInput = {
+    id?: t.String;
+    type: ActivityTypeInput;
+    createdAt?: t.String;
+    userId: t.String;
+    postId?: t.String;
+};
 export type UserCreateOrConnectWithoutPerformedPostViewsInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_50AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
+    create: WithoutInput_48AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
 };
 export type PostViewCreateOrConnectWithoutPostInputInput = {
     where: WhereInput_24AndWhereInput_25;
-    create: WithoutInput_48AndPostViewUncheckedCreateWithoutPostInputInput;
+    create: WithoutInput_46AndPostViewUncheckedCreateWithoutPostInputInput;
 };
 export type PostViewCreateManyPostInputEnvelopeInput = {
     data?: PostViewCreateManyPostInputInput[];
@@ -1081,11 +1080,11 @@ export type PostViewCreateManyPostInputInput = {
 };
 export type PostCreateOrConnectWithoutActivitiesInputInput = {
     where: WhereInput_6AndWhereInput_7;
-    create: WithoutInput_46AndPostUncheckedCreateWithoutActivitiesInputInput;
+    create: WithoutInput_44AndPostUncheckedCreateWithoutActivitiesInputInput;
 };
 export type ActivityCreateOrConnectWithoutUserInputInput = {
     where: WhereInput_18AndWhereInput_19;
-    create: WithoutInput_44AndActivityUncheckedCreateWithoutUserInputInput;
+    create: WithoutInput_42AndActivityUncheckedCreateWithoutUserInputInput;
 };
 export type ActivityCreateManyUserInputEnvelopeInput = {
     data?: ActivityCreateManyUserInputInput[];
@@ -1093,52 +1092,34 @@ export type ActivityCreateManyUserInputEnvelopeInput = {
 };
 export type ActivityCreateManyUserInputInput = {
     id?: t.String;
-    type: t.String;
+    type: ActivityTypeInput;
     createdAt?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
 export type UserCreateOrConnectWithoutFollowersInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_42AndUserUncheckedCreateWithoutFollowersInputInput;
-};
-export type ActivityUncheckedCreateNestedManyWithoutFollowInputInput = {
-    create?: WithoutInput_72AndActivityUncheckedCreateWithoutFollowInputInput;
-    connectOrCreate?: ActivityCreateOrConnectWithoutFollowInputInput[];
-    createMany?: ActivityCreateManyFollowInputEnvelopeInput;
-    connect?: WhereInput_20AndWhereInput_19;
-};
-export type WithoutInput_72AndActivityUncheckedCreateWithoutFollowInputInput = {
-    user?: UserCreateNestedOneWithoutActivitiesInputInput;
-    post?: PostCreateNestedOneWithoutActivitiesInputInput;
-    star?: StarCreateNestedOneWithoutActivitiesInputInput;
-    id?: t.String;
-    type: t.String;
-    createdAt?: t.String;
-    userId?: t.String;
-    postId?: t.String;
-    starId?: t.String;
-};
-export type ActivityCreateOrConnectWithoutFollowInputInput = {
-    where: WhereInput_18AndWhereInput_19;
-    create: WithoutInput_72AndActivityUncheckedCreateWithoutFollowInputInput;
-};
-export type ActivityCreateManyFollowInputEnvelopeInput = {
-    data?: ActivityCreateManyFollowInputInput[];
-    skipDuplicates?: t.Boolean;
-};
-export type ActivityCreateManyFollowInputInput = {
-    id?: t.String;
-    type: t.String;
-    createdAt?: t.String;
-    userId: t.String;
-    postId?: t.String;
-    starId?: t.String;
+    create: WithoutInput_40AndUserUncheckedCreateWithoutFollowersInputInput;
 };
 export type FollowCreateOrConnectWithoutFollowerInputInput = {
     where: WhereInput_10AndWhereInput_11;
-    create: WithoutInput_40AndFollowUncheckedCreateWithoutFollowerInputInput;
+    create: WithoutInput_38AndFollowUncheckedCreateWithoutFollowerInputInput;
+};
+export type WhereInput_10AndWhereInput_11 = {
+    id?: t.String;
+    followerId_followedId?: FollowFollowerIdFollowedIdCompoundUniqueInputInput;
+    AND?: FollowWhereInputInput[];
+    OR?: FollowWhereInputInput[];
+    NOT?: FollowWhereInputInput[];
+    followerId?: t.String;
+    followedId?: t.String;
+    createdAt?: t.String;
+    follower?: WithoutInput_16AndUserWhereInputInput;
+    followed?: WithoutInput_16AndUserWhereInputInput;
+};
+export type FollowFollowerIdFollowedIdCompoundUniqueInputInput = {
+    followerId: t.String;
+    followedId: t.String;
 };
 export type FollowCreateManyFollowerInputEnvelopeInput = {
     data?: FollowCreateManyFollowerInputInput[];
@@ -1160,52 +1141,34 @@ export type WhereInput_12AndWhereInput_11 = {
     createdAt?: t.String;
     follower?: WithoutInput_16AndUserWhereInputInput;
     followed?: WithoutInput_16AndUserWhereInputInput;
-    activities?: ActivityListRelationFilterInput;
 };
 export type UserCreateOrConnectWithoutPostsInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_38AndUserUncheckedCreateWithoutPostsInputInput;
+    create: WithoutInput_36AndUserUncheckedCreateWithoutPostsInputInput;
 };
 export type PostCreateOrConnectWithoutStarsInputInput = {
     where: WhereInput_6AndWhereInput_7;
-    create: WithoutInput_36AndPostUncheckedCreateWithoutStarsInputInput;
-};
-export type ActivityUncheckedCreateNestedManyWithoutStarInputInput = {
-    create?: WithoutInput_74AndActivityUncheckedCreateWithoutStarInputInput;
-    connectOrCreate?: ActivityCreateOrConnectWithoutStarInputInput[];
-    createMany?: ActivityCreateManyStarInputEnvelopeInput;
-    connect?: WhereInput_20AndWhereInput_19;
-};
-export type WithoutInput_74AndActivityUncheckedCreateWithoutStarInputInput = {
-    user?: UserCreateNestedOneWithoutActivitiesInputInput;
-    post?: PostCreateNestedOneWithoutActivitiesInputInput;
-    follow?: FollowCreateNestedOneWithoutActivitiesInputInput;
-    id?: t.String;
-    type: t.String;
-    createdAt?: t.String;
-    userId?: t.String;
-    postId?: t.String;
-    followId?: t.String;
-};
-export type ActivityCreateOrConnectWithoutStarInputInput = {
-    where: WhereInput_18AndWhereInput_19;
-    create: WithoutInput_74AndActivityUncheckedCreateWithoutStarInputInput;
-};
-export type ActivityCreateManyStarInputEnvelopeInput = {
-    data?: ActivityCreateManyStarInputInput[];
-    skipDuplicates?: t.Boolean;
-};
-export type ActivityCreateManyStarInputInput = {
-    id?: t.String;
-    type: t.String;
-    createdAt?: t.String;
-    userId: t.String;
-    postId?: t.String;
-    followId?: t.String;
+    create: WithoutInput_34AndPostUncheckedCreateWithoutStarsInputInput;
 };
 export type StarCreateOrConnectWithoutUserInputInput = {
     where: WhereInput_14AndWhereInput_15;
-    create: WithoutInput_34AndStarUncheckedCreateWithoutUserInputInput;
+    create: WithoutInput_32AndStarUncheckedCreateWithoutUserInputInput;
+};
+export type WhereInput_14AndWhereInput_15 = {
+    id?: t.String;
+    postId_userId?: StarPostIdUserIdCompoundUniqueInputInput;
+    AND?: StarWhereInputInput[];
+    OR?: StarWhereInputInput[];
+    NOT?: StarWhereInputInput[];
+    postId?: t.String;
+    userId?: t.String;
+    createdAt?: t.String;
+    user?: WithoutInput_16AndUserWhereInputInput;
+    post?: WithoutInput_18AndPostWhereInputInput;
+};
+export type StarPostIdUserIdCompoundUniqueInputInput = {
+    postId: t.String;
+    userId: t.String;
 };
 export type StarCreateManyUserInputEnvelopeInput = {
     data?: StarCreateManyUserInputInput[];
@@ -1227,15 +1190,14 @@ export type WhereInput_16AndWhereInput_15 = {
     createdAt?: t.String;
     user?: WithoutInput_16AndUserWhereInputInput;
     post?: WithoutInput_18AndPostWhereInputInput;
-    activities?: ActivityListRelationFilterInput;
 };
 export type UserCreateOrConnectWithoutFollowingsInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_32AndUserUncheckedCreateWithoutFollowingsInputInput;
+    create: WithoutInput_30AndUserUncheckedCreateWithoutFollowingsInputInput;
 };
 export type FollowCreateOrConnectWithoutFollowedInputInput = {
     where: WhereInput_10AndWhereInput_11;
-    create: WithoutInput_30AndFollowUncheckedCreateWithoutFollowedInputInput;
+    create: WithoutInput_28AndFollowUncheckedCreateWithoutFollowedInputInput;
 };
 export type FollowCreateManyFollowedInputEnvelopeInput = {
     data?: FollowCreateManyFollowedInputInput[];
@@ -1248,11 +1210,11 @@ export type FollowCreateManyFollowedInputInput = {
 };
 export type UserCreateOrConnectWithoutStarredPostsInputInput = {
     where: WhereInput_27AndWhereInput_28;
-    create: WithoutInput_28AndUserUncheckedCreateWithoutStarredPostsInputInput;
+    create: WithoutInput_26AndUserUncheckedCreateWithoutStarredPostsInputInput;
 };
 export type StarCreateOrConnectWithoutPostInputInput = {
     where: WhereInput_14AndWhereInput_15;
-    create: WithoutInput_26AndStarUncheckedCreateWithoutPostInputInput;
+    create: WithoutInput_24AndStarUncheckedCreateWithoutPostInputInput;
 };
 export type StarCreateManyPostInputEnvelopeInput = {
     data?: StarCreateManyPostInputInput[];
@@ -1316,6 +1278,7 @@ export type WithoutInput_12AndUserUncheckedUpdateInputInput = {
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
@@ -1325,7 +1288,7 @@ export type OrganizationUpdateOneRequiredWithoutUsersNestedInputInput = {
     connectOrCreate?: OrganizationCreateOrConnectWithoutUsersInputInput;
     upsert?: OrganizationUpsertWithoutUsersInputInput;
     connect?: WhereInput_3AndWhereInput_4;
-    update?: WithoutInput_76AndOrganizationUncheckedUpdateWithoutUsersInputInput;
+    update?: WithoutInput_70AndOrganizationUncheckedUpdateWithoutUsersInputInput;
 };
 export type OrganizationUpsertWithoutUsersInputInput = {
     update: ObjectAndOrganizationUncheckedUpdateWithoutUsersInputInput;
@@ -1335,7 +1298,7 @@ export type OrganizationUpsertWithoutUsersInputInput = {
 export type ObjectAndOrganizationUncheckedUpdateWithoutUsersInputInput = {
     id?: t.String;
 };
-export type WithoutInput_76AndOrganizationUncheckedUpdateWithoutUsersInputInput = {
+export type WithoutInput_70AndOrganizationUncheckedUpdateWithoutUsersInputInput = {
     where?: OrganizationWhereInputInput;
     data?: ObjectAndOrganizationUncheckedUpdateWithoutUsersInputInput;
     id?: t.String;
@@ -1374,7 +1337,7 @@ export type ObjectAndPostUncheckedUpdateWithoutUserInputInput = {
     views?: PostViewUncheckedUpdateManyWithoutPostNestedInputInput;
 };
 export type StarUncheckedUpdateManyWithoutPostNestedInputInput = {
-    create?: WithoutInput_26AndStarUncheckedCreateWithoutPostInputInput;
+    create?: WithoutInput_24AndStarUncheckedCreateWithoutPostInputInput;
     connectOrCreate?: StarCreateOrConnectWithoutPostInputInput[];
     upsert?: StarUpsertWithWhereUniqueWithoutPostInputInput[];
     createMany?: StarCreateManyPostInputEnvelopeInput;
@@ -1388,29 +1351,28 @@ export type StarUncheckedUpdateManyWithoutPostNestedInputInput = {
 };
 export type StarUpsertWithWhereUniqueWithoutPostInputInput = {
     where: WhereInput_14AndWhereInput_15;
-    update: WithoutInput_80AndStarUncheckedUpdateWithoutPostInputInput;
-    create: WithoutInput_26AndStarUncheckedCreateWithoutPostInputInput;
+    update: WithoutInput_74AndStarUncheckedUpdateWithoutPostInputInput;
+    create: WithoutInput_24AndStarUncheckedCreateWithoutPostInputInput;
 };
-export type WithoutInput_80AndStarUncheckedUpdateWithoutPostInputInput = {
+export type WithoutInput_74AndStarUncheckedUpdateWithoutPostInputInput = {
     user?: UserUpdateOneRequiredWithoutStarredPostsNestedInputInput;
     id?: t.String;
     userId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedUpdateManyWithoutStarNestedInputInput;
 };
 export type UserUpdateOneRequiredWithoutStarredPostsNestedInputInput = {
-    create?: WithoutInput_28AndUserUncheckedCreateWithoutStarredPostsInputInput;
+    create?: WithoutInput_26AndUserUncheckedCreateWithoutStarredPostsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutStarredPostsInputInput;
     upsert?: UserUpsertWithoutStarredPostsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_82AndUserUncheckedUpdateWithoutStarredPostsInputInput;
+    update?: WithoutInput_76AndUserUncheckedUpdateWithoutStarredPostsInputInput;
 };
 export type UserUpsertWithoutStarredPostsInputInput = {
-    update: WithoutInput_88AndUserUncheckedUpdateWithoutStarredPostsInputInput;
-    create: WithoutInput_28AndUserUncheckedCreateWithoutStarredPostsInputInput;
+    update: WithoutInput_82AndUserUncheckedUpdateWithoutStarredPostsInputInput;
+    create: WithoutInput_26AndUserUncheckedCreateWithoutStarredPostsInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_88AndUserUncheckedUpdateWithoutStarredPostsInputInput = {
+export type WithoutInput_82AndUserUncheckedUpdateWithoutStarredPostsInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1422,12 +1384,13 @@ export type WithoutInput_88AndUserUncheckedUpdateWithoutStarredPostsInputInput =
     followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type FollowUncheckedUpdateManyWithoutFollowedNestedInputInput = {
-    create?: WithoutInput_30AndFollowUncheckedCreateWithoutFollowedInputInput;
+    create?: WithoutInput_28AndFollowUncheckedCreateWithoutFollowedInputInput;
     connectOrCreate?: FollowCreateOrConnectWithoutFollowedInputInput[];
     upsert?: FollowUpsertWithWhereUniqueWithoutFollowedInputInput[];
     createMany?: FollowCreateManyFollowedInputEnvelopeInput;
@@ -1441,29 +1404,28 @@ export type FollowUncheckedUpdateManyWithoutFollowedNestedInputInput = {
 };
 export type FollowUpsertWithWhereUniqueWithoutFollowedInputInput = {
     where: WhereInput_10AndWhereInput_11;
-    update: WithoutInput_90AndFollowUncheckedUpdateWithoutFollowedInputInput;
-    create: WithoutInput_30AndFollowUncheckedCreateWithoutFollowedInputInput;
+    update: WithoutInput_84AndFollowUncheckedUpdateWithoutFollowedInputInput;
+    create: WithoutInput_28AndFollowUncheckedCreateWithoutFollowedInputInput;
 };
-export type WithoutInput_90AndFollowUncheckedUpdateWithoutFollowedInputInput = {
+export type WithoutInput_84AndFollowUncheckedUpdateWithoutFollowedInputInput = {
     follower?: UserUpdateOneRequiredWithoutFollowingsNestedInputInput;
     id?: t.String;
     followerId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedUpdateManyWithoutFollowNestedInputInput;
 };
 export type UserUpdateOneRequiredWithoutFollowingsNestedInputInput = {
-    create?: WithoutInput_32AndUserUncheckedCreateWithoutFollowingsInputInput;
+    create?: WithoutInput_30AndUserUncheckedCreateWithoutFollowingsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutFollowingsInputInput;
     upsert?: UserUpsertWithoutFollowingsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_92AndUserUncheckedUpdateWithoutFollowingsInputInput;
+    update?: WithoutInput_86AndUserUncheckedUpdateWithoutFollowingsInputInput;
 };
 export type UserUpsertWithoutFollowingsInputInput = {
-    update: WithoutInput_98AndUserUncheckedUpdateWithoutFollowingsInputInput;
-    create: WithoutInput_32AndUserUncheckedCreateWithoutFollowingsInputInput;
+    update: WithoutInput_92AndUserUncheckedUpdateWithoutFollowingsInputInput;
+    create: WithoutInput_30AndUserUncheckedCreateWithoutFollowingsInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_98AndUserUncheckedUpdateWithoutFollowingsInputInput = {
+export type WithoutInput_92AndUserUncheckedUpdateWithoutFollowingsInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1475,12 +1437,13 @@ export type WithoutInput_98AndUserUncheckedUpdateWithoutFollowingsInputInput = {
     followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type StarUncheckedUpdateManyWithoutUserNestedInputInput = {
-    create?: WithoutInput_34AndStarUncheckedCreateWithoutUserInputInput;
+    create?: WithoutInput_32AndStarUncheckedCreateWithoutUserInputInput;
     connectOrCreate?: StarCreateOrConnectWithoutUserInputInput[];
     upsert?: StarUpsertWithWhereUniqueWithoutUserInputInput[];
     createMany?: StarCreateManyUserInputEnvelopeInput;
@@ -1494,31 +1457,30 @@ export type StarUncheckedUpdateManyWithoutUserNestedInputInput = {
 };
 export type StarUpsertWithWhereUniqueWithoutUserInputInput = {
     where: WhereInput_14AndWhereInput_15;
-    update: WithoutInput_100AndStarUncheckedUpdateWithoutUserInputInput;
-    create: WithoutInput_34AndStarUncheckedCreateWithoutUserInputInput;
+    update: WithoutInput_94AndStarUncheckedUpdateWithoutUserInputInput;
+    create: WithoutInput_32AndStarUncheckedCreateWithoutUserInputInput;
 };
-export type WithoutInput_100AndStarUncheckedUpdateWithoutUserInputInput = {
+export type WithoutInput_94AndStarUncheckedUpdateWithoutUserInputInput = {
     post?: PostUpdateOneWithoutStarsNestedInputInput;
     id?: t.String;
     postId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedUpdateManyWithoutStarNestedInputInput;
 };
 export type PostUpdateOneWithoutStarsNestedInputInput = {
-    create?: WithoutInput_36AndPostUncheckedCreateWithoutStarsInputInput;
+    create?: WithoutInput_34AndPostUncheckedCreateWithoutStarsInputInput;
     connectOrCreate?: PostCreateOrConnectWithoutStarsInputInput;
     upsert?: PostUpsertWithoutStarsInputInput;
     disconnect?: t.Boolean;
     delete?: t.Boolean;
     connect?: WhereInput_6AndWhereInput_7;
-    update?: WithoutInput_102AndPostUncheckedUpdateWithoutStarsInputInput;
+    update?: WithoutInput_96AndPostUncheckedUpdateWithoutStarsInputInput;
 };
 export type PostUpsertWithoutStarsInputInput = {
-    update: WithoutInput_108AndPostUncheckedUpdateWithoutStarsInputInput;
-    create: WithoutInput_36AndPostUncheckedCreateWithoutStarsInputInput;
+    update: WithoutInput_102AndPostUncheckedUpdateWithoutStarsInputInput;
+    create: WithoutInput_34AndPostUncheckedCreateWithoutStarsInputInput;
     where?: PostWhereInputInput;
 };
-export type WithoutInput_108AndPostUncheckedUpdateWithoutStarsInputInput = {
+export type WithoutInput_102AndPostUncheckedUpdateWithoutStarsInputInput = {
     user?: UserUpdateOneRequiredWithoutPostsNestedInputInput;
     id?: t.String;
     slug?: t.String;
@@ -1535,18 +1497,18 @@ export type WithoutInput_108AndPostUncheckedUpdateWithoutStarsInputInput = {
     views?: PostViewUncheckedUpdateManyWithoutPostNestedInputInput;
 };
 export type UserUpdateOneRequiredWithoutPostsNestedInputInput = {
-    create?: WithoutInput_38AndUserUncheckedCreateWithoutPostsInputInput;
+    create?: WithoutInput_36AndUserUncheckedCreateWithoutPostsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutPostsInputInput;
     upsert?: UserUpsertWithoutPostsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_110AndUserUncheckedUpdateWithoutPostsInputInput;
+    update?: WithoutInput_104AndUserUncheckedUpdateWithoutPostsInputInput;
 };
 export type UserUpsertWithoutPostsInputInput = {
-    update: WithoutInput_116AndUserUncheckedUpdateWithoutPostsInputInput;
-    create: WithoutInput_38AndUserUncheckedCreateWithoutPostsInputInput;
+    update: WithoutInput_110AndUserUncheckedUpdateWithoutPostsInputInput;
+    create: WithoutInput_36AndUserUncheckedCreateWithoutPostsInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_116AndUserUncheckedUpdateWithoutPostsInputInput = {
+export type WithoutInput_110AndUserUncheckedUpdateWithoutPostsInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1558,12 +1520,13 @@ export type WithoutInput_116AndUserUncheckedUpdateWithoutPostsInputInput = {
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type FollowUncheckedUpdateManyWithoutFollowerNestedInputInput = {
-    create?: WithoutInput_40AndFollowUncheckedCreateWithoutFollowerInputInput;
+    create?: WithoutInput_38AndFollowUncheckedCreateWithoutFollowerInputInput;
     connectOrCreate?: FollowCreateOrConnectWithoutFollowerInputInput[];
     upsert?: FollowUpsertWithWhereUniqueWithoutFollowerInputInput[];
     createMany?: FollowCreateManyFollowerInputEnvelopeInput;
@@ -1577,29 +1540,28 @@ export type FollowUncheckedUpdateManyWithoutFollowerNestedInputInput = {
 };
 export type FollowUpsertWithWhereUniqueWithoutFollowerInputInput = {
     where: WhereInput_10AndWhereInput_11;
-    update: WithoutInput_118AndFollowUncheckedUpdateWithoutFollowerInputInput;
-    create: WithoutInput_40AndFollowUncheckedCreateWithoutFollowerInputInput;
+    update: WithoutInput_112AndFollowUncheckedUpdateWithoutFollowerInputInput;
+    create: WithoutInput_38AndFollowUncheckedCreateWithoutFollowerInputInput;
 };
-export type WithoutInput_118AndFollowUncheckedUpdateWithoutFollowerInputInput = {
+export type WithoutInput_112AndFollowUncheckedUpdateWithoutFollowerInputInput = {
     followed?: UserUpdateOneRequiredWithoutFollowersNestedInputInput;
     id?: t.String;
     followedId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedUpdateManyWithoutFollowNestedInputInput;
 };
 export type UserUpdateOneRequiredWithoutFollowersNestedInputInput = {
-    create?: WithoutInput_42AndUserUncheckedCreateWithoutFollowersInputInput;
+    create?: WithoutInput_40AndUserUncheckedCreateWithoutFollowersInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutFollowersInputInput;
     upsert?: UserUpsertWithoutFollowersInputInput;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_120AndUserUncheckedUpdateWithoutFollowersInputInput;
+    update?: WithoutInput_114AndUserUncheckedUpdateWithoutFollowersInputInput;
 };
 export type UserUpsertWithoutFollowersInputInput = {
-    update: WithoutInput_126AndUserUncheckedUpdateWithoutFollowersInputInput;
-    create: WithoutInput_42AndUserUncheckedCreateWithoutFollowersInputInput;
+    update: WithoutInput_120AndUserUncheckedUpdateWithoutFollowersInputInput;
+    create: WithoutInput_40AndUserUncheckedCreateWithoutFollowersInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_126AndUserUncheckedUpdateWithoutFollowersInputInput = {
+export type WithoutInput_120AndUserUncheckedUpdateWithoutFollowersInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1611,12 +1573,13 @@ export type WithoutInput_126AndUserUncheckedUpdateWithoutFollowersInputInput = {
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type ActivityUncheckedUpdateManyWithoutUserNestedInputInput = {
-    create?: WithoutInput_44AndActivityUncheckedCreateWithoutUserInputInput;
+    create?: WithoutInput_42AndActivityUncheckedCreateWithoutUserInputInput;
     connectOrCreate?: ActivityCreateOrConnectWithoutUserInputInput[];
     upsert?: ActivityUpsertWithWhereUniqueWithoutUserInputInput[];
     createMany?: ActivityCreateManyUserInputEnvelopeInput;
@@ -1630,35 +1593,33 @@ export type ActivityUncheckedUpdateManyWithoutUserNestedInputInput = {
 };
 export type ActivityUpsertWithWhereUniqueWithoutUserInputInput = {
     where: WhereInput_18AndWhereInput_19;
-    update: WithoutInput_128AndActivityUncheckedUpdateWithoutUserInputInput;
-    create: WithoutInput_44AndActivityUncheckedCreateWithoutUserInputInput;
+    update: WithoutInput_122AndActivityUncheckedUpdateWithoutUserInputInput;
+    create: WithoutInput_42AndActivityUncheckedCreateWithoutUserInputInput;
 };
-export type WithoutInput_128AndActivityUncheckedUpdateWithoutUserInputInput = {
+export type WithoutInput_122AndActivityUncheckedUpdateWithoutUserInputInput = {
     post?: PostUpdateOneWithoutActivitiesNestedInputInput;
-    star?: StarUpdateOneWithoutActivitiesNestedInputInput;
-    follow?: FollowUpdateOneWithoutActivitiesNestedInputInput;
+    relatedUser?: UserUpdateOneWithoutRelatedActivitiesNestedInputInput;
     id?: t.String;
     type?: t.String;
     createdAt?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
 export type PostUpdateOneWithoutActivitiesNestedInputInput = {
-    create?: WithoutInput_46AndPostUncheckedCreateWithoutActivitiesInputInput;
+    create?: WithoutInput_44AndPostUncheckedCreateWithoutActivitiesInputInput;
     connectOrCreate?: PostCreateOrConnectWithoutActivitiesInputInput;
     upsert?: PostUpsertWithoutActivitiesInputInput;
     disconnect?: t.Boolean;
     delete?: t.Boolean;
     connect?: WhereInput_6AndWhereInput_7;
-    update?: WithoutInput_130AndPostUncheckedUpdateWithoutActivitiesInputInput;
+    update?: WithoutInput_124AndPostUncheckedUpdateWithoutActivitiesInputInput;
 };
 export type PostUpsertWithoutActivitiesInputInput = {
-    update: WithoutInput_136AndPostUncheckedUpdateWithoutActivitiesInputInput;
-    create: WithoutInput_46AndPostUncheckedCreateWithoutActivitiesInputInput;
+    update: WithoutInput_130AndPostUncheckedUpdateWithoutActivitiesInputInput;
+    create: WithoutInput_44AndPostUncheckedCreateWithoutActivitiesInputInput;
     where?: PostWhereInputInput;
 };
-export type WithoutInput_136AndPostUncheckedUpdateWithoutActivitiesInputInput = {
+export type WithoutInput_130AndPostUncheckedUpdateWithoutActivitiesInputInput = {
     user?: UserUpdateOneRequiredWithoutPostsNestedInputInput;
     id?: t.String;
     slug?: t.String;
@@ -1675,7 +1636,7 @@ export type WithoutInput_136AndPostUncheckedUpdateWithoutActivitiesInputInput = 
     views?: PostViewUncheckedUpdateManyWithoutPostNestedInputInput;
 };
 export type PostViewUncheckedUpdateManyWithoutPostNestedInputInput = {
-    create?: WithoutInput_48AndPostViewUncheckedCreateWithoutPostInputInput;
+    create?: WithoutInput_46AndPostViewUncheckedCreateWithoutPostInputInput;
     connectOrCreate?: PostViewCreateOrConnectWithoutPostInputInput[];
     upsert?: PostViewUpsertWithWhereUniqueWithoutPostInputInput[];
     createMany?: PostViewCreateManyPostInputEnvelopeInput;
@@ -1689,28 +1650,28 @@ export type PostViewUncheckedUpdateManyWithoutPostNestedInputInput = {
 };
 export type PostViewUpsertWithWhereUniqueWithoutPostInputInput = {
     where: WhereInput_24AndWhereInput_25;
-    update: WithoutInput_138AndPostViewUncheckedUpdateWithoutPostInputInput;
-    create: WithoutInput_48AndPostViewUncheckedCreateWithoutPostInputInput;
+    update: WithoutInput_132AndPostViewUncheckedUpdateWithoutPostInputInput;
+    create: WithoutInput_46AndPostViewUncheckedCreateWithoutPostInputInput;
 };
-export type WithoutInput_138AndPostViewUncheckedUpdateWithoutPostInputInput = {
+export type WithoutInput_132AndPostViewUncheckedUpdateWithoutPostInputInput = {
     viewedBy?: UserUpdateOneRequiredWithoutPerformedPostViewsNestedInputInput;
     id?: t.Number;
     viewedById?: t.String;
     createdAt?: t.String;
 };
 export type UserUpdateOneRequiredWithoutPerformedPostViewsNestedInputInput = {
-    create?: WithoutInput_50AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
+    create?: WithoutInput_48AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutPerformedPostViewsInputInput;
     upsert?: UserUpsertWithoutPerformedPostViewsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_140AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput;
+    update?: WithoutInput_134AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput;
 };
 export type UserUpsertWithoutPerformedPostViewsInputInput = {
-    update: WithoutInput_146AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput;
-    create: WithoutInput_50AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
+    update: WithoutInput_140AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput;
+    create: WithoutInput_48AndUserUncheckedCreateWithoutPerformedPostViewsInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_146AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput = {
+export type WithoutInput_140AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1723,11 +1684,68 @@ export type WithoutInput_146AndUserUncheckedUpdateWithoutPerformedPostViewsInput
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
 };
+export type ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput = {
+    create?: WithoutInput_50AndActivityUncheckedCreateWithoutRelatedUserInputInput;
+    connectOrCreate?: ActivityCreateOrConnectWithoutRelatedUserInputInput[];
+    upsert?: ActivityUpsertWithWhereUniqueWithoutRelatedUserInputInput[];
+    createMany?: ActivityCreateManyRelatedUserInputEnvelopeInput;
+    set?: WhereInput_20AndWhereInput_19;
+    disconnect?: WhereInput_20AndWhereInput_19;
+    delete?: WhereInput_20AndWhereInput_19;
+    connect?: WhereInput_20AndWhereInput_19;
+    update?: ActivityUpdateWithWhereUniqueWithoutRelatedUserInputInput[];
+    updateMany?: ActivityUpdateManyWithWhereWithoutRelatedUserInputInput[];
+    deleteMany?: ActivityScalarWhereInputInput[];
+};
+export type ActivityUpsertWithWhereUniqueWithoutRelatedUserInputInput = {
+    where: WhereInput_18AndWhereInput_19;
+    update: WithoutInput_142AndActivityUncheckedUpdateWithoutRelatedUserInputInput;
+    create: WithoutInput_50AndActivityUncheckedCreateWithoutRelatedUserInputInput;
+};
+export type WithoutInput_142AndActivityUncheckedUpdateWithoutRelatedUserInputInput = {
+    user?: UserUpdateOneRequiredWithoutActivitiesNestedInputInput;
+    post?: PostUpdateOneWithoutActivitiesNestedInputInput;
+    id?: t.String;
+    type?: t.String;
+    createdAt?: t.String;
+    userId?: t.String;
+    postId?: t.String;
+};
+export type UserUpdateOneRequiredWithoutActivitiesNestedInputInput = {
+    create?: WithoutInput_52AndUserUncheckedCreateWithoutActivitiesInputInput;
+    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInputInput;
+    upsert?: UserUpsertWithoutActivitiesInputInput;
+    connect?: WhereInput_27AndWhereInput_28;
+    update?: WithoutInput_144AndUserUncheckedUpdateWithoutActivitiesInputInput;
+};
+export type UserUpsertWithoutActivitiesInputInput = {
+    update: WithoutInput_150AndUserUncheckedUpdateWithoutActivitiesInputInput;
+    create: WithoutInput_52AndUserUncheckedCreateWithoutActivitiesInputInput;
+    where?: UserWhereInputInput;
+};
+export type WithoutInput_150AndUserUncheckedUpdateWithoutActivitiesInputInput = {
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
+    id?: t.String;
+    organizationId?: t.String;
+    bio?: t.String;
+    createdAt?: t.String;
+    updatedAt?: t.String;
+    language?: t.String;
+    posts?: PostUncheckedUpdateManyWithoutUserNestedInputInput;
+    followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
+    followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
+    starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
+    receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
+    performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
+    performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
+};
 export type UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput = {
-    create?: WithoutInput_52AndUserViewUncheckedCreateWithoutViewedByInputInput;
+    create?: WithoutInput_54AndUserViewUncheckedCreateWithoutViewedByInputInput;
     connectOrCreate?: UserViewCreateOrConnectWithoutViewedByInputInput[];
     upsert?: UserViewUpsertWithWhereUniqueWithoutViewedByInputInput[];
     createMany?: UserViewCreateManyViewedByInputEnvelopeInput;
@@ -1741,28 +1759,28 @@ export type UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput = {
 };
 export type UserViewUpsertWithWhereUniqueWithoutViewedByInputInput = {
     where: WhereInput_21AndWhereInput_22;
-    update: WithoutInput_148AndUserViewUncheckedUpdateWithoutViewedByInputInput;
-    create: WithoutInput_52AndUserViewUncheckedCreateWithoutViewedByInputInput;
+    update: WithoutInput_152AndUserViewUncheckedUpdateWithoutViewedByInputInput;
+    create: WithoutInput_54AndUserViewUncheckedCreateWithoutViewedByInputInput;
 };
-export type WithoutInput_148AndUserViewUncheckedUpdateWithoutViewedByInputInput = {
+export type WithoutInput_152AndUserViewUncheckedUpdateWithoutViewedByInputInput = {
     user?: UserUpdateOneRequiredWithoutPerformedUserViewsNestedInputInput;
     id?: t.Number;
     userId?: t.String;
     createdAt?: t.String;
 };
 export type UserUpdateOneRequiredWithoutPerformedUserViewsNestedInputInput = {
-    create?: WithoutInput_54AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
+    create?: WithoutInput_56AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutPerformedUserViewsInputInput;
     upsert?: UserUpsertWithoutPerformedUserViewsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_150AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput;
+    update?: WithoutInput_154AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput;
 };
 export type UserUpsertWithoutPerformedUserViewsInputInput = {
-    update: WithoutInput_156AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput;
-    create: WithoutInput_54AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
+    update: WithoutInput_160AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput;
+    create: WithoutInput_56AndUserUncheckedCreateWithoutPerformedUserViewsInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_156AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput = {
+export type WithoutInput_160AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1775,11 +1793,12 @@ export type WithoutInput_156AndUserUncheckedUpdateWithoutPerformedUserViewsInput
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput = {
-    create?: WithoutInput_56AndPostViewUncheckedCreateWithoutViewedByInputInput;
+    create?: WithoutInput_58AndPostViewUncheckedCreateWithoutViewedByInputInput;
     connectOrCreate?: PostViewCreateOrConnectWithoutViewedByInputInput[];
     upsert?: PostViewUpsertWithWhereUniqueWithoutViewedByInputInput[];
     createMany?: PostViewCreateManyViewedByInputEnvelopeInput;
@@ -1793,28 +1812,28 @@ export type PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput = {
 };
 export type PostViewUpsertWithWhereUniqueWithoutViewedByInputInput = {
     where: WhereInput_24AndWhereInput_25;
-    update: WithoutInput_158AndPostViewUncheckedUpdateWithoutViewedByInputInput;
-    create: WithoutInput_56AndPostViewUncheckedCreateWithoutViewedByInputInput;
+    update: WithoutInput_162AndPostViewUncheckedUpdateWithoutViewedByInputInput;
+    create: WithoutInput_58AndPostViewUncheckedCreateWithoutViewedByInputInput;
 };
-export type WithoutInput_158AndPostViewUncheckedUpdateWithoutViewedByInputInput = {
+export type WithoutInput_162AndPostViewUncheckedUpdateWithoutViewedByInputInput = {
     post?: PostUpdateOneRequiredWithoutViewsNestedInputInput;
     id?: t.Number;
     postId?: t.String;
     createdAt?: t.String;
 };
 export type PostUpdateOneRequiredWithoutViewsNestedInputInput = {
-    create?: WithoutInput_58AndPostUncheckedCreateWithoutViewsInputInput;
+    create?: WithoutInput_60AndPostUncheckedCreateWithoutViewsInputInput;
     connectOrCreate?: PostCreateOrConnectWithoutViewsInputInput;
     upsert?: PostUpsertWithoutViewsInputInput;
     connect?: WhereInput_6AndWhereInput_7;
-    update?: WithoutInput_160AndPostUncheckedUpdateWithoutViewsInputInput;
+    update?: WithoutInput_164AndPostUncheckedUpdateWithoutViewsInputInput;
 };
 export type PostUpsertWithoutViewsInputInput = {
-    update: WithoutInput_166AndPostUncheckedUpdateWithoutViewsInputInput;
-    create: WithoutInput_58AndPostUncheckedCreateWithoutViewsInputInput;
+    update: WithoutInput_170AndPostUncheckedUpdateWithoutViewsInputInput;
+    create: WithoutInput_60AndPostUncheckedCreateWithoutViewsInputInput;
     where?: PostWhereInputInput;
 };
-export type WithoutInput_166AndPostUncheckedUpdateWithoutViewsInputInput = {
+export type WithoutInput_170AndPostUncheckedUpdateWithoutViewsInputInput = {
     user?: UserUpdateOneRequiredWithoutPostsNestedInputInput;
     id?: t.String;
     slug?: t.String;
@@ -1831,7 +1850,7 @@ export type WithoutInput_166AndPostUncheckedUpdateWithoutViewsInputInput = {
     activities?: ActivityUncheckedUpdateManyWithoutPostNestedInputInput;
 };
 export type ActivityUncheckedUpdateManyWithoutPostNestedInputInput = {
-    create?: WithoutInput_60AndActivityUncheckedCreateWithoutPostInputInput;
+    create?: WithoutInput_62AndActivityUncheckedCreateWithoutPostInputInput;
     connectOrCreate?: ActivityCreateOrConnectWithoutPostInputInput[];
     upsert?: ActivityUpsertWithWhereUniqueWithoutPostInputInput[];
     createMany?: ActivityCreateManyPostInputEnvelopeInput;
@@ -1845,33 +1864,33 @@ export type ActivityUncheckedUpdateManyWithoutPostNestedInputInput = {
 };
 export type ActivityUpsertWithWhereUniqueWithoutPostInputInput = {
     where: WhereInput_18AndWhereInput_19;
-    update: WithoutInput_168AndActivityUncheckedUpdateWithoutPostInputInput;
-    create: WithoutInput_60AndActivityUncheckedCreateWithoutPostInputInput;
+    update: WithoutInput_172AndActivityUncheckedUpdateWithoutPostInputInput;
+    create: WithoutInput_62AndActivityUncheckedCreateWithoutPostInputInput;
 };
-export type WithoutInput_168AndActivityUncheckedUpdateWithoutPostInputInput = {
+export type WithoutInput_172AndActivityUncheckedUpdateWithoutPostInputInput = {
     user?: UserUpdateOneRequiredWithoutActivitiesNestedInputInput;
-    star?: StarUpdateOneWithoutActivitiesNestedInputInput;
-    follow?: FollowUpdateOneWithoutActivitiesNestedInputInput;
+    relatedUser?: UserUpdateOneWithoutRelatedActivitiesNestedInputInput;
     id?: t.String;
     type?: t.String;
     createdAt?: t.String;
     userId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
-export type UserUpdateOneRequiredWithoutActivitiesNestedInputInput = {
-    create?: WithoutInput_62AndUserUncheckedCreateWithoutActivitiesInputInput;
-    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInputInput;
-    upsert?: UserUpsertWithoutActivitiesInputInput;
+export type UserUpdateOneWithoutRelatedActivitiesNestedInputInput = {
+    create?: WithoutInput_64AndUserUncheckedCreateWithoutRelatedActivitiesInputInput;
+    connectOrCreate?: UserCreateOrConnectWithoutRelatedActivitiesInputInput;
+    upsert?: UserUpsertWithoutRelatedActivitiesInputInput;
+    disconnect?: t.Boolean;
+    delete?: t.Boolean;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_170AndUserUncheckedUpdateWithoutActivitiesInputInput;
+    update?: WithoutInput_174AndUserUncheckedUpdateWithoutRelatedActivitiesInputInput;
 };
-export type UserUpsertWithoutActivitiesInputInput = {
-    update: WithoutInput_176AndUserUncheckedUpdateWithoutActivitiesInputInput;
-    create: WithoutInput_62AndUserUncheckedCreateWithoutActivitiesInputInput;
+export type UserUpsertWithoutRelatedActivitiesInputInput = {
+    update: WithoutInput_180AndUserUncheckedUpdateWithoutRelatedActivitiesInputInput;
+    create: WithoutInput_64AndUserUncheckedCreateWithoutRelatedActivitiesInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_176AndUserUncheckedUpdateWithoutActivitiesInputInput = {
+export type WithoutInput_180AndUserUncheckedUpdateWithoutRelatedActivitiesInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1883,12 +1902,13 @@ export type WithoutInput_176AndUserUncheckedUpdateWithoutActivitiesInputInput = 
     followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
+    activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type UserViewUncheckedUpdateManyWithoutUserNestedInputInput = {
-    create?: WithoutInput_64AndUserViewUncheckedCreateWithoutUserInputInput;
+    create?: WithoutInput_66AndUserViewUncheckedCreateWithoutUserInputInput;
     connectOrCreate?: UserViewCreateOrConnectWithoutUserInputInput[];
     upsert?: UserViewUpsertWithWhereUniqueWithoutUserInputInput[];
     createMany?: UserViewCreateManyUserInputEnvelopeInput;
@@ -1902,28 +1922,28 @@ export type UserViewUncheckedUpdateManyWithoutUserNestedInputInput = {
 };
 export type UserViewUpsertWithWhereUniqueWithoutUserInputInput = {
     where: WhereInput_21AndWhereInput_22;
-    update: WithoutInput_178AndUserViewUncheckedUpdateWithoutUserInputInput;
-    create: WithoutInput_64AndUserViewUncheckedCreateWithoutUserInputInput;
+    update: WithoutInput_182AndUserViewUncheckedUpdateWithoutUserInputInput;
+    create: WithoutInput_66AndUserViewUncheckedCreateWithoutUserInputInput;
 };
-export type WithoutInput_178AndUserViewUncheckedUpdateWithoutUserInputInput = {
+export type WithoutInput_182AndUserViewUncheckedUpdateWithoutUserInputInput = {
     viewedBy?: UserUpdateOneRequiredWithoutReceivedUserViewsNestedInputInput;
     id?: t.Number;
     viewedById?: t.String;
     createdAt?: t.String;
 };
 export type UserUpdateOneRequiredWithoutReceivedUserViewsNestedInputInput = {
-    create?: WithoutInput_66AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
+    create?: WithoutInput_68AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
     connectOrCreate?: UserCreateOrConnectWithoutReceivedUserViewsInputInput;
     upsert?: UserUpsertWithoutReceivedUserViewsInputInput;
     connect?: WhereInput_27AndWhereInput_28;
-    update?: WithoutInput_180AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput;
+    update?: WithoutInput_184AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput;
 };
 export type UserUpsertWithoutReceivedUserViewsInputInput = {
-    update: WithoutInput_186AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput;
-    create: WithoutInput_66AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
+    update: WithoutInput_190AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput;
+    create: WithoutInput_68AndUserUncheckedCreateWithoutReceivedUserViewsInputInput;
     where?: UserWhereInputInput;
 };
-export type WithoutInput_186AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput = {
+export type WithoutInput_190AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput = {
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
     id?: t.String;
     organizationId?: t.String;
@@ -1936,13 +1956,14 @@ export type WithoutInput_186AndUserUncheckedUpdateWithoutReceivedUserViewsInputI
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
-export type WithoutInput_180AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput = {
+export type WithoutInput_184AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_186AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput;
+    data?: WithoutInput_190AndUserUncheckedUpdateWithoutReceivedUserViewsInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -1954,12 +1975,13 @@ export type WithoutInput_180AndUserUncheckedUpdateWithoutReceivedUserViewsInputI
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type UserViewUpdateWithWhereUniqueWithoutUserInputInput = {
     where: WhereInput_21AndWhereInput_22;
-    data: WithoutInput_178AndUserViewUncheckedUpdateWithoutUserInputInput;
+    data: WithoutInput_182AndUserViewUncheckedUpdateWithoutUserInputInput;
 };
 export type UserViewUpdateManyWithWhereWithoutUserInputInput = {
     where: UserViewScalarWhereInputInput;
@@ -1979,10 +2001,10 @@ export type ObjectAndUserViewUncheckedUpdateManyWithoutUserInputInput = {
     viewedById?: t.String;
     createdAt?: t.String;
 };
-export type WithoutInput_170AndUserUncheckedUpdateWithoutActivitiesInputInput = {
+export type WithoutInput_174AndUserUncheckedUpdateWithoutRelatedActivitiesInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_176AndUserUncheckedUpdateWithoutActivitiesInputInput;
+    data?: WithoutInput_180AndUserUncheckedUpdateWithoutRelatedActivitiesInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -1993,77 +2015,14 @@ export type WithoutInput_170AndUserUncheckedUpdateWithoutActivitiesInputInput = 
     followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
+    activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
-export type StarUpdateOneWithoutActivitiesNestedInputInput = {
-    create?: WithoutInput_68AndStarUncheckedCreateWithoutActivitiesInputInput;
-    connectOrCreate?: StarCreateOrConnectWithoutActivitiesInputInput;
-    upsert?: StarUpsertWithoutActivitiesInputInput;
-    disconnect?: t.Boolean;
-    delete?: t.Boolean;
-    connect?: WhereInput_14AndWhereInput_15;
-    update?: WithoutInput_189AndStarUncheckedUpdateWithoutActivitiesInputInput;
-};
-export type StarUpsertWithoutActivitiesInputInput = {
-    update: WithoutInput_195AndStarUncheckedUpdateWithoutActivitiesInputInput;
-    create: WithoutInput_68AndStarUncheckedCreateWithoutActivitiesInputInput;
-    where?: StarWhereInputInput;
-};
-export type WithoutInput_195AndStarUncheckedUpdateWithoutActivitiesInputInput = {
-    user?: UserUpdateOneRequiredWithoutStarredPostsNestedInputInput;
-    post?: PostUpdateOneWithoutStarsNestedInputInput;
-    id?: t.String;
-    postId?: t.String;
-    userId?: t.String;
-    createdAt?: t.String;
-};
-export type WithoutInput_189AndStarUncheckedUpdateWithoutActivitiesInputInput = {
-    user?: UserUpdateOneRequiredWithoutStarredPostsNestedInputInput;
-    post?: PostUpdateOneWithoutStarsNestedInputInput;
-    where?: StarWhereInputInput;
-    data?: WithoutInput_195AndStarUncheckedUpdateWithoutActivitiesInputInput;
-    id?: t.String;
-    postId?: t.String;
-    userId?: t.String;
-    createdAt?: t.String;
-};
-export type FollowUpdateOneWithoutActivitiesNestedInputInput = {
-    create?: WithoutInput_70AndFollowUncheckedCreateWithoutActivitiesInputInput;
-    connectOrCreate?: FollowCreateOrConnectWithoutActivitiesInputInput;
-    upsert?: FollowUpsertWithoutActivitiesInputInput;
-    disconnect?: t.Boolean;
-    delete?: t.Boolean;
-    connect?: WhereInput_10AndWhereInput_11;
-    update?: WithoutInput_197AndFollowUncheckedUpdateWithoutActivitiesInputInput;
-};
-export type FollowUpsertWithoutActivitiesInputInput = {
-    update: WithoutInput_203AndFollowUncheckedUpdateWithoutActivitiesInputInput;
-    create: WithoutInput_70AndFollowUncheckedCreateWithoutActivitiesInputInput;
-    where?: FollowWhereInputInput;
-};
-export type WithoutInput_203AndFollowUncheckedUpdateWithoutActivitiesInputInput = {
-    follower?: UserUpdateOneRequiredWithoutFollowingsNestedInputInput;
-    followed?: UserUpdateOneRequiredWithoutFollowersNestedInputInput;
-    id?: t.String;
-    followerId?: t.String;
-    followedId?: t.String;
-    createdAt?: t.String;
-};
-export type WithoutInput_197AndFollowUncheckedUpdateWithoutActivitiesInputInput = {
-    where?: FollowWhereInputInput;
-    follower?: UserUpdateOneRequiredWithoutFollowingsNestedInputInput;
-    followed?: UserUpdateOneRequiredWithoutFollowersNestedInputInput;
-    data?: WithoutInput_203AndFollowUncheckedUpdateWithoutActivitiesInputInput;
-    id?: t.String;
-    followerId?: t.String;
-    followedId?: t.String;
-    createdAt?: t.String;
-};
 export type ActivityUpdateWithWhereUniqueWithoutPostInputInput = {
     where: WhereInput_18AndWhereInput_19;
-    data: WithoutInput_168AndActivityUncheckedUpdateWithoutPostInputInput;
+    data: WithoutInput_172AndActivityUncheckedUpdateWithoutPostInputInput;
 };
 export type ActivityUpdateManyWithWhereWithoutPostInputInput = {
     where: ActivityScalarWhereInputInput;
@@ -2074,25 +2033,23 @@ export type ActivityScalarWhereInputInput = {
     OR?: ActivityScalarWhereInputInput[];
     NOT?: ActivityScalarWhereInputInput[];
     id?: t.String;
-    type?: t.String;
+    type?: EnumActivityTypeFilterInput;
     createdAt?: t.String;
     userId?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
 export type ObjectAndActivityUncheckedUpdateManyWithoutPostInputInput = {
     id?: t.String;
     type?: t.String;
     createdAt?: t.String;
     userId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
-export type WithoutInput_160AndPostUncheckedUpdateWithoutViewsInputInput = {
+export type WithoutInput_164AndPostUncheckedUpdateWithoutViewsInputInput = {
     user?: UserUpdateOneRequiredWithoutPostsNestedInputInput;
     where?: PostWhereInputInput;
-    data?: WithoutInput_166AndPostUncheckedUpdateWithoutViewsInputInput;
+    data?: WithoutInput_170AndPostUncheckedUpdateWithoutViewsInputInput;
     id?: t.String;
     slug?: t.String;
     title?: t.String;
@@ -2109,7 +2066,7 @@ export type WithoutInput_160AndPostUncheckedUpdateWithoutViewsInputInput = {
 };
 export type PostViewUpdateWithWhereUniqueWithoutViewedByInputInput = {
     where: WhereInput_24AndWhereInput_25;
-    data: WithoutInput_158AndPostViewUncheckedUpdateWithoutViewedByInputInput;
+    data: WithoutInput_162AndPostViewUncheckedUpdateWithoutViewedByInputInput;
 };
 export type PostViewUpdateManyWithWhereWithoutViewedByInputInput = {
     where: PostViewScalarWhereInputInput;
@@ -2129,10 +2086,10 @@ export type ObjectAndPostViewUncheckedUpdateManyWithoutViewedByInputInput = {
     postId?: t.String;
     createdAt?: t.String;
 };
-export type WithoutInput_150AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput = {
+export type WithoutInput_154AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_156AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput;
+    data?: WithoutInput_160AndUserUncheckedUpdateWithoutPerformedUserViewsInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -2144,12 +2101,13 @@ export type WithoutInput_150AndUserUncheckedUpdateWithoutPerformedUserViewsInput
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type UserViewUpdateWithWhereUniqueWithoutViewedByInputInput = {
     where: WhereInput_21AndWhereInput_22;
-    data: WithoutInput_148AndUserViewUncheckedUpdateWithoutViewedByInputInput;
+    data: WithoutInput_152AndUserViewUncheckedUpdateWithoutViewedByInputInput;
 };
 export type UserViewUpdateManyWithWhereWithoutViewedByInputInput = {
     where: UserViewScalarWhereInputInput;
@@ -2160,10 +2118,44 @@ export type ObjectAndUserViewUncheckedUpdateManyWithoutViewedByInputInput = {
     userId?: t.String;
     createdAt?: t.String;
 };
-export type WithoutInput_140AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput = {
+export type WithoutInput_144AndUserUncheckedUpdateWithoutActivitiesInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_146AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput;
+    data?: WithoutInput_150AndUserUncheckedUpdateWithoutActivitiesInputInput;
+    id?: t.String;
+    organizationId?: t.String;
+    bio?: t.String;
+    createdAt?: t.String;
+    updatedAt?: t.String;
+    language?: t.String;
+    posts?: PostUncheckedUpdateManyWithoutUserNestedInputInput;
+    followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
+    followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
+    starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
+    receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
+    performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
+    performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
+};
+export type ActivityUpdateWithWhereUniqueWithoutRelatedUserInputInput = {
+    where: WhereInput_18AndWhereInput_19;
+    data: WithoutInput_142AndActivityUncheckedUpdateWithoutRelatedUserInputInput;
+};
+export type ActivityUpdateManyWithWhereWithoutRelatedUserInputInput = {
+    where: ActivityScalarWhereInputInput;
+    data: ObjectAndActivityUncheckedUpdateManyWithoutRelatedUserInputInput;
+};
+export type ObjectAndActivityUncheckedUpdateManyWithoutRelatedUserInputInput = {
+    id?: t.String;
+    type?: t.String;
+    createdAt?: t.String;
+    userId?: t.String;
+    postId?: t.String;
+};
+export type WithoutInput_134AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput = {
+    where?: UserWhereInputInput;
+    organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
+    data?: WithoutInput_140AndUserUncheckedUpdateWithoutPerformedPostViewsInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -2175,12 +2167,13 @@ export type WithoutInput_140AndUserUncheckedUpdateWithoutPerformedPostViewsInput
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
 };
 export type PostViewUpdateWithWhereUniqueWithoutPostInputInput = {
     where: WhereInput_24AndWhereInput_25;
-    data: WithoutInput_138AndPostViewUncheckedUpdateWithoutPostInputInput;
+    data: WithoutInput_132AndPostViewUncheckedUpdateWithoutPostInputInput;
 };
 export type PostViewUpdateManyWithWhereWithoutPostInputInput = {
     where: PostViewScalarWhereInputInput;
@@ -2191,10 +2184,10 @@ export type ObjectAndPostViewUncheckedUpdateManyWithoutPostInputInput = {
     viewedById?: t.String;
     createdAt?: t.String;
 };
-export type WithoutInput_130AndPostUncheckedUpdateWithoutActivitiesInputInput = {
+export type WithoutInput_124AndPostUncheckedUpdateWithoutActivitiesInputInput = {
     user?: UserUpdateOneRequiredWithoutPostsNestedInputInput;
     where?: PostWhereInputInput;
-    data?: WithoutInput_136AndPostUncheckedUpdateWithoutActivitiesInputInput;
+    data?: WithoutInput_130AndPostUncheckedUpdateWithoutActivitiesInputInput;
     id?: t.String;
     slug?: t.String;
     title?: t.String;
@@ -2211,7 +2204,7 @@ export type WithoutInput_130AndPostUncheckedUpdateWithoutActivitiesInputInput = 
 };
 export type ActivityUpdateWithWhereUniqueWithoutUserInputInput = {
     where: WhereInput_18AndWhereInput_19;
-    data: WithoutInput_128AndActivityUncheckedUpdateWithoutUserInputInput;
+    data: WithoutInput_122AndActivityUncheckedUpdateWithoutUserInputInput;
 };
 export type ActivityUpdateManyWithWhereWithoutUserInputInput = {
     where: ActivityScalarWhereInputInput;
@@ -2222,13 +2215,12 @@ export type ObjectAndActivityUncheckedUpdateManyWithoutUserInputInput = {
     type?: t.String;
     createdAt?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
-export type WithoutInput_120AndUserUncheckedUpdateWithoutFollowersInputInput = {
+export type WithoutInput_114AndUserUncheckedUpdateWithoutFollowersInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_126AndUserUncheckedUpdateWithoutFollowersInputInput;
+    data?: WithoutInput_120AndUserUncheckedUpdateWithoutFollowersInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -2239,58 +2231,14 @@ export type WithoutInput_120AndUserUncheckedUpdateWithoutFollowersInputInput = {
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
-export type ActivityUncheckedUpdateManyWithoutFollowNestedInputInput = {
-    create?: WithoutInput_72AndActivityUncheckedCreateWithoutFollowInputInput;
-    connectOrCreate?: ActivityCreateOrConnectWithoutFollowInputInput[];
-    upsert?: ActivityUpsertWithWhereUniqueWithoutFollowInputInput[];
-    createMany?: ActivityCreateManyFollowInputEnvelopeInput;
-    set?: WhereInput_20AndWhereInput_19;
-    disconnect?: WhereInput_20AndWhereInput_19;
-    delete?: WhereInput_20AndWhereInput_19;
-    connect?: WhereInput_20AndWhereInput_19;
-    update?: ActivityUpdateWithWhereUniqueWithoutFollowInputInput[];
-    updateMany?: ActivityUpdateManyWithWhereWithoutFollowInputInput[];
-    deleteMany?: ActivityScalarWhereInputInput[];
-};
-export type ActivityUpsertWithWhereUniqueWithoutFollowInputInput = {
-    where: WhereInput_18AndWhereInput_19;
-    update: WithoutInput_210AndActivityUncheckedUpdateWithoutFollowInputInput;
-    create: WithoutInput_72AndActivityUncheckedCreateWithoutFollowInputInput;
-};
-export type WithoutInput_210AndActivityUncheckedUpdateWithoutFollowInputInput = {
-    user?: UserUpdateOneRequiredWithoutActivitiesNestedInputInput;
-    post?: PostUpdateOneWithoutActivitiesNestedInputInput;
-    star?: StarUpdateOneWithoutActivitiesNestedInputInput;
-    id?: t.String;
-    type?: t.String;
-    createdAt?: t.String;
-    userId?: t.String;
-    postId?: t.String;
-    starId?: t.String;
-};
-export type ActivityUpdateWithWhereUniqueWithoutFollowInputInput = {
-    where: WhereInput_18AndWhereInput_19;
-    data: WithoutInput_210AndActivityUncheckedUpdateWithoutFollowInputInput;
-};
-export type ActivityUpdateManyWithWhereWithoutFollowInputInput = {
-    where: ActivityScalarWhereInputInput;
-    data: ObjectAndActivityUncheckedUpdateManyWithoutFollowInputInput;
-};
-export type ObjectAndActivityUncheckedUpdateManyWithoutFollowInputInput = {
-    id?: t.String;
-    type?: t.String;
-    createdAt?: t.String;
-    userId?: t.String;
-    postId?: t.String;
-    starId?: t.String;
-};
 export type FollowUpdateWithWhereUniqueWithoutFollowerInputInput = {
     where: WhereInput_10AndWhereInput_11;
-    data: WithoutInput_118AndFollowUncheckedUpdateWithoutFollowerInputInput;
+    data: WithoutInput_112AndFollowUncheckedUpdateWithoutFollowerInputInput;
 };
 export type FollowUpdateManyWithWhereWithoutFollowerInputInput = {
     where: FollowScalarWhereInputInput;
@@ -2310,10 +2258,10 @@ export type ObjectAndFollowUncheckedUpdateManyWithoutFollowerInputInput = {
     followedId?: t.String;
     createdAt?: t.String;
 };
-export type WithoutInput_110AndUserUncheckedUpdateWithoutPostsInputInput = {
+export type WithoutInput_104AndUserUncheckedUpdateWithoutPostsInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_116AndUserUncheckedUpdateWithoutPostsInputInput;
+    data?: WithoutInput_110AndUserUncheckedUpdateWithoutPostsInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -2324,14 +2272,15 @@ export type WithoutInput_110AndUserUncheckedUpdateWithoutPostsInputInput = {
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
-export type WithoutInput_102AndPostUncheckedUpdateWithoutStarsInputInput = {
+export type WithoutInput_96AndPostUncheckedUpdateWithoutStarsInputInput = {
     user?: UserUpdateOneRequiredWithoutPostsNestedInputInput;
     where?: PostWhereInputInput;
-    data?: WithoutInput_108AndPostUncheckedUpdateWithoutStarsInputInput;
+    data?: WithoutInput_102AndPostUncheckedUpdateWithoutStarsInputInput;
     id?: t.String;
     slug?: t.String;
     title?: t.String;
@@ -2346,54 +2295,9 @@ export type WithoutInput_102AndPostUncheckedUpdateWithoutStarsInputInput = {
     activities?: ActivityUncheckedUpdateManyWithoutPostNestedInputInput;
     views?: PostViewUncheckedUpdateManyWithoutPostNestedInputInput;
 };
-export type ActivityUncheckedUpdateManyWithoutStarNestedInputInput = {
-    create?: WithoutInput_74AndActivityUncheckedCreateWithoutStarInputInput;
-    connectOrCreate?: ActivityCreateOrConnectWithoutStarInputInput[];
-    upsert?: ActivityUpsertWithWhereUniqueWithoutStarInputInput[];
-    createMany?: ActivityCreateManyStarInputEnvelopeInput;
-    set?: WhereInput_20AndWhereInput_19;
-    disconnect?: WhereInput_20AndWhereInput_19;
-    delete?: WhereInput_20AndWhereInput_19;
-    connect?: WhereInput_20AndWhereInput_19;
-    update?: ActivityUpdateWithWhereUniqueWithoutStarInputInput[];
-    updateMany?: ActivityUpdateManyWithWhereWithoutStarInputInput[];
-    deleteMany?: ActivityScalarWhereInputInput[];
-};
-export type ActivityUpsertWithWhereUniqueWithoutStarInputInput = {
-    where: WhereInput_18AndWhereInput_19;
-    update: WithoutInput_214AndActivityUncheckedUpdateWithoutStarInputInput;
-    create: WithoutInput_74AndActivityUncheckedCreateWithoutStarInputInput;
-};
-export type WithoutInput_214AndActivityUncheckedUpdateWithoutStarInputInput = {
-    user?: UserUpdateOneRequiredWithoutActivitiesNestedInputInput;
-    post?: PostUpdateOneWithoutActivitiesNestedInputInput;
-    follow?: FollowUpdateOneWithoutActivitiesNestedInputInput;
-    id?: t.String;
-    type?: t.String;
-    createdAt?: t.String;
-    userId?: t.String;
-    postId?: t.String;
-    followId?: t.String;
-};
-export type ActivityUpdateWithWhereUniqueWithoutStarInputInput = {
-    where: WhereInput_18AndWhereInput_19;
-    data: WithoutInput_214AndActivityUncheckedUpdateWithoutStarInputInput;
-};
-export type ActivityUpdateManyWithWhereWithoutStarInputInput = {
-    where: ActivityScalarWhereInputInput;
-    data: ObjectAndActivityUncheckedUpdateManyWithoutStarInputInput;
-};
-export type ObjectAndActivityUncheckedUpdateManyWithoutStarInputInput = {
-    id?: t.String;
-    type?: t.String;
-    createdAt?: t.String;
-    userId?: t.String;
-    postId?: t.String;
-    followId?: t.String;
-};
 export type StarUpdateWithWhereUniqueWithoutUserInputInput = {
     where: WhereInput_14AndWhereInput_15;
-    data: WithoutInput_100AndStarUncheckedUpdateWithoutUserInputInput;
+    data: WithoutInput_94AndStarUncheckedUpdateWithoutUserInputInput;
 };
 export type StarUpdateManyWithWhereWithoutUserInputInput = {
     where: StarScalarWhereInputInput;
@@ -2413,10 +2317,10 @@ export type ObjectAndStarUncheckedUpdateManyWithoutUserInputInput = {
     postId?: t.String;
     createdAt?: t.String;
 };
-export type WithoutInput_92AndUserUncheckedUpdateWithoutFollowingsInputInput = {
+export type WithoutInput_86AndUserUncheckedUpdateWithoutFollowingsInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_98AndUserUncheckedUpdateWithoutFollowingsInputInput;
+    data?: WithoutInput_92AndUserUncheckedUpdateWithoutFollowingsInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -2427,13 +2331,14 @@ export type WithoutInput_92AndUserUncheckedUpdateWithoutFollowingsInputInput = {
     followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type FollowUpdateWithWhereUniqueWithoutFollowedInputInput = {
     where: WhereInput_10AndWhereInput_11;
-    data: WithoutInput_90AndFollowUncheckedUpdateWithoutFollowedInputInput;
+    data: WithoutInput_84AndFollowUncheckedUpdateWithoutFollowedInputInput;
 };
 export type FollowUpdateManyWithWhereWithoutFollowedInputInput = {
     where: FollowScalarWhereInputInput;
@@ -2444,10 +2349,10 @@ export type ObjectAndFollowUncheckedUpdateManyWithoutFollowedInputInput = {
     followerId?: t.String;
     createdAt?: t.String;
 };
-export type WithoutInput_82AndUserUncheckedUpdateWithoutStarredPostsInputInput = {
+export type WithoutInput_76AndUserUncheckedUpdateWithoutStarredPostsInputInput = {
     where?: UserWhereInputInput;
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInputInput;
-    data?: WithoutInput_88AndUserUncheckedUpdateWithoutStarredPostsInputInput;
+    data?: WithoutInput_82AndUserUncheckedUpdateWithoutStarredPostsInputInput;
     id?: t.String;
     organizationId?: t.String;
     bio?: t.String;
@@ -2458,13 +2363,14 @@ export type WithoutInput_82AndUserUncheckedUpdateWithoutStarredPostsInputInput =
     followers?: FollowUncheckedUpdateManyWithoutFollowedNestedInputInput;
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
 };
 export type StarUpdateWithWhereUniqueWithoutPostInputInput = {
     where: WhereInput_14AndWhereInput_15;
-    data: WithoutInput_80AndStarUncheckedUpdateWithoutPostInputInput;
+    data: WithoutInput_74AndStarUncheckedUpdateWithoutPostInputInput;
 };
 export type StarUpdateManyWithWhereWithoutPostInputInput = {
     where: StarScalarWhereInputInput;
@@ -2511,7 +2417,7 @@ export type ObjectAndPostUncheckedUpdateManyWithoutUserInputInput = {
     privacy?: t.String;
     language?: t.String;
 };
-export type OmitInput_19 = {
+export type OmitInput_21 = {
     AND?: UserWhereInputInput[];
     OR?: UserWhereInputInput[];
     NOT?: UserWhereInputInput[];
@@ -2526,6 +2432,7 @@ export type OmitInput_19 = {
     followings?: FollowListRelationFilterInput;
     starredPosts?: StarListRelationFilterInput;
     activities?: ActivityListRelationFilterInput;
+    relatedActivities?: ActivityListRelationFilterInput;
     receivedUserViews?: UserViewListRelationFilterInput;
     performedUserViews?: UserViewListRelationFilterInput;
     performedPostViews?: PostViewListRelationFilterInput;
@@ -2543,7 +2450,6 @@ export type StarOrderByWithRelationAndSearchRelevanceInputInput = {
     createdAt?: SortOrderInput;
     user?: UserOrderByWithRelationAndSearchRelevanceInputInput;
     post?: PostOrderByWithRelationAndSearchRelevanceInputInput;
-    activities?: ActivityOrderByRelationAggregateInputInput;
     _relevance?: StarOrderByRelevanceInputInput;
 };
 export type PostOrderByWithRelationAndSearchRelevanceInputInput = {
@@ -2574,7 +2480,7 @@ export type StarOrderByRelevanceInputInput = {
     sort: SortOrderInput;
     search: t.String;
 };
-export type OmitInput_26 = {
+export type OmitInput_28 = {
     user?: UserCreateNestedOneWithoutPostsInputInput;
     createdAt?: t.String;
     updatedAt?: t.String;
@@ -2607,7 +2513,7 @@ export type WithoutInputAndPostUncheckedUpdateInputInput = {
     activities?: ActivityUncheckedUpdateManyWithoutPostNestedInputInput;
     views?: PostViewUncheckedUpdateManyWithoutPostNestedInputInput;
 };
-export type OmitInput_27 = {
+export type OmitInput_29 = {
     user?: WithoutInput_16AndUserWhereInputInput;
     AND?: PostWhereInputInput[];
     OR?: PostWhereInputInput[];
@@ -2626,46 +2532,10 @@ export type OmitInput_27 = {
     privacy?: EnumPrivacyFilterInput;
     stars?: StarListRelationFilterInput;
 };
-export type ActivityOrderByWithRelationAndSearchRelevanceInputInput = {
-    id?: SortOrderInput;
-    type?: SortOrderInput;
-    createdAt?: SortOrderInput;
-    userId?: SortOrderInput;
-    postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
-    user?: UserOrderByWithRelationAndSearchRelevanceInputInput;
-    post?: PostOrderByWithRelationAndSearchRelevanceInputInput;
-    star?: StarOrderByWithRelationAndSearchRelevanceInputInput;
-    follow?: FollowOrderByWithRelationAndSearchRelevanceInputInput;
-    _relevance?: ActivityOrderByRelevanceInputInput;
-};
-export type FollowOrderByWithRelationAndSearchRelevanceInputInput = {
-    id?: SortOrderInput;
-    followerId?: SortOrderInput;
-    followedId?: SortOrderInput;
-    createdAt?: SortOrderInput;
-    follower?: UserOrderByWithRelationAndSearchRelevanceInputInput;
-    followed?: UserOrderByWithRelationAndSearchRelevanceInputInput;
-    activities?: ActivityOrderByRelationAggregateInputInput;
-    _relevance?: FollowOrderByRelevanceInputInput;
-};
-export type FollowOrderByRelevanceInputInput = {
-    fields: t.String;
-    sort: SortOrderInput;
-    search: t.String;
-};
-export type ActivityOrderByRelevanceInputInput = {
-    fields: t.String;
-    sort: SortOrderInput;
-    search: t.String;
-};
-export type OmitInput_30 = {
+export type OmitInput_22 = {
     user?: UserCreateNestedOneWithoutStarredPostsInputInput;
-    post?: PostCreateNestedOneWithoutStarsInputInput;
+    id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutStarInputInput;
-    postId?: t.String;
     userId?: t.String;
 };
 export type WithoutInput_4AndStarUncheckedUpdateInputInput = {
@@ -2675,154 +2545,65 @@ export type WithoutInput_4AndStarUncheckedUpdateInputInput = {
     postId?: t.String;
     userId?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedUpdateManyWithoutStarNestedInputInput;
 };
-export type OmitInput_31 = {
+export type OmitInput_23 = {
     user?: WithoutInput_16AndUserWhereInputInput;
-    post?: WithoutInput_18AndPostWhereInputInput;
     AND?: StarWhereInputInput[];
     OR?: StarWhereInputInput[];
     NOT?: StarWhereInputInput[];
+    id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityListRelationFilterInput;
-    postId?: t.String;
     userId?: t.String;
     postId_userId?: StarPostIdUserIdCompoundUniqueInputInput;
 };
-export type OmitInput_34 = {
+export type ActivityOrderByWithRelationAndSearchRelevanceInputInput = {
+    id?: SortOrderInput;
+    type?: SortOrderInput;
+    createdAt?: SortOrderInput;
+    userId?: SortOrderInput;
+    postId?: t.String;
+    relatedUserId?: t.String;
+    user?: UserOrderByWithRelationAndSearchRelevanceInputInput;
+    post?: PostOrderByWithRelationAndSearchRelevanceInputInput;
+    relatedUser?: UserOrderByWithRelationAndSearchRelevanceInputInput;
+    _relevance?: ActivityOrderByRelevanceInputInput;
+};
+export type ActivityOrderByRelevanceInputInput = {
+    fields: t.String;
+    sort: SortOrderInput;
+    search: t.String;
+};
+export type OmitInput_24 = {
     user?: UserCreateNestedOneWithoutActivitiesInputInput;
-    post?: PostCreateNestedOneWithoutActivitiesInputInput;
     id?: t.String;
     createdAt?: t.String;
-    star?: StarCreateNestedOneWithoutActivitiesInputInput;
-    postId?: t.String;
     userId?: t.String;
-    type: t.String;
-    starId?: t.String;
+    type: ActivityTypeInput;
+    relatedUser?: UserCreateNestedOneWithoutRelatedActivitiesInputInput;
+    relatedUserId?: t.String;
 };
 export type WithoutInput_6AndActivityUncheckedUpdateInputInput = {
     user?: UserUpdateOneRequiredWithoutActivitiesNestedInputInput;
     post?: PostUpdateOneWithoutActivitiesNestedInputInput;
-    star?: StarUpdateOneWithoutActivitiesNestedInputInput;
-    follow?: FollowUpdateOneWithoutActivitiesNestedInputInput;
+    relatedUser?: UserUpdateOneWithoutRelatedActivitiesNestedInputInput;
     id?: t.String;
     type?: t.String;
     createdAt?: t.String;
     userId?: t.String;
     postId?: t.String;
-    starId?: t.String;
-    followId?: t.String;
+    relatedUserId?: t.String;
 };
-export type OmitInput_35 = {
-    user?: WithoutInput_16AndUserWhereInputInput;
-    post?: WithoutInput_18AndPostWhereInputInput;
-    AND?: ActivityWhereInputInput[];
-    OR?: ActivityWhereInputInput[];
-    NOT?: ActivityWhereInputInput[];
-    id?: t.String;
-    createdAt?: t.String;
-    star?: WithoutInput_20AndStarWhereInputInput;
-    postId?: t.String;
-    userId?: t.String;
-    type?: t.String;
-    starId?: t.String;
-};
-export type OmitInput_32 = {
-    createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutFollowInputInput;
-    followerId?: t.String;
-    followedId?: t.String;
-    follower?: UserCreateNestedOneWithoutFollowingsInputInput;
-    followed?: UserCreateNestedOneWithoutFollowersInputInput;
-};
-export type WithoutInput_2AndFollowUncheckedUpdateInputInput = {
-    follower?: UserUpdateOneRequiredWithoutFollowingsNestedInputInput;
-    followed?: UserUpdateOneRequiredWithoutFollowersNestedInputInput;
-    id?: t.String;
-    followerId?: t.String;
-    followedId?: t.String;
-    createdAt?: t.String;
-    activities?: ActivityUncheckedUpdateManyWithoutFollowNestedInputInput;
-};
-export type OmitInput_33 = {
-    AND?: FollowWhereInputInput[];
-    OR?: FollowWhereInputInput[];
-    NOT?: FollowWhereInputInput[];
-    createdAt?: t.String;
-    activities?: ActivityListRelationFilterInput;
-    followerId?: t.String;
-    followedId?: t.String;
-    follower?: WithoutInput_16AndUserWhereInputInput;
-    followed?: WithoutInput_16AndUserWhereInputInput;
-    followerId_followedId?: FollowFollowerIdFollowedIdCompoundUniqueInputInput;
-};
-export type OmitInput_28 = {
-    user?: UserCreateNestedOneWithoutActivitiesInputInput;
-    post?: PostCreateNestedOneWithoutActivitiesInputInput;
-    id?: t.String;
-    createdAt?: t.String;
-    postId?: t.String;
-    userId?: t.String;
-    type: t.String;
-    follow?: FollowCreateNestedOneWithoutActivitiesInputInput;
-    followId?: t.String;
-};
-export type OmitInput_29 = {
-    user?: WithoutInput_16AndUserWhereInputInput;
-    post?: WithoutInput_18AndPostWhereInputInput;
-    AND?: ActivityWhereInputInput[];
-    OR?: ActivityWhereInputInput[];
-    NOT?: ActivityWhereInputInput[];
-    id?: t.String;
-    createdAt?: t.String;
-    postId?: t.String;
-    userId?: t.String;
-    type?: t.String;
-    follow?: WithoutInput_22AndFollowWhereInputInput;
-    followId?: t.String;
-};
-export type OmitInput_20 = {
-    user?: UserCreateNestedOneWithoutStarredPostsInputInput;
-    id?: t.String;
-    createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutStarInputInput;
-    userId?: t.String;
-};
-export type OmitInput_21 = {
-    user?: WithoutInput_16AndUserWhereInputInput;
-    AND?: StarWhereInputInput[];
-    OR?: StarWhereInputInput[];
-    NOT?: StarWhereInputInput[];
-    id?: t.String;
-    createdAt?: t.String;
-    activities?: ActivityListRelationFilterInput;
-    userId?: t.String;
-    postId_userId?: StarPostIdUserIdCompoundUniqueInputInput;
-};
-export type OmitInput_22 = {
-    user?: UserCreateNestedOneWithoutActivitiesInputInput;
-    id?: t.String;
-    createdAt?: t.String;
-    star?: StarCreateNestedOneWithoutActivitiesInputInput;
-    userId?: t.String;
-    type: t.String;
-    follow?: FollowCreateNestedOneWithoutActivitiesInputInput;
-    starId?: t.String;
-    followId?: t.String;
-};
-export type OmitInput_23 = {
+export type OmitInput_25 = {
     user?: WithoutInput_16AndUserWhereInputInput;
     AND?: ActivityWhereInputInput[];
     OR?: ActivityWhereInputInput[];
     NOT?: ActivityWhereInputInput[];
     id?: t.String;
     createdAt?: t.String;
-    star?: WithoutInput_20AndStarWhereInputInput;
     userId?: t.String;
-    type?: t.String;
-    follow?: WithoutInput_22AndFollowWhereInputInput;
-    starId?: t.String;
-    followId?: t.String;
+    type?: EnumActivityTypeFilterInput;
+    relatedUser?: WithoutInput_20AndUserWhereInputInput;
+    relatedUserId?: t.String;
 };
 export type PostViewOrderByWithRelationAndSearchRelevanceInputInput = {
     id?: SortOrderInput;
@@ -2838,7 +2619,7 @@ export type PostViewOrderByRelevanceInputInput = {
     sort: SortOrderInput;
     search: t.String;
 };
-export type OmitInput_24 = {
+export type OmitInput_26 = {
     id?: t.Number;
     createdAt?: t.String;
     viewedBy?: UserCreateNestedOneWithoutPerformedPostViewsInputInput;
@@ -2852,7 +2633,7 @@ export type WithoutInput_10AndPostViewUncheckedUpdateInputInput = {
     viewedById?: t.String;
     createdAt?: t.String;
 };
-export type OmitInput_25 = {
+export type OmitInput_27 = {
     AND?: PostViewWhereInputInput[];
     OR?: PostViewWhereInputInput[];
     NOT?: PostViewWhereInputInput[];
@@ -2861,7 +2642,7 @@ export type OmitInput_25 = {
     viewedBy?: WithoutInput_16AndUserWhereInputInput;
     viewedById?: t.String;
 };
-export type OmitInput_36 = {
+export type OmitInput_30 = {
     id: t.String;
     bio?: t.String;
     createdAt?: t.String;
@@ -2872,11 +2653,12 @@ export type OmitInput_36 = {
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
 };
-export type OmitInput_37 = {
+export type OmitInput_31 = {
     AND?: UserWhereInputInput[];
     OR?: UserWhereInputInput[];
     NOT?: UserWhereInputInput[];
@@ -2890,6 +2672,7 @@ export type OmitInput_37 = {
     followings?: FollowListRelationFilterInput;
     starredPosts?: StarListRelationFilterInput;
     activities?: ActivityListRelationFilterInput;
+    relatedActivities?: ActivityListRelationFilterInput;
     receivedUserViews?: UserViewListRelationFilterInput;
     performedUserViews?: UserViewListRelationFilterInput;
     performedPostViews?: PostViewListRelationFilterInput;
@@ -2914,6 +2697,7 @@ export type ObjectAndUserUncheckedCreateWithoutOrganizationInputInput = {
     followings?: FollowUncheckedCreateNestedManyWithoutFollowerInputInput;
     starredPosts?: StarUncheckedCreateNestedManyWithoutUserInputInput;
     activities?: ActivityUncheckedCreateNestedManyWithoutUserInputInput;
+    relatedActivities?: ActivityUncheckedCreateNestedManyWithoutRelatedUserInputInput;
     receivedUserViews?: UserViewUncheckedCreateNestedManyWithoutViewedByInputInput;
     performedUserViews?: UserViewUncheckedCreateNestedManyWithoutUserInputInput;
     performedPostViews?: PostViewUncheckedCreateNestedManyWithoutViewedByInputInput;
@@ -2949,6 +2733,7 @@ export type WhereInput_29AndWhereInput_28 = {
     followings?: FollowListRelationFilterInput;
     starredPosts?: StarListRelationFilterInput;
     activities?: ActivityListRelationFilterInput;
+    relatedActivities?: ActivityListRelationFilterInput;
     receivedUserViews?: UserViewListRelationFilterInput;
     performedUserViews?: UserViewListRelationFilterInput;
     performedPostViews?: PostViewListRelationFilterInput;
@@ -2986,6 +2771,7 @@ export type ObjectAndUserUncheckedUpdateWithoutOrganizationInputInput = {
     followings?: FollowUncheckedUpdateManyWithoutFollowerNestedInputInput;
     starredPosts?: StarUncheckedUpdateManyWithoutUserNestedInputInput;
     activities?: ActivityUncheckedUpdateManyWithoutUserNestedInputInput;
+    relatedActivities?: ActivityUncheckedUpdateManyWithoutRelatedUserNestedInputInput;
     receivedUserViews?: UserViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
     performedUserViews?: UserViewUncheckedUpdateManyWithoutUserNestedInputInput;
     performedPostViews?: PostViewUncheckedUpdateManyWithoutViewedByNestedInputInput;
@@ -3079,12 +2865,33 @@ export type OmitInput_3 = {
     privacy?: EnumPrivacyFilterInput;
     stars?: StarListRelationFilterInput;
 };
+export type FollowOrderByWithRelationAndSearchRelevanceInputInput = {
+    id?: SortOrderInput;
+    followerId?: SortOrderInput;
+    followedId?: SortOrderInput;
+    createdAt?: SortOrderInput;
+    follower?: UserOrderByWithRelationAndSearchRelevanceInputInput;
+    followed?: UserOrderByWithRelationAndSearchRelevanceInputInput;
+    _relevance?: FollowOrderByRelevanceInputInput;
+};
+export type FollowOrderByRelevanceInputInput = {
+    fields: t.String;
+    sort: SortOrderInput;
+    search: t.String;
+};
 export type OmitInput_4 = {
     id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutFollowInputInput;
-    followerId?: t.String;
     follower?: UserCreateNestedOneWithoutFollowingsInputInput;
+    followerId?: t.String;
+};
+export type WithoutInput_2AndFollowUncheckedUpdateInputInput = {
+    follower?: UserUpdateOneRequiredWithoutFollowingsNestedInputInput;
+    followed?: UserUpdateOneRequiredWithoutFollowersNestedInputInput;
+    id?: t.String;
+    followerId?: t.String;
+    followedId?: t.String;
+    createdAt?: t.String;
 };
 export type OmitInput_5 = {
     AND?: FollowWhereInputInput[];
@@ -3092,15 +2899,13 @@ export type OmitInput_5 = {
     NOT?: FollowWhereInputInput[];
     id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityListRelationFilterInput;
-    followerId?: t.String;
     follower?: WithoutInput_16AndUserWhereInputInput;
+    followerId?: t.String;
     followerId_followedId?: FollowFollowerIdFollowedIdCompoundUniqueInputInput;
 };
 export type OmitInput_6 = {
     id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutFollowInputInput;
     followedId?: t.String;
     followed?: UserCreateNestedOneWithoutFollowersInputInput;
 };
@@ -3110,16 +2915,14 @@ export type OmitInput_7 = {
     NOT?: FollowWhereInputInput[];
     id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityListRelationFilterInput;
+    followerId_followedId?: FollowFollowerIdFollowedIdCompoundUniqueInputInput;
     followedId?: t.String;
     followed?: WithoutInput_16AndUserWhereInputInput;
-    followerId_followedId?: FollowFollowerIdFollowedIdCompoundUniqueInputInput;
 };
 export type OmitInput_8 = {
     post?: PostCreateNestedOneWithoutStarsInputInput;
     id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityUncheckedCreateNestedManyWithoutStarInputInput;
     postId?: t.String;
 };
 export type OmitInput_9 = {
@@ -3129,7 +2932,6 @@ export type OmitInput_9 = {
     NOT?: StarWhereInputInput[];
     id?: t.String;
     createdAt?: t.String;
-    activities?: ActivityListRelationFilterInput;
     postId?: t.String;
     postId_userId?: StarPostIdUserIdCompoundUniqueInputInput;
 };
@@ -3137,12 +2939,10 @@ export type OmitInput_10 = {
     post?: PostCreateNestedOneWithoutActivitiesInputInput;
     id?: t.String;
     createdAt?: t.String;
-    star?: StarCreateNestedOneWithoutActivitiesInputInput;
     postId?: t.String;
-    type: t.String;
-    follow?: FollowCreateNestedOneWithoutActivitiesInputInput;
-    starId?: t.String;
-    followId?: t.String;
+    type: ActivityTypeInput;
+    relatedUser?: UserCreateNestedOneWithoutRelatedActivitiesInputInput;
+    relatedUserId?: t.String;
 };
 export type OmitInput_11 = {
     post?: WithoutInput_18AndPostWhereInputInput;
@@ -3151,12 +2951,31 @@ export type OmitInput_11 = {
     NOT?: ActivityWhereInputInput[];
     id?: t.String;
     createdAt?: t.String;
-    star?: WithoutInput_20AndStarWhereInputInput;
     postId?: t.String;
-    type?: t.String;
-    follow?: WithoutInput_22AndFollowWhereInputInput;
-    starId?: t.String;
-    followId?: t.String;
+    type?: EnumActivityTypeFilterInput;
+    relatedUser?: WithoutInput_20AndUserWhereInputInput;
+    relatedUserId?: t.String;
+};
+export type OmitInput_12 = {
+    user?: UserCreateNestedOneWithoutActivitiesInputInput;
+    post?: PostCreateNestedOneWithoutActivitiesInputInput;
+    id?: t.String;
+    createdAt?: t.String;
+    postId?: t.String;
+    userId?: t.String;
+    type: ActivityTypeInput;
+};
+export type OmitInput_13 = {
+    user?: WithoutInput_16AndUserWhereInputInput;
+    post?: WithoutInput_18AndPostWhereInputInput;
+    AND?: ActivityWhereInputInput[];
+    OR?: ActivityWhereInputInput[];
+    NOT?: ActivityWhereInputInput[];
+    id?: t.String;
+    createdAt?: t.String;
+    postId?: t.String;
+    userId?: t.String;
+    type?: EnumActivityTypeFilterInput;
 };
 export type UserViewOrderByWithRelationAndSearchRelevanceInputInput = {
     id?: SortOrderInput;
@@ -3172,7 +2991,7 @@ export type UserViewOrderByRelevanceInputInput = {
     sort: SortOrderInput;
     search: t.String;
 };
-export type OmitInput_12 = {
+export type OmitInput_14 = {
     user?: UserCreateNestedOneWithoutPerformedUserViewsInputInput;
     id?: t.Number;
     createdAt?: t.String;
@@ -3186,7 +3005,7 @@ export type WithoutInput_8AndUserViewUncheckedUpdateInputInput = {
     viewedById?: t.String;
     createdAt?: t.String;
 };
-export type OmitInput_13 = {
+export type OmitInput_15 = {
     user?: WithoutInput_16AndUserWhereInputInput;
     AND?: UserViewWhereInputInput[];
     OR?: UserViewWhereInputInput[];
@@ -3195,13 +3014,13 @@ export type OmitInput_13 = {
     createdAt?: t.String;
     userId?: t.String;
 };
-export type OmitInput_14 = {
+export type OmitInput_16 = {
     id?: t.Number;
     createdAt?: t.String;
     viewedBy?: UserCreateNestedOneWithoutReceivedUserViewsInputInput;
     viewedById?: t.String;
 };
-export type OmitInput_15 = {
+export type OmitInput_17 = {
     AND?: UserViewWhereInputInput[];
     OR?: UserViewWhereInputInput[];
     NOT?: UserViewWhereInputInput[];
@@ -3210,14 +3029,14 @@ export type OmitInput_15 = {
     viewedBy?: WithoutInput_16AndUserWhereInputInput;
     viewedById?: t.String;
 };
-export type OmitInput_16 = {
+export type OmitInput_18 = {
     post?: PostCreateNestedOneWithoutViewsInputInput;
     id?: t.Number;
     createdAt?: t.String;
     postId?: t.String;
 };
-export type OmitInput_17 = {
-    post?: WithoutInput_24AndPostWhereInputInput;
+export type OmitInput_19 = {
+    post?: WithoutInput_22AndPostWhereInputInput;
     AND?: PostViewWhereInputInput[];
     OR?: PostViewWhereInputInput[];
     NOT?: PostViewWhereInputInput[];
@@ -3396,6 +3215,14 @@ export class User {
     activitie: (args?: {
         where?: ActivityWhereInputInput;
     }) => Activity;
+    relatedActivities: (args?: {
+        pagination?: ConnectionArgumentsInput;
+        where?: ActivityWhereInputInput;
+        orderBy?: ActivityOrderByWithRelationAndSearchRelevanceInputInput[];
+    }) => Connection_4;
+    relatedActivitie: (args?: {
+        where?: ActivityWhereInputInput;
+    }) => Activity;
     language: t.Nullable<Language>;
     receivedUserViews: (args?: {
         pagination?: ConnectionArgumentsInput;
@@ -3421,7 +3248,7 @@ export class User {
     performedPostView: (args?: {
         where?: PostViewWhereInputInput;
     }) => PostView;
-    constructor() { this.__typename = ""; this.profile = proxy(Profile); this.featuredPosts = proxy(Connection_1); this.isFollowed = false; this.id = ""; this.organization = fnProxy(Organization); this.posts = fnProxy(Connection_1); this.post = fnProxy(Post); this.followers = fnProxy(Connection_2); this.follower = fnProxy(Follow); this.followings = fnProxy(Connection_2); this.following = fnProxy(Follow); this.starredPosts = fnProxy(Connection_3); this.starredPost = fnProxy(Star); this.bio = null; this.createdAt = ""; this.updatedAt = ""; this.activities = fnProxy(Connection_4); this.activitie = fnProxy(Activity); this.language = null; this.receivedUserViews = fnProxy(Connection_5); this.receivedUserView = fnProxy(UserView); this.performedUserViews = fnProxy(Connection_5); this.performedUserView = fnProxy(UserView); this.performedPostViews = fnProxy(Connection_6); this.performedPostView = fnProxy(PostView); }
+    constructor() { this.__typename = ""; this.profile = proxy(Profile); this.featuredPosts = proxy(Connection_1); this.isFollowed = false; this.id = ""; this.organization = fnProxy(Organization); this.posts = fnProxy(Connection_1); this.post = fnProxy(Post); this.followers = fnProxy(Connection_2); this.follower = fnProxy(Follow); this.followings = fnProxy(Connection_2); this.following = fnProxy(Follow); this.starredPosts = fnProxy(Connection_3); this.starredPost = fnProxy(Star); this.bio = null; this.createdAt = ""; this.updatedAt = ""; this.activities = fnProxy(Connection_4); this.activitie = fnProxy(Activity); this.relatedActivities = fnProxy(Connection_4); this.relatedActivitie = fnProxy(Activity); this.language = null; this.receivedUserViews = fnProxy(Connection_5); this.receivedUserView = fnProxy(UserView); this.performedUserViews = fnProxy(Connection_5); this.performedUserView = fnProxy(UserView); this.performedPostViews = fnProxy(Connection_6); this.performedPostView = fnProxy(PostView); }
 }
 export class Profile {
     __typename: t.String;
@@ -3511,15 +3338,21 @@ export class Star {
         orderBy?: PostOrderByWithRelationAndSearchRelevanceInputInput[];
     }) => t.Nullable<Post>;
     createdAt: t.Date;
-    activities: (args?: {
-        pagination?: ConnectionArgumentsInput;
-        where?: ActivityWhereInputInput;
-        orderBy?: ActivityOrderByWithRelationAndSearchRelevanceInputInput[];
-    }) => Connection_4;
-    activitie: (args?: {
-        where?: ActivityWhereInputInput;
-    }) => Activity;
-    constructor() { this.__typename = ""; this.id = ""; this.user = fnProxy(User); this.post = fnProxy(Post); this.createdAt = ""; this.activities = fnProxy(Connection_4); this.activitie = fnProxy(Activity); }
+    constructor() { this.__typename = ""; this.id = ""; this.user = fnProxy(User); this.post = fnProxy(Post); this.createdAt = ""; }
+}
+export class Edge_2 {
+    __typename: t.String;
+    cursor: t.String;
+    node: Star;
+    constructor() { this.__typename = ""; this.cursor = ""; this.node = proxy(Star); }
+}
+export class PageInfo {
+    __typename: t.String;
+    hasNextPage: t.Boolean;
+    hasPreviousPage: t.Boolean;
+    startCursor: t.Nullable<t.String>;
+    endCursor: t.Nullable<t.String>;
+    constructor() { this.__typename = ""; this.hasNextPage = false; this.hasPreviousPage = false; this.startCursor = null; this.endCursor = null; }
 }
 export class Connection_4 {
     __typename: t.String;
@@ -3532,7 +3365,7 @@ export class Connection_4 {
 export class Activity {
     __typename: t.String;
     id: t.String;
-    type: t.String;
+    type: t.Nullable<ActivityType>;
     createdAt: t.Date;
     user: (args?: {
         where?: UserWhereInputInput;
@@ -3542,57 +3375,17 @@ export class Activity {
         where?: PostWhereInputInput;
         orderBy?: PostOrderByWithRelationAndSearchRelevanceInputInput[];
     }) => t.Nullable<Post>;
-    star: (args?: {
-        where?: StarWhereInputInput;
-        orderBy?: StarOrderByWithRelationAndSearchRelevanceInputInput[];
-    }) => t.Nullable<Star>;
-    follow: (args?: {
-        where?: FollowWhereInputInput;
-        orderBy?: FollowOrderByWithRelationAndSearchRelevanceInputInput[];
-    }) => t.Nullable<Follow>;
-    constructor() { this.__typename = ""; this.id = ""; this.type = ""; this.createdAt = ""; this.user = fnProxy(User); this.post = fnProxy(Post); this.star = fnProxy(Star); this.follow = fnProxy(Follow); }
-}
-export class Follow {
-    __typename: t.String;
-    id: t.String;
-    follower: (args?: {
+    relatedUser: (args?: {
         where?: UserWhereInputInput;
         orderBy?: UserOrderByWithRelationAndSearchRelevanceInputInput[];
-    }) => User;
-    followed: (args?: {
-        where?: UserWhereInputInput;
-        orderBy?: UserOrderByWithRelationAndSearchRelevanceInputInput[];
-    }) => User;
-    createdAt: t.Date;
-    activities: (args?: {
-        pagination?: ConnectionArgumentsInput;
-        where?: ActivityWhereInputInput;
-        orderBy?: ActivityOrderByWithRelationAndSearchRelevanceInputInput[];
-    }) => Connection_4;
-    activitie: (args?: {
-        where?: ActivityWhereInputInput;
-    }) => Activity;
-    constructor() { this.__typename = ""; this.id = ""; this.follower = fnProxy(User); this.followed = fnProxy(User); this.createdAt = ""; this.activities = fnProxy(Connection_4); this.activitie = fnProxy(Activity); }
+    }) => t.Nullable<User>;
+    constructor() { this.__typename = ""; this.id = ""; this.type = null; this.createdAt = ""; this.user = fnProxy(User); this.post = fnProxy(Post); this.relatedUser = fnProxy(User); }
 }
 export class Edge_3 {
     __typename: t.String;
     cursor: t.String;
     node: Activity;
     constructor() { this.__typename = ""; this.cursor = ""; this.node = proxy(Activity); }
-}
-export class PageInfo {
-    __typename: t.String;
-    hasNextPage: t.Boolean;
-    hasPreviousPage: t.Boolean;
-    startCursor: t.Nullable<t.String>;
-    endCursor: t.Nullable<t.String>;
-    constructor() { this.__typename = ""; this.hasNextPage = false; this.hasPreviousPage = false; this.startCursor = null; this.endCursor = null; }
-}
-export class Edge_2 {
-    __typename: t.String;
-    cursor: t.String;
-    node: Star;
-    constructor() { this.__typename = ""; this.cursor = ""; this.node = proxy(Star); }
 }
 export class Connection_6 {
     __typename: t.String;
@@ -3648,6 +3441,20 @@ export class Connection_2 {
     pageInfo: PageInfo;
     totalCount: t.Number;
     constructor() { this.__typename = ""; this.nodes = arrayProxy(Follow); this.edges = arrayProxy(Edge_5); this.pageInfo = proxy(PageInfo); this.totalCount = null; }
+}
+export class Follow {
+    __typename: t.String;
+    id: t.String;
+    follower: (args?: {
+        where?: UserWhereInputInput;
+        orderBy?: UserOrderByWithRelationAndSearchRelevanceInputInput[];
+    }) => User;
+    followed: (args?: {
+        where?: UserWhereInputInput;
+        orderBy?: UserOrderByWithRelationAndSearchRelevanceInputInput[];
+    }) => User;
+    createdAt: t.Date;
+    constructor() { this.__typename = ""; this.id = ""; this.follower = fnProxy(User); this.followed = fnProxy(User); this.createdAt = ""; }
 }
 export class Edge_5 {
     __typename: t.String;
