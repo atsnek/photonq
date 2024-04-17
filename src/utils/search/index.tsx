@@ -142,7 +142,7 @@ export async function searchDocs(
     //     {
     //       title: pageResult.doc.title,
     //       description: pageResult.doc.content ?? pageResult.doc.title,
-    //       href: pageResult.doc.url ?? '#'
+    //       to: pageResult.doc.url ?? '#'
     //     }
     //   ]
     // });
@@ -181,7 +181,7 @@ export async function searchDocs(
           sectionResult.doc.title ??
           pageResult.doc.title,
         description: sectionResult.doc.content ?? sectionResult.doc.title,
-        href: sectionResult.doc.url
+        to: sectionResult.doc.url
       });
     }
 
@@ -190,7 +190,7 @@ export async function searchDocs(
       searchResultItems.push({
         title: pageResult.doc.title,
         description: pageResult.doc.content ?? pageResult.doc.title,
-        href: pageResult.doc.url ?? '#'
+        to: pageResult.doc.url ?? '#'
       });
     }
 
@@ -229,7 +229,7 @@ export async function getDefaultSearchDocs(
       results: [
         {
           description: summary ?? item.title ?? '',
-          href: key,
+          to: key,
           title: item.title ?? ''
         }
       ],
@@ -273,7 +273,7 @@ export async function searchSocialPosts(
               pn.matchingQuery({ query: query || '' }) ??
               pn.summary ??
               pn.title,
-            href: `/experiments/${pn.slug}`,
+            to: `/experiments/${pn.slug}`,
             title: `${username}/${pn.title}`
           }
         ]
@@ -284,112 +284,4 @@ export async function searchSocialPosts(
   });
 
   return !postsError || postsError?.length === 0 ? posts : [];
-}
-
-/**
- * Search the users for the given query.
- * @param query The query to search for
- * @returns  The users matching the query
- */
-export async function searchUser(
-  query: string
-): Promise<TSearchResultSection[]> {
-  const [searchResult, error] = await sq.query(q => {
-    const user = q.user({ where: { id: '' } });
-
-    const sections: TSearchResultSection[] = [];
-    if (!user) sections;
-
-    sections.push({
-      title: user.profile.userName,
-      results: [
-        {
-          avatarURL: user.profile?.avatarUrl ?? undefined,
-          description: user.bio ?? user.profile.displayName,
-          href: `/users/${user.id}`,
-          title: user.profile.displayName
-        }
-      ]
-    });
-    return sections;
-  });
-
-  return !error || error?.length === 0 ? searchResult : [];
-}
-
-/**
- * Get the default search results for the given user.
- * @param currentUserId  The id of the current user
- * @returns  The default search results
- */
-export async function getDefaultSearchUsers(): Promise<TSearchResultSection[]> {
-  const currentUserId = '';
-
-  if (!currentUserId)
-    return [
-      {
-        title: 'users',
-        results: [
-          { title: 'Create an account', href: '/signup', description: '' }
-        ]
-      }
-    ];
-
-  const [followerCon, followerConError] = await sq.query(q => {
-    const followers = q.me.followers({ pagination: { first: 5 } });
-    followers?.nodes.map(fn => fn.follower.id);
-    return followers;
-  });
-  if (!followerCon || followerConError?.length > 0) return [];
-
-  const results = await Promise.all(
-    followerCon.nodes.map(async (fn): Promise<TSearchResult> => {
-      const [follower] = await sq.query(q => {
-        const user = q.user({
-          resourceId: __SNEK_RESOURCE_ID__,
-          id: fn.follower.id
-        });
-        user.details?.firstName;
-        user.details?.lastName;
-        user.username;
-        return user;
-      });
-      return {
-        description: follower.profile?.bio ?? follower.username,
-        href: `/user/${follower.username}`,
-        title: getUserDisplayname(follower)
-      };
-    })
-  );
-
-  return [
-    {
-      title: 'Users',
-      results
-    }
-  ];
-}
-
-/**
- * Get the default search results for the given user.
- * @param currentUserId  The id of the current user
- * @param searchIndex  The search index to use
- * @returns  The default search results
- */
-export async function fetchDefaultSearchresult(
-  searchIndex: SearchIndex
-): Promise<TSearchResults> {
-  const userResults: TSearchResultSection[] = await getDefaultSearchUsers();
-  const docsResults = await getDefaultSearchDocs(searchIndex);
-  const socialPostResults = await searchSocialPosts();
-
-  return {
-    docs: { title: 'Documentation', sections: docsResults, icon: <TbBooks /> },
-    posts: {
-      title: 'Experiments',
-      sections: socialPostResults,
-      icon: <FaFlask />
-    },
-    user: { title: 'Users', sections: userResults, icon: <TbUser /> }
-  };
 }

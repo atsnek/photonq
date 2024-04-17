@@ -39,6 +39,7 @@ import { navigate } from 'gatsby';
 import { useSearchContext } from '../../contexts/search';
 import { TSearchResults } from '../../utils/search/types';
 import { useDebounce } from 'use-debounce';
+import { useLocation } from '@reach/router';
 
 interface SearchMenuProps {}
 
@@ -46,7 +47,7 @@ interface SearchMenuProps {}
  * Search menu component - shows a navigatable list of search results
  */
 const SearchMenu: FC<SearchMenuProps> = ({}) => {
-  const [searchQuery, setSearchQuery] = useState(undefined);
+  const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
   const [navigateIdx, setNavigateIdx] = useState<number>(-1);
   const modalDisclosure = useDisclosure();
   const ref = useRef<{
@@ -61,6 +62,13 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const [query] = useDebounce(searchQuery, 500);
 
   const search = useSearch(query);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    // close the modal when the location changes
+    modalDisclosure.onClose();
+  }, [location]);
 
   useEffect(() => {
     // Focus the input when the user presses the shortcut
@@ -179,48 +187,111 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   //   return output;
   // }, [search.searchResult, navigateIdx]);
 
-  // useEffect(() => {
-  //   if (navigateIdx >= 0) {
-  //     const item = document.getElementById(`sd-search-ri-${navigateIdx}`);
-  //     if (item) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  //   }
-  // }, [resultItems]);
+  useEffect(() => {
+    if (navigateIdx >= 0) {
+      const item = document.getElementById(`sd-search-ri-${navigateIdx}`);
+
+      console.log('item', item, navigateIdx);
+
+      if (item) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [search.searchResult]);
 
   /**
    * Navigate to the next or previous item in the search results
    * @param isUp Whether to navigate up or down
    */
   const handleNavigate = (isUp: boolean) => {
-    // const itemsCount = Object.values(searchData)
-    //   .map(section => section.sections.map(s => s.results).flat())
-    //   .flat().length;
-    // if (isUp) {
-    //   if (navigateIdx > 0) setNavigateIdx(navigateIdx - 1);
-    //   else setNavigateIdx(itemsCount - 1);
-    //   return;
-    // }
-    // if (navigateIdx < itemsCount - 1) setNavigateIdx(navigateIdx + 1);
-    // else setNavigateIdx(0);
+    const itemsCount = Object.values(search.searchResult)
+      .map(section => section.results)
+      .flat().length;
+
+    console.log('itemsCount', isUp, itemsCount);
+    if (isUp) {
+      if (navigateIdx > 0) setNavigateIdx(navigateIdx - 1);
+      else setNavigateIdx(itemsCount - 1);
+      return;
+    }
+    if (navigateIdx < itemsCount - 1) setNavigateIdx(navigateIdx + 1);
+    else setNavigateIdx(0);
   };
+
+  const data = useMemo(() => {
+    let dataItemIdx = 0;
+
+    return search.searchResult.map(sr => {
+      return {
+        ...sr,
+        results: sr.results.map(r => {
+          return {
+            ...r,
+            isActive: dataItemIdx++ === navigateIdx
+          };
+        })
+      };
+    });
+  }, [search.searchResult, navigateIdx]);
 
   /**
    * Navigate to the active item's href
    */
   const handleOpenActiveItem = () => {
-    // const activeItem = Object.values(searchData)
-    //   .map(section => section.sections.map(s => s.results).flat())
-    //   .flat()
-    //   .find(item => item.isActive);
-    // if (activeItem) {
-    //   modalDisclosure.onClose();
-    //   navigate(activeItem.href);
-    // }
+    const activeItem = data
+      .map(section => section.results)
+      .flat()
+      .find(item => item.isActive);
+
+    console.log('activeItem', activeItem, search.searchResult);
+
+    if (activeItem) {
+      modalDisclosure.onClose();
+      navigate(activeItem.to);
+    }
   };
 
   const onOpen = () => {
     setSearchQuery('');
     modalDisclosure.onOpen();
   };
+
+  const results = useMemo(() => {
+    let itemIdx = 0;
+
+    return data.map((section, idx) => {
+      console.log('itemIdx', itemIdx);
+
+      const el = (
+        <Fragment key={idx}>
+          {idx > 0 && <Divider />}
+
+          <VStack
+            spacing={1}
+            w="full"
+            textAlign="left"
+            _last={{
+              mb: 2
+            }}
+            maxH="205px"
+            overflowY="auto"
+            className="sd-search-outer-section"
+          >
+            <SearchResultSection
+              section={section}
+              idx={itemIdx}
+              query={searchQuery}
+              key={idx}
+              defaultHighlight={itemIdx === 0}
+              icon={section.icon}
+              isDocs={true}
+            />
+          </VStack>
+        </Fragment>
+      );
+
+      itemIdx = itemIdx + section.results.length;
+      return el;
+    });
+  }, [data, navigateIdx]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -230,41 +301,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
         isOpen={modalDisclosure.isOpen}
         onClose={modalDisclosure.onClose}
         isLoading={search.isLoading}
-        searchResultItems={search.searchResult.map((section, idx) => (
-          <Fragment key={idx}>
-            {idx > 0 && <Divider />}
-            {/* <SearchResultSectionTitle
-              title={section.title}
-              idx={idx * -1}
-              color="features.search.section.title.color"
-              textTransform="none"
-              {...(!section.icon && {
-                mb: 5
-              })}
-            /> */}
-            <VStack
-              spacing={1}
-              w="full"
-              textAlign="left"
-              _last={{
-                mb: 2
-              }}
-              maxH="205px"
-              overflowY="auto"
-              className="sd-search-outer-section"
-            >
-              <SearchResultSection
-                section={section}
-                idx={idx}
-                query={searchQuery}
-                key={idx}
-                defaultHighlight={idx++ === 0}
-                icon={section.icon}
-                isDocs={true}
-              />
-            </VStack>
-          </Fragment>
-        ))}
+        searchResultItems={results}
         setSearchQuery={setSearchQuery}
         handleNavigate={handleNavigate}
         openActiveItem={handleOpenActiveItem}

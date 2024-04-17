@@ -35,7 +35,7 @@ export type TSearchResult = {
   avatarURL?: string;
   title: string;
   description: string;
-  href: string;
+  to: string;
   isActive?: boolean;
 };
 

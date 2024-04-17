@@ -77,8 +77,6 @@ export const SearchResultSection: FC<{
   onItemClickCapture,
   isDocs
 }) => {
-  section;
-
   return (
     <Box key={idx} w="full">
       {/* {isDocs && (

@@ -10,6 +10,7 @@ import {
 import { FC, ReactNode } from 'react';
 import { TSearchResult } from '../../../shared/types/search';
 import Highlighter from 'react-highlight-words';
+import { Link } from 'gatsby-plugin-jaen';
 
 /**
  * The search menu item component for displaying a specific search result item.
@@ -48,6 +49,7 @@ export const SearchResultItem: FC<{
       children={children}
     />
   );
+  console.log(item);
 
   return (
     <LinkBox
@@ -74,6 +76,7 @@ export const SearchResultItem: FC<{
         color: 'features.search.section.item._hover.color'
       })}
     >
+      <Text>{id}</Text>
       <Box
         display="flex"
         alignItems="center"
@@ -87,7 +90,8 @@ export const SearchResultItem: FC<{
       >
         {icon}
         <LinkOverlay
-          to={item.href}
+          as={Link}
+          to={item.to}
           ml={2}
           _focus={{
             outline: 'none'

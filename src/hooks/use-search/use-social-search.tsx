@@ -11,7 +11,7 @@ export type TSearchResult = {
   avatarURL?: string;
   title: string;
   description: string;
-  href: string;
+  to: string;
   isActive?: boolean;
 };
 /**
@@ -38,7 +38,8 @@ export type TSearchResultSection = {
 };
 
 const useSocialSearch = (query?: string) => {
-  const [trigger, { data, isLoading, errors, refetch }] = useLazyQuery(sq);
+  const [trigger, { data, isLoading, isSafe, errors, refetch }] =
+    useLazyQuery(sq);
 
   const postSearchResultSection: TSearchResultSection[] = useMemo(() => {
     if (query === undefined) {
@@ -57,8 +58,8 @@ const useSocialSearch = (query?: string) => {
         results: searched.users.nodes.map(user => ({
           title: user.profile.displayName || user.profile.userName,
           description: user.bio || '',
-          href: `/users/${user.id}`,
-          avatarURL: user.profile.avatarUrl
+          to: `/users/${user.id}`,
+          avatarURL: user.profile.avatarUrl || undefined
         })),
         resultIcon: <TbUser />
       });
@@ -70,7 +71,7 @@ const useSocialSearch = (query?: string) => {
         results: searched.posts.nodes.map(post => ({
           title: post.title,
           description: post.matchingQuery({ query }) || post.summary || '',
-          href: `/experiments/${post.id}`
+          to: `/experiments/${post.slug}`
         })),
         resultIcon: <FaFlask />
       });
@@ -93,7 +94,7 @@ const useSocialSearch = (query?: string) => {
 
   return {
     searchResults: postSearchResultSection,
-    isLoading
+    isLoading: !isSafe
   };
 };
 
