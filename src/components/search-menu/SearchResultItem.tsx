@@ -49,7 +49,6 @@ export const SearchResultItem: FC<{
       children={children}
     />
   );
-  console.log(item);
 
   return (
     <LinkBox

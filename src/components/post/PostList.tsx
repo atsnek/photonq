@@ -1,15 +1,20 @@
 import { Post, Query } from '@/clients/social/src/schema.generated';
 import {
   Button,
+  Collapse,
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
   List,
   ListItem,
+  Select,
   Stack
 } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import PostCardSkeleton from './PostCardSkeleton';
 import PostCard from './PostCard';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
@@ -33,11 +38,22 @@ const PostList: FC<PostListProps> = props => {
 
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
 
+  const dateFromRef = useRef<HTMLInputElement>(null);
+  const dateToRef = useRef<HTMLInputElement>(null);
+
+  const [dateRange, setDateRange] = useState<
+    | {
+        from?: Date;
+        to?: Date;
+      }
+    | undefined
+  >(undefined);
+
   const [query, setQuery] = useState('');
 
   useEffect(() => {
     refetch();
-  }, [query, props.userId]);
+  }, [query, props.userId, dateRange]);
 
   const [paginationCursor, setPaginationCursor] = useState<{
     before: string | undefined;
@@ -53,13 +69,33 @@ const PostList: FC<PostListProps> = props => {
     }
   }, [paginationCursor]);
 
+  const createdAt: {
+    gte?: string;
+    lte?: string;
+  } = {};
+
+  if (dateRange?.from) {
+    createdAt['gte'] = dateRange.from.toISOString();
+  }
+  if (dateRange?.to) {
+    createdAt['lte'] = dateRange.to.toISOString();
+  }
+
   const allPosts = data.allPost({
     where:
       props.useStars && props.userId
-        ? { stars: { some: { userId: props.userId } } }
+        ? {
+            stars: { some: { userId: props.userId } },
+            createdAt: createdAt
+          }
         : props.userId
-        ? { userId: props.userId }
-        : undefined,
+        ? {
+            userId: props.userId,
+            createdAt: createdAt
+          }
+        : {
+            createdAt: createdAt
+          },
     query,
     pagination: {
       first: paginationCursor.before ? undefined : 1,
@@ -131,6 +167,65 @@ const PostList: FC<PostListProps> = props => {
           </Button>
         )}
       </HStack>
+
+      <Collapse
+        in={isAdvancedSearchOpen}
+        animateOpacity
+        style={{ width: '75%' }}
+      >
+        <HStack gap={5} w="full">
+          {!!setDateRange && (
+            <InputGroup size="sm">
+              <InputLeftAddon borderLeftRadius="lg">Date from</InputLeftAddon>
+              <Input
+                ref={dateFromRef}
+                type="date"
+                onChange={e => {
+                  const date = e.currentTarget.valueAsDate;
+
+                  if (!date) {
+                    setDateRange({
+                      ...dateRange,
+                      from: undefined
+                    });
+                  } else {
+                    setDateRange({
+                      ...dateRange,
+                      from: isNaN(date.getTime()) ? undefined : date
+                    });
+                  }
+                }}
+              />
+              <InputRightAddon>Date to</InputRightAddon>
+              <Input
+                ref={dateToRef}
+                type="date"
+                sx={{ borderRightRadius: 'lg' }}
+                onChange={e => {
+                  const date = e.currentTarget.valueAsDate;
+
+                  if (!date) {
+                    setDateRange({
+                      ...dateRange,
+                      to: undefined
+                    });
+                  } else {
+                    date.setHours(23);
+                    date.setMinutes(59);
+                    date.setSeconds(59);
+                    date.setMilliseconds(999);
+
+                    setDateRange({
+                      ...dateRange,
+                      to: isNaN(date.getTime()) ? undefined : date
+                    });
+                  }
+                }}
+              />
+            </InputGroup>
+          )}
+        </HStack>
+      </Collapse>
 
       <List spacing={3}>
         {allPosts.nodes.map((post, idx) => (
