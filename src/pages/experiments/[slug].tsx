@@ -19,6 +19,9 @@ import {
   IconButton,
   Image,
   Input,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
   Stack,
   Text,
   Wrap
@@ -346,110 +349,131 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
         </CardBody>
       </Card>
 
-      <Wrap justify="space-between" align="center">
-        <TextControl
-          key={values.title}
-          text={values.title}
-          onSubmit={title => {
-            setValues({
-              ...values,
-              title
-            });
-          }}
-          type="heading"
-          editable={post.isOwner}
-        />
-
-        <HStack>
-          <Text fontSize="sm" color="gray.600">
-            {post.language}
-          </Text>
-
-          <PostCardRating
-            id={post.id}
-            likes={post.stars().totalCount || 0}
-            hasRated={!!post.hasStarred}
-            toggleRating={async (id: string) => {
-              if (post.hasStarred === false) {
-                await sq.mutate(m => m.postStar({ postId: id }));
-              } else if (post.hasStarred === true) {
-                await sq.mutate(m => m.postUnstar({ postId: id }));
-              }
+      <Skeleton isLoaded={isSafe} height="50px">
+        <Wrap justify="space-between" align="center">
+          <TextControl
+            key={values.title}
+            text={values.title}
+            onSubmit={title => {
+              setValues({
+                ...values,
+                title
+              });
             }}
+            type="heading"
+            editable={post.isOwner}
           />
-        </HStack>
-      </Wrap>
+
+          <HStack>
+            <Text fontSize="sm" color="gray.600">
+              {post.language}
+            </Text>
+
+            <PostCardRating
+              id={post.id}
+              likes={post.stars().totalCount || 0}
+              hasRated={!!post.hasStarred}
+              toggleRating={async (id: string) => {
+                if (post.hasStarred === false) {
+                  await sq.mutate(m => m.postStar({ postId: id }));
+                } else if (post.hasStarred === true) {
+                  await sq.mutate(m => m.postUnstar({ postId: id }));
+                }
+              }}
+            />
+          </HStack>
+        </Wrap>
+      </Skeleton>
 
       <Flex alignItems="center">
-        <Avatar
-          size="md"
-          src={post.user().profile.avatarUrl || ''}
-          name={post.user().profile.displayName}
-        />
+        <SkeletonCircle boxSize="unset" isLoaded={isSafe}>
+          <Avatar
+            size="md"
+            src={post.user().profile.avatarUrl || ''}
+            name={post.user().profile.displayName}
+          />
+        </SkeletonCircle>
+
         <Box ml={2}>
-          <Link to={`/users/${post.user().id}`}>
-            {post.user().profile.displayName}
-          </Link>
-          <Text fontSize="sm" color="gray.600">
-            @{post.user().profile.userName} &bull;
-            {post.createdAt !== post.updatedAt ? (
-              <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
-            ) : (
-              <> Created: {new Date(post.createdAt).toLocaleString()}</>
-            )}
-          </Text>
+          <SkeletonText isLoaded={isSafe}>
+            <Link to={`/users/${post.user().id}`}>
+              {post.user().profile.displayName}
+            </Link>
+
+            <Text fontSize="sm" color="gray.600">
+              @{post.user().profile.userName} &bull;
+              {post.createdAt !== post.updatedAt ? (
+                <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
+              ) : (
+                <> Created: {new Date(post.createdAt).toLocaleString()}</>
+              )}
+            </Text>
+          </SkeletonText>
         </Box>
       </Flex>
 
-      <TextControl
-        key={values.summary}
-        text={values.summary || undefined}
-        onSubmit={summary => {
-          setValues({
-            ...values,
-            summary
-          });
-        }}
-        type="text"
-        editable={post.isOwner}
-      />
-
-      <AspectRatio
-        ratio={16 / 9}
-        borderWidth="1px"
-        borderRadius="lg"
-        display={!post.avatarURL && !post.isOwner ? 'none' : 'block'}
-        cursor={post.isOwner ? 'pointer' : 'default'}
-        onClick={() => {
-          if (post.isOwner) {
-            imageInputRef.current?.click();
-          }
-        }}
-      >
-        <Image
-          src={post.avatarURL}
-          alt="Post Image"
-          fallback={
-            <Center>
-              <Text>Click to upload an image</Text>
-            </Center>
-          }
+      <SkeletonText isLoaded={isSafe}>
+        <TextControl
+          key={values.summary}
+          text={values.summary || undefined}
+          onSubmit={summary => {
+            setValues({
+              ...values,
+              summary
+            });
+          }}
+          type="text"
+          editable={post.isOwner}
         />
-      </AspectRatio>
+      </SkeletonText>
+
+      <Skeleton isLoaded={isSafe}>
+        <AspectRatio
+          ratio={16 / 9}
+          borderWidth="1px"
+          borderRadius="lg"
+          display={
+            isSafe && !post.avatarURL && !post.isOwner ? 'none' : 'block'
+          }
+          cursor={post.isOwner ? 'pointer' : 'default'}
+          onClick={() => {
+            if (post.isOwner) {
+              imageInputRef.current?.click();
+            }
+          }}
+        >
+          <Image
+            src={post.avatarURL}
+            alt="Post Image"
+            fallback={
+              <Center>
+                <Text>Click to upload an image</Text>
+              </Center>
+            }
+          />
+        </AspectRatio>
+      </Skeleton>
 
       {/* Placeholder for Editor Component */}
-      <UncontrolledMdxEditor
-        value={parsedContent}
-        isEditing={post.isOwner}
-        onUpdateValue={value => {
-          toc.setValue(value);
+      <SkeletonText
+        isLoaded={isSafe}
+        noOfLines={15}
+        spacing="4"
+        skeletonHeight="6"
+      >
+        <UncontrolledMdxEditor
+          value={parsedContent}
+          isEditing={post.isOwner}
+          onUpdateValue={value => {
+            toc.setValue(value);
 
-          setValues({
-            ...values,
-            content: JSON.stringify(value)
-          });
-        }}
-      />
+            setValues({
+              ...values,
+              content: JSON.stringify(value)
+            });
+          }}
+        />
+      </SkeletonText>
     </Stack>
   );
 };

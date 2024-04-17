@@ -25,7 +25,7 @@ const gradientAnimation = keyframes`
 `;
 
 const IndexPage: React.FC<PageProps> = () => {
-  const { data, isLoading, refetch } = useQuery(sq);
+  const { data, isSafe, refetch } = useQuery(sq);
 
   return (
     <VStack>
@@ -63,7 +63,7 @@ const IndexPage: React.FC<PageProps> = () => {
               Featured Experiments
             </Heading>
           </Box>
-
+          {/* 
           <SimpleGrid
             columns={2}
             gap={4}
@@ -71,23 +71,25 @@ const IndexPage: React.FC<PageProps> = () => {
             w="full"
             display={isLoading ? 'grid' : 'none'}
           >
+            <PostCard post={post} hideAuthor />;
             <PostCardSkeleton />
             <PostCardSkeleton />
             <PostCardSkeleton />
-            <PostCardSkeleton />
-          </SimpleGrid>
+          </SimpleGrid> */}
 
           <SimpleGrid
-            columns={2}
+            columns={{
+              base: 1,
+              md: 2
+            }}
             gap={4}
             p={5}
             w="full"
-            display={isLoading ? 'none' : 'grid'}
           >
             {data
               .allTrendingPost({ pagination: { first: 4 } })
               .nodes.map(post => {
-                return <PostCard key={post.id} post={post} hideAuthor />;
+                return <PostCard key={post.id} post={post} isSafe={isSafe} />;
               })}
           </SimpleGrid>
 

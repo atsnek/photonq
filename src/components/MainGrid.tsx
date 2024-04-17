@@ -22,6 +22,7 @@ const MainGrid: FC<IMainGridProps> = ({
       maxW={mainContentWrapperProps.default.maxW}
       h={`max(mac-content, calc(100vh - ${navOffset}))`}
       mx="auto"
+      px="4"
       templateRows="1fr"
       templateColumns={{
         base: '1fr',

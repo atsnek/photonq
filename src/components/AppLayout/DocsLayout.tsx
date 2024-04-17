@@ -59,7 +59,15 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
   return (
     <Container maxW="8xl" w="full" minH="full" mt={offset}>
       <Flex minH="100dvh">
-        <Box as="aside" flex="1" maxW="xs">
+        <Box
+          as="aside"
+          flex="1"
+          maxW="xs"
+          display={{
+            base: 'none',
+            md: 'block'
+          }}
+        >
           <Box position="sticky" top="100px" mt="50px">
             <PageDirectory
               data={menuStructure}
@@ -75,7 +83,10 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
 
         <TOCProvider>
           <Box flex="1" mt="6" maxW="3xl" m="4">
-            <MainBreadcrumb parts={breadcrumbParts} />
+            {path?.startsWith('/docs/') && (
+              <MainBreadcrumb parts={breadcrumbParts} />
+            )}
+
             {memoedChildren}
 
             <MainBottomNav />

@@ -3,12 +3,15 @@ import {
   Badge,
   Box,
   Card,
+  CardBody,
   HStack,
   Heading,
   Image,
   LinkBox,
   LinkOverlay,
   Skeleton,
+  SkeletonText,
+  Stack,
   Text,
   VStack,
   Wrap
@@ -23,13 +26,15 @@ import NoSSR from '../NoSSR';
 interface PostCardProps {
   hideAuthor?: boolean;
   post: Post;
+  isSafe?: boolean;
 }
 
-const PostCard: FC<PostCardProps> = ({ hideAuthor, post }) => {
+const PostCard: FC<PostCardProps> = ({ hideAuthor, post, isSafe }) => {
+  const isLoaded = isSafe !== undefined ? isSafe : true;
+
   return (
     <LinkBox
       as={Card}
-      p="5"
       variant="outline"
       borderRadius="xl"
       _hover={{
@@ -45,8 +50,8 @@ const PostCard: FC<PostCardProps> = ({ hideAuthor, post }) => {
         }
       }}
     >
-      <HStack w="full" spacing="3">
-        <VStack flex={1} alignItems="flex-start">
+      <CardBody as={Stack} justifyContent="end">
+        <HStack w="full" spacing="3">
           {post.avatarURL && post.avatarURL?.length > 0 && (
             <Image
               boxSize="3rem"
@@ -55,15 +60,19 @@ const PostCard: FC<PostCardProps> = ({ hideAuthor, post }) => {
               objectFit="cover"
             />
           )}
-          <Box maxW="55%">
+
+          <Stack>
             {!hideAuthor && (
-              <Link
-                variant="hover-theme"
-                fontSize="sm"
-                href={`/users/${post.user().id}`}
-              >
-                @{post.user().profile.userName}
-              </Link>
+              <SkeletonText isLoaded={isLoaded} noOfLines={1} minW="50px">
+                <Link
+                  noOfLines={1}
+                  variant="hover-theme"
+                  fontSize="sm"
+                  href={`/users/${post.user().id}`}
+                >
+                  @{post.user().profile.userName}
+                </Link>
+              </SkeletonText>
             )}
             <Heading
               as="h5"
@@ -71,64 +80,65 @@ const PostCard: FC<PostCardProps> = ({ hideAuthor, post }) => {
               transition="color 0.2s ease-in-out"
               flex={1}
               w={{ base: 'full', md: 'auto' }}
-              textOverflow="ellipsis"
-              overflow="hidden"
-              whiteSpace="nowrap"
             >
               <LinkOverlay as={Link} to={`/experiments/${post.slug}`}>
                 {post.title}
               </LinkOverlay>
             </Heading>
-          </Box>
-        </VStack>
-      </HStack>
+          </Stack>
+        </HStack>
 
-      <Text
-        mt="2"
-        flexGrow={1}
-        noOfLines={2}
-        opacity={0.75}
-        className="sd-pp-summary"
-        transition="opacity 0.2s ease-in-out"
-      >
-        {post.summary}
-      </Text>
-
-      <HStack mt="4" justifyContent="space-between">
-        <Wrap>
-          <Text fontSize={12} color="components.postPreview.date.color">
-            <NoSSR>{new Date(post.createdAt).toLocaleDateString()}</NoSSR>
-          </Text>
-
-          <Badge colorScheme="gray" borderRadius="md">
-            {post.language}
-          </Badge>
-
-          <Badge
-            display={post.isOwner ? 'block' : 'none'}
-            variant="outline"
-            size="sm"
-            borderRadius="md"
-            colorScheme="blue"
+        <SkeletonText isLoaded={isLoaded}>
+          <Text
+            mt="2"
+            flexGrow={1}
+            noOfLines={2}
+            opacity={0.75}
+            className="sd-pp-summary"
+            transition="opacity 0.2s ease-in-out"
           >
-            {post.privacy === Privacy.PUBLIC && 'Public'}
-            {post.privacy === Privacy.PRIVATE && 'Private'}
-          </Badge>
-        </Wrap>
+            {post.summary}
+          </Text>
+        </SkeletonText>
 
-        <PostCardRating
-          id={post.id}
-          likes={post.stars().totalCount || 0}
-          hasRated={!!post.hasStarred}
-          toggleRating={async (id: string) => {
-            if (post.hasStarred === false) {
-              await sq.mutate(m => m.postStar({ postId: id }));
-            } else if (post.hasStarred === true) {
-              await sq.mutate(m => m.postUnstar({ postId: id }));
-            }
-          }}
-        />
-      </HStack>
+        <SkeletonText isLoaded={isLoaded} noOfLines={1}>
+          <HStack mt="4" justifyContent="space-between">
+            <Wrap>
+              <Text fontSize={12} color="components.postPreview.date.color">
+                <NoSSR>{new Date(post.createdAt).toLocaleDateString()}</NoSSR>
+              </Text>
+
+              <Badge colorScheme="gray" borderRadius="md">
+                {post.language}
+              </Badge>
+
+              <Badge
+                display={post.isOwner ? 'block' : 'none'}
+                variant="outline"
+                size="sm"
+                borderRadius="md"
+                colorScheme="blue"
+              >
+                {post.privacy === Privacy.PUBLIC && 'Public'}
+                {post.privacy === Privacy.PRIVATE && 'Private'}
+              </Badge>
+            </Wrap>
+
+            <PostCardRating
+              id={post.id}
+              likes={post.stars().totalCount || 0}
+              hasRated={!!post.hasStarred}
+              toggleRating={async (id: string) => {
+                if (post.hasStarred === false) {
+                  await sq.mutate(m => m.postStar({ postId: id }));
+                } else if (post.hasStarred === true) {
+                  await sq.mutate(m => m.postUnstar({ postId: id }));
+                }
+              }}
+            />
+          </HStack>
+        </SkeletonText>
+      </CardBody>
     </LinkBox>
   );
 };

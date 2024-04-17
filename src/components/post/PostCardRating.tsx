@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Button, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Text, Tooltip } from '@chakra-ui/react';
 import TbStar from '../icons/tabler/TbStar';
 import { formatNumber } from '../../utils/general';
 import { useAuth } from '@atsnek/jaen';
@@ -25,7 +25,7 @@ const PostCardRating: FC<PostCardRatingProps> = ({
   useHighContrast,
   ...props
 }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, signinRedirect } = useAuth();
 
   const [likes, setLikes] = useState(props.likes);
 
@@ -63,7 +63,6 @@ const PostCardRating: FC<PostCardRatingProps> = ({
               }
             : {}
         }
-        cursor={isAuthor ? 'default' : 'pointer'}
         onClick={handleRating}
         px={2}
         isDisabled={isRating}
@@ -82,17 +81,31 @@ const PostCardRating: FC<PostCardRatingProps> = ({
     );
   }
   return (
-    <HStack
-      spacing={1}
-      color="features.rating.disabled.color"
-      _hover={{
-        color: 'features.rating._hover.disabled.color'
-      }}
-      transition="color 0.2s ease-in-out"
+    <Tooltip
+      label="Sign up to rate this post"
+      aria-label="Sign up to rate this post"
     >
-      <TbStar boxSize={3} fill="none" stroke="currentColor" />
-      <Text fontSize={12}>{formatNumber(likes)}</Text>
-    </HStack>
+      <Button
+        display={'flex'}
+        variant={'unstyled'}
+        size={'sm'}
+        px="2"
+        leftIcon={<TbStar fill="none" stroke="currentColor" />}
+        color="features.rating.disabled.color"
+        _hover={{
+          color: 'features.rating._hover.disabled.color'
+        }}
+        transition="color 0.2s ease-in-out"
+        onClick={() =>
+          signinRedirect({
+            prompt: 'create'
+          })
+        }
+        fontSize={12}
+      >
+        {formatNumber(likes)}
+      </Button>
+    </Tooltip>
   );
 };
 

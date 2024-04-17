@@ -15,6 +15,9 @@ import {
   CardBody,
   Center,
   Container,
+  Editable,
+  EditablePreview,
+  EditableTextarea,
   HStack,
   Heading,
   Icon,
@@ -26,6 +29,8 @@ import {
   ListIcon,
   ListItem,
   SimpleGrid,
+  SkeletonText,
+  Spacer,
   Stack,
   StackDivider,
   Tab,
@@ -35,6 +40,7 @@ import {
   Tabs,
   Text,
   Textarea,
+  Tooltip,
   Wrap
 } from '@chakra-ui/react';
 import { useLazyQuery, useQuery } from 'snek-query/react-hooks';
@@ -64,6 +70,7 @@ import TbInfoCircle from '../../components/icons/tabler/TbInfoCircle';
 import TbUserMinus from '../../components/icons/tabler/TbUserMinus';
 import TbUserPlus from '../../components/icons/tabler/TbUserPlus';
 import TbPencilPlus from '../../components/icons/tabler/TbPencilPlus';
+import { TextControl } from '../../components/TextControl';
 
 const AvatarImage: React.FC<{
   src: string | undefined;
@@ -339,7 +346,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
 
   const auth = useAuth();
 
-  const [_, { data, isLoading, refetch }] = useLazyQuery(sq);
+  const [_, { data, isLoading, isSafe, refetch }] = useLazyQuery(sq);
 
   const user = data.user({
     where: {
@@ -367,97 +374,194 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
 
   return (
     <Box minH="100dvh" mt={offset}>
-      {isLoading && <div>Loading...</div>}
-
       <MainGrid>
-        <Stack divider={<StackDivider />}>
-          {userId === auth.user?.profile.sub ? (
-            <AuthUserProvider>
-              <EditableImage
-                avatarUrl={user.profile.avatarUrl}
-                userId={userId}
-                displayName={user.profile.displayName}
-              />
-            </AuthUserProvider>
-          ) : (
-            <AvatarImage
-              src={user.profile.avatarUrl || undefined}
-              displayName={user.profile.displayName}
-            />
-          )}
+        <Stack mt="16">
+          <Stack
+            // divider={<StackDivider />}
+            spacing={4}
+          >
+            <Box alignSelf="center">
+              {userId === auth.user?.profile.sub ? (
+                <AuthUserProvider>
+                  <EditableImage
+                    avatarUrl={user.profile.avatarUrl}
+                    userId={userId}
+                    displayName={user.profile.displayName}
+                  />
+                </AuthUserProvider>
+              ) : (
+                <AvatarImage
+                  src={user.profile.avatarUrl || undefined}
+                  displayName={user.profile.displayName}
+                />
+              )}
+            </Box>
 
-          <Stack>
-            <Heading as="h6" fontSize="24px">
-              {user.profile.displayName}
-            </Heading>
-            <Text>@{user.profile.userName}</Text>
-
-            <Button
-              display={userId === auth.user?.profile.sub ? 'none' : 'block'}
-              variant="outline"
-              isLoading={isFollow}
-              onClick={async () => {
-                setIsFollow(true);
-                const [_, errors] = user.isFollowed
-                  ? await sq.mutate(m =>
-                      m.userUnfollow({
-                        followedId: userId
-                      })
-                    )
-                  : await sq.mutate(m =>
-                      m.userFollow({
-                        followedId: userId
-                      })
-                    );
-
-                if (!errors) {
-                  refetch();
-                }
-
-                setIsFollow(false);
+            <Stack
+              textAlign={{
+                base: 'center',
+                md: 'start'
+              }}
+              justifyContent={{
+                base: 'center',
+                md: 'start'
               }}
             >
-              {user.isFollowed ? 'Unfollow' : 'Follow'}
-            </Button>
+              <SkeletonText
+                isLoaded={isSafe}
+                noOfLines={1}
+                skeletonHeight={'24px'}
+              >
+                <Heading as="h6" fontSize="24px">
+                  {user.profile.displayName}
+                </Heading>
+              </SkeletonText>
+
+              <SkeletonText isLoaded={isSafe} noOfLines={1}>
+                <Text>@{user.profile.userName}</Text>
+              </SkeletonText>
+
+              <Spacer />
+
+              <Tooltip
+                label="Sign up to follow users"
+                isDisabled={auth.isAuthenticated}
+              >
+                <Button
+                  display={
+                    !isSafe || userId === auth.user?.profile.sub
+                      ? 'none'
+                      : 'block'
+                  }
+                  variant="outline"
+                  isLoading={isFollow}
+                  onClick={async () => {
+                    if (!auth.isAuthenticated) {
+                      auth.signinRedirect({
+                        prompt: 'create'
+                      });
+                      return;
+                    }
+
+                    setIsFollow(true);
+                    const [_, errors] = user.isFollowed
+                      ? await sq.mutate(m =>
+                          m.userUnfollow({
+                            followedId: userId
+                          })
+                        )
+                      : await sq.mutate(m =>
+                          m.userFollow({
+                            followedId: userId
+                          })
+                        );
+
+                    if (!errors) {
+                      refetch();
+                    }
+
+                    setIsFollow(false);
+                  }}
+                >
+                  {user.isFollowed ? 'Unfollow' : 'Follow'}
+                </Button>
+              </Tooltip>
+            </Stack>
           </Stack>
 
-          {user.bio && <Textarea value={user.bio} />}
+          <TextControl
+            text={user.bio || 'No bio yet'}
+            type="text"
+            editable={userId === auth.user?.profile.sub}
+            onSubmit={async bio => {
+              await sq.mutate(m =>
+                m.userUpdate({
+                  id: userId,
+                  values: {
+                    bio
+                  }
+                })
+              );
+            }}
+          />
 
-          <List>
-            <ListItem>
+          <List
+            fontSize="sm"
+            alignSelf={{
+              base: 'center',
+              md: 'start'
+            }}
+          >
+            <ListItem
+              display={{
+                base: 'inline-block',
+                md: 'block'
+              }}
+              mr={{
+                base: 0,
+                md: 4
+              }}
+            >
               <ListIcon as={TbUsers} />
               <Link
                 onClick={() => {
                   handleTabsChange(3);
                 }}
               >
-                {formatNumber(user.followers().totalCount)} Followers
+                <b>{formatNumber(user.followers().totalCount)}</b> Followers
               </Link>
             </ListItem>
-            <ListItem>
+            <ListItem
+              display={{
+                base: 'inline-block',
+                md: 'block'
+              }}
+              mr={{
+                base: 0,
+                md: 4
+              }}
+            >
               <ListIcon as={TbUserShare} />
               <Link
                 onClick={() => {
                   handleTabsChange(4);
                 }}
               >
-                {formatNumber(user.followings().totalCount)} Following
+                <b>{formatNumber(user.followings().totalCount)} </b>Following
               </Link>
             </ListItem>
 
-            <ListItem>
+            <ListItem
+              display={{
+                base: 'inline-block',
+                md: 'block'
+              }}
+              mr={{
+                base: 4,
+                md: 0
+              }}
+            >
               <ListIcon as={TbEye} />
-              {formatNumber(user.receivedUserViews().totalCount)} Views
+              <b>{formatNumber(user.receivedUserViews().totalCount)}</b> Views
             </ListItem>
 
-            <ListItem>
+            <ListItem
+              display={{
+                base: 'inline-block',
+                md: 'block'
+              }}
+              mr={{
+                base: 0,
+                md: 4
+              }}
+            >
               <ListIcon as={FaFlask} />
               <Link
                 onClick={() => {
                   handleTabsChange(1);
                 }}
               >
-                {formatNumber(user.posts().totalCount)} Experiments
+                <b>{formatNumber(user.posts().totalCount)}</b> Experiments
               </Link>
             </ListItem>
           </List>
@@ -465,15 +569,15 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
 
         <Tabs index={tabIndex} onChange={handleTabsChange} isFitted>
           <TabList>
-            <Tab>
+            <Tab fontSize="sm">
               <Icon as={TbUser} mr="2" />
               Overview
             </Tab>
-            <Tab>
+            <Tab fontSize="sm">
               <Icon as={FaFlask} mr="2" />
               Experiments ({formatNumber(user.posts().totalCount)})
             </Tab>
-            <Tab>
+            <Tab fontSize="sm">
               <Icon as={TbStar} mr="2" />
               Stars ({formatNumber(user.starredPosts().totalCount)})
             </Tab>
@@ -490,7 +594,12 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                   spacing={4}
                 >
                   {user.featuredPosts.nodes.map(post => (
-                    <PostCard key={post.id} post={post} hideAuthor />
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      hideAuthor
+                      isSafe={isSafe}
+                    />
                   ))}
                 </SimpleGrid>
 
@@ -511,7 +620,14 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                         where: { userId }
                       })
                       .nodes.map(p => {
-                        return <PostCard key={p.id} post={p} hideAuthor />;
+                        return (
+                          <PostCard
+                            key={p.id}
+                            post={p}
+                            hideAuthor
+                            isSafe={isSafe}
+                          />
+                        );
                       })}
                   </SimpleGrid>
                 </Stack>
@@ -537,7 +653,12 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                         ]
                       })
                       .nodes.map(post => (
-                        <PostCard key={post.id} post={post} hideAuthor />
+                        <PostCard
+                          key={post.id}
+                          post={post}
+                          hideAuthor
+                          isSafe={isSafe}
+                        />
                       ))}
                   </SimpleGrid>
                 </Stack>

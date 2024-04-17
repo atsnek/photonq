@@ -29,7 +29,7 @@ interface PostListProps {
 const PostList: FC<PostListProps> = props => {
   const { isAuthenticated } = useAuth();
 
-  const [_, { data, refetch, isLoading }] = useLazyQuery(sq);
+  const [_, { data, refetch, isSafe }] = useLazyQuery(sq);
 
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
 
@@ -132,16 +132,14 @@ const PostList: FC<PostListProps> = props => {
         )}
       </HStack>
 
-      <List spacing={3} display={isLoading ? 'block' : 'none'}>
-        <PostCardSkeleton />
-        <PostCardSkeleton />
-        <PostCardSkeleton />
-        <PostCardSkeleton />
-      </List>
-
-      <List spacing={3} display={isLoading ? 'none' : 'block'}>
+      <List spacing={3}>
         {allPosts.nodes.map((post, idx) => (
-          <PostCard key={idx} post={post} hideAuthor={props.hideAuthor} />
+          <PostCard
+            key={idx}
+            post={post}
+            hideAuthor={props.hideAuthor}
+            isSafe={isSafe}
+          />
         ))}
       </List>
 
