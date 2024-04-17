@@ -76,7 +76,6 @@ export const SearchResultItem: FC<{
         color: 'features.search.section.item._hover.color'
       })}
     >
-      <Text>{id}</Text>
       <Box
         display="flex"
         alignItems="center"
