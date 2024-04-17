@@ -349,7 +349,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
         </CardBody>
       </Card>
 
-      <Skeleton isLoaded={isSafe} height="50px">
+      <Skeleton isLoaded={isSafe} minH="50px">
         <Wrap justify="space-between" align="center">
           <TextControl
             key={values.title}

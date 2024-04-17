@@ -62,7 +62,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
         <Box
           as="aside"
           flex="1"
-          maxW="xs"
+          maxW={{ base: '150px', lg: 'xs' }}
           display={{
             base: 'none',
             md: 'block'
@@ -93,7 +93,15 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
           </Box>
 
           {!isCommunity && (
-            <Box as="aside" flex="1" maxW="xs">
+            <Box
+              as="aside"
+              flex="1"
+              maxW={{ base: '150px', lg: 'xs' }}
+              display={{
+                base: 'none',
+                md: 'block'
+              }}
+            >
               <Box position="sticky" top="100px" mt="50px">
                 <Text
                   color="rightNav.titleTop.color"
