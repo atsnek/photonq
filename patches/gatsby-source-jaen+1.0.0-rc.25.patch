@@ -1,0 +1,20 @@
+diff --git a/node_modules/gatsby-source-jaen/dist/source-nodes/jaen-data.js b/node_modules/gatsby-source-jaen/dist/source-nodes/jaen-data.js
+index 21d71ca..10f88e3 100644
+--- a/node_modules/gatsby-source-jaen/dist/source-nodes/jaen-data.js
++++ b/node_modules/gatsby-source-jaen/dist/source-nodes/jaen-data.js
+@@ -95,7 +95,14 @@ var sourceNodes = function (args) { return __awaiter(void 0, void 0, void 0, fun
+                 });
+                 if (response) {
+                     jaenData = (0, deepmerge_1.default)(jaenData, response.data, {
+-                        arrayMerge: deepmerge_2.deepmergeArrayIdMerge
++                        arrayMerge: deepmerge_2.deepmergeArrayIdMerge,
++                        customMerge: function (key) {
++                            if (key === 'IMA:MdxField') {
++                                return function (target, source) {
++                                    return __assign(__assign({}, target), source);
++                                };
++                            }
++                        }
+                     });
+                 }
+                 _a.label = 5;
