@@ -89,7 +89,14 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
   const canEdit = isAuthenticated && user?.isAdmin ? true : false;
 
   return (
-    <Stack spacing={4}>
+    <Stack
+      spacing={4}
+      sx={{
+        '.cm-editor': {
+          height: '60dvh'
+        }
+      }}
+    >
       {canEdit && isLoading === false && (
         <ButtonGroup>
           <Button
