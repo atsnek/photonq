@@ -47,10 +47,10 @@
     css-tree "^2.3.1"
     is-potential-custom-element-name "^1.0.1"
 
-"@atsnek/jaen-fields-mdx@^1.0.0-rc.6":
-  version "1.0.0-rc.6"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.6.tgz#2a1fc3f0e81eae6709cc7ecf6a7cc7cf3e206673"
-  integrity sha512-TBrmXtmQd52n9ViWSP+gMiCmX+/6O8KEs6h6yIvRurV7fNVL8dhzUX/IJ/NPa+ufGWhfyR2GUkVYEKa3/0IfAw==
+"@atsnek/jaen-fields-mdx@^1.0.0-rc.8":
+  version "1.0.0-rc.8"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.8.tgz#cfdb58e85217b12dd2ae0cf6b849f288defc138f"
+  integrity sha512-aeKTwNDLQ8/CZgcmJqVbBH8DX8ZT2qnqF8SagfKGg8iLohBJ/e0+X7RNtApWI6MRzzDfZqsPXnO7zMHZQ8FExg==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"

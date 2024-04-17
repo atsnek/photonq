@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@atsnek/jaen": "1.0.0-rc.46",
-    "@atsnek/jaen-fields-mdx": "^1.0.0-rc.6",
+    "@atsnek/jaen-fields-mdx": "^1.0.0-rc.8",
     "@chakra-ui/anatomy": "^2.2.0",
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/react": "^2.8.1",
