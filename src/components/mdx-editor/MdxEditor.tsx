@@ -38,18 +38,20 @@ interface IMdxEditorProps {
 
 export const mdxEditorComponents: MdxFieldProps['components'] = {
   // TEXT
-  p: props => <Text {...props} />,
+  p: props => <Text children={props.children} />,
   // LIST
-  ul: (props: any) => <UnorderedList {...props}></UnorderedList>,
-  ol: (props: any) => <OrderedList {...props}></OrderedList>,
-  li: (props: any) => <ListItem {...props}></ListItem>,
+  ul: (props: any) => <UnorderedList children={props.children}></UnorderedList>,
+  ol: (props: any) => <OrderedList children={props.children}></OrderedList>,
+  li: (props: any) => <ListItem children={props.children}></ListItem>,
   // TABLE
-  table: (props: any) => <Table variant="striped" w="fit-content" {...props} />,
-  thead: (props: any) => <Thead {...props} />,
-  tbody: (props: any) => <Tbody {...props} />,
-  tr: (props: any) => <Tr {...props} />,
-  th: (props: any) => <Th {...props} />,
-  td: (props: any) => <Td {...props} />,
+  table: (props: any) => (
+    <Table variant="striped" w="fit-content" children={props.children} />
+  ),
+  thead: (props: any) => <Thead children={props.children} />,
+  tbody: (props: any) => <Tbody children={props.children} />,
+  tr: (props: any) => <Tr children={props.children} />,
+  th: (props: any) => <Th children={props.children} />,
+  td: (props: any) => <Td children={props.children} />,
   // MISC
   code: ({
     className,
@@ -58,22 +60,39 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   }: {
     playground?: boolean;
     className?: string;
+    children?: string;
+    headerText?: string;
   }) => {
     const lang = className?.replace('language-', '') || 'text';
 
     if (playground) {
-      return <QASMPlayground {...props} wrapWithPre={false} />;
+      return <QASMPlayground children={props.children} wrapWithPre={false} />;
     }
 
-    return <CodeSnippet language={lang} {...props} />;
+    return (
+      <CodeSnippet
+        language={lang}
+        children={props.children}
+        headerText={props.headerText}
+      />
+    );
   },
   // CUSTOM COMPONENTS
-  QASMPlayground,
-  Filesystem,
-  ImageCard,
-  Callout,
-  IconCard,
-  DocsIndex
+  QASMPlayground: props => <QASMPlayground children={props.children} />,
+  Filesystem: props => <Filesystem structure={props.structure} />,
+  ImageCard: props => (
+    <ImageCard
+      id={props.id}
+      image={props.image}
+      link={props.link}
+      size={props.size}
+    />
+  ),
+  Callout: props => (
+    <Callout icon={props.icon} type={props.type} children={props.children} />
+  ),
+  IconCard: props => <IconCard icon={props.icon} link={props.link} />,
+  DocsIndex: () => <DocsIndex />
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
