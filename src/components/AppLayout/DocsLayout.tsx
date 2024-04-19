@@ -67,6 +67,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
             base: 'none',
             md: 'block'
           }}
+          pb="4"
         >
           <Box position="sticky" top="100px" mt="50px">
             <PageDirectory
@@ -101,6 +102,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
                 base: 'none',
                 md: 'block'
               }}
+              pb="4"
             >
               <Box position="sticky" top="100px" mt="50px">
                 <Text
