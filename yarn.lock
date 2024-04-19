@@ -47,10 +47,10 @@
     css-tree "^2.3.1"
     is-potential-custom-element-name "^1.0.1"
 
-"@atsnek/jaen-fields-mdx@^1.0.0-rc.6":
-  version "1.0.0-rc.6"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.6.tgz#2a1fc3f0e81eae6709cc7ecf6a7cc7cf3e206673"
-  integrity sha512-TBrmXtmQd52n9ViWSP+gMiCmX+/6O8KEs6h6yIvRurV7fNVL8dhzUX/IJ/NPa+ufGWhfyR2GUkVYEKa3/0IfAw==
+"@atsnek/jaen-fields-mdx@^1.0.0-rc.10":
+  version "1.0.0-rc.10"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.10.tgz#0102c355076f831cc231489c822256e4425bfee0"
+  integrity sha512-FBngLdtDxtPQXJTKI1UHQxyd4H/OtYtFyak0l26deh9m8luEQEmzwA+pK+5aIrQYHFRCJnTtB2r+38z7f2xxlg==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
@@ -59,6 +59,7 @@
     "@mdx-js/mdx" "^3.0.0"
     "@uiw/react-codemirror" "^4.21.12"
     ahooks "^3.7.8"
+    deepmerge "^4.3.1"
     mdast-util-directive "^3.0.0"
     mdast-util-frontmatter "^2.0.0"
     mdast-util-gfm "^3.0.0"
@@ -78,14 +79,15 @@
     remark-gfm "^4.0.0"
     remark-math "^6.0.0"
     unified "^11.0.2"
+    unist-builder "^4.0.0"
     vfile "^5.0.0"
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.69":
-  version "1.0.0-rc.69"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.69.tgz#b667135bde0dc1e4766a18dd28ebf2de7fd9d626"
-  integrity sha512-roo6C0fnFiPpRifIZyY4zIuw+48yZbr1Kkc19oYx1yf4sZJyyzHIx3fFfFRY5GkxunWd94fu7+0Wmjj6zmkNqQ==
+"@atsnek/jaen@^1.0.0-rc.70":
+  version "1.0.0-rc.70"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.70.tgz#2f6403e1d4dffde905a26fc90ee04ab3330c66c5"
+  integrity sha512-jIbraY9gyoE+rRL0fsFq1R2aPZZn9Oa3hopzd1BPEzEL5+4vzJPqsF+NUk30hovQdWkfHbsekKs5FqwD8xxoRw==
   dependencies:
     "@chakra-ui/icons" "^2.1.1"
     "@chakra-ui/react" "^2.8.0"
@@ -8237,10 +8239,10 @@ gatsby-jaen-lens@^0.0.17:
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
 
-gatsby-jaen-mailpress@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-0.0.4.tgz#32c3d9c3700fe098a83511cde011219fd3d3838b"
-  integrity sha512-RJpL8+gNviyGAHCJ0QC0KifluhRoObTGYc87iVD6gWyulU3I0/lxqBhZQ/cT8o0HSLIIn4/pvRgvOfebJ+q4/g==
+gatsby-jaen-mailpress@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-0.0.5.tgz#af3d592b719e66b52e0713aa213708d7ea97a1af"
+  integrity sha512-zZmq8m/djJosi3qrhTfkULsKXITsvNb6kxn5ZpNNwE2cWRIN3FCXzemSxd7JirAsFW0WGqHAaozneyuvAObwlw==
   dependencies:
     "@monaco-editor/react" "^4.6.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
@@ -8346,10 +8348,10 @@ gatsby-plugin-image@^3.11.0, gatsby-plugin-image@^3.13.1:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.91:
-  version "1.0.0-rc.91"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.91.tgz#5460a5ee5148864508d5c4491de9db1e0b40424f"
-  integrity sha512-3mmzdU1bhXRGal5MN8AWFq4ziWd4872Xj7H6T8GiGrRM15yIA/7yCqQp5hejvVbInivsV/jtL5p9NKYpSZbh8g==
+gatsby-plugin-jaen@^1.0.0-rc.93:
+  version "1.0.0-rc.93"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.93.tgz#6336a4f88b775b895c31941aa4c86f88b0c63143"
+  integrity sha512-nI4hxefmkrpCr3jy0zDte7mu1V+jAtmQSX0KpSyqZQ72GgcYCLFN7XUsqQboosHuvEQcah1LdSnmkDmy4g/WOw==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
@@ -8370,7 +8372,7 @@ gatsby-plugin-jaen@^1.0.0-rc.91:
     gatsby-plugin-sitemap "^6.12.0"
     gatsby-plugin-ts-config "^2.1.3"
     gatsby-source-filesystem "^5.11.0"
-    gatsby-source-jaen "^1.0.0-rc.25"
+    gatsby-source-jaen "^1.0.0-rc.26"
     gatsby-transformer-sharp "^5.11.0"
     isomorphic-dompurify "^1.8.0"
     lucide-react "^0.358.0"
@@ -8382,7 +8384,7 @@ gatsby-plugin-jaen@^1.0.0-rc.91:
     react-konva "^18.2.10"
     react-photo-view "^1.2.3"
     react-zoom-pan-pinch "^3.1.0"
-    reagraph "^4.13.0"
+    reagraph "^4.16.1"
     slugify "^1.6.6"
     styled-components "^6.0.5"
     tailwind-merge "^2.2.1"
@@ -8537,10 +8539,10 @@ gatsby-source-filesystem@^5.11.0:
     valid-url "^1.0.9"
     xstate "^4.38.0"
 
-gatsby-source-jaen@^1.0.0-rc.25:
-  version "1.0.0-rc.25"
-  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.25.tgz#94278ad41beb56dec9d99f653a80b282276683f8"
-  integrity sha512-+qI/GiZTa/YclhG98jgB+/Hm+8/pOFs2aaojOxNEoEFcZ9jpTEzBvAynqQnmcz+hu6qZFO1tb70gO7JZgobYGg==
+gatsby-source-jaen@^1.0.0-rc.26:
+  version "1.0.0-rc.26"
+  resolved "https://registry.yarnpkg.com/gatsby-source-jaen/-/gatsby-source-jaen-1.0.0-rc.26.tgz#4642de8ba97c4af0a0df9d0c7c7fb1005c3a3283"
+  integrity sha512-j73L7jSK4dQQ5NUKdllQLkYOFjui9k3eH/0J20uIJknQszQfgkEnYSncJlc5GbKplwc1tU1G0+nG8e/LZ2i3rw==
   dependencies:
     "@babel/generator" "^7.22.15"
     "@babel/parser" "^7.22.11"
@@ -13650,10 +13652,10 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
-reagraph@^4.13.0:
-  version "4.16.0"
-  resolved "https://registry.yarnpkg.com/reagraph/-/reagraph-4.16.0.tgz#9be97816870c5348fedff61d66fa8cea45eb1943"
-  integrity sha512-PCmEfq/UOPies6EqXJQGGi7N1n+687rCQ/WsdhuuglWHgkEhgSVGmtpxWVMOqkCs2P7fp0UzAQOyPy4YhdbQtw==
+reagraph@^4.16.1:
+  version "4.16.1"
+  resolved "https://registry.yarnpkg.com/reagraph/-/reagraph-4.16.1.tgz#94dbe34ffbe04506f71f48ea67f04c020c1252c2"
+  integrity sha512-xSzfeJbplHR4usoWpg2pJPbkODZ3YSQff5D4c0fATYYBg2MQbigarQff03Osl36zGBbh7DVVApfxycDZEoJNGw==
   dependencies:
     "@react-spring/three" "9.6.1"
     "@react-three/fiber" "8.13.5"
@@ -15911,6 +15913,13 @@ unique-string@^2.0.0:
   integrity sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==
   dependencies:
     crypto-random-string "^2.0.0"
+
+unist-builder@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/unist-builder/-/unist-builder-4.0.0.tgz#817b326c015a6f9f5e92bb55b8e8bc5e578fe243"
+  integrity sha512-wmRFnH+BLpZnTKpc5L7O67Kac89s9HMrtELpnNaE6TAobq5DTZZs5YaTQfAZBA9bFPECx2uVAPO31c+GVug8mg==
+  dependencies:
+    "@types/unist" "^3.0.0"
 
 unist-util-find-after@^5.0.0:
   version "5.0.0"
