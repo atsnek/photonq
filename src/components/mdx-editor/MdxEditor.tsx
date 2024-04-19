@@ -43,7 +43,6 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   ul: (props: any) => <UnorderedList {...props}></UnorderedList>,
   ol: (props: any) => <OrderedList {...props}></OrderedList>,
   li: (props: any) => <ListItem {...props}></ListItem>,
-  a: (props: any) => <Link to={props.href} {...props} />,
   // TABLE
   table: (props: any) => <Table variant="striped" w="fit-content" {...props} />,
   thead: (props: any) => <Thead {...props} />,
@@ -74,8 +73,7 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   ImageCard,
   Callout,
   IconCard,
-  DocsIndex,
-  Image: JaenImage
+  DocsIndex
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
