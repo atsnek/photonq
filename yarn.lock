@@ -8237,17 +8237,17 @@ gatsby-jaen-lens@^0.0.17:
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
 
-gatsby-jaen-mailpress@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-0.0.1.tgz#a86c9f8799da6a8581cc94e3b464768c615bc54a"
-  integrity sha512-HIc3B23OVE0NnTY5jsa76Tf+QTgQBhz3c/tSGjjJjjyWzt6n2idYk2M633VjPP9kbyuDocEytlIE/lSIkR/+hA==
+gatsby-jaen-mailpress@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-0.0.4.tgz#32c3d9c3700fe098a83511cde011219fd3d3838b"
+  integrity sha512-RJpL8+gNviyGAHCJ0QC0KifluhRoObTGYc87iVD6gWyulU3I0/lxqBhZQ/cT8o0HSLIIn4/pvRgvOfebJ+q4/g==
   dependencies:
     "@monaco-editor/react" "^4.6.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
     "@tanstack/react-table" "^8.10.7"
     isomorphic-dompurify "^1.9.0"
     react-hook-form "^7.46.1"
-    snek-query "^0.0.83"
+    snek-query "^0.0.110"
 
 gatsby-legacy-polyfills@^3.13.1:
   version "3.13.1"
@@ -14523,6 +14523,19 @@ snek-query@*, snek-query@^0.0.114:
   version "0.0.114"
   resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.114.tgz#83f2afd9c58f6905850ae3f720a5125d01091baa"
   integrity sha512-Jh5nQNszdekKgmj6KJ9d2OUV+up5HAmLyGMy3OC0ydDYovQSVxyG2y/BpLs1ut+6N8vPHJthiK5I1PFf4J0AzA==
+  dependencies:
+    commander "^9.4.1"
+    graphql "^16.6.0"
+    lodash.clonedeep "^4.5.0"
+    pino "^8.8.0"
+    pino-pretty "^9.1.1"
+    rxjs "^7.8.0"
+    typescript "^4.9.4"
+
+snek-query@^0.0.110:
+  version "0.0.110"
+  resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.110.tgz#b36235af494864cd7a6c001f6d96d9fd6336bfa1"
+  integrity sha512-Gw4yeHznJOhPCdvPUDWYO21SHtwlvoRqK7qefrXC4USb9Ovc6mddcB2yzErkzI/O+VTrq5ztzKusucdUF6ZHdw==
   dependencies:
     commander "^9.4.1"
     graphql "^16.6.0"
