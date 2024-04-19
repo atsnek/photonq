@@ -85,9 +85,9 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
   const hasChanges = useMemo(() => {
     return (
       isSafe &&
-      (values.title !== post.title ||
-        values.summary !== post.summary ||
-        values.content !== post.content)
+      ((values.title !== undefined && values.title !== post.title) ||
+        (values.summary !== undefined && values.summary !== post.summary) ||
+        (values.content !== undefined && values.content !== post.content))
     );
   }, [values, post, isSafe]);
 
