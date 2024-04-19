@@ -35,6 +35,7 @@ import {
 } from '@atsnek/jaen';
 import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { QASMPlayground } from '../../../features/main-content/qasm-playground/components/qasm-playground';
+import JaenImage from '../JaenImage';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -78,7 +79,8 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   ImageCard,
   Callout,
   IconCard,
-  DocsIndex
+  DocsIndex,
+  Image: JaenImage
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
