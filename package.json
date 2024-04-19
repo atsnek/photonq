@@ -34,7 +34,7 @@
     "gatsby-jaen-lens": "^0.0.17",
     "gatsby-jaen-mailpress": "0.0.5",
     "gatsby-plugin-cloudflare-pages": "^1.0.2",
-    "gatsby-plugin-jaen": "^1.0.0-rc.93",
+    "gatsby-plugin-jaen": "^1.0.0-rc.94",
     "github-slugger": "^2.0.0",
     "immer": "^10.0.2",
     "prismjs": "^1.29.0",
