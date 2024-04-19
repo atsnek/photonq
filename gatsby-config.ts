@@ -20,22 +20,19 @@ const config: GatsbyConfig = {
     {
       resolve: `gatsby-plugin-jaen`,
       options: {
+        pylonUrl: 'https://pylons.photonq.org/jaen-agent/graphql',
         remote: {
           repository: 'atsnek/photonq'
         },
         zitadel: {
-          organizationId: '261017026250670083',
-          clientId: '252746210698395651@services',
-          authority: 'https://accounts.cronit.io',
+          organizationId: '263489662662743669',
+          clientId: '263491440007517793@services',
+          authority: 'https://accounts.photonq.org',
           redirectUri:
             process.env.NODE_ENV === 'production'
               ? 'https://photonq.org'
               : 'http://localhost:8000',
-          projectIds: [
-            '252765861113233411',
-            '252899191242620931',
-            '260237544631828483'
-          ]
+          projectIds: ['263491274097563233']
         },
         sentry: {
           org: 'photonq',
@@ -47,7 +44,12 @@ const config: GatsbyConfig = {
         }
       }
     },
-    `gatsby-jaen-mailpress`
+    {
+      resolve: `gatsby-jaen-mailpress`,
+      options: {
+        pylonUrl: 'https://pylons.photonq.org/mailpress/graphql'
+      }
+    }
   ]
 };
 
