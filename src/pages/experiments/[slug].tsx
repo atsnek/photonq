@@ -257,16 +257,6 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
               </Button>
             )}
 
-            <IconButton
-              isLoading={isImageUploading}
-              icon={<FaImage />}
-              variant="ghost"
-              onClick={() => {
-                imageInputRef.current?.click();
-              }}
-              aria-label="Upload Image"
-            />
-
             <Input
               type="file"
               ref={imageInputRef}
@@ -427,8 +417,71 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
         />
       </SkeletonText>
 
+      <HStack justifyContent="end" display={post.isOwner ? 'flex' : 'none'}>
+        <IconButton
+          variant="outline"
+          icon={<FaImage />}
+          aria-label="Upload Image"
+          onClick={() => {
+            imageInputRef.current?.click();
+          }}
+        />
+        <IconButton
+          variant="ghost"
+          colorScheme="red"
+          isLoading={isImageUploading}
+          icon={<DeleteIcon color="red.500" />}
+          aria-label="Delete Image"
+          onClick={async () => {
+            const confirm = await notify.confirm({
+              title: 'Delete Image',
+              message: 'Are you sure you want to delete the image?'
+            });
+
+            if (confirm) {
+              const [_, errors] = await sq.mutate(m =>
+                m.postUpdate({
+                  id: post.id,
+                  values: {
+                    avatarURL: undefined
+                  }
+                })
+              );
+
+              refetch();
+
+              if (errors) {
+                notify.toast({
+                  title: 'Error',
+                  status: 'error',
+                  description: 'An error occurred while deleting the image.'
+                });
+              } else {
+                notify.toast({
+                  title: 'Image Deleted',
+                  status: 'success',
+                  description: 'The image has been successfully deleted.'
+                });
+              }
+            }
+          }}
+        />
+      </HStack>
+
       <Skeleton isLoaded={isSafe}>
         <AspectRatio
+          _hover={
+            post.isOwner
+              ? {
+                  cursor: 'pointer',
+                  filter: 'brightness(0.8)',
+                  outlineColor: 'brand.500',
+                  outlineWidth: '2px',
+                  outlineStyle: 'solid',
+                  outlineOffset: '2px'
+                }
+              : {}
+          }
           ratio={16 / 9}
           borderWidth="1px"
           borderRadius="lg"

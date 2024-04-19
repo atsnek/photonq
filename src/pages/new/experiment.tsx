@@ -10,7 +10,7 @@ import {
   useAuth,
   useNotificationsContext
 } from '@atsnek/jaen';
-import { CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   AspectRatio,
   Button,
@@ -184,16 +184,6 @@ const IndexPage: React.FC<PageProps> = () => {
               Create
             </Button>
 
-            <IconButton
-              isLoading={isImageUploading}
-              icon={<FaImage />}
-              variant="ghost"
-              onClick={() => {
-                imageInputRef.current?.click();
-              }}
-              aria-label="Upload Image"
-            />
-
             <Input
               type="file"
               ref={imageInputRef}
@@ -266,6 +256,43 @@ const IndexPage: React.FC<PageProps> = () => {
         type="text"
         editable={true}
       />
+
+      <HStack justifyContent="end">
+        <IconButton
+          variant="outline"
+          icon={<FaImage />}
+          isLoading={isImageUploading}
+          aria-label="Upload Image"
+          onClick={() => {
+            imageInputRef.current?.click();
+          }}
+        />
+        <IconButton
+          variant="ghost"
+          colorScheme="red"
+          icon={<DeleteIcon color="red.500" />}
+          aria-label="Delete Image"
+          onClick={async () => {
+            const confirm = await notify.confirm({
+              title: 'Delete Image',
+              message: 'Are you sure you want to delete the image?'
+            });
+
+            if (confirm) {
+              setValues({
+                ...values,
+                avatarURL: undefined
+              });
+
+              notify.toast({
+                title: 'Image Deleted',
+                status: 'success',
+                description: 'The image has been successfully deleted.'
+              });
+            }
+          }}
+        />
+      </HStack>
 
       <AspectRatio
         ratio={16 / 9}
