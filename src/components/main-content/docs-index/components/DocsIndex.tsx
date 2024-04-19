@@ -1,13 +1,12 @@
-import { useJaenPageIndex } from '@atsnek/jaen';
+import { useContentManagement, useJaenPageIndex } from '@atsnek/jaen';
 import { Box, SimpleGrid } from '@chakra-ui/react';
 import ImageCard from '../../image-card/components/ImageCard';
+import { useCMSManagement } from 'gatsby-plugin-jaen/src/connectors/cms-management';
 
 const DocsIndex: React.FC = () => {
-  const index = useJaenPageIndex({
-    jaenPageId: 'JaenPage /docs/'
-  });
+  const index = useJaenPageIndex({});
 
-  console.log('index', index);
+  const manager = useCMSManagement();
 
   return (
     <SimpleGrid columns={{ base: 1, sm: 2 }} spacing="4" gap="4">
@@ -18,7 +17,7 @@ const DocsIndex: React.FC = () => {
             id={child.id}
             link={{
               name: `${child.jaenPageMetadata?.title || 'Read Page'}`,
-              href: `/docs/${child.slug || 'none'}`
+              href: manager.pagePath(child.id)
             }}
             image={{
               src: child.jaenPageMetadata?.image || '',

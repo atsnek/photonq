@@ -30,6 +30,7 @@ import Filesystem from '../main-content/filesystem/components/Filesystem';
 import IconCard from '../main-content/icon-card/components/IconCard';
 import ImageCard from '../main-content/image-card/components/ImageCard';
 import { QASMPlayground } from '../main-content/qasm-playground/components/qasm-playground';
+import JaenImage from '../JaenImage';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -73,7 +74,8 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   ImageCard,
   Callout,
   IconCard,
-  DocsIndex
+  DocsIndex,
+  Image: JaenImage
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
@@ -84,7 +86,14 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
   const canEdit = true;
 
   return (
-    <Stack spacing={4}>
+    <Stack
+      spacing={4}
+      sx={{
+        '.cm-editor': {
+          height: '60dvh'
+        }
+      }}
+    >
       {canEdit && isLoading === false && (
         <ButtonGroup>
           <Button
