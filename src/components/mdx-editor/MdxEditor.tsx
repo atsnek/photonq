@@ -92,7 +92,7 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
     <Callout icon={props.icon} type={props.type} children={props.children} />
   ),
   IconCard: props => <IconCard icon={props.icon} link={props.link} />,
-  DocsIndex: () => <DocsIndex />
+  DocsIndex: props => <DocsIndex type={props.type} />
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
