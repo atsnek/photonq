@@ -47,10 +47,10 @@
     css-tree "^2.3.1"
     is-potential-custom-element-name "^1.0.1"
 
-"@atsnek/jaen-fields-mdx@^1.0.0-rc.10":
-  version "1.0.0-rc.10"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.10.tgz#0102c355076f831cc231489c822256e4425bfee0"
-  integrity sha512-FBngLdtDxtPQXJTKI1UHQxyd4H/OtYtFyak0l26deh9m8luEQEmzwA+pK+5aIrQYHFRCJnTtB2r+38z7f2xxlg==
+"@atsnek/jaen-fields-mdx@^1.0.0-rc.12":
+  version "1.0.0-rc.12"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.12.tgz#c94dc3482e8c5424c7a8055bb223cee927900fec"
+  integrity sha512-FwaKuf5iwiB7+5DcMzuyvTuinq8kFP4JGKqgvvvlQ3LG6PhzsWdB2n6OzCvvZYpG/BI+zmSCPTz0Du0vHb94KA==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
@@ -8317,10 +8317,10 @@ gatsby-plugin-image@^3.11.0, gatsby-plugin-image@^3.13.1:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.94:
-  version "1.0.0-rc.94"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.94.tgz#9caea98ddc637635d7ac14f5714bf5e197cc494b"
-  integrity sha512-GZ45fWKpajzrD36ieRtqsNl6KUOMcZt2pnHTEyhY2D7QDTAD2WOkVuw3kEN3bqgXglc7fqQDUpH8eH3jhDqScw==
+gatsby-plugin-jaen@^1.0.0-rc.96:
+  version "1.0.0-rc.96"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.96.tgz#e64a77ff405f12c505dcc790eac7d7405df7a514"
+  integrity sha512-p0JcvaF3BBG4wy5qfojy0nLAwvGCcNv72+oIlh+G5wuEvGWWfjg/pcudBxGua8/ydHyuy53WHbydUIC1j6zMxw==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
