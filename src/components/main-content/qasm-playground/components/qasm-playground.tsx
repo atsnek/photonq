@@ -41,6 +41,8 @@ const ReactChildrenText = (children: any): string => {
 
 export interface QASMPlaygroundProps {
   wrapWithPre?: boolean;
+  withoutSimulate?: boolean;
+  withoutTranslate?: boolean;
   children?: string;
 }
 
@@ -54,6 +56,8 @@ cz q[0],q[1];
 
 export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
   wrapWithPre = true,
+  withoutSimulate = false,
+  withoutTranslate = false,
   children = defaultQASMCode
 }) => {
   const cardProps: BoxProps = {
@@ -149,35 +153,39 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
               onChange={setQasmCode}
               toolbar={
                 <ButtonGroup>
-                  <Button
-                    size="sm"
-                    my="auto"
-                    variant="outline"
-                    _hover={{
-                      transform: 'scale(1.05)'
-                    }}
-                    transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                    isLoading={translator.isLoading}
-                    onClick={translator.run}
-                  >
-                    Translate
-                  </Button>
-
-                  <Tooltip label="We are working hard to implement this feature!">
+                  {!withoutSimulate && (
                     <Button
                       size="sm"
                       my="auto"
+                      variant="outline"
                       _hover={{
                         transform: 'scale(1.05)'
                       }}
                       transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                      isLoading={simulator.isLoading}
-                      onClick={simulator.run}
-                      isDisabled
+                      isLoading={translator.isLoading}
+                      onClick={translator.run}
                     >
-                      Simulate
+                      Translate
                     </Button>
-                  </Tooltip>
+                  )}
+
+                  {!withoutTranslate && (
+                    <Tooltip label="We are working hard to implement this feature!">
+                      <Button
+                        size="sm"
+                        my="auto"
+                        _hover={{
+                          transform: 'scale(1.05)'
+                        }}
+                        transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
+                        isLoading={simulator.isLoading}
+                        onClick={simulator.run}
+                        isDisabled
+                      >
+                        Simulate
+                      </Button>
+                    </Tooltip>
+                  )}
                 </ButtonGroup>
               }
               children={qasmCode}
@@ -185,60 +193,66 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
           </Box>
         </pre>
 
-        <CodeResultPreview
-          isStandalone
-          headerText="Translation"
-          headerTextRight="Powered by Perceval, Qiskit, PyZX"
-          isExecuting={translator.isLoading}
-          warnings={translator.data?.warnings}
-          errors={translator.data?.errors}
-          result={
-            translator.data ? (
-              <Stack spacing="4">
-                {translator.data.translation?.map((translation, index) => (
-                  <Stack key={index}>
-                    {translation ? (
-                      <>
-                        <Stack
-                          justify="space-between"
-                          align="center"
-                          justifyContent="center"
-                          wrap="wrap"
-                        >
-                          <Heading size="md">{translation.name}</Heading>
-                          <Link
-                            align="left"
-                            as={Button}
-                            variant="link"
+        {!withoutTranslate && (
+          <CodeResultPreview
+            isStandalone
+            headerText="Translation"
+            headerTextRight="Powered by Perceval, Qiskit, PyZX"
+            isExecuting={translator.isLoading}
+            warnings={translator.data?.warnings}
+            errors={translator.data?.errors}
+            result={
+              translator.data ? (
+                <Stack spacing="4">
+                  {translator.data.translation?.map((translation, index) => (
+                    <Stack key={index}>
+                      {translation ? (
+                        <>
+                          <Stack
+                            justify="space-between"
+                            align="center"
+                            justifyContent="center"
+                            wrap="wrap"
+                          >
+                            <Heading size="md">{translation.name}</Heading>
+                            <Link
+                              align="left"
+                              as={Button}
+                              variant="link"
+                              onClick={() =>
+                                openImageInNewTab(translation.dataUri)
+                              }
+                            >
+                              View in New Tab
+                            </Link>
+                          </Stack>
+                          <Image
+                            src={translation.dataUri}
+                            alt={translation.name + ' diagram'}
+                            style={{ cursor: 'pointer' }}
                             onClick={() =>
                               openImageInNewTab(translation.dataUri)
                             }
-                          >
-                            View in New Tab
-                          </Link>
-                        </Stack>
-                        <Image
-                          src={translation.dataUri}
-                          alt={translation.name + ' diagram'}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => openImageInNewTab(translation.dataUri)}
-                        />
-                      </>
-                    ) : (
-                      <p>Translation failed</p>
-                    )}
-                  </Stack>
-                ))}
-              </Stack>
-            ) : null
-          }
-        />
+                          />
+                        </>
+                      ) : (
+                        <p>Translation failed</p>
+                      )}
+                    </Stack>
+                  ))}
+                </Stack>
+              ) : null
+            }
+          />
+        )}
 
-        <CodeResultPreview
-          isStandalone
-          headerText="Simulation"
-          isExecuting={simulator.isLoading}
-        />
+        {!withoutSimulate && (
+          <CodeResultPreview
+            isStandalone
+            headerText="Simulation"
+            isExecuting={simulator.isLoading}
+          />
+        )}
       </Stack>
     </Card>
   );

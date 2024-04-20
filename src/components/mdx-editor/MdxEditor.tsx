@@ -62,11 +62,21 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
     className?: string;
     children?: string;
     headerText?: string;
+    withoutSimulate?: boolean;
+    withoutTranslate?: boolean;
   }) => {
+    console.log('code pprops', className, playground, props);
     const lang = className?.replace('language-', '') || 'text';
 
     if (playground) {
-      return <QASMPlayground children={props.children} wrapWithPre={false} />;
+      return (
+        <QASMPlayground
+          children={props.children}
+          wrapWithPre={false}
+          withoutSimulate={props.withoutSimulate}
+          withoutTranslate={props.withoutTranslate}
+        />
+      );
     }
 
     return (
@@ -78,7 +88,17 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
     );
   },
   // CUSTOM COMPONENTS
-  QASMPlayground: props => <QASMPlayground children={props.children} />,
+  QASMPlayground: props => {
+    console.log('props', props);
+
+    return (
+      <QASMPlayground
+        children={props.children}
+        withoutTranslate={props.withoutTranslate}
+        withoutSimulate={props.withoutSimulate}
+      />
+    );
+  },
   Filesystem: props => <Filesystem structure={props.structure} />,
   ImageCard: props => (
     <ImageCard
