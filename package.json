@@ -28,7 +28,7 @@
     "flexsearch": "^0.7.31",
     "framer-motion": "^10.16.1",
     "gatsby": "^5.11.0",
-    "gatsby-jaen-mailpress": "0.0.5",
+    "gatsby-jaen-mailpress": "0.0.6",
     "gatsby-plugin-cloudflare-pages": "^1.0.2",
     "gatsby-plugin-jaen": "^1.0.0-rc.96",
     "github-slugger": "^2.0.0",
