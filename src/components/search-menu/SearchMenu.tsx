@@ -191,8 +191,6 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     if (navigateIdx >= 0) {
       const item = document.getElementById(`sd-search-ri-${navigateIdx}`);
 
-      console.log('item', item, navigateIdx);
-
       if (item) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }, [search.searchResult]);
@@ -203,10 +201,11 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
    */
   const handleNavigate = (isUp: boolean) => {
     const itemsCount = Object.values(search.searchResult)
+      .map(chapter => chapter.sections)
+      .flat()
       .map(section => section.results)
       .flat().length;
 
-    console.log('itemsCount', isUp, itemsCount);
     if (isUp) {
       if (navigateIdx > 0) setNavigateIdx(navigateIdx - 1);
       else setNavigateIdx(itemsCount - 1);
@@ -219,13 +218,18 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const data = useMemo(() => {
     let dataItemIdx = 0;
 
-    return search.searchResult.map(sr => {
+    return Object.values(search.searchResult).map(chapter => {
       return {
-        ...sr,
-        results: sr.results.map(r => {
+        ...chapter,
+        sections: chapter.sections.map(section => {
           return {
-            ...r,
-            isActive: dataItemIdx++ === navigateIdx
+            ...section,
+            results: section.results.map(result => {
+              return {
+                ...result,
+                isActive: dataItemIdx++ === navigateIdx
+              };
+            })
           };
         })
       };
@@ -237,11 +241,11 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
    */
   const handleOpenActiveItem = () => {
     const activeItem = data
+      .map(chapter => chapter.sections)
+      .flat()
       .map(section => section.results)
       .flat()
       .find(item => item.isActive);
-
-    console.log('activeItem', activeItem, search.searchResult);
 
     if (activeItem) {
       modalDisclosure.onClose();
@@ -257,13 +261,20 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const results = useMemo(() => {
     let itemIdx = 0;
 
-    return data.map((section, idx) => {
-      console.log('itemIdx', itemIdx);
-
-      const el = (
-        <Fragment key={idx}>
-          {idx > 0 && <Divider />}
-
+    return data.map((chapter, cidx) => {
+      return (
+        <Fragment key={cidx}>
+          {cidx > 0 && <Divider />}
+          <SearchResultSectionTitle
+            title={chapter.title}
+            idx={itemIdx * -1}
+            color="features.search.section.title.color"
+            textTransform="none"
+            {...(!chapter.icon && {
+              mb: 5
+            })}
+            icon={chapter.icon}
+          />
           <VStack
             spacing={1}
             w="full"
@@ -275,21 +286,26 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
             overflowY="auto"
             className="sd-search-outer-section"
           >
-            <SearchResultSection
-              section={section}
-              idx={itemIdx}
-              query={searchQuery}
-              key={idx}
-              defaultHighlight={itemIdx === 0}
-              icon={section.icon}
-              isDocs={true}
-            />
+            {chapter.sections.map((section, sidx) => {
+              const el = (
+                <SearchResultSection
+                  section={section}
+                  idx={itemIdx}
+                  query={searchQuery}
+                  key={sidx}
+                  defaultHighlight={itemIdx === 0}
+                  icon={chapter.icon}
+                  isDocs={!!section.results[0]?.to?.startsWith('/docs/')}
+                />
+              );
+
+              itemIdx = itemIdx + section.results.length;
+
+              return el;
+            })}
           </VStack>
         </Fragment>
       );
-
-      itemIdx = itemIdx + section.results.length;
-      return el;
     });
   }, [data, navigateIdx]);
 

@@ -5,7 +5,8 @@ import {
   Text,
   Box,
   Spacer,
-  Flex
+  Flex,
+  Stack
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 import { TSearchResult } from '../../../shared/types/search';
@@ -53,7 +54,6 @@ export const SearchResultItem: FC<{
   return (
     <LinkBox
       as={Flex}
-      w={isDocs ? 'calc(100% - 20px)' : 'full'}
       key={id}
       id={`sd-search-ri-${id}`}
       _hover={{
@@ -99,13 +99,35 @@ export const SearchResultItem: FC<{
           whiteSpace="nowrap"
         >
           {isDocs ? (
-            <Highlighter
-              searchWords={queryTokens}
-              textToHighlight={item.title ?? ''}
-              highlightTag={highlightTag}
-            />
+            <Stack spacing="0.5">
+              <Text
+                fontSize="sm"
+                color="features.search.section.item.title.color"
+                fontWeight="bold"
+              >
+                <Highlighter
+                  searchWords={queryTokens}
+                  autoEscape
+                  textToHighlight={item.title}
+                  highlightTag={highlightTag}
+                />
+              </Text>
+              {item.description && (
+                <Text
+                  fontSize="sm"
+                  color="features.search.section.item.description.color"
+                >
+                  <Highlighter
+                    searchWords={queryTokens}
+                    autoEscape
+                    textToHighlight={item.description}
+                    highlightTag={highlightTag}
+                  />
+                </Text>
+              )}
+            </Stack>
           ) : (
-            item.title
+            item.title || item.description
           )}
         </LinkOverlay>
       </Box>

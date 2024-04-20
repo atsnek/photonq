@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import { useLazyQuery, useQuery } from 'snek-query/react-hooks';
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import TbUser from '../../components/icons/tabler/TbUser';
+import TbUsers from '../../components/icons/tabler/TbUsers';
 
 /**
  * A single search result.
@@ -41,19 +42,20 @@ const useSocialSearch = (query?: string) => {
   const [trigger, { data, isLoading, isSafe, errors, refetch }] =
     useLazyQuery(sq);
 
-  const postSearchResultSection: TSearchResultSection[] = useMemo(() => {
+  const postSearchResultSection: TSearchResults = useMemo(() => {
     if (query === undefined) {
-      return [];
+      return {};
     }
 
     const searched = data.search({ query });
 
     console.log('users', searched.users?.nodes);
 
-    const results: TSearchResultSection[] = [];
+    let usersResult: TSearchResultSection | undefined = undefined;
+    let postsResult: TSearchResultSection | undefined = undefined;
 
     if (searched.users?.nodes) {
-      results.push({
+      usersResult = {
         title: 'Users',
         results: searched.users.nodes.map(user => ({
           title: user.profile.displayName || user.profile.userName,
@@ -62,11 +64,11 @@ const useSocialSearch = (query?: string) => {
           avatarURL: user.profile.avatarUrl || undefined
         })),
         resultIcon: <TbUser />
-      });
+      };
     }
 
     if (searched.posts?.nodes) {
-      results.push({
+      postsResult = {
         title: 'Experiments',
         results: searched.posts.nodes.map(post => ({
           title: post.title,
@@ -74,14 +76,25 @@ const useSocialSearch = (query?: string) => {
           to: `/experiments/${post.slug}`
         })),
         resultIcon: <FaFlask />
-      });
+      };
     }
 
     if (errors?.length) {
-      return [];
+      return {};
     }
 
-    return results;
+    return {
+      users: {
+        title: 'Users',
+        sections: usersResult ? [usersResult] : [],
+        icon: <TbUsers />
+      },
+      posts: {
+        title: 'Experiments',
+        sections: postsResult ? [postsResult] : [],
+        icon: <FaFlask />
+      }
+    } as TSearchResults;
   }, [query, data, isLoading]);
 
   useEffect(() => {

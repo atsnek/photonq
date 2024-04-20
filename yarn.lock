@@ -7971,7 +7971,7 @@ flatted@^3.2.9:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.3.1.tgz#21db470729a6734d4997002f439cb308987f567a"
   integrity sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==
 
-flexsearch@^0.7.31:
+flexsearch@^0.7.43:
   version "0.7.43"
   resolved "https://registry.yarnpkg.com/flexsearch/-/flexsearch-0.7.43.tgz#34f89b36278a466ce379c5bf6fb341965ed3f16c"
   integrity sha512-c5o/+Um8aqCSOXGcZoqZOm+NqtVwNsvVpWv6lfmSclU954O3wvQKxxK8zj74fPaSJbXpSLTs4PRhh+wnoCXnKg==
@@ -8216,10 +8216,10 @@ gatsby-graphiql-explorer@^3.13.1:
   resolved "https://registry.yarnpkg.com/gatsby-graphiql-explorer/-/gatsby-graphiql-explorer-3.13.1.tgz#906f5b75f9c01ca5cd836de6cda60e376126e3e2"
   integrity sha512-WR6jv18OhKLwK/hGZ6ZGUd82GFtM6gHz+sOpgsJJx/+uqRjZwqcrH2LSrWRSWUCk7FoZY1rJuBSD1QkOODV01A==
 
-gatsby-jaen-mailpress@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-0.0.5.tgz#af3d592b719e66b52e0713aa213708d7ea97a1af"
-  integrity sha512-zZmq8m/djJosi3qrhTfkULsKXITsvNb6kxn5ZpNNwE2cWRIN3FCXzemSxd7JirAsFW0WGqHAaozneyuvAObwlw==
+gatsby-jaen-mailpress@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-0.0.6.tgz#a9d327463e8bfa7279a53f8e5cb85cf4f5c0852e"
+  integrity sha512-X+PC/xabs4hPN44sDAosTMNyo+zhTH3cQU4G8jBr+CKcL8+TWuiLigquiA64hWUBAxAIWnn9KsN71Eh4xafUTw==
   dependencies:
     "@monaco-editor/react" "^4.6.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"

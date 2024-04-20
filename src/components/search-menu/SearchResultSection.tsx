@@ -7,11 +7,17 @@ import {
   Box,
   Divider,
   Icon,
-  VStack
+  VStack,
+  UnorderedList,
+  ListItem,
+  Stack
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 import SearchResultItem from './SearchResultItem';
 import { TSearchResultSection } from '../../utils/search/types';
+import TbBooks from '../icons/tabler/TbBooks';
+import TbBookOff from '../icons/tabler/TbBookOff';
+import { FaBook } from '@react-icons/all-files/fa/FaBook';
 
 /**
  * The search menu section title component for displaying a search result section title.
@@ -77,34 +83,45 @@ export const SearchResultSection: FC<{
   onItemClickCapture,
   isDocs
 }) => {
+  const pageToWithoutHash = (page: string) => {
+    const hashIndex = page.indexOf('#');
+    return hashIndex === -1 ? page : page.slice(0, hashIndex);
+  };
+
   return (
-    <Box key={idx} w="full">
-      {/* {isDocs && (
+    <Stack key={idx} w="full" spacing="1">
+      {isDocs && (
         <SearchResultItem
           item={{
             title: section.title,
-            href: section.results?.[0]?.href,
+            to: section.results?.[0]?.to
+              ? pageToWithoutHash(section.results?.[0]?.to)
+              : '',
             description: ''
           }}
           query={query}
           id={-1}
-          icon={icon}
+          icon={<FaBook />}
         />
-      )} */}
-      <SearchResultSectionTitle title={section.title} idx={idx} icon={icon} />
+      )}
+      {/* <SearchResultSectionTitle title={section.title} idx={idx} icon={icon} /> */}
       {/* <Divider /> */}
-      {section.results.map((result, i) => (
-        <SearchResultItem
-          item={result}
-          query={query}
-          id={idx + i}
-          key={i}
-          defaultFocus={defaultHighlight && i === 0}
-          onClickCapture={onItemClickCapture}
-          icon={section.resultIcon ?? icon}
-          isDocs={isDocs}
-        />
-      ))}
-    </Box>
+      <UnorderedList listStyleType="none" ml={isDocs ? 4 : 0}>
+        <ListItem>
+          {section.results.map((result, i) => (
+            <SearchResultItem
+              item={result}
+              query={query}
+              id={idx + i}
+              key={i}
+              defaultFocus={defaultHighlight && i === 0}
+              onClickCapture={onItemClickCapture}
+              icon={section.resultIcon ?? icon}
+              isDocs={isDocs}
+            />
+          ))}
+        </ListItem>
+      </UnorderedList>
+    </Stack>
   );
 };

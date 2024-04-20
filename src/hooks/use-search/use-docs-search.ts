@@ -7,7 +7,7 @@ import { SearchIndex } from './types';
 import { useDynamicPaths } from '@atsnek/jaen';
 import { useJaenPagePaths } from 'gatsby-plugin-jaen';
 import { useAppSelector } from '@atsnek/jaen';
-import { searchDocs } from '../../utils/search';
+import { getDefaultSearchDocs, searchDocs } from '../../utils/search';
 import { TSearchResultSection } from '../../utils/search/types';
 
 /**
@@ -106,10 +106,12 @@ const useDocsSearch = (query?: string): UseSearchResult => {
     const search = async () => {
       setIsLoading(true);
 
-      if (!query || !searchIndex) {
+      if (!searchIndex) {
         setSearchResults([]);
+      } else if (!query) {
+        setSearchResults(searchDocs('OpenQASM', searchIndex));
       } else {
-        const docsResults = await searchDocs(query, searchIndex);
+        const docsResults = searchDocs(query, searchIndex);
 
         setSearchResults(docsResults);
       }
