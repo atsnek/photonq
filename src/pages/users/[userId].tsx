@@ -18,6 +18,7 @@ import {
   Editable,
   EditablePreview,
   EditableTextarea,
+  Flex,
   HStack,
   Heading,
   Icon,
@@ -87,7 +88,7 @@ const AvatarImage: React.FC<{
           onClick={onClick}
           cursor={cursor}
           aspectRatio={1}
-          h="max-content"
+          boxSize="full"
           bg="gray.100"
           _hover={{
             boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
@@ -106,13 +107,9 @@ const AvatarImage: React.FC<{
         </Center>
       }
       onClick={onClick}
-      width={{
-        base: '100px',
-        md: 'full'
-      }}
+      boxSize="full"
       objectFit="cover"
       objectPosition="top"
-      h="max-content"
       aspectRatio={1}
       _hover={{
         boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
@@ -376,11 +373,8 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
     <Box minH="100dvh" mt={offset}>
       <MainGrid>
         <Stack mt="16">
-          <Stack
-            // divider={<StackDivider />}
-            spacing={4}
-          >
-            <Box alignSelf="center">
+          <Box alignSelf="center">
+            <Flex justifyContent="center" boxSize={250} mt="4">
               {userId === auth.user?.profile.sub ? (
                 <AuthUserProvider>
                   <EditableImage
@@ -395,9 +389,10 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                   displayName={user.profile.displayName}
                 />
               )}
-            </Box>
+            </Flex>
 
             <Stack
+              mb="4"
               textAlign={{
                 base: 'center',
                 md: 'start'
@@ -467,23 +462,23 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 </Button>
               </Tooltip>
             </Stack>
-          </Stack>
 
-          <TextControl
-            text={user.bio || 'No bio yet'}
-            type="text"
-            editable={userId === auth.user?.profile.sub}
-            onSubmit={async bio => {
-              await sq.mutate(m =>
-                m.userUpdate({
-                  id: userId,
-                  values: {
-                    bio
-                  }
-                })
-              );
-            }}
-          />
+            <TextControl
+              text={user.bio || 'No bio yet'}
+              type="text"
+              editable={userId === auth.user?.profile.sub}
+              onSubmit={async bio => {
+                await sq.mutate(m =>
+                  m.userUpdate({
+                    id: userId,
+                    values: {
+                      bio
+                    }
+                  })
+                );
+              }}
+            />
+          </Box>
 
           <List
             fontSize="sm"
