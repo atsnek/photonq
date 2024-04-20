@@ -1,10 +1,28 @@
 import { PageConfig } from '@atsnek/jaen';
+import { Box, Flex, Stack, Text, VStack } from '@chakra-ui/react';
 import { PageProps, graphql } from 'gatsby';
 import * as React from 'react';
-import { DocContent } from '../contents/DocContent';
+import TableOfContent from '../components/navigation/TableOfContent';
+import useNavOffset from '../hooks/use-nav-offset';
+import MdxEditor from '../components/mdx-editor/MdxEditor';
+import Links from '../components/Links';
+import RightNav from '../components/navigation/RightNav';
+import MainBottomNav from '../components/navigation/MainBottomNav';
+
+// Example links - these would probably be fetched from a CMS or other data source
+const links = [
+  {
+    name: 'Question? Give us feedback',
+    href: '/contact'
+  },
+  {
+    name: 'Edit this page on Jaen',
+    href: '/cms/pages'
+  }
+];
 
 const DocPage: React.FC<PageProps> = props => {
-  return <DocContent />;
+  return <MdxEditor />;
 };
 
 export default DocPage;

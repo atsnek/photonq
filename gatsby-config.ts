@@ -18,20 +18,38 @@ const config: GatsbyConfig = {
   plugins: [
     `gatsby-plugin-cloudflare-pages`,
     {
-      resolve: `gatsby-jaen-lens`,
+      resolve: `gatsby-plugin-jaen`,
       options: {
-        roles: ['005559cd-c204-4919-80a9-0059f213eafc']
+        pylonUrl: 'https://pylons.photonq.org/jaen-agent/graphql',
+        remote: {
+          repository: 'atsnek/photonq'
+        },
+        zitadel: {
+          organizationId: '263581005107959413',
+          clientId: '263491440007517793@services',
+          authority: 'https://accounts.photonq.org',
+          redirectUri:
+            process.env.NODE_ENV === 'production'
+              ? 'https://photonq.org'
+              : 'http://localhost:8000',
+          projectIds: ['263491274097563233']
+        },
+        sentry: {
+          org: 'photonq',
+          project: 'website',
+          dsn: 'https://37ffbc7589f79cfab5936ce5fca4f310@sentry.cronit.io/10'
+        },
+        googleAnalytics: {
+          trackingIds: ['G-M58K75M9PG']
+        }
       }
     },
     {
-      resolve: `gatsby-plugin-jaen`,
+      resolve: `gatsby-jaen-mailpress`,
       options: {
-        // The folder where the page templates are located
-        pageTemplateFolder: `src/templates`,
-        snekResourceId: `a58477a4-6e2a-4dca-80a9-e59d86bcac10`
+        pylonUrl: 'https://pylons.photonq.org/mailpress/graphql'
       }
-    },
-    `gatsby-jaen-mailpress`
+    }
   ]
 };
 
