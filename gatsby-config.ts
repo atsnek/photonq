@@ -25,7 +25,7 @@ const config: GatsbyConfig = {
           repository: 'atsnek/photonq'
         },
         zitadel: {
-          organizationId: '263489662662743669',
+          organizationId: '263581005107959413',
           clientId: '263491440007517793@services',
           authority: 'https://accounts.photonq.org',
           redirectUri:
