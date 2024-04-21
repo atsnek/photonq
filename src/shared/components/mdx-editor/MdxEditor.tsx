@@ -64,11 +64,20 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   }: {
     playground?: boolean;
     className?: string;
+    withoutTranslate?: boolean;
+    withoutSimulate?: boolean;
   }) => {
     const lang = className?.replace('language-', '') || 'text';
 
     if (playground) {
-      return <QASMPlayground {...props} wrapWithPre={false} />;
+      return (
+        <QASMPlayground
+          {...props}
+          wrapWithPre={false}
+          withoutSimulate={props.withoutSimulate}
+          withoutTranslate={props.withoutTranslate}
+        />
+      );
     }
 
     return <CodeSnippet language={lang} {...props} />;
