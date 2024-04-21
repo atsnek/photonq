@@ -43,9 +43,9 @@ export class Result {
     __typename: t.String;
     errors: t.String[];
     warnings: t.String[];
-    info: t.String[];
+    infos: t.String[];
     data: Data[];
-    constructor() { this.__typename = ""; this.errors = []; this.warnings = []; this.info = []; this.data = arrayProxy(Data); }
+    constructor() { this.__typename = ""; this.errors = []; this.warnings = []; this.infos = []; this.data = arrayProxy(Data); }
 }
 export class Data {
     __typename: t.String;

@@ -86,7 +86,7 @@ export const useQasmExecutor = ({
               data: t.data.result?.data || [],
               errors: t.data.result?.errors || [],
               warnings: t.data.result?.warnings || [],
-              infos: t.data.result?.warnings || []
+              infos: t.data.result?.infos || []
             }
           };
         });
