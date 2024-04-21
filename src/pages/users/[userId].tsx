@@ -392,6 +392,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             </Flex>
 
             <Stack
+              mt="4"
               mb="4"
               textAlign={{
                 base: 'center',
