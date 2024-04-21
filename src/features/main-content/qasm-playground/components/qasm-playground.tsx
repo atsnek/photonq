@@ -72,17 +72,11 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
     borderRadius: '3xl',
     overflow: 'hidden',
     _hover: {
-      transform: {
-        base: 'none',
-        sm: 'scale(1.01)'
-      },
       boxShadow: {
         base: 'none',
         sm: '6px 4px 20px -12px rgba(0,0,0,0.25)'
       }
-    },
-    transition:
-      'transform 0.2s cubic-bezier(.17,.67,.83,.67), box-shadow 0.2s cubic-bezier(.17,.67,.83,.67)'
+    }
   };
 
   const [qasmCode, setQasmCode] = useState<string>(ReactChildrenText(children));
