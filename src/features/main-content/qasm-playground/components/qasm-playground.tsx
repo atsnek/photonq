@@ -6,12 +6,9 @@ import {
   Button,
   ButtonGroup,
   Card,
-  Center,
-  Flex,
   Heading,
   Image,
-  Stack,
-  Tooltip
+  Stack
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -20,13 +17,11 @@ const circuit = new QuantumCircuit();
 
 import CodeResultPreview from '../../code-result-preview/components/CodeResultPreview';
 import CodeSnippet from '../../code-snippet/components/CodeSnippet';
-import { useQasmSimulate } from '../use-qasm-simulate';
-import { useQasmTranslate } from '../use-qasm-translate';
+import { useQasmExecutor } from '../use-qasm-executor';
 import DiagramPreview from './diagram-preview';
 
-import React, { isValidElement } from 'react';
 import { Link } from 'gatsby-plugin-jaen';
-import { Field } from '@atsnek/jaen';
+import React, { isValidElement } from 'react';
 
 const hasChildren = (element: React.ReactNode) =>
   isValidElement(element) && Boolean(element.props.children);
@@ -113,8 +108,8 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
     }
   }, [qasmCode]);
 
-  const simulator = useQasmSimulate({ code: qasmCode });
-  const translator = useQasmTranslate({ code: qasmCode });
+  const simulator = useQasmExecutor({ code: qasmCode, type: 'simulation' });
+  const translator = useQasmExecutor({ code: qasmCode, type: 'translation' });
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -166,21 +161,18 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
                   )}
 
                   {!withoutSimulate && (
-                    <Tooltip label="We are working hard to implement this feature!">
-                      <Button
-                        size="sm"
-                        my="auto"
-                        _hover={{
-                          transform: 'scale(1.05)'
-                        }}
-                        transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                        isLoading={simulator.isLoading}
-                        onClick={simulator.run}
-                        isDisabled
-                      >
-                        Simulate
-                      </Button>
-                    </Tooltip>
+                    <Button
+                      size="sm"
+                      my="auto"
+                      _hover={{
+                        transform: 'scale(1.05)'
+                      }}
+                      transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
+                      isLoading={simulator.isLoading}
+                      onClick={simulator.run}
+                    >
+                      Simulate
+                    </Button>
                   )}
                 </ButtonGroup>
               }
@@ -195,12 +187,13 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
             headerText="Translation"
             headerTextRight="Powered by Perceval, Qiskit, PyZX"
             isExecuting={translator.isLoading}
-            warnings={translator.data?.warnings}
-            errors={translator.data?.errors}
+            warnings={translator.result?.warnings}
+            errors={translator.result?.errors}
+            infos={translator.result?.infos}
             result={
-              translator.data ? (
+              translator.result ? (
                 <Stack spacing="4">
-                  {translator.data.translation?.map((translation, index) => (
+                  {translator.result.data.map((translation, index) => (
                     <Stack key={index}>
                       {translation ? (
                         <>
@@ -247,6 +240,51 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
             isStandalone
             headerText="Simulation"
             isExecuting={simulator.isLoading}
+            warnings={simulator.result?.warnings}
+            errors={simulator.result?.errors}
+            infos={simulator.result?.infos}
+            result={
+              simulator.result ? (
+                <Stack spacing="4">
+                  {simulator.result.data.map((simulation, index) => (
+                    <Stack key={index}>
+                      {simulation ? (
+                        <>
+                          <Stack
+                            justify="space-between"
+                            align="center"
+                            justifyContent="center"
+                            wrap="wrap"
+                          >
+                            <Heading size="md">{simulation.name}</Heading>
+                            <Link
+                              align="left"
+                              as={Button}
+                              variant="link"
+                              onClick={() =>
+                                openImageInNewTab(simulation.dataUri)
+                              }
+                            >
+                              View in New Tab
+                            </Link>
+                          </Stack>
+                          <Image
+                            src={simulation.dataUri}
+                            alt={simulation.name + ' diagram'}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              openImageInNewTab(simulation.dataUri)
+                            }
+                          />
+                        </>
+                      ) : (
+                        <p>Simulation failed</p>
+                      )}
+                    </Stack>
+                  ))}
+                </Stack>
+              ) : null
+            }
           />
         )}
       </Stack>
