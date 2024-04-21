@@ -42,6 +42,7 @@ jobs:
             PROJECT_NAME="photonq-${{ github.ref_name }}"
             echo "CLOUDFLARE_PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_ENV
             echo "::set-output name=CLOUDFLARE_PROJECT_NAME::$PROJECT_NAME"
+          fi
 
   deploy:
     needs: setup
