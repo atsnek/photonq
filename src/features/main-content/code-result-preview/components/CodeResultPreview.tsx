@@ -7,8 +7,10 @@ import {
   Center,
   Flex,
   HStack,
+  ListItem,
   Stack,
-  Text
+  Text,
+  UnorderedList
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 
@@ -82,11 +84,13 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
               <Alert status="error" my={2}>
                 <AlertIcon />
                 <AlertDescription overflowX="auto">
-                  {errors.map((error, index) => (
-                    <Text key={index} fontSize="sm">
-                      {error}
-                    </Text>
-                  ))}
+                  <UnorderedList>
+                    {errors.map((error, index) => (
+                      <ListItem key={index} fontSize="sm">
+                        {error}
+                      </ListItem>
+                    ))}
+                  </UnorderedList>
                 </AlertDescription>
               </Alert>
             )}
@@ -94,11 +98,13 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
               <Alert status="warning" my={2}>
                 <AlertIcon />
                 <AlertDescription overflowX="auto">
-                  {warnings.map((warning, index) => (
-                    <Text key={index} fontSize="sm">
-                      {warning}
-                    </Text>
-                  ))}
+                  <UnorderedList>
+                    {warnings.map((warning, index) => (
+                      <ListItem key={index} fontSize="sm">
+                        {warning}
+                      </ListItem>
+                    ))}
+                  </UnorderedList>
                 </AlertDescription>
               </Alert>
             )}
