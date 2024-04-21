@@ -22,6 +22,7 @@ const UncontrolledMdxEditor: FC<IUncontrolledMdxEditorProps> = ({
 }) => {
   return (
     <Stack
+      maxW="calc(100vw - var(--chakra-space-10))"
       sx={{
         '.cm-editor': {
           height: '60dvh'
