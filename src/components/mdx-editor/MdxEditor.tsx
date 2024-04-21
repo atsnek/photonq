@@ -17,7 +17,13 @@ import { FC } from 'react';
 
 // Insertable custom components (via Jaen)
 
-import { useAuth, useContentManagement, usePageContext } from '@atsnek/jaen';
+import {
+  checkUserRoles,
+  useAuth,
+  useAuthUser,
+  useContentManagement,
+  usePageContext
+} from '@atsnek/jaen';
 import { MdxField, MdxFieldProps } from '@atsnek/jaen-fields-mdx';
 import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { Link } from 'gatsby-plugin-jaen';
@@ -120,7 +126,7 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
   const { isEditing, toggleIsEditing } = useContentManagement();
   const { jaenPage } = usePageContext();
 
-  const canEdit = true;
+  const canEdit = isAuthenticated && checkUserRoles(user, ['jaen:admin']);
 
   return (
     <Stack
