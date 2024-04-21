@@ -88,8 +88,7 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   ImageCard,
   Callout,
   IconCard,
-  DocsIndex,
-  Image: JaenImage
+  DocsIndex
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
