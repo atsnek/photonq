@@ -46,6 +46,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
       borderRadius={isStandalone ? 'md' : 'none'}
       border="1px solid"
       borderColor="components.codeResultPreview.borderColor"
+      whiteSpace="pre-wrap"
     >
       {headerText && (
         <Stack
