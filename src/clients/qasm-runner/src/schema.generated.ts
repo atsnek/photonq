@@ -10,17 +10,21 @@ export enum COMPLETED_WAITING_ACTIVE_DELAYED_FAILED_PAUSED_STUCK {
     paused = "paused",
     stuck = "stuck"
 }
+export enum TRANSLATION_SIMULATION {
+    translation = "translation",
+    simulation = "simulation"
+}
 
 
 export class Query {
     __typename: t.String;
-    translate: (args: {
+    execution: (args: {
         taskId: t.String;
-    }) => Translate;
+    }) => Execution;
     version: t.String;
-    constructor() { this.__typename = ""; this.translate = fnProxy(Translate); this.version = ""; }
+    constructor() { this.__typename = ""; this.execution = fnProxy(Execution); this.version = ""; }
 }
-export class Translate {
+export class Execution {
     __typename: t.String;
     id: t.String;
     status: t.Nullable<COMPLETED_WAITING_ACTIVE_DELAYED_FAILED_PAUSED_STUCK>;
@@ -30,18 +34,20 @@ export class Translate {
 }
 export class JobData {
     __typename: t.String;
+    type: t.Nullable<TRANSLATION_SIMULATION>;
     base64Qasm: t.String;
     result: t.Nullable<Result>;
-    constructor() { this.__typename = ""; this.base64Qasm = ""; this.result = proxy(Result); }
+    constructor() { this.__typename = ""; this.type = null; this.base64Qasm = ""; this.result = proxy(Result); }
 }
 export class Result {
     __typename: t.String;
     errors: t.String[];
     warnings: t.String[];
-    translation: Translation[];
-    constructor() { this.__typename = ""; this.errors = []; this.warnings = []; this.translation = arrayProxy(Translation); }
+    infos: t.String[];
+    data: Data[];
+    constructor() { this.__typename = ""; this.errors = []; this.warnings = []; this.infos = []; this.data = arrayProxy(Data); }
 }
-export class Translation {
+export class Data {
     __typename: t.String;
     mimeType: t.String;
     value: t.String;
@@ -53,7 +59,10 @@ export class Mutation {
     __typename: t.String;
     translate: (args: {
         base64Code: t.String;
-    }) => Translate;
-    constructor() { this.__typename = ""; this.translate = fnProxy(Translate); }
+    }) => Execution;
+    simulate: (args: {
+        base64Code: t.String;
+    }) => Execution;
+    constructor() { this.__typename = ""; this.translate = fnProxy(Execution); this.simulate = fnProxy(Execution); }
 }
 

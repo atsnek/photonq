@@ -6,12 +6,9 @@ import {
   Button,
   ButtonGroup,
   Card,
-  Center,
-  Flex,
   Heading,
   Image,
-  Stack,
-  Tooltip
+  Stack
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -20,13 +17,11 @@ const circuit = new QuantumCircuit();
 
 import CodeResultPreview from '../../code-result-preview/components/CodeResultPreview';
 import CodeSnippet from '../../code-snippet/components/CodeSnippet';
-import { useQasmSimulate } from '../use-qasm-simulate';
-import { useQasmTranslate } from '../use-qasm-translate';
+import { useQasmExecutor } from '../use-qasm-executor';
 import DiagramPreview from './diagram-preview';
 
-import React, { isValidElement } from 'react';
 import { Link } from 'gatsby-plugin-jaen';
-import { Field } from '@atsnek/jaen';
+import React, { isValidElement } from 'react';
 
 const hasChildren = (element: React.ReactNode) =>
   isValidElement(element) && Boolean(element.props.children);
@@ -60,6 +55,8 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
   withoutTranslate = false,
   children = defaultQASMCode
 }) => {
+  console.log('QASMPlayground', withoutSimulate, withoutTranslate);
+
   const cardProps: BoxProps = {
     bgColor: 'pq.sections.features.card.bgColor',
     boxShadow: '4px 2px 16px -12px rgba(0,0,0,0.25)',
@@ -70,17 +67,11 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
     borderRadius: '3xl',
     overflow: 'hidden',
     _hover: {
-      transform: {
-        base: 'none',
-        sm: 'scale(1.01)'
-      },
       boxShadow: {
         base: 'none',
         sm: '6px 4px 20px -12px rgba(0,0,0,0.25)'
       }
-    },
-    transition:
-      'transform 0.2s cubic-bezier(.17,.67,.83,.67), box-shadow 0.2s cubic-bezier(.17,.67,.83,.67)'
+    }
   };
 
   const [qasmCode, setQasmCode] = useState<string>(ReactChildrenText(children));
@@ -117,8 +108,8 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
     }
   }, [qasmCode]);
 
-  const simulator = useQasmSimulate({ code: qasmCode });
-  const translator = useQasmTranslate({ code: qasmCode });
+  const simulator = useQasmExecutor({ code: qasmCode, type: 'simulation' });
+  const translator = useQasmExecutor({ code: qasmCode, type: 'translation' });
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -153,7 +144,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
               onChange={setQasmCode}
               toolbar={
                 <ButtonGroup>
-                  {!withoutSimulate && (
+                  {!withoutTranslate && (
                     <Button
                       size="sm"
                       my="auto"
@@ -169,22 +160,20 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
                     </Button>
                   )}
 
-                  {!withoutTranslate && (
-                    <Tooltip label="We are working hard to implement this feature!">
-                      <Button
-                        size="sm"
-                        my="auto"
-                        _hover={{
-                          transform: 'scale(1.05)'
-                        }}
-                        transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
-                        isLoading={simulator.isLoading}
-                        onClick={simulator.run}
-                        isDisabled
-                      >
-                        Simulate
-                      </Button>
-                    </Tooltip>
+                  {!withoutSimulate && (
+                    <Button
+                      size="sm"
+                      my="auto"
+                      variant="outline"
+                      _hover={{
+                        transform: 'scale(1.05)'
+                      }}
+                      transition="transform 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
+                      isLoading={simulator.isLoading}
+                      onClick={simulator.run}
+                    >
+                      Translate
+                    </Button>
                   )}
                 </ButtonGroup>
               }
@@ -199,12 +188,13 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
             headerText="Translation"
             headerTextRight="Powered by Perceval, Qiskit, PyZX"
             isExecuting={translator.isLoading}
-            warnings={translator.data?.warnings}
-            errors={translator.data?.errors}
+            warnings={translator.result?.warnings}
+            errors={translator.result?.errors}
+            infos={translator.result?.infos}
             result={
-              translator.data ? (
+              translator.result ? (
                 <Stack spacing="4">
-                  {translator.data.translation?.map((translation, index) => (
+                  {translator.result.data.map((translation, index) => (
                     <Stack key={index}>
                       {translation ? (
                         <>
@@ -251,6 +241,51 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
             isStandalone
             headerText="Simulation"
             isExecuting={simulator.isLoading}
+            warnings={simulator.result?.warnings}
+            errors={simulator.result?.errors}
+            infos={simulator.result?.infos}
+            result={
+              simulator.result ? (
+                <Stack spacing="4">
+                  {simulator.result.data.map((simulation, index) => (
+                    <Stack key={index}>
+                      {simulation ? (
+                        <>
+                          <Stack
+                            justify="space-between"
+                            align="center"
+                            justifyContent="center"
+                            wrap="wrap"
+                          >
+                            <Heading size="md">{simulation.name}</Heading>
+                            <Link
+                              align="left"
+                              as={Button}
+                              variant="link"
+                              onClick={() =>
+                                openImageInNewTab(simulation.dataUri)
+                              }
+                            >
+                              View in New Tab
+                            </Link>
+                          </Stack>
+                          <Image
+                            src={simulation.dataUri}
+                            alt={simulation.name + ' diagram'}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              openImageInNewTab(simulation.dataUri)
+                            }
+                          />
+                        </>
+                      ) : (
+                        <p>Simulation failed</p>
+                      )}
+                    </Stack>
+                  ))}
+                </Stack>
+              ) : null
+            }
           />
         )}
       </Stack>

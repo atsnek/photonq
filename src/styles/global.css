@@ -1,3 +1,7 @@
 .qc-circuit{
     margin: auto;
 }
+
+mjx-container {
+    overflow-x: auto;
+}

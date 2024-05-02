@@ -17,6 +17,7 @@ import { FC, ReactNode } from 'react';
 interface ICodeResultPreviewProps {
   errors?: string[];
   warnings?: string[];
+  infos?: string[];
   result?: ReactNode;
   isStandalone?: boolean;
   headerText?: string;
@@ -29,6 +30,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
   errors,
   warnings,
   result,
+  infos,
   isStandalone,
   headerText,
   headerTextRight,
@@ -46,6 +48,7 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
       borderRadius={isStandalone ? 'md' : 'none'}
       border="1px solid"
       borderColor="components.codeResultPreview.borderColor"
+      whiteSpace="normal"
     >
       {headerText && (
         <Stack
@@ -99,6 +102,20 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
                     {warnings.map((warning, index) => (
                       <ListItem key={index} fontSize="sm">
                         {warning}
+                      </ListItem>
+                    ))}
+                  </UnorderedList>
+                </AlertDescription>
+              </Alert>
+            )}
+            {infos && infos.length > 0 && (
+              <Alert status="info" my={2}>
+                <AlertIcon />
+                <AlertDescription overflowX="auto">
+                  <UnorderedList>
+                    {infos.map((info, index) => (
+                      <ListItem key={index} fontSize="sm">
+                        {info}
                       </ListItem>
                     ))}
                   </UnorderedList>
