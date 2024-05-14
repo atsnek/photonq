@@ -47,10 +47,10 @@
     css-tree "^2.3.1"
     is-potential-custom-element-name "^1.0.1"
 
-"@atsnek/jaen-fields-mdx@^1.0.0-rc.16":
-  version "1.0.0-rc.16"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.16.tgz#415ad75ac9202b407db86e0ee3fecc53384e7906"
-  integrity sha512-WkQuOz+mwnixY4dVlvXl1NaIe0PR/ji7Cw6Y1TZHvprSj5/HEWAES2+AAKrALlfAFWn8gCSb+Uz+0BYs8nddUQ==
+"@atsnek/jaen-fields-mdx@^1.0.0-rc.18":
+  version "1.0.0-rc.18"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.18.tgz#b2ee61c6a8ce6a5af8433b2902dd079c886aef5c"
+  integrity sha512-wvZArSf2MB/CZgs6kSJahlMb85QyQkc8p1001Rv4L/QMyO2Zf04AJ3v9X4oLTvaIS2EKWugzPiTln/taPMUiDw==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
@@ -84,10 +84,10 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.70":
-  version "1.0.0-rc.70"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.70.tgz#2f6403e1d4dffde905a26fc90ee04ab3330c66c5"
-  integrity sha512-jIbraY9gyoE+rRL0fsFq1R2aPZZn9Oa3hopzd1BPEzEL5+4vzJPqsF+NUk30hovQdWkfHbsekKs5FqwD8xxoRw==
+"@atsnek/jaen@^1.0.0-rc.75":
+  version "1.0.0-rc.75"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.75.tgz#094874472d7bb6f227d9403df0ff9f3dc94df417"
+  integrity sha512-AwDfDGAEMf3bocobfeOARHXtyiBLI7K7WnRQMbZQjEmhw/hYHB2qos6qclZKbn2qIIReVHfcdVcOZY8p6Zb1CA==
   dependencies:
     "@chakra-ui/icons" "^2.1.1"
     "@chakra-ui/react" "^2.8.0"
@@ -3987,13 +3987,6 @@
   dependencies:
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
-
-"@snek-functions/origin@^0.9.8":
-  version "0.9.8"
-  resolved "https://registry.yarnpkg.com/@snek-functions/origin/-/origin-0.9.8.tgz#640be93fdaa02b3485353892cb564d101ede3c9d"
-  integrity sha512-mNjc8HbCwCzoBrrUXoul5xfpbcgo3BeF40j0WqJUuGvb7+bd/nl6KocuF1qoWQDjJM9l1mIIDsRoUM565fnW+g==
-  dependencies:
-    snek-query "*"
 
 "@socket.io/component-emitter@~3.1.0":
   version "3.1.1"
@@ -8317,10 +8310,10 @@ gatsby-plugin-image@^3.11.0, gatsby-plugin-image@^3.13.1:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.96:
-  version "1.0.0-rc.96"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.96.tgz#e64a77ff405f12c505dcc790eac7d7405df7a514"
-  integrity sha512-p0JcvaF3BBG4wy5qfojy0nLAwvGCcNv72+oIlh+G5wuEvGWWfjg/pcudBxGua8/ydHyuy53WHbydUIC1j6zMxw==
+gatsby-plugin-jaen@^1.0.0-rc.97:
+  version "1.0.0-rc.97"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.97.tgz#8bafd33bc234f3090153c5d473bbe3d4e5afd277"
+  integrity sha512-9b2VNp+uFYc9BCILi9VHuaVHKY3KS6n/lUSbRP4sOXJ8hecVVMZFNN5VVFvLHrzQpC8WQYLDt2Sv2IuBvaAaOQ==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
@@ -14468,10 +14461,10 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
-snek-query@*, snek-query@^0.0.114:
-  version "0.0.114"
-  resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.114.tgz#83f2afd9c58f6905850ae3f720a5125d01091baa"
-  integrity sha512-Jh5nQNszdekKgmj6KJ9d2OUV+up5HAmLyGMy3OC0ydDYovQSVxyG2y/BpLs1ut+6N8vPHJthiK5I1PFf4J0AzA==
+snek-query@^0.0.110:
+  version "0.0.110"
+  resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.110.tgz#b36235af494864cd7a6c001f6d96d9fd6336bfa1"
+  integrity sha512-Gw4yeHznJOhPCdvPUDWYO21SHtwlvoRqK7qefrXC4USb9Ovc6mddcB2yzErkzI/O+VTrq5ztzKusucdUF6ZHdw==
   dependencies:
     commander "^9.4.1"
     graphql "^16.6.0"
@@ -14481,10 +14474,10 @@ snek-query@*, snek-query@^0.0.114:
     rxjs "^7.8.0"
     typescript "^4.9.4"
 
-snek-query@^0.0.110:
-  version "0.0.110"
-  resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.110.tgz#b36235af494864cd7a6c001f6d96d9fd6336bfa1"
-  integrity sha512-Gw4yeHznJOhPCdvPUDWYO21SHtwlvoRqK7qefrXC4USb9Ovc6mddcB2yzErkzI/O+VTrq5ztzKusucdUF6ZHdw==
+snek-query@^0.0.114:
+  version "0.0.114"
+  resolved "https://registry.yarnpkg.com/snek-query/-/snek-query-0.0.114.tgz#83f2afd9c58f6905850ae3f720a5125d01091baa"
+  integrity sha512-Jh5nQNszdekKgmj6KJ9d2OUV+up5HAmLyGMy3OC0ydDYovQSVxyG2y/BpLs1ut+6N8vPHJthiK5I1PFf4J0AzA==
   dependencies:
     commander "^9.4.1"
     graphql "^16.6.0"
