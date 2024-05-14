@@ -109,7 +109,7 @@ const IndexPage: React.FC<PageProps> = () => {
             /> */}
         </Box>
       </Box>
-      <Stack py={10} px={3} w="full">
+      <Stack py={10} px={3} w="full" spacing="4">
         <Heading as="h2" size="md">
           Latest Experiments
         </Heading>

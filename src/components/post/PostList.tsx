@@ -227,7 +227,7 @@ const PostList: FC<PostListProps> = props => {
         </HStack>
       </Collapse>
 
-      <List spacing={3}>
+      <List spacing={3} mt="4">
         {allPosts.nodes.map((post, idx) => (
           <PostCard
             key={idx}

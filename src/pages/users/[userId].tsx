@@ -579,7 +579,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             </Tab>
           </TabList>
 
-          <TabPanels>
+          <TabPanels mt="12">
             <TabPanel>
               <Stack spacing="16">
                 <SimpleGrid
