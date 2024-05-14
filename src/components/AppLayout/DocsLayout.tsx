@@ -1,19 +1,17 @@
 import { Box, Container, Flex, Text, VStack } from '@chakra-ui/react';
+import { FaLink } from '@react-icons/all-files/fa/FaLink';
 import React, { FC, useMemo, useState } from 'react';
 import { useMenuStructureContext } from '../../contexts/menu-structure';
+import { TOCProvider } from '../../contexts/toc';
+import useNavOffset from '../../hooks/use-nav-offset';
 import { createBreadCrumbParts } from '../../utils/navigation';
 import { MainBreadcrumbPart } from '../../utils/navigation/types';
-import MainGrid from '../MainGrid';
-import LeftNav from '../navigation/LeftNav';
-import MainBreadcrumb from '../navigation/MainBreadcrumb';
-import PageDirectory from '../navigation/page-directory/PageDirectory';
-import MdxEditor from '../mdx-editor/MdxEditor';
-import MainBottomNav from '../navigation/MainBottomNav';
-import TableOfContent from '../navigation/TableOfContent';
 import Links from '../Links';
-import RightNav from '../navigation/RightNav';
-import { TOCProvider, useTOCContext } from '../../contexts/toc';
-import useNavOffset from '../../hooks/use-nav-offset';
+import TbUsers from '../icons/tabler/TbUsers';
+import MainBottomNav from '../navigation/MainBottomNav';
+import MainBreadcrumb from '../navigation/MainBreadcrumb';
+import TableOfContent from '../navigation/TableOfContent';
+import PageDirectory from '../navigation/page-directory/PageDirectory';
 
 const links = [
   {
@@ -74,6 +72,29 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
               data={menuStructure}
               isExpanded={isExpanded}
               path={path}
+              baseMenuItems={[
+                {
+                  name: 'Research',
+                  icon: <TbUsers />,
+                  items: [
+                    {
+                      name: 'Experiments',
+                      href: '/experiments',
+                      isActive: path?.startsWith('/experiments')
+                    }
+                  ]
+                },
+                {
+                  name: 'More',
+                  icon: <FaLink />,
+                  items: [
+                    {
+                      name: 'PhotonQ',
+                      href: '/'
+                    }
+                  ]
+                }
+              ]}
             />
           </Box>
         </Box>

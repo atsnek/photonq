@@ -1,12 +1,14 @@
 import { Box, Collapse, Flex, Spacer } from '@chakra-ui/react';
-import React, { FC } from 'react';
-import PageDirectory from './page-directory/PageDirectory';
-import NavbarControls from './NavbarControls';
 import { Global } from '@emotion/react';
-import SearchMenu from '../search-menu';
-import useNavOffset from '../../hooks/use-nav-offset';
-import { useMenuStructureContext } from '../../contexts/menu-structure';
 import { useLocation } from '@reach/router';
+import { FaLink } from '@react-icons/all-files/fa/FaLink';
+import { FC } from 'react';
+import { useMenuStructureContext } from '../../contexts/menu-structure';
+import useNavOffset from '../../hooks/use-nav-offset';
+import TbUsers from '../icons/tabler/TbUsers';
+import SearchMenu from '../search-menu';
+import NavbarControls from './NavbarControls';
+import PageDirectory from './page-directory/PageDirectory';
 
 interface MobileNavDrawerProps {
   isOpen: boolean;
@@ -53,6 +55,29 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({
                 isMobile
                 closeMobileDrawer={onClose}
                 data={menuStructure}
+                baseMenuItems={[
+                  {
+                    name: 'Research',
+                    icon: <TbUsers />,
+                    items: [
+                      {
+                        name: 'Experiments',
+                        href: '/experiments',
+                        isActive: pathname?.startsWith('/experiments')
+                      }
+                    ]
+                  },
+                  {
+                    name: 'More',
+                    icon: <FaLink />,
+                    items: [
+                      {
+                        name: 'PhotonQ',
+                        href: '/'
+                      }
+                    ]
+                  }
+                ]}
                 path={pathname}
               />
             </Box>
