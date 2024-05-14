@@ -98,8 +98,8 @@ const PostList: FC<PostListProps> = props => {
           },
     query,
     pagination: {
-      first: paginationCursor.before ? undefined : 1,
-      last: paginationCursor.before ? 1 : undefined,
+      first: paginationCursor.before ? undefined : 6,
+      last: paginationCursor.before ? 6 : undefined,
       after: paginationCursor.after,
       before: paginationCursor.before
     }
