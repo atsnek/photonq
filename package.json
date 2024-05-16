@@ -17,8 +17,8 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@atsnek/jaen": "^1.0.0-rc.75",
-    "@atsnek/jaen-fields-mdx": "^1.0.0-rc.18",
+    "@atsnek/jaen": "^1.0.0-rc.77",
+    "@atsnek/jaen-fields-mdx": "^1.0.0-rc.19",
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",

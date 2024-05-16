@@ -47,10 +47,10 @@
     css-tree "^2.3.1"
     is-potential-custom-element-name "^1.0.1"
 
-"@atsnek/jaen-fields-mdx@^1.0.0-rc.18":
-  version "1.0.0-rc.18"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.18.tgz#b2ee61c6a8ce6a5af8433b2902dd079c886aef5c"
-  integrity sha512-wvZArSf2MB/CZgs6kSJahlMb85QyQkc8p1001Rv4L/QMyO2Zf04AJ3v9X4oLTvaIS2EKWugzPiTln/taPMUiDw==
+"@atsnek/jaen-fields-mdx@^1.0.0-rc.19":
+  version "1.0.0-rc.19"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0-rc.19.tgz#6bfe5e1472e5c57796884fcfb6cc5c217dee686e"
+  integrity sha512-7Y9ZExGgf9DUooj6li8iuTPLDPSp+LKtn9eNy50cjpLmm35KheIUj15HFFrm2mDjyuH8DtnvjRWAB6G9253AMQ==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
@@ -84,10 +84,10 @@
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-"@atsnek/jaen@^1.0.0-rc.75":
-  version "1.0.0-rc.75"
-  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.75.tgz#094874472d7bb6f227d9403df0ff9f3dc94df417"
-  integrity sha512-AwDfDGAEMf3bocobfeOARHXtyiBLI7K7WnRQMbZQjEmhw/hYHB2qos6qclZKbn2qIIReVHfcdVcOZY8p6Zb1CA==
+"@atsnek/jaen@^1.0.0-rc.77":
+  version "1.0.0-rc.77"
+  resolved "https://registry.yarnpkg.com/@atsnek/jaen/-/jaen-1.0.0-rc.77.tgz#7a12d14deb9ed514f99bdc024bb74da192e76a99"
+  integrity sha512-qv6ROzUtZmuPOh5hBwCZdG375PA5+uCgPV4pFtm1+wHXoRd1yNY96yto247eRhVq83r3YdvRqiTiLEi/Z+SAnw==
   dependencies:
     "@chakra-ui/icons" "^2.1.1"
     "@chakra-ui/react" "^2.8.0"
