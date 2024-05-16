@@ -8310,10 +8310,10 @@ gatsby-plugin-image@^3.11.0, gatsby-plugin-image@^3.13.1:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0-rc.97:
-  version "1.0.0-rc.97"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.97.tgz#8bafd33bc234f3090153c5d473bbe3d4e5afd277"
-  integrity sha512-9b2VNp+uFYc9BCILi9VHuaVHKY3KS6n/lUSbRP4sOXJ8hecVVMZFNN5VVFvLHrzQpC8WQYLDt2Sv2IuBvaAaOQ==
+gatsby-plugin-jaen@^1.0.0-rc.98:
+  version "1.0.0-rc.98"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0-rc.98.tgz#0f4664330afd6e0095f4a042dd5240454d1a0a82"
+  integrity sha512-Hf9qnQ3fJZw2otA7UxugG82+xDS1+p/1Z5U/kw87TLMM7WiEkbmqSkd6mDCy5F5X/kXQGohA9bpbzKL3Du8aEg==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
