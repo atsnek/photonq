@@ -1,5 +1,6 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
+import useNavOffset from '../../hooks/use-nav-offset';
 
 interface ICommunityLayoutProps {
   children: ReactNode;
@@ -9,7 +10,13 @@ interface ICommunityLayoutProps {
  *  The community layout component.
  */
 const CommunityLayout: FC<ICommunityLayoutProps> = ({ children }) => {
-  return <Box mt={5}>{children}</Box>;
+  const offset = useNavOffset();
+
+  return (
+    <Container maxW="3xl" mt={offset}>
+      {children}
+    </Container>
+  );
 };
 
 export default CommunityLayout;

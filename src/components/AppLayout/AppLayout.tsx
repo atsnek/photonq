@@ -9,6 +9,7 @@ import { createPageTree } from '../../utils/navigation';
 import CommunityLayout from './CommunityLayout';
 import DocsLayout from './DocsLayout';
 import Footer from './Footer';
+import PostLayout from './PostLayout';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -48,6 +49,13 @@ const AppLayout: FC<AppLayoutProps> = ({ children, isDocs, path, footer }) => {
     );
   } else if (isCommunity) {
     childrenElmnt = <CommunityLayout>{children}</CommunityLayout>;
+  } else if (
+    (path.startsWith('/experiments') &&
+      path !== '/experiments/' &&
+      path !== '/experiments') ||
+    path.startsWith('/new/experiment')
+  ) {
+    childrenElmnt = <PostLayout>{children}</PostLayout>;
   } else {
     childrenElmnt = children;
   }
@@ -55,7 +63,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children, isDocs, path, footer }) => {
   return (
     <>
       <MenuStructureContext.Provider value={{ menuStructure }}>
-        <Flex minW="210px" direction="column" pb={5}>
+        <Flex minW="210px" direction="column" pb={12}>
           {!isAuthenticated && <TopNav path={path} />}
           <Box flex="1">{childrenElmnt}</Box>
         </Flex>
