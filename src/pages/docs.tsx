@@ -43,13 +43,6 @@ const DocsPage: React.FC<PageProps> = () => {
           borderLeft="1px solid"
         >
           <RightNav>
-            <Text
-              color="rightNav.titleTop.color"
-              fontWeight="semibold"
-              fontSize="sm"
-            >
-              On This Page
-            </Text>
             <Flex as="nav" direction="column" mt={5}>
               <MemoizedToc />
             </Flex>
