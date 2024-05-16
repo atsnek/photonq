@@ -66,7 +66,7 @@ const AboutUs: FC = () => {
         src: 'https://avatars.githubusercontent.com/u/165766191?s=400&u=fe48f5be472421d6ba76c97b36edcd98396a6672&v=4',
         name: 'cronit',
         title: 'Development Studio',
-        to: 'https://cronit.io'
+        to: 'https://www.cronit.io'
       }
     }
   ];
