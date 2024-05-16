@@ -28,18 +28,7 @@ const IndexPage: React.FC<PageProps> = () => {
   const { data, isSafe, refetch } = useQuery(sq);
 
   return (
-    <VStack>
-      {/* <PostListControls
-      filterLanguage={filterLanguage}
-      setFilterLanguage={setFilterLanguage}
-      // setPosts={setPostResults}
-      fetchPosts={(query, offset, lang) =>
-        fetchSearchPosts(query, POST_FETCH_LIMIT, 0, lang ?? undefined)
-      }
-      setDateRange={setFilterDateRange}
-      showCreatePostButton
-      query={searchPosts.query}
-    /> */}
+    <Stack>
       <Box
         borderRadius="xl"
         mt={10}
@@ -59,7 +48,7 @@ const IndexPage: React.FC<PageProps> = () => {
             ml={5}
             borderRadius="full"
           >
-            <Heading as="h1" size="lg" color="pages.posts.featured.title.color">
+            <Heading as="h1" size="lg" color="#1FA2FF">
               Featured Experiments
             </Heading>
           </Box>
@@ -83,7 +72,8 @@ const IndexPage: React.FC<PageProps> = () => {
               md: 2
             }}
             gap={4}
-            p={5}
+            px={5}
+            py="10"
             w="full"
           >
             {data
@@ -116,7 +106,7 @@ const IndexPage: React.FC<PageProps> = () => {
 
         <PostList />
       </Stack>
-    </VStack>
+    </Stack>
   );
 };
 

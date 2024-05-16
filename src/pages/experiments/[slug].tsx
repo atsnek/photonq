@@ -2,49 +2,61 @@ import {
   PageConfig,
   PageProps,
   osg,
-  useAuth,
   useNotificationsContext
 } from '@atsnek/jaen';
 import {
-  AspectRatio,
   Avatar,
   Box,
   Button,
   ButtonGroup,
-  Card,
-  CardBody,
-  Center,
+  Divider,
   Flex,
   HStack,
+  Icon,
   IconButton,
-  Image,
   Input,
-  Skeleton,
+  LinkBox,
+  LinkOverlay,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   SkeletonCircle,
   SkeletonText,
   Stack,
-  Text,
-  Wrap
+  Text
 } from '@chakra-ui/react';
 
-import { FaImage } from '@react-icons/all-files/fa/FaImage';
+import { FaRegShareSquare } from '@react-icons/all-files/fa/FaRegShareSquare';
 import { FaRocket } from '@react-icons/all-files/fa/FaRocket';
+import { FaUsers } from '@react-icons/all-files/fa/FaUsers';
 
 import { sq } from '@/clients/social';
 import { PrivacyInput } from '@/clients/social/src/schema.generated';
-import { CheckIcon, DeleteIcon } from '@chakra-ui/icons';
+import { CheckIcon, DeleteIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import { graphql, navigate } from 'gatsby';
 import { Link } from 'gatsby-plugin-jaen';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { asEnumKey } from 'snek-query';
 import { useLazyQuery } from 'snek-query/react-hooks';
-import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEditor';
-import { useTOCContext } from '../../contexts/toc';
-import PostCardRating from '../../components/post/PostCardRating';
 import { TextControl } from '../../components/TextControl';
+import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEditor';
+import TableOfContent from '../../components/navigation/TableOfContent';
+import PostCardRating from '../../components/post/PostCardRating';
+import { useTOCContext } from '../../contexts/toc';
+
+const useId = () => {
+  const [id, setId] = useState<string>(Math.random().toString(36).substring(2));
+
+  const refresh = () => setId(Math.random().toString(36).substring(2));
+
+  return [id, refresh] as const;
+};
 
 const DocsPage: React.FC<PageProps> = ({ params }) => {
   const notify = useNotificationsContext();
+
+  const [mdxKey, refreshMdxKey] = useId();
 
   const [_, { data, isLoading, refetch, isSafe }] = useLazyQuery(sq);
 
@@ -59,14 +71,16 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
   const [values, setValues] = useState({
     title: post.title,
     summary: post.summary,
-    content: post.content
+    content: post.content,
+    avatarURL: post.avatarURL
   });
 
   useEffect(() => {
     setValues({
       title: post.title,
       summary: post.summary,
-      content: post.content
+      content: post.content,
+      avatarURL: post.avatarURL
     });
   }, [post]);
 
@@ -84,10 +98,11 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
 
   const hasChanges = useMemo(() => {
     return (
-      isSafe &&
-      ((values.title !== undefined && values.title !== post.title) ||
-        (values.summary !== undefined && values.summary !== post.summary) ||
-        (values.content !== undefined && values.content !== post.content))
+      (isSafe &&
+        ((values.title !== undefined && values.title !== post.title) ||
+          (values.summary !== undefined && values.summary !== post.summary) ||
+          (values.content !== undefined && values.content !== post.content))) ||
+      (values.avatarURL !== undefined && values.avatarURL !== post.avatarURL)
     );
   }, [values, post, isSafe]);
 
@@ -106,276 +121,312 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
   }, [values.content]);
 
   return (
-    <Stack key={post.id} spacing={4}>
-      <Card variant="outline" display={post.isOwner ? 'block' : 'none'}>
-        <CardBody as={Flex} justifyContent="space-between" alignItems="center">
-          {post.privacy === 'PRIVATE' ? (
-            <Button
-              leftIcon={<FaRocket />}
-              variant="link"
-              fontWeight="normal"
-              onClick={async () => {
-                const confirm = await notify.confirm({
-                  title: 'Publish Experiment',
-                  message: 'Are you sure you want to publish this experiment?'
-                });
+    <Stack key={post.id} spacing={8}>
+      <Stack spacing="4">
+        <Flex justifyContent="space-between">
+          <HStack spacing="1">
+            <Icon
+              as={FaUsers}
+              display="inline-block"
+              color="brand.500"
+              mr="2"
+            />
+            <Text color="gray.600">Community experiment</Text>
+          </HStack>
+        </Flex>
 
-                if (confirm) {
-                  const [_, errors] = await sq.mutate(m =>
-                    m.postUpdate({
-                      id: post.id,
-                      values: {
-                        privacy: asEnumKey(PrivacyInput, 'PUBLIC')
-                      }
-                    })
-                  );
-
-                  refetch();
-
-                  if (errors) {
-                    notify.toast({
-                      title: 'Error',
-                      status: 'error',
-                      description:
-                        'An error occurred while publishing the experiment.'
-                    });
-                  } else {
-                    notify.toast({
-                      title: 'Experiment Published',
-                      status: 'success',
-                      description:
-                        'The experiment has been successfully published.'
-                    });
-                  }
-                }
-              }}
-            >
-              Publish
-            </Button>
-          ) : (
-            <Button
-              leftIcon={<CheckIcon color="green.500" />}
-              variant="link"
-              colorScheme="green"
-              fontWeight="normal"
-              color="gray.500"
-              onClick={async () => {
-                const confirm = await notify.confirm({
-                  title: 'Unpublish Experiment',
-                  message: 'Are you sure you want to unpublish this experiment?'
-                });
-
-                if (confirm) {
-                  const [_, errors] = await sq.mutate(m =>
-                    m.postUpdate({
-                      id: post.id,
-                      values: {
-                        privacy: asEnumKey(PrivacyInput, 'PRIVATE')
-                      }
-                    })
-                  );
-
-                  refetch();
-
-                  if (errors) {
-                    notify.toast({
-                      title: 'Error',
-                      status: 'error',
-                      description:
-                        'An error occurred while unpublishing the experiment.'
-                    });
-                  } else {
-                    notify.toast({
-                      title: 'Experiment Unpublished',
-                      status: 'success',
-                      description:
-                        'The experiment has been successfully unpublished.'
-                    });
-                  }
-                }
-              }}
-            >
-              Published
-            </Button>
-          )}
-
-          <ButtonGroup flexDir={['column', 'row']}>
-            <Button
-              variant="outline"
-              isDisabled={!hasChanges}
-              isLoading={isSaving}
-              onClick={async () => {
-                setIsSaving(true);
-
-                const [_, errors] = await sq.mutate(m =>
-                  m.postUpdate({
-                    id: post.id,
-                    values: {
-                      title: values.title,
-                      summary: values.summary || undefined,
-                      content: values.content || undefined
-                    }
-                  })
-                );
-
-                refetch();
-
-                setIsSaving(false);
-
-                if (errors) {
-                  notify.toast({
-                    title: 'Error',
-                    status: 'error',
-                    description:
-                      'An error occurred while saving the experiment.'
-                  });
-                } else {
-                  notify.toast({
-                    title: 'Experiment Saved',
-                    status: 'success',
-                    description: 'The experiment has been successfully saved.'
-                  });
-                }
-              }}
-            >
-              Save
-            </Button>
-
-            {hasChanges && (
+        <Stack display={post.isOwner ? 'flex' : 'none'}>
+          <Divider />
+          <Flex justifyContent="space-between" alignItems="center">
+            {post.privacy === 'PRIVATE' ? (
               <Button
-                variant="ghost"
-                colorScheme="red"
-                onClick={() => {
-                  setValues({
-                    title: post.title,
-                    summary: post.summary,
-                    content: post.content
+                leftIcon={<FaRocket />}
+                variant="link"
+                fontWeight="normal"
+                onClick={async () => {
+                  const confirm = await notify.confirm({
+                    title: 'Publish Experiment',
+                    message: 'Are you sure you want to publish this experiment?'
                   });
+
+                  if (confirm) {
+                    const [_, errors] = await sq.mutate(m =>
+                      m.postUpdate({
+                        id: post.id,
+                        values: {
+                          privacy: asEnumKey(PrivacyInput, 'PUBLIC')
+                        }
+                      })
+                    );
+
+                    refetch();
+
+                    if (errors) {
+                      notify.toast({
+                        title: 'Error',
+                        status: 'error',
+                        description:
+                          'An error occurred while publishing the experiment.'
+                      });
+                    } else {
+                      notify.toast({
+                        title: 'Experiment Published',
+                        status: 'success',
+                        description:
+                          'The experiment has been successfully published.'
+                      });
+                    }
+                  }
                 }}
               >
-                Cancel
+                Publish
+              </Button>
+            ) : (
+              <Button
+                leftIcon={<CheckIcon color="green.500" />}
+                variant="link"
+                colorScheme="green"
+                fontWeight="normal"
+                color="gray.500"
+                onClick={async () => {
+                  const confirm = await notify.confirm({
+                    title: 'Unpublish Experiment',
+                    message:
+                      'Are you sure you want to unpublish this experiment?'
+                  });
+
+                  if (confirm) {
+                    const [_, errors] = await sq.mutate(m =>
+                      m.postUpdate({
+                        id: post.id,
+                        values: {
+                          privacy: asEnumKey(PrivacyInput, 'PRIVATE')
+                        }
+                      })
+                    );
+
+                    refetch();
+
+                    if (errors) {
+                      notify.toast({
+                        title: 'Error',
+                        status: 'error',
+                        description:
+                          'An error occurred while unpublishing the experiment.'
+                      });
+                    } else {
+                      notify.toast({
+                        title: 'Experiment Unpublished',
+                        status: 'success',
+                        description:
+                          'The experiment has been successfully unpublished.'
+                      });
+                    }
+                  }
+                }}
+              >
+                Published
               </Button>
             )}
 
-            <Input
-              type="file"
-              ref={imageInputRef}
-              display="none"
-              onChange={async e => {
-                const file = e.target.files?.[0];
-
-                if (file) {
-                  setIsImageUploading(true);
-                  const { fileUrl } = await osg.uploadFile(file);
+            <ButtonGroup flexDir={['column', 'row']}>
+              <Button
+                variant="outline"
+                isDisabled={!hasChanges}
+                isLoading={isSaving}
+                onClick={async () => {
+                  setIsSaving(true);
 
                   const [_, errors] = await sq.mutate(m =>
                     m.postUpdate({
                       id: post.id,
                       values: {
-                        avatarURL: fileUrl
+                        title: values.title,
+                        summary: values.summary || undefined,
+                        content: values.content || undefined
                       }
                     })
                   );
 
                   refetch();
 
+                  setIsSaving(false);
+
                   if (errors) {
                     notify.toast({
                       title: 'Error',
                       status: 'error',
                       description:
-                        'An error occurred while uploading the image.'
+                        'An error occurred while saving the experiment.'
                     });
                   } else {
                     notify.toast({
-                      title: 'Image Uploaded',
+                      title: 'Experiment Saved',
                       status: 'success',
-                      description: 'The image has been successfully uploaded.'
+                      description: 'The experiment has been successfully saved.'
+                    });
+                  }
+                }}
+              >
+                Save
+              </Button>
+
+              {hasChanges && (
+                <Button
+                  variant="ghost"
+                  colorScheme="red"
+                  onClick={() => {
+                    setValues({
+                      title: post.title,
+                      summary: post.summary,
+                      content: post.content,
+                      avatarURL: post.avatarURL
                     });
 
-                    setIsImageUploading(false);
+                    refreshMdxKey();
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
+
+              <Input
+                type="file"
+                ref={imageInputRef}
+                display="none"
+                onChange={async e => {
+                  const file = e.target.files?.[0];
+
+                  if (file) {
+                    setIsImageUploading(true);
+
+                    try {
+                      const { fileUrl } = await osg.uploadFile(file);
+
+                      setValues({
+                        ...values,
+                        avatarURL: fileUrl
+                      });
+                    } catch {
+                      notify.toast({
+                        title: 'Error',
+                        status: 'error',
+                        description:
+                          'An error occurred while uploading the image.'
+                      });
+                    } finally {
+                      setIsImageUploading(false);
+                    }
                   }
+                }}
+              />
+
+              <IconButton
+                icon={<DeleteIcon />}
+                aria-label="Delete"
+                variant="ghost"
+                colorScheme="red"
+                onClick={async () => {
+                  const confirm = await notify.confirm({
+                    title: 'Delete Experiment',
+                    message: 'Are you sure you want to delete this experiment?'
+                  });
+
+                  if (confirm) {
+                    const [_, errors] = await sq.mutate(m =>
+                      m.postDelete({ id: post.id })
+                    );
+
+                    if (errors) {
+                      notify.toast({
+                        title: 'Error',
+                        status: 'error',
+                        description:
+                          'An error occurred while deleting the experiment.'
+                      });
+                    } else {
+                      notify.toast({
+                        title: 'Experiment Deleted',
+                        status: 'success',
+                        description:
+                          'The experiment has been successfully deleted.'
+                      });
+
+                      navigate(`/users/${post.user().id}`);
+                    }
+                  }
+                }}
+              />
+            </ButtonGroup>
+          </Flex>
+          <Divider />
+        </Stack>
+
+        <HStack spacing="4">
+          <SkeletonCircle
+            boxSize="unset"
+            isLoaded={isSafe && !isImageUploading}
+            borderRadius="md"
+          >
+            <Avatar
+              size="md"
+              borderRadius="md"
+              src={values.avatarURL || undefined}
+              name={values.title}
+              _hover={
+                post.isOwner
+                  ? {
+                      cursor: 'pointer',
+                      filter: 'brightness(0.8)',
+                      outlineColor: 'var(--chakra-colors-brand-400)',
+                      outlineWidth: '2px',
+                      outlineStyle: 'solid',
+                      outlineOffset: '2px'
+                    }
+                  : {}
+              }
+              cursor={post.isOwner ? 'pointer' : 'default'}
+              onClick={() => {
+                if (post.isOwner) {
+                  imageInputRef.current?.click();
                 }
               }}
             />
+          </SkeletonCircle>
 
-            <IconButton
-              icon={<DeleteIcon />}
-              aria-label="Delete"
-              variant="ghost"
-              colorScheme="red"
-              onClick={async () => {
-                const confirm = await notify.confirm({
-                  title: 'Delete Experiment',
-                  message: 'Are you sure you want to delete this experiment?'
+          <SkeletonText isLoaded={isSafe}>
+            <TextControl
+              key={values.title}
+              text={values.title}
+              onSubmit={title => {
+                setValues({
+                  ...values,
+                  title
                 });
-
-                if (confirm) {
-                  const [_, errors] = await sq.mutate(m =>
-                    m.postDelete({ id: post.id })
-                  );
-
-                  if (errors) {
-                    notify.toast({
-                      title: 'Error',
-                      status: 'error',
-                      description:
-                        'An error occurred while deleting the experiment.'
-                    });
-                  } else {
-                    notify.toast({
-                      title: 'Experiment Deleted',
-                      status: 'success',
-                      description:
-                        'The experiment has been successfully deleted.'
-                    });
-
-                    navigate(`/users/${post.user().id}`);
-                  }
-                }
               }}
+              type="heading"
+              editable={post.isOwner}
             />
-          </ButtonGroup>
-        </CardBody>
-      </Card>
+          </SkeletonText>
+        </HStack>
 
-      <Skeleton isLoaded={isSafe} minH="50px">
-        <Wrap justify="space-between" align="center">
+        <SkeletonText isLoaded={isSafe}>
           <TextControl
-            key={values.title}
-            text={values.title}
-            onSubmit={title => {
+            key={values.summary}
+            text={values.summary || undefined}
+            onSubmit={summary => {
               setValues({
                 ...values,
-                title
+                summary
               });
             }}
-            type="heading"
-            editable={post.isOwner}
+            type="text"
+            editable={true}
           />
+        </SkeletonText>
+      </Stack>
 
-          <HStack>
-            <Text fontSize="sm" color="gray.600">
-              {post.language}
-            </Text>
-
-            <PostCardRating
-              id={post.id}
-              likes={post.stars().totalCount || 0}
-              hasRated={!!post.hasStarred}
-              toggleRating={async (id: string) => {
-                if (post.hasStarred === false) {
-                  await sq.mutate(m => m.postStar({ postId: id }));
-                } else if (post.hasStarred === true) {
-                  await sq.mutate(m => m.postUnstar({ postId: id }));
-                }
-              }}
-            />
-          </HStack>
-        </Wrap>
-      </Skeleton>
-
-      <Flex alignItems="center">
+      <LinkBox as={Flex} alignItems="center">
         <SkeletonCircle boxSize="unset" isLoaded={isSafe}>
           <Avatar
             size="md"
@@ -386,12 +437,13 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
 
         <Box ml={2}>
           <SkeletonText isLoaded={isSafe}>
-            <Link to={`/users/${post.user().id}`}>
-              {post.user().profile.displayName}
-            </Link>
+            <Text>{post.user().profile.displayName}</Text>
 
             <Text fontSize="sm" color="gray.600">
-              @{post.user().profile.userName} &bull;
+              <LinkOverlay as={Link} to={`/users/${post.user().id}`}>
+                @{post.user().profile.userName}
+              </LinkOverlay>
+              &bull;
               {post.createdAt !== post.updatedAt ? (
                 <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
               ) : (
@@ -400,112 +452,56 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
             </Text>
           </SkeletonText>
         </Box>
-      </Flex>
+      </LinkBox>
 
-      <SkeletonText isLoaded={isSafe}>
-        <TextControl
-          key={values.summary}
-          text={values.summary || undefined}
-          onSubmit={summary => {
-            setValues({
-              ...values,
-              summary
-            });
-          }}
-          type="text"
-          editable={post.isOwner}
-        />
-      </SkeletonText>
-
-      <HStack justifyContent="end" display={post.isOwner ? 'flex' : 'none'}>
-        <IconButton
-          variant="outline"
-          icon={<FaImage />}
-          aria-label="Upload Image"
-          onClick={() => {
-            imageInputRef.current?.click();
-          }}
-        />
-        <IconButton
-          variant="ghost"
-          colorScheme="red"
-          isLoading={isImageUploading}
-          icon={<DeleteIcon color="red.500" />}
-          aria-label="Delete Image"
-          onClick={async () => {
-            const confirm = await notify.confirm({
-              title: 'Delete Image',
-              message: 'Are you sure you want to delete the image?'
-            });
-
-            if (confirm) {
-              const [_, errors] = await sq.mutate(m =>
-                m.postUpdate({
-                  id: post.id,
-                  values: {
-                    avatarURL: undefined
-                  }
-                })
-              );
-
-              refetch();
-
-              if (errors) {
-                notify.toast({
-                  title: 'Error',
-                  status: 'error',
-                  description: 'An error occurred while deleting the image.'
-                });
-              } else {
-                notify.toast({
-                  title: 'Image Deleted',
-                  status: 'success',
-                  description: 'The image has been successfully deleted.'
-                });
+      <Stack>
+        <Divider />
+        <Flex justifyContent="space-between">
+          <PostCardRating
+            id={post.id}
+            likes={post.stars().totalCount || 0}
+            hasRated={!!post.hasStarred}
+            toggleRating={async (id: string) => {
+              if (post.hasStarred === false) {
+                await sq.mutate(m => m.postStar({ postId: id }));
+              } else if (post.hasStarred === true) {
+                await sq.mutate(m => m.postUnstar({ postId: id }));
               }
-            }
-          }}
-        />
-      </HStack>
-
-      <Skeleton isLoaded={isSafe}>
-        <AspectRatio
-          _hover={
-            post.isOwner
-              ? {
-                  cursor: 'pointer',
-                  filter: 'brightness(0.8)',
-                  outlineColor: 'brand.500',
-                  outlineWidth: '2px',
-                  outlineStyle: 'solid',
-                  outlineOffset: '2px'
-                }
-              : {}
-          }
-          ratio={16 / 9}
-          borderWidth="1px"
-          borderRadius="lg"
-          display={
-            isSafe && !post.avatarURL && !post.isOwner ? 'none' : 'block'
-          }
-          cursor={post.isOwner ? 'pointer' : 'default'}
-          onClick={() => {
-            if (post.isOwner) {
-              imageInputRef.current?.click();
-            }
-          }}
-        >
-          <Image
-            src={post.avatarURL}
-            alt="Post Image"
-            fallback={
-              <Center>
-                <Text>Click to upload an image</Text>
-              </Center>
-            }
+            }}
           />
-        </AspectRatio>
-      </Skeleton>
+
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              size="sm"
+              color="gray.600"
+              icon={<FaRegShareSquare />}
+              aria-label="Share"
+              variant="ghost"
+            />
+            <MenuList>
+              <MenuItem
+                icon={<ExternalLinkIcon />}
+                onClick={() => {
+                  // Copy to clipboard
+                  navigator.clipboard.writeText(window.location.href);
+
+                  notify.toast({
+                    title: 'Share',
+                    status: 'info',
+                    description: 'Link copied to clipboard.'
+                  });
+                }}
+              >
+                Copy Link
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+        <Divider />
+      </Stack>
+
+      <TableOfContent />
 
       {/* Placeholder for Editor Component */}
       <SkeletonText
@@ -515,6 +511,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
         skeletonHeight="6"
       >
         <UncontrolledMdxEditor
+          key={mdxKey}
           value={parsedContent}
           isEditing={post.isOwner}
           onUpdateValue={value => {

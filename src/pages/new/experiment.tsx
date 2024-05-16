@@ -10,32 +10,28 @@ import {
   useAuth,
   useNotificationsContext
 } from '@atsnek/jaen';
-import { CloseIcon, DeleteIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import {
-  AspectRatio,
+  Avatar,
   Button,
   ButtonGroup,
-  Card,
-  CardBody,
-  Center,
+  Divider,
   Flex,
   HStack,
   IconButton,
-  Image,
   Input,
+  SkeletonCircle,
   Stack,
-  Switch,
-  Text,
-  Wrap
+  Switch
 } from '@chakra-ui/react';
-import { FaImage } from '@react-icons/all-files/fa/FaImage';
 
 import { graphql, navigate } from 'gatsby';
 import * as React from 'react';
-import { TextControl } from '../../components/TextControl';
 import { asEnumKey } from 'snek-query';
+import { TextControl } from '../../components/TextControl';
 import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEditor';
 import { useTOCContext } from '../../contexts/toc';
+import TableOfContent from '../../components/navigation/TableOfContent';
 
 const IndexPage: React.FC<PageProps> = () => {
   const notify = useNotificationsContext();
@@ -123,9 +119,10 @@ const IndexPage: React.FC<PageProps> = () => {
   }, [values.content]);
 
   return (
-    <Stack spacing="4">
-      <Card variant="outline">
-        <CardBody as={Flex} justifyContent="space-between" alignItems="center">
+    <Stack spacing="8">
+      <Stack>
+        <Divider />
+        <Flex justifyContent="space-between" alignItems="center">
           <Switch
             isChecked={values.privacy === 'PUBLIC'}
             onChange={e => {
@@ -223,26 +220,54 @@ const IndexPage: React.FC<PageProps> = () => {
                 });
 
                 if (confirm) {
-                  navigate(`/users/${user?.profile.sub}`);
+                  navigate(`/users/${user?.profile?.sub}`);
                 }
               }}
             />
           </ButtonGroup>
-        </CardBody>
-      </Card>
+        </Flex>
+        <Divider />
+      </Stack>
 
-      <TextControl
-        key={values.title}
-        text={values.title}
-        onSubmit={title => {
-          setValues({
-            ...values,
-            title
-          });
-        }}
-        type="heading"
-        editable={true}
-      />
+      <HStack spacing="4">
+        <SkeletonCircle
+          boxSize="unset"
+          isLoaded={!isImageUploading}
+          borderRadius="md"
+        >
+          <Avatar
+            size="md"
+            borderRadius="md"
+            src={values.avatarURL || undefined}
+            name={values.title}
+            _hover={{
+              cursor: 'pointer',
+              filter: 'brightness(0.8)',
+              outlineColor: 'var(--chakra-colors-brand-400)',
+              outlineWidth: '2px',
+              outlineStyle: 'solid',
+              outlineOffset: '2px'
+            }}
+            cursor={'pointer'}
+            onClick={() => {
+              imageInputRef.current?.click();
+            }}
+          />
+        </SkeletonCircle>
+
+        <TextControl
+          key={values.title}
+          text={values.title}
+          onSubmit={title => {
+            setValues({
+              ...values,
+              title
+            });
+          }}
+          type="heading"
+          editable={true}
+        />
+      </HStack>
 
       <TextControl
         key={values.summary}
@@ -257,62 +282,7 @@ const IndexPage: React.FC<PageProps> = () => {
         editable={true}
       />
 
-      <HStack justifyContent="end">
-        <IconButton
-          variant="outline"
-          icon={<FaImage />}
-          isLoading={isImageUploading}
-          aria-label="Upload Image"
-          onClick={() => {
-            imageInputRef.current?.click();
-          }}
-        />
-        <IconButton
-          variant="ghost"
-          colorScheme="red"
-          icon={<DeleteIcon color="red.500" />}
-          aria-label="Delete Image"
-          onClick={async () => {
-            const confirm = await notify.confirm({
-              title: 'Delete Image',
-              message: 'Are you sure you want to delete the image?'
-            });
-
-            if (confirm) {
-              setValues({
-                ...values,
-                avatarURL: undefined
-              });
-
-              notify.toast({
-                title: 'Image Deleted',
-                status: 'success',
-                description: 'The image has been successfully deleted.'
-              });
-            }
-          }}
-        />
-      </HStack>
-
-      <AspectRatio
-        ratio={16 / 9}
-        borderWidth="1px"
-        borderRadius="lg"
-        cursor="pointer"
-        onClick={() => {
-          imageInputRef.current?.click();
-        }}
-      >
-        <Image
-          src={values.avatarURL}
-          alt="Post Image"
-          fallback={
-            <Center>
-              <Text>Click to upload an image</Text>
-            </Center>
-          }
-        />
-      </AspectRatio>
+      <TableOfContent />
 
       {/* Placeholder for Editor Component */}
       <UncontrolledMdxEditor
