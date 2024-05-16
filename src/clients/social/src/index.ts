@@ -6,7 +6,7 @@ import { Query, Mutation } from './schema.generated';
 export const sq = makeSnekQuery(
   { Query, Mutation },
   {
-    apiURL: 'https://pylons.photonq.org/social/graphql',
+    apiURL: 'https://social-pylon.cronit.io/graphql',
     middlewares: [
       ({ context }) => {
         context.headers['x-org-id'] = __JAEN_ZITADEL__.organizationId;
