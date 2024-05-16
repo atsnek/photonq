@@ -375,7 +375,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
         <Stack mt="16">
           <Box alignSelf="center">
             <Flex justifyContent="center" boxSize={250} mt="4">
-              {userId === auth.user?.profile.sub ? (
+              {userId === auth.user?.profile?.sub ? (
                 <AuthUserProvider>
                   <EditableImage
                     avatarUrl={user.profile.avatarUrl}
@@ -425,7 +425,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
               >
                 <Button
                   display={
-                    !isSafe || userId === auth.user?.profile.sub
+                    !isSafe || userId === auth.user?.profile?.sub
                       ? 'none'
                       : 'block'
                   }
@@ -467,7 +467,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             <TextControl
               text={user.bio || 'No bio yet'}
               type="text"
-              editable={userId === auth.user?.profile.sub}
+              editable={userId === auth.user?.profile?.sub}
               onSubmit={async bio => {
                 await sq.mutate(m =>
                   m.userUpdate({
@@ -764,7 +764,7 @@ export const pageConfig: PageConfig = {
     type: 'user',
     label: 'Your profile',
     path: ({ auth }) => {
-      return `/users/${auth.user?.profile.sub}`;
+      return `/users/${auth.user?.profile?.sub}`;
     }
   }
 };
