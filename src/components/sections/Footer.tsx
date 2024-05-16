@@ -1,3 +1,4 @@
+import { Field, useAuth } from '@atsnek/jaen';
 import {
   Box,
   Button,
@@ -7,16 +8,16 @@ import {
   HStack,
   Image,
   Spacer,
+  Text,
   VStack
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
-import { Field, useAuth } from '@atsnek/jaen';
 
-import UniWienLogo from '../../assets/icons/uni-wien-logo-gray.svg';
 import { Link } from 'gatsby-plugin-jaen';
+import UniWienLogo from '../../assets/icons/uni-wien-logo-gray.svg';
 
 const Footer: FC = () => {
-  const isAuthenticated = useAuth().user !== null;
+  const isAuthenticated = useAuth().isAuthenticated;
 
   const links = [
     [
@@ -24,13 +25,22 @@ const Footer: FC = () => {
         label: 'Links',
         isTitle: true
       },
+
       {
-        label: 'Terms & Conditions',
-        href: '#'
+        label: 'Documentation',
+        href: '/docs'
+      },
+      {
+        label: 'Experiments',
+        href: '/experiments'
       },
       {
         label: 'Imprint',
-        href: '#'
+        href: '/imprint'
+      },
+      {
+        label: 'Contact',
+        href: '/contact'
       }
     ],
     [
@@ -40,11 +50,11 @@ const Footer: FC = () => {
       },
       {
         label: 'Christian Doppler Forschungsgesellschaft',
-        href: '#'
+        href: 'https://www.cdg.ac.at'
       },
       {
         label: 'University of Vienna',
-        href: '#'
+        href: 'https://www.univie.ac.at'
       }
     ],
     [
@@ -54,15 +64,15 @@ const Footer: FC = () => {
       },
       {
         label: 'Christian Doppler Laboratory for Photonic Quantum Computing',
-        href: '#'
+        href: 'https://www.cdg.ac.at/forschungseinheiten/labor/optische-quantencomputer'
       },
       {
         label: 'Walther Group',
-        href: '#'
+        href: 'https://walther.quantum.at'
       },
       {
         label: 'Faculty of Phsycis, University of Vienna',
-        href: '#'
+        href: 'https://physik.univie.ac.at/en'
       }
     ]
   ];
@@ -75,24 +85,21 @@ const Footer: FC = () => {
         {linkGroup.map((link, i) => {
           if ('isTitle' in link) {
             return (
-              <Field.Text
-                key={i}
-                name={'FooterLinkTitle' + link.label}
-                defaultValue={link.label}
-                fontWeight="500"
-              />
+              <Text key={i} fontWeight="500">
+                {link.label}
+              </Text>
             );
           }
           return (
-            <Field.Text
+            <Link
               key={i}
-              as={Link}
               to={link.href}
               variant="hover-theme"
               opacity={0.7}
-              name={'FooterLink' + link.label}
-              defaultValue={link.label}
-            />
+              isExternal={link.href.startsWith('http')}
+            >
+              {link.label}
+            </Link>
           );
         })}
       </VStack>
