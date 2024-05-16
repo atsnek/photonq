@@ -1,5 +1,6 @@
 import { Post, Privacy } from '@/clients/social/src/schema.generated';
 import {
+  Avatar,
   Badge,
   Box,
   Card,
@@ -52,14 +53,13 @@ const PostCard: FC<PostCardProps> = ({ hideAuthor, post, isSafe }) => {
     >
       <CardBody as={Stack} justifyContent="end">
         <HStack w="full" spacing="3">
-          {post.avatarURL && post.avatarURL?.length > 0 && (
-            <Image
-              boxSize="3rem"
-              src={post.avatarURL}
-              borderRadius="md"
-              objectFit="cover"
-            />
-          )}
+          <Avatar
+            boxSize="3rem"
+            borderRadius="md"
+            objectFit="cover"
+            src={post.avatarURL}
+            name={post.title}
+          />
 
           <Stack>
             {!hideAuthor && (
