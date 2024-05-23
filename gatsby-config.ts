@@ -29,7 +29,7 @@ const config: GatsbyConfig = {
           authority: 'https://accounts.cronit.io',
           redirectUri:
             process.env.NODE_ENV === 'production'
-              ? 'https://photonq.org'
+              ? 'https://dev.photonq.pages.dev'
               : 'http://localhost:8000',
           projectIds: [
             '252765861113233411',
