@@ -421,7 +421,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
               });
             }}
             type="text"
-            editable={true}
+            editable={post.isOwner}
           />
         </SkeletonText>
       </Stack>
