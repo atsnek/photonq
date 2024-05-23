@@ -32,22 +32,52 @@ const UncontrolledMdxEditor: FC<IUncontrolledMdxEditorProps> = ({
         {...props}
         components={{
           h1: props => (
-            <Heading variant="h1" noAnchor children={props.children} />
+            <Heading
+              id={props.id}
+              variant="h1"
+              noAnchor
+              children={props.children}
+            />
           ),
           h2: props => (
-            <Heading variant="h2" noAnchor children={props.children} />
+            <Heading
+              id={props.id}
+              variant="h2"
+              noAnchor
+              children={props.children}
+            />
           ),
           h3: props => (
-            <Heading variant="h3" noAnchor children={props.children} />
+            <Heading
+              id={props.id}
+              variant="h3"
+              noAnchor
+              children={props.children}
+            />
           ),
           h4: props => (
-            <Heading variant="h4" noAnchor children={props.children} />
+            <Heading
+              id={props.id}
+              variant="h4"
+              noAnchor
+              children={props.children}
+            />
           ),
           h5: props => (
-            <Heading variant="h5" noAnchor children={props.children} />
+            <Heading
+              id={props.id}
+              variant="h5"
+              noAnchor
+              children={props.children}
+            />
           ),
           h6: props => (
-            <Heading variant="h6" noAnchor children={props.children} />
+            <Heading
+              id={props.id}
+              variant="h6"
+              noAnchor
+              children={props.children}
+            />
           ),
           wrapper: ({ children }) => <Stack>{children}</Stack>,
           ...experimentEditorComponents
