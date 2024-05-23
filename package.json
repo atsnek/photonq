@@ -17,7 +17,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@atsnek/jaen": "^1.0.0-rc.77",
+    "@atsnek/jaen": "^1.0.0-rc.87",
     "@atsnek/jaen-fields-mdx": "^1.0.0-rc.19",
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/react": "^2.8.1",
@@ -29,7 +29,7 @@
     "gatsby": "^5.11.0",
     "gatsby-jaen-mailpress": "0.0.6",
     "gatsby-plugin-cloudflare-pages": "^1.0.2",
-    "gatsby-plugin-jaen": "^1.0.0-rc.98",
+    "gatsby-plugin-jaen": "^1.0.0-rc.102",
     "github-slugger": "^2.0.0",
     "prismjs": "^1.29.0",
     "quantum-circuit": "^0.9.218",
