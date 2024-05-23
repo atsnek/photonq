@@ -34,11 +34,11 @@ const config: GatsbyConfig = {
               : 'http://localhost:8000',
           projectIds: ['263491274097563233']
         },
-        // sentry: {
-        //   org: 'photonq',
-        //   project: 'website',
-        //   dsn: 'https://37ffbc7589f79cfab5936ce5fca4f310@sentry.cronit.io/10'
-        // },
+        sentry: {
+          org: 'photonq',
+          project: 'website',
+          dsn: 'https://37ffbc7589f79cfab5936ce5fca4f310@sentry.cronit.io/10'
+        },
         googleAnalytics: {
           trackingIds: ['G-M58K75M9PG']
         }
