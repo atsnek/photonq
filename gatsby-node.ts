@@ -1,5 +1,5 @@
 import { PageConfig } from '@atsnek/jaen';
-import { GatsbyNode, CreatePagesArgs } from 'gatsby';
+import { GatsbyNode } from 'gatsby';
 import path from 'path';
 import fs from 'fs';
 import { buildSearchIndex } from './src/search/build-search-index';
@@ -100,15 +100,3 @@ async function preparePagesAndBuildSearch(allJaenPage: {
     JSON.stringify(searchIndex)
   );
 }
-
-// New createPages logic for redirection
-export const createPages: GatsbyNode['createPages'] = async ({ actions }: CreatePagesArgs) => {
-  const { createRedirect } = actions;
-
-  createRedirect({
-    fromPath: `/privacy-policy`,
-    toPath: `https://dsba.univie.ac.at/fileadmin/user_upload/p_dsba/datenschutzerklaerung_websites_V04_26062020_EN.pdf`,
-    isPermanent: true,
-    redirectInBrowser: true
-  });
-};
