@@ -329,7 +329,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
         shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Complete) {
-      const [id, errors] = await sq.mutate(
+      const [_, errors] = await sq.mutate(
         m =>
           m.userCreate({
             createProfile: true,
@@ -343,7 +343,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
               }
             },
             organizationId: __JAEN_ZITADEL__.organizationId
-          }).userId
+          })
       );
 
       if (errors?.length > 0) {
