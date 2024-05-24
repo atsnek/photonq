@@ -164,7 +164,6 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
                     <Button
                       size="sm"
                       my="auto"
-                      variant="outline"
                       _hover={{
                         transform: 'scale(1.05)'
                       }}
@@ -172,7 +171,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
                       isLoading={simulator.isLoading}
                       onClick={simulator.run}
                     >
-                      Translate
+                      Simulate
                     </Button>
                   )}
                 </ButtonGroup>
