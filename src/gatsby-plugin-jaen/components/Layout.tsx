@@ -31,12 +31,6 @@ const Layout: React.FC<LayoutProps> = ({ children, pageProps }) => {
     return children;
   }
 
-  if (path === '/privacy-policy') {
-    window.location.replace(
-      'https://dsba.univie.ac.at/fileadmin/user_upload/p_dsba/datenschutzerklaerung_websites_V04_26062020_EN.pdf'
-    );
-  }
-
   return (
     <CMSManagement>
       <AppLayout
