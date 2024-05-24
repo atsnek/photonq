@@ -164,8 +164,11 @@ const Page: React.FC<PageProps> = () => {
                 <Heading size={{ base: 'xs', md: 'sm' }}>
                   Create your account
                 </Heading>
-                <Text>
-                  Already a user? <Link to="/login">Login</Link>
+                <Text >
+                  Already a user?{' '}
+                  <Link to="/login">
+                    Login
+                  </Link>
                 </Text>
               </Stack>
             </Stack>
@@ -298,12 +301,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
     let shouldJumpToNextStep = true;
 
     if (step === SignupFormStep.Email) {
-      const [is] = await sq.query(q =>
-        q.getIsUnique({ loginName: data.email })
+      const [isUnique] = await sq.query(
+        q => q.getIsUnique({ loginName: data.email })
       );
 
       // check if user exists
-      if (is) {
+      if (!isUnique) {
         setError('email', {
           type: 'manual',
           message: 'Email is already registered'
@@ -312,12 +315,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
         shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Username) {
-      const [is] = await sq.query(q =>
-        q.getIsUnique({ loginName: data.username })
+      const [isUnique] = await sq.query(
+        q => q.getIsUnique({ loginName: data.username })
       );
 
       // check if user exists
-      if (!is) {
+      if (!isUnique) {
         setError('username', {
           type: 'manual',
           message: 'Username is already registered'
