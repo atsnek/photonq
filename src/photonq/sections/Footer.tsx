@@ -27,11 +27,11 @@ const Footer: FC = () => {
       },
       {
         label: 'Terms & Conditions',
-        href: '#'
+        href: '/legal'
       },
       {
         label: 'Imprint',
-        href: '#'
+        href: '/imprint'
       }
     ],
     [
@@ -41,11 +41,11 @@ const Footer: FC = () => {
       },
       {
         label: 'Christian Doppler Forschungsgesellschaft',
-        href: '#'
+        href: 'https://www.cdg.ac.at/'
       },
       {
         label: 'University of Vienna',
-        href: '#'
+        href: 'https://www.univie.ac.at/'
       }
     ],
     [
@@ -55,15 +55,15 @@ const Footer: FC = () => {
       },
       {
         label: 'Christian Doppler Laboratory for Photonic Quantum Computing',
-        href: '#'
+        href: 'https://www.cdg.ac.at/forschungseinheiten/labor/optische-quantencomputer'
       },
       {
         label: 'Walther Group',
-        href: '#'
+        href: 'https://walther.univie.ac.at/'
       },
       {
         label: 'Faculty of Phsycis, University of Vienna',
-        href: '#'
+        href: 'https://physik.univie.ac.at/'
       }
     ]
   ];
