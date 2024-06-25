@@ -9,7 +9,7 @@ import {
   osg,
   useAuth,
   useNotificationsContext
-} from '@atsnek/jaen';
+} from 'jaen';
 import { CloseIcon } from '@chakra-ui/icons';
 import {
   Avatar,
@@ -341,4 +341,4 @@ export const query = graphql`
   }
 `;
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

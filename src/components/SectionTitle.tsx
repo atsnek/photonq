@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import SectionLabel, { ISectionLabelProps } from './SectionLabel';
 import { Box, BoxProps, Center, Heading } from '@chakra-ui/react';
-import { Field } from '@atsnek/jaen';
-import { TextFieldProps } from '@atsnek/jaen/dist/fields/TextField';
+import { Field } from 'jaen';
+import { TextFieldProps } from 'jaen/dist/fields/TextField';
 
 interface ISectionTitleProps extends ISectionLabelProps {
   title: string;

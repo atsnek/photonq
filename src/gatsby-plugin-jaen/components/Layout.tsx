@@ -1,4 +1,4 @@
-import { LayoutProps } from '@atsnek/jaen';
+import { LayoutProps } from 'jaen';
 import { useLocation } from '@reach/router';
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import { CMSManagement, useJaenFrameMenuContext } from 'gatsby-plugin-jaen';

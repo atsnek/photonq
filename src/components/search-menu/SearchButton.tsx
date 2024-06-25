@@ -1,4 +1,4 @@
-import { withRedux } from '@atsnek/jaen';
+import { withRedux } from 'jaen';
 import { Button, Kbd } from '@chakra-ui/react';
 import { FC } from 'react';
 

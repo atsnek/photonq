@@ -4,9 +4,9 @@ import { buildSearchIndex } from '../../utils/search/build-search-index';
 import { getBuiltSearchIndex } from '../../utils/search/get-built-search-index';
 import { mergeSearchIndex } from '../../utils/search/merge-search-index';
 import { SearchIndex } from './types';
-import { useDynamicPaths } from '@atsnek/jaen';
+import { useDynamicPaths } from 'jaen';
 import { useJaenPagePaths } from 'gatsby-plugin-jaen';
-import { useAppSelector } from '@atsnek/jaen';
+import { useAppSelector } from 'jaen';
 import { getDefaultSearchDocs, searchDocs } from '../../utils/search';
 import { TSearchResultSection } from '../../utils/search/types';
 

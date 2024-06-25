@@ -1,4 +1,4 @@
-import { Field, useAuth } from '@atsnek/jaen';
+import { Field, useAuth } from 'jaen';
 import {
   Box,
   Button,

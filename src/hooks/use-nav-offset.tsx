@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAuth } from '@atsnek/jaen';
+import { useAuth } from 'jaen';
 
 function useNavOffset(fallback: string = '85px') {
   const auth = useAuth();

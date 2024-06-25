@@ -1,4 +1,4 @@
-import { PageConfig } from '@atsnek/jaen';
+import { PageConfig } from 'jaen';
 import { Box, Flex, Stack, Text, VStack } from '@chakra-ui/react';
 import { PageProps, graphql } from 'gatsby';
 import * as React from 'react';
@@ -27,7 +27,7 @@ const DocPage: React.FC<PageProps> = props => {
 
 export default DocPage;
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';
 
 export const pageConfig: PageConfig = {
   label: 'DocPage',

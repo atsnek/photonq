@@ -1,6 +1,6 @@
-import { Field } from '@atsnek/jaen';
-import { JaenFieldProps } from '@atsnek/jaen/dist/connectors/connect-field';
-import { ImageFieldProps } from '@atsnek/jaen/dist/fields/ImageField';
+import { Field } from 'jaen';
+import { JaenFieldProps } from 'jaen/dist/connectors/connect-field';
+import { ImageFieldProps } from 'jaen/dist/fields/ImageField';
 import { Box } from '@chakra-ui/react';
 import { FC } from 'react';
 

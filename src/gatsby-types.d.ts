@@ -1412,6 +1412,7 @@ type JaenPage = Node & {
   readonly childPagesOrder: ReadonlyArray<Scalars['String']>;
   readonly children: ReadonlyArray<Node>;
   readonly createdAt: Scalars['Date'];
+  readonly createdBy: Scalars['String'];
   readonly excludedFromIndex: Maybe<Scalars['Boolean']>;
   readonly id: Scalars['ID'];
   readonly internal: Internal;
@@ -1478,6 +1479,7 @@ type JaenPageFieldSelector = {
   readonly childPagesOrder: InputMaybe<FieldSelectorEnum>;
   readonly children: InputMaybe<NodeFieldSelector>;
   readonly createdAt: InputMaybe<FieldSelectorEnum>;
+  readonly createdBy: InputMaybe<FieldSelectorEnum>;
   readonly excludedFromIndex: InputMaybe<FieldSelectorEnum>;
   readonly id: InputMaybe<FieldSelectorEnum>;
   readonly internal: InputMaybe<InternalFieldSelector>;
@@ -1499,6 +1501,7 @@ type JaenPageFilterInput = {
   readonly childPagesOrder: InputMaybe<StringQueryOperatorInput>;
   readonly children: InputMaybe<NodeFilterListInput>;
   readonly createdAt: InputMaybe<DateQueryOperatorInput>;
+  readonly createdBy: InputMaybe<StringQueryOperatorInput>;
   readonly excludedFromIndex: InputMaybe<BooleanQueryOperatorInput>;
   readonly id: InputMaybe<StringQueryOperatorInput>;
   readonly internal: InputMaybe<InternalFilterInput>;
@@ -1617,6 +1620,7 @@ type JaenPageSortInput = {
   readonly childPagesOrder: InputMaybe<SortOrderEnum>;
   readonly children: InputMaybe<NodeSortInput>;
   readonly createdAt: InputMaybe<SortOrderEnum>;
+  readonly createdBy: InputMaybe<SortOrderEnum>;
   readonly excludedFromIndex: InputMaybe<SortOrderEnum>;
   readonly id: InputMaybe<SortOrderEnum>;
   readonly internal: InputMaybe<InternalSortInput>;
@@ -2648,6 +2652,7 @@ type Query_jaenPageArgs = {
   childPagesOrder: InputMaybe<StringQueryOperatorInput>;
   children: InputMaybe<NodeFilterListInput>;
   createdAt: InputMaybe<DateQueryOperatorInput>;
+  createdBy: InputMaybe<StringQueryOperatorInput>;
   excludedFromIndex: InputMaybe<BooleanQueryOperatorInput>;
   id: InputMaybe<StringQueryOperatorInput>;
   internal: InputMaybe<InternalFilterInput>;
