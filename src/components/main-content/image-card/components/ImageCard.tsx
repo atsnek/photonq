@@ -3,7 +3,7 @@ import { Box, Card, CardProps, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import { FC } from 'react';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
 import { TImageData } from '../types/imageCard';
-import { useContentManagement, useEditingContext } from '@atsnek/jaen';
+import { useContentManagement, useEditingContext } from 'jaen';
 import { TLinkData } from '../../../types';
 import JaenImage from '../../../JaenImage';
 import { Link } from 'gatsby-plugin-jaen';

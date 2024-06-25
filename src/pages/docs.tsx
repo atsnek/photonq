@@ -1,4 +1,4 @@
-import { PageConfig } from '@atsnek/jaen';
+import { PageConfig } from 'jaen';
 import { Box, Container, Flex, Stack, Text, VStack } from '@chakra-ui/react';
 import { PageProps, graphql } from 'gatsby';
 import * as React from 'react';
@@ -101,4 +101,4 @@ export const query = graphql`
   }
 `;
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

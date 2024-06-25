@@ -23,7 +23,7 @@ import { sq } from '@/clients/social';
 import TbFilterDown from '../icons/tabler/TbFilterDown';
 import TbFilterUp from '../icons/tabler/TbFilterUp';
 import TbPlus from '../icons/tabler/TbPlus';
-import { useAuth } from '@atsnek/jaen';
+import { useAuth } from 'jaen';
 
 interface PostListProps {
   userId?: string;

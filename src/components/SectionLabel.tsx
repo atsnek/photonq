@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { Field } from '@atsnek/jaen';
+import { Field } from 'jaen';
 import { FC } from 'react';
 
 export interface ISectionLabelProps {

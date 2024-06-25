@@ -1,5 +1,5 @@
 import { sq } from '@/clients/social';
-import { PageConfig, PageProps } from '@atsnek/jaen';
+import { PageConfig, PageProps } from 'jaen';
 
 import {
   Box,
@@ -137,4 +137,4 @@ export const query = graphql`
   }
 `;
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { Box, Button, HStack, Text, Tooltip } from '@chakra-ui/react';
 import TbStar from '../icons/tabler/TbStar';
 import { formatNumber } from '../../utils/general';
-import { useAuth } from '@atsnek/jaen';
+import { useAuth } from 'jaen';
 
 interface PostCardRatingProps {
   id: string;

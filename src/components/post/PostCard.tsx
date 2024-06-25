@@ -20,7 +20,7 @@ import {
 import { Link } from 'gatsby-plugin-jaen';
 import { FC } from 'react';
 import PostCardRating from './PostCardRating';
-import { useAuth } from '@atsnek/jaen';
+import { useAuth } from 'jaen';
 import { sq } from '@/clients/social';
 import NoSSR from '../NoSSR';
 

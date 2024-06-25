@@ -7,7 +7,7 @@ import {
   buildActiveMenuItemIndexArray,
   getAdjacentPages
 } from '../../utils/navigation';
-import { useCMSManagementContext } from '@atsnek/jaen';
+import { useCMSManagementContext } from 'jaen';
 import { TLinkData } from '../types';
 import { TAdjacentPages } from '../../utils/navigation/types';
 import { Link } from 'gatsby-plugin-jaen';

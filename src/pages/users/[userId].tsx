@@ -5,7 +5,7 @@ import {
   PageProps,
   useAuth,
   useAuthUser
-} from '@atsnek/jaen';
+} from 'jaen';
 import {
   Avatar,
   Box,

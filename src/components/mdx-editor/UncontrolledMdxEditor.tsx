@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { MdxFieldProps, UncontrolledMdxField } from '@atsnek/jaen-fields-mdx';
+import { MdxFieldProps, UncontrolledMdxField } from 'jaen-fields-mdx';
 import { mdxEditorComponents } from './MdxEditor';
 import Heading from '../main-content/heading/components/Heading';
 import { Stack } from '@chakra-ui/react';

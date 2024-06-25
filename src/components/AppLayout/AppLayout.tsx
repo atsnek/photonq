@@ -2,7 +2,7 @@ import { Box, Flex, useDisclosure } from '@chakra-ui/react';
 import React, { FC, ReactNode, useMemo } from 'react';
 import TopNav from '../navigation/TopNav';
 
-import { useAuth, useCMSManagementContext } from '@atsnek/jaen';
+import { useAuth, useCMSManagementContext } from 'jaen';
 import { useLocation } from '@reach/router';
 import { MenuStructureContext } from '../../contexts/menu-structure';
 import { createPageTree } from '../../utils/navigation';

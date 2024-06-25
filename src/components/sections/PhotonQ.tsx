@@ -1,6 +1,6 @@
 import { Box, Button, Container, Flex, Spacer } from '@chakra-ui/react';
 import { FC } from 'react';
-import { Field, useAuth } from '@atsnek/jaen';
+import { Field, useAuth } from 'jaen';
 import SectionTitle from '../SectionTitle';
 import { Link } from 'gatsby-plugin-jaen';
 

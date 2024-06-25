@@ -1,4 +1,4 @@
-import { useAuth } from '@atsnek/jaen';
+import { useAuth } from 'jaen';
 import {
   Accordion,
   Box,

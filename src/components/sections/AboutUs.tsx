@@ -6,7 +6,7 @@ import {
   Wrap,
   WrapItem
 } from '@chakra-ui/react';
-import { Field } from '@atsnek/jaen';
+import { Field } from 'jaen';
 import { FC } from 'react';
 import {
   Testimonial,

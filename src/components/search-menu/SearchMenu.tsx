@@ -34,7 +34,7 @@ import SearchButton from './SearchButton';
 import SearchModal from './SearchModal';
 import TbBooks from '../icons/tabler/TbBooks';
 import TbUser from '../icons/tabler/TbUser';
-import { useAuth } from '@atsnek/jaen';
+import { useAuth } from 'jaen';
 import { navigate } from 'gatsby';
 import { useSearchContext } from '../../contexts/search';
 import { TSearchResults } from '../../utils/search/types';

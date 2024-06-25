@@ -1,4 +1,4 @@
-import { useCMSManagementContext, useJaenPageIndex } from '@atsnek/jaen';
+import { useCMSManagementContext, useJaenPageIndex } from 'jaen';
 import { ListItem, OrderedList, SimpleGrid, Text } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
 

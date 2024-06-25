@@ -37,7 +37,7 @@ import { FaEye } from '@react-icons/all-files/fa/FaEye';
 import { FaEyeSlash } from '@react-icons/all-files/fa/FaEyeSlash';
 import zxcvbn from 'zxcvbn';
 
-import { PageConfig, PageProps } from '@atsnek/jaen';
+import { PageConfig, PageProps } from 'jaen';
 import { sq } from '@/clients/signup';
 
 const Page: React.FC<PageProps> = () => {
@@ -683,4 +683,4 @@ export const pageConfig: PageConfig = {
   }
 };
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

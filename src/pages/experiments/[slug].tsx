@@ -3,7 +3,7 @@ import {
   PageProps,
   osg,
   useNotificationsContext
-} from '@atsnek/jaen';
+} from 'jaen';
 import {
   Avatar,
   Box,
@@ -550,4 +550,4 @@ export const query = graphql`
   }
 `;
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

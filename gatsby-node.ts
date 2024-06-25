@@ -1,4 +1,4 @@
-import { PageConfig } from '@atsnek/jaen';
+import { PageConfig } from 'jaen';
 import { GatsbyNode } from 'gatsby';
 import path from 'path';
 import fs from 'fs';
