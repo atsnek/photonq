@@ -35,9 +35,9 @@ const config: GatsbyConfig = {
           projectIds: ['263491274097563233']
         },
         sentry: {
-          org: 'photonq',
-          project: 'website',
-          dsn: 'https://37ffbc7589f79cfab5936ce5fca4f310@sentry.cronit.io/10'
+          org: 'cronit',
+          project: 'photonq',
+          dsn: 'https://0500df0c84c0af9c06527751e6f640b8@sentry.cronit.io/12'
         },
         googleAnalytics: {
           trackingIds: ['G-M58K75M9PG']
@@ -50,7 +50,7 @@ const config: GatsbyConfig = {
         pylonUrl: 'https://pylons.photonq.org/mailpress/graphql'
       }
     },
-    `gatsby-jaen-lens`,
+    `gatsby-jaen-lens`
   ]
 };
 
