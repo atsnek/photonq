@@ -750,8 +750,9 @@ export const pageConfig: PageConfig = {
       // get username from url
       let userId = window.location.pathname.split('/users/')[1];
 
-      const [username] = await sq.query(q => q.user({ where: { id: userId } }))
-        .profile.userName;
+      const [username] = await sq.query(
+        q => q.user({ where: { id: userId } }).profile.userName
+      );
 
       return { label: username, path: `/users/${username}` };
     }
