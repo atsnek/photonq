@@ -748,14 +748,10 @@ export const pageConfig: PageConfig = {
   breadcrumbs: [
     async () => {
       // get username from url
-      let username = window.location.pathname.split('/user/')[1];
+      let userId = window.location.pathname.split('/users/')[1];
 
-      if (!username) return { label: 'User', path: '/user' };
-
-      // Remove trailing slash
-      if (username.endsWith('/')) {
-        username = username.substring(0, username.length - 1);
-      }
+      const [username] = await sq.query(q => q.user({ where: { id: userId } }))
+        .profile.userName;
 
       return { label: username, path: `/users/${username}` };
     }
