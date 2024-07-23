@@ -337,6 +337,11 @@ const ActivityList: React.FC<{
 };
 
 const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
+  useEffect(() => {
+    // add sq to window
+    window.sq = sq;
+  }, []);
+
   const offset = useNavOffset();
 
   const userId = params.userId;
@@ -750,11 +755,13 @@ export const pageConfig: PageConfig = {
       // get username from url
       let userId = window.location.pathname.split('/users/')[1];
 
-      const [username] = await sq.query(
+      userId = userId.split('/')[0];
+
+      const [userName] = await window.sq.query(
         q => q.user({ where: { id: userId } }).profile.userName
       );
 
-      return { label: username, path: `/users/${username}` };
+      return { label: userName, path: `/users/${userId}/` };
     }
   ],
   menu: {
