@@ -1,9 +1,4 @@
-import {
-  PageConfig,
-  PageProps,
-  osg,
-  useNotificationsContext
-} from 'jaen';
+import { PageConfig, PageProps, osg, useNotificationsContext } from 'jaen';
 import {
   Avatar,
   Box,
@@ -67,6 +62,10 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
   }, [params.slug]);
 
   const post = data.post({ where: { slug: params.slug } });
+
+  useEffect(() => {
+    document.title = post.title;
+  }, [post]);
 
   const [values, setValues] = useState({
     title: post.title,

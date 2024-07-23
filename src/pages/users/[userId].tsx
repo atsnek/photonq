@@ -356,6 +356,10 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
     }
   });
 
+  useEffect(() => {
+    document.title = `${user.profile.displayName} (@${user.profile.userName})`;
+  }, [user]);
+
   const [tabIndex, setTabIndex] = useState(0);
 
   const handleSliderChange = event => {
@@ -772,3 +776,5 @@ export const pageConfig: PageConfig = {
     }
   }
 };
+
+export { Head } from 'jaen';
