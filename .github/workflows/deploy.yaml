@@ -25,33 +25,12 @@ on:
 
 # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobs
 jobs:
-  setup:
-    # Use a lightweight image as you don't need to run jobs in a complex environment
-    runs-on: ubuntu-latest
-    outputs:
-      cloudflare_project_name: ${{ steps.set_env.outputs.CLOUDFLARE_PROJECT_NAME }}
-
-    steps:
-      - name: Set Cloudflare Project Name
-        id: set_env
-        run: |
-          if [ "${{ github.ref_name }}" == "main" ]; then
-            echo "CLOUDFLARE_PROJECT_NAME=photonq" >> $GITHUB_ENV
-            echo "::set-output name=CLOUDFLARE_PROJECT_NAME::photonq"
-          else
-            PROJECT_NAME="photonq-${{ github.ref_name }}"
-            echo "CLOUDFLARE_PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_ENV
-            echo "::set-output name=CLOUDFLARE_PROJECT_NAME::$PROJECT_NAME"
-          fi
-
   deploy:
-    needs: setup
     uses: atsnek/jaen/.github/workflows/jaen-deploy.yaml@main
-    # Use inputs from previous job via 'needs' context
+    # https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-inputs-and-secrets-in-a-reusable-workflow
     with:
-      CLOUDFLARE_PROJECT_NAME: ${{ needs.setup.outputs.cloudflare_project_name }}
+      CLOUDFLARE_PROJECT_NAME: 'photonq'
     secrets:
-      # Preserved secrets as is from the original file
       GATSBY_MYSHOPIFY_URL: ${{ secrets.GATSBY_MYSHOPIFY_URL }}
       GATSBY_STOREFRONT_API_KEY: ${{ secrets.GATSBY_STOREFRONT_API_KEY }}
       SHOPIFY_APP_PASSWORD: ${{ secrets.SHOPIFY_APP_PASSWORD }}

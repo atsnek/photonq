@@ -1,15 +1,28 @@
-import { Field, PageConfig, PageProps } from '@atsnek/jaen';
+import { PageConfig, PageProps } from 'jaen';
+import { Global } from '@emotion/react';
 
-import { Box } from '@chakra-ui/react';
 import { graphql } from 'gatsby';
-import * as React from 'react';
-import { LandingPageContent } from '../photonq/LandingPageContent';
+import AboutUs from '../components/sections/AboutUs';
+import Features from '../components/sections/Features';
+import Hero from '../components/sections/Hero';
+import PhotonQ from '../components/sections/PhotonQ';
 
 const IndexPage: React.FC<PageProps> = () => {
   return (
-    <Box as="main">
-      <LandingPageContent />
-    </Box>
+    <>
+      <Global
+        styles={{
+          body: {
+            backgroundColor: '#0D0E11'
+          }
+        }}
+      />
+
+      <Hero />
+      <Features />
+      <PhotonQ />
+      <AboutUs />
+    </>
   );
 };
 
@@ -35,4 +48,4 @@ export const query = graphql`
   }
 `;
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

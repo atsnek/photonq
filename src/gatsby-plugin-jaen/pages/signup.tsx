@@ -37,8 +37,8 @@ import { FaEye } from '@react-icons/all-files/fa/FaEye';
 import { FaEyeSlash } from '@react-icons/all-files/fa/FaEyeSlash';
 import zxcvbn from 'zxcvbn';
 
-import { PageConfig, PageProps, snekResourceId } from '@atsnek/jaen';
-import { sq } from '@snek-functions/origin';
+import { PageConfig, PageProps } from 'jaen';
+import { sq } from '@/clients/signup';
 
 const Page: React.FC<PageProps> = () => {
   const [alert, setAlert] = useState<{
@@ -301,12 +301,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
     let shouldJumpToNextStep = true;
 
     if (step === SignupFormStep.Email) {
-      const [id] = await sq.query(
-        q => q.user({ login: data.email, resourceId: snekResourceId }).id
+      const [isUnique] = await sq.query(
+        q => q.getIsUnique({ loginName: data.email })
       );
 
       // check if user exists
-      if (id) {
+      if (!isUnique) {
         setError('email', {
           type: 'manual',
           message: 'Email is already registered'
@@ -315,12 +315,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
         shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Username) {
-      const [id] = await sq.query(
-        q => q.user({ login: data.username, resourceId: snekResourceId }).id
+      const [isUnique] = await sq.query(
+        q => q.getIsUnique({ loginName: data.username })
       );
 
       // check if user exists
-      if (id) {
+      if (!isUnique) {
         setError('username', {
           type: 'manual',
           message: 'Username is already registered'
@@ -329,7 +329,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
         shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Complete) {
-      const [id, errors] = await sq.mutate(
+      const [_, errors] = await sq.mutate(
         m =>
           m.userCreate({
             createProfile: true,
@@ -342,8 +342,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
                 lastName: data.details.lastName
               }
             },
-            resourceId: snekResourceId
-          }).id
+            organizationId: __JAEN_ZITADEL__.organizationId
+          })
       );
 
       if (errors?.length > 0) {
@@ -683,4 +683,4 @@ export const pageConfig: PageConfig = {
   }
 };
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

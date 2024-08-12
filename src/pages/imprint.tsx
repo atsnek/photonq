@@ -1,14 +1,13 @@
-import { Field, PageConfig, PageProps } from '@atsnek/jaen';
+import { Field, PageConfig, PageProps } from 'jaen';
 
 import { Box } from '@chakra-ui/react';
 import { graphql } from 'gatsby';
 import * as React from 'react';
-import ImprintContent from '../contents/ImprintContent';
 
 const ImprintPage: React.FC<PageProps> = () => {
   return (
     <Box as="main">
-      <ImprintContent />
+      <Field.Editor name="imprint" />
     </Box>
   );
 };
@@ -17,8 +16,7 @@ export default ImprintPage;
 
 export const pageConfig: PageConfig = {
   label: 'Imprint page',
-  icon: 'FaPassport',
-  childTemplates: ['BlogPage']
+  icon: 'FaPassport'
 };
 
 export const query = graphql`
@@ -35,4 +33,4 @@ export const query = graphql`
   }
 `;
 
-export { Head } from '@atsnek/jaen';
+export { Head } from 'jaen';

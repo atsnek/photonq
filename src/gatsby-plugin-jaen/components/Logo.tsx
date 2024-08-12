@@ -19,13 +19,11 @@ const Logo: FC<LogoProps> = ({ forceColorMode }) => {
 
   return (
     <chakra.svg
-      filter="drop-shadow(1px 2px 2px rgb(0 0 0 / 0.1))"
       width="full"
       height="full"
       x="0px"
       y="0px"
       viewBox="0 0 755.907 377.947"
-      xmlSpace="preserve"
     >
       <style type="text/css">
         {`
