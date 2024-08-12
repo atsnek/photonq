@@ -189,7 +189,7 @@ const ActivityList: React.FC<{
     [key: string]: ResolvedActivity[];
   }>((acc, activity) => {
     const date = new Date(activity.createdAt);
-    const key = `${date.getFullYear()}-${date.getMonth()}`;
+    const key = `${date.getFullYear()}-${date.getMonth()}-1`;
 
     if (!acc[key]) {
       acc[key] = [];
