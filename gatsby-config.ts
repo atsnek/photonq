@@ -30,7 +30,7 @@ const config: GatsbyConfig = {
           authority: 'https://accounts.photonq.org',
           redirectUri:
             process.env.NODE_ENV === 'production'
-              ? 'https://dev.photonq.org'
+              ? 'https://photonq.org'
               : 'http://localhost:8000',
           projectIds: ['263491274097563233']
         },
