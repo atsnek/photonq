@@ -89,6 +89,19 @@ const IndexPage: React.FC<PageProps> = () => {
     })
   });
 
+  React.useEffect(() => {
+    const storedValues = localStorage.getItem('new-experiment');
+
+    if (storedValues) {
+      setValues(JSON.parse(storedValues));
+    }
+  }, []);
+
+  // Persist values in local storage
+  React.useEffect(() => {
+    localStorage.setItem('new-experiment', JSON.stringify(values));
+  }, [values]);
+
   const toc = useTOCContext();
 
   React.useEffect(() => {
@@ -159,6 +172,8 @@ const IndexPage: React.FC<PageProps> = () => {
                 );
 
                 setIsCreating(false);
+
+                localStorage.removeItem('new-experiment');
 
                 if (errors) {
                   notify.toast({
