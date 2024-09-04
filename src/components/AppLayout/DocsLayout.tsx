@@ -74,7 +74,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
               path={path}
               baseMenuItems={[
                 {
-                  name: 'Research',
+                  name: 'Community Research',
                   icon: <TbUsers />,
                   items: [
                     {

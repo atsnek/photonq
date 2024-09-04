@@ -57,7 +57,7 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({
                 data={menuStructure}
                 baseMenuItems={[
                   {
-                    name: 'Research',
+                    name: 'Community Research',
                     icon: <TbUsers />,
                     items: [
                       {
