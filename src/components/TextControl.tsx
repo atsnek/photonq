@@ -59,6 +59,7 @@ export const TextControl: React.FC<{
 
   return (
     <Editable
+      key={props.text}
       as={HStack}
       textAlign={'left'}
       isPreviewFocusable={props.editable ? true : false}
