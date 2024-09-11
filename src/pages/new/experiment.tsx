@@ -156,7 +156,7 @@ const IndexPage: React.FC<PageProps> = () => {
   }, [isCreating]);
 
   return (
-    <Stack spacing="8" bg="red">
+    <Stack spacing="8">
       <Breadcrumb mb="4">
         <BreadcrumbItem>
           <BreadcrumbLink as={Link} to="/experiments">
