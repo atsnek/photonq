@@ -155,9 +155,9 @@ const EditableImage: React.FC<{
       />
 
       <AvatarImage
-        src={authUser.user.human.profile.avatarUrl || avatarUrl || undefined}
+        src={authUser.user?.human?.profile?.avatarUrl || avatarUrl || undefined}
         displayName={displayName}
-        cursor={userId === authUser.user.id ? 'pointer' : 'default'}
+        cursor={userId === authUser.user?.id ? 'pointer' : 'default'}
         onClick={() => {
           if (userId === authUser.user.id) {
             imageRef.current?.click();
@@ -405,13 +405,11 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
           <Box alignSelf="center">
             <Flex justifyContent="center" boxSize={250} mt="4">
               {userId === auth.user?.profile?.sub ? (
-                <AuthUserProvider>
-                  <EditableImage
-                    avatarUrl={user.profile.avatarUrl}
-                    userId={userId}
-                    displayName={user.profile.displayName}
-                  />
-                </AuthUserProvider>
+                <EditableImage
+                  avatarUrl={user.profile.avatarUrl}
+                  userId={userId}
+                  displayName={user.profile.displayName}
+                />
               ) : (
                 <AvatarImage
                   src={user.profile.avatarUrl || undefined}

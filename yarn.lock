@@ -8539,10 +8539,10 @@ gatsby-jaen-lens@1.1.0:
     use-debounce "^9.0.4"
     zxcvbn "^4.4.2"
 
-gatsby-jaen-mailpress@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-1.0.1.tgz#8b2a2815e60004b6254fa7655392491745502c79"
-  integrity sha512-otr6MA+/rl069lovk2ntKdxnlMA8xG2KbV1ciSoTngCAmuOy4QPFHkC05ANxrBNpuK1ClduoNyCiKwohpF+W+g==
+gatsby-jaen-mailpress@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/gatsby-jaen-mailpress/-/gatsby-jaen-mailpress-1.0.2.tgz#acbdcdea2802f8b62add4efa996347c32e978293"
+  integrity sha512-FtP++FcgPiL4YMfha2Y7KhGE+wVnQrLP3wQpDxwv0SNiLonq/M2pJpU+A5RAbPU0Bpb5mJsdLy0upFLr0BmThw==
   dependencies:
     "@monaco-editor/react" "^4.6.0"
     "@react-icons/all-files" "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz"
@@ -8640,10 +8640,10 @@ gatsby-plugin-image@^3.11.0, gatsby-plugin-image@^3.13.1:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.0.0.tgz#8b841deb5a1c55187184b8e6ad8d4487de7d2eea"
-  integrity sha512-wnpfzfHjxkycLWf4MnI04uLoPBUKP8PaBt7fE2nUnpJXzhYpu823+yFSnFdfZGM4RBvSBiRSvqenzUvJmQtA0A==
+gatsby-plugin-jaen@^1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.3.3.tgz#99535a7e1118210ac2b9d14fffe2763898d6dfa1"
+  integrity sha512-6J5cgPkRMnHMoC/KRTC+z7XRl9uCoQnIfBuqI/HNeMrcwxrh2zBBJ7kOmSKiq3b4N5H0Ros9tLSPzhi+Z7h6SA==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
@@ -10538,10 +10538,10 @@ jaen-fields-mdx@^1.0.0:
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-jaen@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/jaen/-/jaen-1.1.0.tgz#bbc39b9a779541071e955ef02ef30907ff592a1b"
-  integrity sha512-2c06euV+T5VDqgVT3frPNnIYmEvP3i7IWvcb8RvtbZK7UzrLfvmnyZFalZiSEk840/9EQYt8nUYY/QSJetmw6A==
+jaen@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jaen/-/jaen-1.2.0.tgz#aeb128239e135ca0244ec43b5883c0ad58b97b71"
+  integrity sha512-lBzGj3X2sLPBVzo3duc3X5qvKyX1wdmtF6avdHLDrF67QR191dfbggQ/ORs/QLI1ogyZ9/FpF14FNSPe4poATw==
   dependencies:
     "@chakra-ui/icons" "^2.1.1"
     "@chakra-ui/react" "^2.8.0"
