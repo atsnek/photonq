@@ -49,8 +49,6 @@ const useSocialSearch = (query?: string) => {
 
     const searched = data.search({ query });
 
-    console.log('users', searched.users?.nodes);
-
     let usersResult: TSearchResultSection | undefined = undefined;
     let postsResult: TSearchResultSection | undefined = undefined;
 

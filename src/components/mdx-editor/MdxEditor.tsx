@@ -71,7 +71,6 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
     withoutSimulate?: boolean;
     withoutTranslate?: boolean;
   }) => {
-    console.log('code pprops', className, playground, props);
     const lang = className?.replace('language-', '') || 'text';
 
     if (playground) {
@@ -95,8 +94,6 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   },
   // CUSTOM COMPONENTS
   QASMPlayground: props => {
-    console.log('props', props);
-
     return (
       <QASMPlayground
         children={props.children}

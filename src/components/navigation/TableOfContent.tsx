@@ -20,8 +20,6 @@ const TableOfContent: FC<ITableOfContentProps> = ({
 }) => {
   const toc = useTOCContext();
 
-  console.log('TOC', toc);
-
   const data = useTocNavigation(
     mdxFieldName ? mdxFieldName : toc.value ? undefined : 'documentation',
     !mdxFieldName ? toc.value : undefined

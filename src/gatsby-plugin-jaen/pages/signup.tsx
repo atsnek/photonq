@@ -52,8 +52,6 @@ const Page: React.FC<PageProps> = () => {
   };
 
   const particlesInit = useCallback(async (engine: Engine) => {
-    console.log(engine);
-
     // you can initialize the tsParticles instance (engine) here, adding custom shapes or presets
     // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
     // starting from v2 you can add only the features you need reducing the bundle size
@@ -62,9 +60,7 @@ const Page: React.FC<PageProps> = () => {
   }, []);
 
   const particlesLoaded = useCallback(
-    async (container: Container | undefined) => {
-      await console.log(container);
-    },
+    async (container: Container | undefined) => {},
     []
   );
 
@@ -164,11 +160,8 @@ const Page: React.FC<PageProps> = () => {
                 <Heading size={{ base: 'xs', md: 'sm' }}>
                   Create your account
                 </Heading>
-                <Text >
-                  Already a user?{' '}
-                  <Link to="/login">
-                    Login
-                  </Link>
+                <Text>
+                  Already a user? <Link to="/login">Login</Link>
                 </Text>
               </Stack>
             </Stack>
@@ -294,15 +287,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
   const [step, setStep] = useState<SignupFormStep>(SignupFormStep.Email);
 
   const onSubmit = async (data: SignupFormData) => {
-    console.log(data);
-
     // Validation based on step
 
     let shouldJumpToNextStep = true;
 
     if (step === SignupFormStep.Email) {
-      const [isUnique] = await sq.query(
-        q => q.getIsUnique({ loginName: data.email })
+      const [isUnique] = await sq.query(q =>
+        q.getIsUnique({ loginName: data.email })
       );
 
       // check if user exists
@@ -315,8 +306,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
         shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Username) {
-      const [isUnique] = await sq.query(
-        q => q.getIsUnique({ loginName: data.username })
+      const [isUnique] = await sq.query(q =>
+        q.getIsUnique({ loginName: data.username })
       );
 
       // check if user exists
@@ -329,21 +320,20 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
         shouldJumpToNextStep = false;
       }
     } else if (step === SignupFormStep.Complete) {
-      const [_, errors] = await sq.mutate(
-        m =>
-          m.userCreate({
-            createProfile: true,
-            values: {
-              password: data.password,
-              username: data.username,
-              emailAddress: data.email,
-              details: {
-                firstName: data.details.firstName,
-                lastName: data.details.lastName
-              }
-            },
-            organizationId: __JAEN_ZITADEL__.organizationId
-          })
+      const [_, errors] = await sq.mutate(m =>
+        m.userCreate({
+          createProfile: true,
+          values: {
+            password: data.password,
+            username: data.username,
+            emailAddress: data.email,
+            details: {
+              firstName: data.details.firstName,
+              lastName: data.details.lastName
+            }
+          },
+          organizationId: __JAEN_ZITADEL__.organizationId
+        })
       );
 
       if (errors?.length > 0) {

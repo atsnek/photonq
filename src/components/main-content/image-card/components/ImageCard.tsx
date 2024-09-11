@@ -33,8 +33,6 @@ const ImageCard: FC<IImageCardProps> = ({
     const editingContext = useEditingContext();
     isEditing = editingContext.isEditing;
   } catch (e) {
-    console.log('error', e);
-
     isEditing = cms.isEditing;
   }
 

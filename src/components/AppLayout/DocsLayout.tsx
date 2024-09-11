@@ -50,8 +50,6 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
 
   const MemoizedToc = React.memo(TableOfContent, () => false);
 
-  console.log('DocsLayout', path);
-
   const offset = useNavOffset();
 
   return (

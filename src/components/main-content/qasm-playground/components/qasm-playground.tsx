@@ -55,8 +55,6 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
   withoutTranslate = false,
   children = defaultQASMCode
 }) => {
-  console.log('QASMPlayground', withoutSimulate, withoutTranslate);
-
   const cardProps: BoxProps = {
     bgColor: 'pq.sections.features.card.bgColor',
     boxShadow: '4px 2px 16px -12px rgba(0,0,0,0.25)',
@@ -104,7 +102,7 @@ export const QASMPlayground: React.FC<QASMPlaygroundProps> = ({
         diagram.current.innerHTML = '';
       }
 
-      console.log(e);
+      console.error(e);
     }
   }, [qasmCode]);
 

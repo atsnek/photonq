@@ -60,8 +60,6 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
       ref
     );
 
-    // console.log("menuButton['aria-controls']", menuButton['aria-label']);
-
     const [kbd, setKbd] = useState<string | null>(null);
     const focusBorderColor = useColorModeValue('theme.500', 'theme.700'); // We need this because semanticTokens seem to be broken for that prop
 

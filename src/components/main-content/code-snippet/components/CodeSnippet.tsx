@@ -70,8 +70,6 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
       if (parent) {
         const parentTag = parent.tagName.toLowerCase();
 
-        console.log(r.current, parent);
-
         if (parentTag === 'pre') {
           setIsCodeBlock(true);
         }

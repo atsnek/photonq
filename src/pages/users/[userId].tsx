@@ -220,8 +220,6 @@ const ActivityList: React.FC<{
     return acc;
   }, {});
 
-  console.log(groupByDate);
-
   const [batch, setBatch] = useState(0);
 
   const generateDetails = (

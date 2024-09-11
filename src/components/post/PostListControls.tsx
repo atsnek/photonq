@@ -226,7 +226,6 @@ const PostListControls: FC<IPostListControlsProps> = ({
                     dateToRef.current.value = '';
                     dateTo = null;
                   }
-                  console.log('date', date, dateTo);
                   setDateRange(
                     isNaN(date.getTime()) ? undefined : date,
                     dateTo
