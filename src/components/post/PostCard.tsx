@@ -104,7 +104,7 @@ const PostCard: FC<PostCardProps> = ({ hideAuthor, post, isSafe }) => {
         <SkeletonText isLoaded={isLoaded} noOfLines={1}>
           <HStack mt="4" justifyContent="space-between">
             <Wrap>
-              <Text fontSize={12} color="components.postPreview.date.color">
+              <Text fontSize={12} color="gray.600">
                 <NoSSR>{new Date(post.createdAt).toLocaleDateString()}</NoSSR>
               </Text>
 
