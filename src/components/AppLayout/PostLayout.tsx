@@ -14,7 +14,7 @@ const PostLayout: FC<IPostLayoutProps> = ({ children }) => {
   const offset = useNavOffset();
 
   return (
-    <Container maxW="3xl" mt={offset} py="8">
+    <Container maxW="3xl" mt={offset} py="8" minH="100vh">
       <TOCProvider>{children}</TOCProvider>
     </Container>
   );

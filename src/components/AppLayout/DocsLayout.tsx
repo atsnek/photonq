@@ -103,7 +103,7 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
 
         <TOCProvider>
           <Container flex="1" mt="6" maxW="3xl">
-            <MainBreadcrumb parts={breadcrumbParts} />
+            {!isCommunity && <MainBreadcrumb parts={breadcrumbParts} />}
 
             {memoedChildren}
 
@@ -120,29 +120,31 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
             }}
             pb="4"
           >
-            <Box position="sticky" top="100px" mt="50px">
-              <Flex as="nav" direction="column" mt={5}>
-                <MemoizedToc />
-              </Flex>
-              <Box
-                mt={7}
-                pt={7}
-                borderTop="1px solid"
-                borderTopColor="components.separator.borderColor"
-                fontSize="xs"
-              >
-                <VStack rowGap={1} textAlign="left">
-                  <Links
-                    links={links}
-                    props={{
-                      variant: 'right-bottom-nav',
-                      w: '100%',
-                      display: 'block'
-                    }}
-                  />
-                </VStack>
+            {!isCommunity && (
+              <Box position="sticky" top="100px" mt="50px">
+                <Flex as="nav" direction="column" mt={5}>
+                  <MemoizedToc />
+                </Flex>
+                <Box
+                  mt={7}
+                  pt={7}
+                  borderTop="1px solid"
+                  borderTopColor="components.separator.borderColor"
+                  fontSize="xs"
+                >
+                  <VStack rowGap={1} textAlign="left">
+                    <Links
+                      links={links}
+                      props={{
+                        variant: 'right-bottom-nav',
+                        w: '100%',
+                        display: 'block'
+                      }}
+                    />
+                  </VStack>
+                </Box>
               </Box>
-            </Box>
+            )}
           </Box>
         </TOCProvider>
       </Flex>

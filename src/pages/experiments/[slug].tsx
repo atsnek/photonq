@@ -124,29 +124,26 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
 
   return (
     <Stack key={post.id} spacing={8}>
+      <Breadcrumb mb="4">
+        <BreadcrumbItem>
+          <BreadcrumbLink as={Link} to="/experiments">
+            <HStack spacing="1">
+              <Icon
+                as={FaUsers}
+                display="inline-block"
+                color="brand.500"
+                mr="2"
+              />
+              <Text color="gray.600">Community Experiments</Text>
+            </HStack>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+
+        <BreadcrumbItem isCurrentPage>
+          <BreadcrumbLink href="#">{post.title}</BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
       <Stack spacing="4">
-        <Flex justifyContent="space-between"></Flex>
-
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <BreadcrumbLink as={Link} to="/experiments">
-              <HStack spacing="1">
-                <Icon
-                  as={FaUsers}
-                  display="inline-block"
-                  color="brand.500"
-                  mr="2"
-                />
-                <Text color="gray.600">Community Experiments</Text>
-              </HStack>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-
-          <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink href="#">{post.title}</BreadcrumbLink>
-          </BreadcrumbItem>
-        </Breadcrumb>
-
         <Stack display={post.isOwner ? 'flex' : 'none'}>
           <Divider />
           <Flex justifyContent="space-between" alignItems="center">

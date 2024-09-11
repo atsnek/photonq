@@ -41,14 +41,12 @@ const AppLayout: FC<AppLayoutProps> = ({ children, isDocs, path, footer }) => {
 
   const isCommunity = ['/experiments', '/experiments/'].includes(path);
 
-  if (isDocs) {
+  if (isDocs || isCommunity) {
     childrenElmnt = (
       <DocsLayout path={path} isCommunity={isCommunity}>
         {children}
       </DocsLayout>
     );
-  } else if (isCommunity) {
-    childrenElmnt = <CommunityLayout>{children}</CommunityLayout>;
   } else if (
     (path.startsWith('/experiments') &&
       path !== '/experiments/' &&
