@@ -114,10 +114,11 @@ const PostCard: FC<PostCardProps> = ({ hideAuthor, post, isSafe }) => {
 
               <Badge
                 display={post.isOwner ? 'block' : 'none'}
-                variant="outline"
                 size="sm"
                 borderRadius="md"
-                colorScheme="blue"
+                colorScheme={
+                  post.privacy === Privacy.PUBLIC ? 'yellow' : 'green'
+                }
               >
                 {post.privacy === Privacy.PUBLIC && 'Public'}
                 {post.privacy === Privacy.PRIVATE && 'Private'}
