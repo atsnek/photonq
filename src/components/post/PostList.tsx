@@ -1,4 +1,4 @@
-import { Post, Query } from '@/clients/social/src/schema.generated';
+import { Privacy, PrivacyInput } from '@/clients/social/src/schema.generated';
 import {
   Button,
   Collapse,
@@ -24,6 +24,7 @@ import TbFilterDown from '../icons/tabler/TbFilterDown';
 import TbFilterUp from '../icons/tabler/TbFilterUp';
 import TbPlus from '../icons/tabler/TbPlus';
 import { useAuth } from 'jaen';
+import { asEnumKey } from 'snek-query';
 
 interface PostListProps {
   userId?: string;
@@ -133,6 +134,23 @@ const PostList: FC<PostListProps> = props => {
     }
   };
 
+  const handlePostDelete = async (id: string) => {
+    await sq.mutate(m => m.postDelete({ id }));
+
+    refetch();
+  };
+
+  const handlePostPrivacy = async (id: string, privacy: Privacy) => {
+    await sq.mutate(m =>
+      m.postUpdate({
+        id,
+        values: { privacy: asEnumKey(PrivacyInput, privacy) }
+      })
+    );
+
+    refetch();
+  };
+
   return (
     <Stack w="full">
       <HStack spacing="3" w="full">
@@ -234,6 +252,8 @@ const PostList: FC<PostListProps> = props => {
             post={post}
             hideAuthor={props.hideAuthor}
             isSafe={isSafe}
+            onDelete={handlePostDelete}
+            onSetPrivacy={handlePostPrivacy}
           />
         ))}
       </List>

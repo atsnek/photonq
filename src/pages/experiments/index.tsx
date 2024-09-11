@@ -15,6 +15,8 @@ import { useQuery } from 'snek-query/react-hooks';
 import PostCard from '../../components/post/PostCard';
 import PostCardSkeleton from '../../components/post/PostCardSkeleton';
 import PostList from '../../components/post/PostList';
+import { Privacy, PrivacyInput } from '@/clients/social/src/schema.generated';
+import { asEnumKey } from 'snek-query';
 
 export const POST_FETCH_LIMIT = 3;
 
@@ -26,6 +28,23 @@ const gradientAnimation = keyframes`
 
 const IndexPage: React.FC<PageProps> = () => {
   const { data, isSafe, refetch } = useQuery(sq);
+
+  const handlePostDelete = async (id: string) => {
+    await sq.mutate(m => m.postDelete({ id }));
+
+    refetch();
+  };
+
+  const handlePostPrivacy = async (id: string, privacy: Privacy) => {
+    await sq.mutate(m =>
+      m.postUpdate({
+        id,
+        values: { privacy: asEnumKey(PrivacyInput, privacy) }
+      })
+    );
+
+    refetch();
+  };
 
   return (
     <Stack>
@@ -79,7 +98,15 @@ const IndexPage: React.FC<PageProps> = () => {
             {data
               .allTrendingPost({ pagination: { first: 4 } })
               .nodes.map(post => {
-                return <PostCard key={post.id} post={post} isSafe={isSafe} />;
+                return (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    isSafe={isSafe}
+                    onDelete={handlePostDelete}
+                    onSetPrivacy={handlePostPrivacy}
+                  />
+                );
               })}
           </SimpleGrid>
 

@@ -57,6 +57,8 @@ import TbStar from '../../components/icons/tabler/TbStar';
 import {
   Activity,
   ActivityType,
+  Privacy,
+  PrivacyInput,
   SortOrderInput
 } from '@/clients/social/src/schema.generated';
 import { asEnumKey } from 'snek-query';
@@ -126,7 +128,6 @@ const EditableImage: React.FC<{
   displayName: string;
   userId: string;
 }> = ({ avatarUrl, userId, displayName }) => {
-  const auth = useAuth();
   const authUser = useAuthUser();
 
   const imageRef = useRef<HTMLInputElement>(null);
@@ -147,14 +148,14 @@ const EditableImage: React.FC<{
           if (file) {
             await authUser.profileAvatarUpdate(file);
 
-            // Reload window
-            window.location.reload();
+            // // Reload window
+            // window.location.reload();
           }
         }}
       />
 
       <AvatarImage
-        src={avatarUrl || undefined}
+        src={authUser.user.human.profile.avatarUrl || avatarUrl || undefined}
         displayName={displayName}
         cursor={userId === authUser.user.id ? 'pointer' : 'default'}
         onClick={() => {
@@ -379,6 +380,23 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
   }, [userId]);
 
   const [isFollow, setIsFollow] = useState(false);
+
+  const handlePostDelete = async (id: string) => {
+    await sq.mutate(m => m.postDelete({ id }));
+
+    refetch();
+  };
+
+  const handlePostPrivacy = async (id: string, privacy: Privacy) => {
+    await sq.mutate(m =>
+      m.postUpdate({
+        id,
+        values: { privacy: asEnumKey(PrivacyInput, privacy) }
+      })
+    );
+
+    refetch();
+  };
 
   return (
     <Box minH="100dvh" mt={offset}>
@@ -606,6 +624,8 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                       post={post}
                       hideAuthor
                       isSafe={isSafe}
+                      onDelete={handlePostDelete}
+                      onSetPrivacy={handlePostPrivacy}
                     />
                   ))}
                 </SimpleGrid>
@@ -633,6 +653,8 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                             post={p}
                             hideAuthor
                             isSafe={isSafe}
+                            onDelete={handlePostDelete}
+                            onSetPrivacy={handlePostPrivacy}
                           />
                         );
                       })}

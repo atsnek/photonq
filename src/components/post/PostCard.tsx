@@ -7,9 +7,14 @@ import {
   CardBody,
   HStack,
   Heading,
+  IconButton,
   Image,
   LinkBox,
   LinkOverlay,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Skeleton,
   SkeletonText,
   Stack,
@@ -18,23 +23,38 @@ import {
   Wrap
 } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import PostCardRating from './PostCardRating';
 import { useAuth } from 'jaen';
 import { sq } from '@/clients/social';
 import NoSSR from '../NoSSR';
+import {
+  DeleteIcon,
+  SettingsIcon,
+  ViewIcon,
+  ViewOffIcon
+} from '@chakra-ui/icons';
 
 interface PostCardProps {
   hideAuthor?: boolean;
   post: Post;
   isSafe?: boolean;
+  onDelete: (id: string) => void;
+  onSetPrivacy: (id: string, privacy: Privacy) => void;
 }
 
-const PostCard: FC<PostCardProps> = ({ hideAuthor, post, isSafe }) => {
+const PostCard: FC<PostCardProps> = ({
+  hideAuthor,
+  post,
+  isSafe,
+  onDelete,
+  onSetPrivacy
+}) => {
   const isLoaded = isSafe !== undefined ? isSafe : true;
 
   return (
     <LinkBox
+      key={post.id}
       as={Card}
       variant="outline"
       borderRadius="xl"
@@ -52,40 +72,83 @@ const PostCard: FC<PostCardProps> = ({ hideAuthor, post, isSafe }) => {
       }}
     >
       <CardBody as={Stack} justifyContent="end">
-        <HStack w="full" spacing="3">
-          <Avatar
-            boxSize="3rem"
-            borderRadius="md"
-            objectFit="cover"
-            src={post.avatarURL}
-            name={post.title}
-          />
+        <HStack justifyContent="space-between">
+          <HStack w="full" spacing="3">
+            <Avatar
+              boxSize="3rem"
+              borderRadius="md"
+              objectFit="cover"
+              src={post.avatarURL}
+              name={post.title}
+            />
 
-          <Stack>
-            {!hideAuthor && (
-              <SkeletonText isLoaded={isLoaded} noOfLines={1} minW="50px">
-                <Link
-                  noOfLines={1}
-                  variant="hover-theme"
-                  fontSize="sm"
-                  href={`/users/${post.user().id}`}
+            <Stack>
+              {!hideAuthor && (
+                <SkeletonText isLoaded={isLoaded} noOfLines={1} minW="50px">
+                  <Link
+                    noOfLines={1}
+                    variant="hover-theme"
+                    fontSize="sm"
+                    href={`/users/${post.user().id}`}
+                  >
+                    @{post.user().profile.userName}
+                  </Link>
+                </SkeletonText>
+              )}
+              <Heading
+                as="h5"
+                size="sm"
+                transition="color 0.2s ease-in-out"
+                flex={1}
+                w={{ base: 'full', md: 'auto' }}
+              >
+                <LinkOverlay as={Link} to={`/experiments/${post.slug}`}>
+                  {post.title}
+                </LinkOverlay>
+              </Heading>
+            </Stack>
+          </HStack>
+
+          {post.isOwner && (
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                variant="outline"
+                mb="auto"
+                size="sm"
+                icon={<SettingsIcon />}
+              />
+              <MenuList>
+                <MenuItem
+                  onClick={() =>
+                    onSetPrivacy(
+                      post.id,
+                      post.privacy === Privacy.PUBLIC
+                        ? Privacy.PRIVATE
+                        : Privacy.PUBLIC
+                    )
+                  }
+                  icon={
+                    post.privacy === Privacy.PUBLIC ? (
+                      <ViewOffIcon color="green.600" />
+                    ) : (
+                      <ViewIcon color="yellow.300" />
+                    )
+                  }
                 >
-                  @{post.user().profile.userName}
-                </Link>
-              </SkeletonText>
-            )}
-            <Heading
-              as="h5"
-              size="sm"
-              transition="color 0.2s ease-in-out"
-              flex={1}
-              w={{ base: 'full', md: 'auto' }}
-            >
-              <LinkOverlay as={Link} to={`/experiments/${post.slug}`}>
-                {post.title}
-              </LinkOverlay>
-            </Heading>
-          </Stack>
+                  {post.privacy === Privacy.PUBLIC
+                    ? 'Make Private'
+                    : 'Make Public'}
+                </MenuItem>
+                <MenuItem
+                  icon={<DeleteIcon color="red.500" />}
+                  onClick={() => onDelete(post.id)}
+                >
+                  Delete
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          )}
         </HStack>
 
         <SkeletonText isLoaded={isLoaded}>
