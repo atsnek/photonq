@@ -32,6 +32,7 @@ import { TextControl } from '../../components/TextControl';
 import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEditor';
 import { useTOCContext } from '../../contexts/toc';
 import TableOfContent from '../../components/navigation/TableOfContent';
+import { globalHistory, useLocation } from '@reach/router';
 
 const IndexPage: React.FC<PageProps> = () => {
   const notify = useNotificationsContext();
@@ -131,6 +132,23 @@ const IndexPage: React.FC<PageProps> = () => {
     }
   }, [values.content]);
 
+  const curLocation = useLocation();
+  React.useEffect(() => {
+    return globalHistory.listen(({ action, location }) => {
+      if (
+        (action === 'PUSH' &&
+          !location.pathname.includes('/new/experiment') &&
+          !isCreating) ||
+        action === 'POP'
+      ) {
+        if (!window.confirm('Are you sure you want to leave this page?')) {
+          navigate(`${curLocation.pathname}`);
+        }
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCreating]);
+
   return (
     <Stack spacing="8">
       <Stack>
@@ -170,8 +188,6 @@ const IndexPage: React.FC<PageProps> = () => {
                       }
                     }).slug
                 );
-
-                setIsCreating(false);
 
                 localStorage.removeItem('new-experiment');
 
