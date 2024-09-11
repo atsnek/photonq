@@ -510,7 +510,14 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
         <Divider />
       </Stack>
 
-      <TableOfContent />
+      <Box
+        display={{
+          base: 'block',
+          xl: 'none'
+        }}
+      >
+        <TableOfContent />
+      </Box>
 
       {/* Placeholder for Editor Component */}
       <SkeletonText

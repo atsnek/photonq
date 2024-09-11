@@ -13,6 +13,7 @@ import {
 import { CloseIcon } from '@chakra-ui/icons';
 import {
   Avatar,
+  Box,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -339,7 +340,14 @@ const IndexPage: React.FC<PageProps> = () => {
         editable={true}
       />
 
-      <TableOfContent />
+      <Box
+        display={{
+          base: 'block',
+          xl: 'none'
+        }}
+      >
+        <TableOfContent />
+      </Box>
 
       {/* Placeholder for Editor Component */}
       <UncontrolledMdxEditor
