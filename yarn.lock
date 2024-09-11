@@ -10500,10 +10500,10 @@ its-fine@^1.0.6, its-fine@^1.1.1:
   dependencies:
     "@types/react-reconciler" "^0.28.0"
 
-jaen-fields-mdx@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/jaen-fields-mdx/-/jaen-fields-mdx-1.0.0.tgz#fc4d56e5d3b6a9a7d28c3bfe5a7f898d63db3e0a"
-  integrity sha512-qnXoHkM91y6ohxTgjiRoddZU69ByAI9HokUXHieKgGMM4j6swflfTuL4hzxww1oedig7imjdIgQH8w/WwVtw0g==
+jaen-fields-mdx@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/jaen-fields-mdx/-/jaen-fields-mdx-1.0.1.tgz#73e5278ce09d77cf04847344cb1e6e760e6a389c"
+  integrity sha512-KrDT3hWw23U7dQs4Rown8AehPgi/FWqV06o3BIqMiwmz6ShoM+NE1EMQ9DEIPHPC+kZ224KbN8OoSylmU5Geuw==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
