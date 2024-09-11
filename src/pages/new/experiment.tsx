@@ -13,19 +13,24 @@ import {
 import { CloseIcon } from '@chakra-ui/icons';
 import {
   Avatar,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
   Button,
   ButtonGroup,
   Divider,
   Flex,
   HStack,
+  Icon,
   IconButton,
   Input,
   SkeletonCircle,
   Stack,
-  Switch
+  Switch,
+  Text
 } from '@chakra-ui/react';
 
-import { graphql, navigate } from 'gatsby';
+import { graphql, Link, navigate } from 'gatsby';
 import * as React from 'react';
 import { asEnumKey } from 'snek-query';
 import { TextControl } from '../../components/TextControl';
@@ -33,6 +38,7 @@ import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEd
 import { useTOCContext } from '../../contexts/toc';
 import TableOfContent from '../../components/navigation/TableOfContent';
 import { globalHistory, useLocation } from '@reach/router';
+import { FaUsers } from '@react-icons/all-files/fa/FaUsers';
 
 const IndexPage: React.FC<PageProps> = () => {
   const notify = useNotificationsContext();
@@ -151,6 +157,26 @@ const IndexPage: React.FC<PageProps> = () => {
 
   return (
     <Stack spacing="8">
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <BreadcrumbLink as={Link} to="/experiments">
+            <HStack spacing="1">
+              <Icon
+                as={FaUsers}
+                display="inline-block"
+                color="brand.500"
+                mr="2"
+              />
+              <Text color="gray.600">Community Experiments</Text>
+            </HStack>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+
+        <BreadcrumbItem isCurrentPage>
+          <BreadcrumbLink href="#">New</BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
+
       <Stack>
         <Divider />
         <Flex justifyContent="space-between" alignItems="center">
