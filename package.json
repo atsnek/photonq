@@ -30,7 +30,7 @@
     "gatsby-jaen-mailpress": "^1.0.2",
     "gatsby-jaen-lens": "1.1.0",
     "gatsby-plugin-cloudflare-pages": "^1.0.2",
-    "gatsby-plugin-jaen": "^1.3.3",
+    "gatsby-plugin-jaen": "^1.3.4",
     "github-slugger": "^2.0.0",
     "prismjs": "^1.29.0",
     "quantum-circuit": "^0.9.218",
