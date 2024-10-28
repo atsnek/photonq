@@ -49,7 +49,9 @@ const FooterLinkGroup: FC<{
   </VStack>
 );
 
-const Footer: FC = () => {
+const Footer: FC<{
+  pullUp?: boolean;
+}> = ({ pullUp = false }) => {
   const { isAuthenticated } = useAuth();
 
   const linkGroups = [
@@ -92,7 +94,7 @@ const Footer: FC = () => {
     <Box
       as="footer"
       position="relative"
-      mt="-50px"
+      mt={pullUp ? -50 : 0}
       pt={20}
       pb={10}
       px={4}
