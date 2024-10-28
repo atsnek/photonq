@@ -102,50 +102,55 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
         </Container> */}
 
         <TOCProvider>
-          <Container flex="1" mt="6" maxW="3xl">
-            {!isCommunity && <MainBreadcrumb parts={breadcrumbParts} />}
+          {isCommunity ? (
+            <Box flex="1" mt="6" mx="8">
+              {memoedChildren}
+            </Box>
+          ) : (
+            <>
+              <Container flex="1" mt="6" maxW="3xl">
+                <MainBreadcrumb parts={breadcrumbParts} />
 
-            {memoedChildren}
+                {memoedChildren}
 
-            <MainBottomNav />
-          </Container>
-
-          <Box
-            as="aside"
-            flex="1"
-            maxW={{ base: '150px', lg: '2xs' }}
-            display={{
-              base: 'none',
-              md: 'block'
-            }}
-            pb="4"
-          >
-            {!isCommunity && (
-              <Box position="sticky" top="100px" mt="50px">
-                <Flex as="nav" direction="column" mt={5}>
-                  <MemoizedToc />
-                </Flex>
-                <Box
-                  mt={7}
-                  pt={7}
-                  borderTop="1px solid"
-                  borderTopColor="components.separator.borderColor"
-                  fontSize="xs"
-                >
-                  <VStack rowGap={1} textAlign="left">
-                    <Links
-                      links={links}
-                      props={{
-                        variant: 'right-bottom-nav',
-                        w: '100%',
-                        display: 'block'
-                      }}
-                    />
-                  </VStack>
+                <MainBottomNav />
+              </Container>
+              <Box
+                as="aside"
+                flex="1"
+                maxW={{ base: '150px', lg: '2xs' }}
+                display={{
+                  base: 'none',
+                  md: 'block'
+                }}
+                pb="4"
+              >
+                <Box position="sticky" top="100px" mt="50px">
+                  <Flex as="nav" direction="column" mt={5}>
+                    <MemoizedToc />
+                  </Flex>
+                  <Box
+                    mt={7}
+                    pt={7}
+                    borderTop="1px solid"
+                    borderTopColor="components.separator.borderColor"
+                    fontSize="xs"
+                  >
+                    <VStack rowGap={1} textAlign="left">
+                      <Links
+                        links={links}
+                        props={{
+                          variant: 'right-bottom-nav',
+                          w: '100%',
+                          display: 'block'
+                        }}
+                      />
+                    </VStack>
+                  </Box>
                 </Box>
               </Box>
-            )}
-          </Box>
+            </>
+          )}
         </TOCProvider>
       </Flex>
     </Container>
