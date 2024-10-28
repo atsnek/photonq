@@ -66,6 +66,7 @@ const ImageCard: FC<IImageCardProps> = ({
             height: 'var(--chakra-sizes-xs)',
             objectFit: 'cover'
           }}
+          useAspectRatio={false}
         />
         <Box p={4}>
           <Link
@@ -93,10 +94,7 @@ ImageCard.defaultProps = {
   },
   //@ts-expect-error
   id: () => `${(Math.random() + 1).toString(36).substring(7)}`,
-  image: {
-    src: 'https://picsum.photos/200',
-    alt: 'Placeholder image'
-  },
+
   link: {
     href: '#',
     name: 'Placeholder link'

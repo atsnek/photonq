@@ -92,32 +92,15 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
       />
     );
   },
-  img: props => <JaenImage {...props} />,
-  Image: props => <JaenImage {...props} />,
+  img: JaenImage,
+  Image: JaenImage,
   // CUSTOM COMPONENTS
-  QASMPlayground: props => {
-    return (
-      <QASMPlayground
-        children={props.children}
-        withoutTranslate={props.withoutTranslate}
-        withoutSimulate={props.withoutSimulate}
-      />
-    );
-  },
-  Filesystem: props => <Filesystem structure={props.structure} />,
-  ImageCard: props => (
-    <ImageCard
-      id={props.id}
-      image={props.image}
-      link={props.link}
-      size={props.size}
-    />
-  ),
-  Callout: props => (
-    <Callout icon={props.icon} type={props.type} children={props.children} />
-  ),
-  IconCard: props => <IconCard icon={props.icon} link={props.link} />,
-  DocsIndex: props => <DocsIndex type={props.type} />
+  QASMPlayground,
+  Filesystem,
+  ImageCard,
+  Callout,
+  IconCard,
+  DocsIndex
 };
 
 const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {

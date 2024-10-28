@@ -7,6 +7,7 @@ import { FC } from 'react';
 interface IImageProps {
   name: string;
   defaultValue: string;
+  useAspectRatio?: boolean;
   alt?: string;
 }
 
@@ -17,21 +18,30 @@ export const JaenImage: FC<IImageProps & JaenFieldProps & ImageFieldProps> = ({
   name,
   defaultValue,
   alt,
+  useAspectRatio = true,
   ...props
 }: any) => {
   if (!name) {
     name = `image-${(Math.random() + 1).toString(36).substring(7)}`;
   }
 
+  if (useAspectRatio) {
+    return (
+      <AspectRatio {...props}>
+        <Field.Image
+          name={name}
+          defaultValue={defaultValue}
+          alt={alt}
+          objectFit="contain"
+        />
+      </AspectRatio>
+    );
+  }
+
   return (
-    <AspectRatio {...props}>
-      <Field.Image
-        name={name}
-        defaultValue={defaultValue}
-        alt={alt}
-        objectFit="contain"
-      />
-    </AspectRatio>
+    <Box {...props}>
+      <Field.Image name={name} defaultValue={defaultValue} alt={alt} />
+    </Box>
   );
 };
 
