@@ -59,42 +59,16 @@ const IndexPage: React.FC<PageProps> = () => {
       "This is my new experiment's summary. You should give a brief description of what you're trying to achieve.",
     language: LanguageInput.EN,
     privacy: PrivacyInput.PRIVATE,
-    content: JSON.stringify({
-      type: 'root',
-      children: [
-        {
-          type: 'code',
-          lang: 'qasm',
-          meta: 'playground',
-          value:
-            '// Define a quantum circuit with 2 qubits\nOPENQASM 2.0;            // Set the QASM version[^1]\ninclude "qelib1.inc";    // Include standard library[^2]\n\nqreg qubits[2];          // Declare a 2-qubit register[^3]\ncx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]\n',
-          position: {
-            start: {
-              line: 1,
-              column: 1,
-              offset: 0
-            },
-            end: {
-              line: 40,
-              column: 4,
-              offset: 735
-            }
-          }
-        }
-      ],
-      position: {
-        start: {
-          line: 1,
-          column: 1,
-          offset: 0
-        },
-        end: {
-          line: 41,
-          column: 1,
-          offset: 736
-        }
-      }
-    })
+    content: `\`\`\`qasm playground
+// Define a quantum circuit with 2 qubits
+OPENQASM 2.0;            // Set the QASM version[^1]
+include "qelib1.inc";    // Include standard library[^2]
+
+qreg qubits[2];          // Declare a 2-qubit register[^3]
+cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
+
+\`\`\`
+`
   });
 
   React.useEffect(() => {
@@ -112,17 +86,7 @@ const IndexPage: React.FC<PageProps> = () => {
 
   const toc = useTOCContext();
 
-  React.useEffect(() => {
-    if (values.content) {
-      try {
-        toc.setValue(JSON.parse(values.content));
-      } catch {
-        toc.setValue(undefined);
-      }
-    } else {
-      toc.setValue(undefined);
-    }
-  }, [values.content]);
+  const [parsedContent, setParsedContent] = React.useState<any>();
 
   const [isCreating, setIsCreating] = React.useState(false);
 
@@ -130,14 +94,6 @@ const IndexPage: React.FC<PageProps> = () => {
   const imageInputRef = React.useRef<HTMLInputElement>(null);
 
   const { user } = useAuth();
-
-  const parsedContent = React.useMemo(() => {
-    try {
-      return JSON.parse(values.content);
-    } catch {
-      return undefined;
-    }
-  }, [values.content]);
 
   const curLocation = useLocation();
   React.useEffect(() => {
@@ -351,14 +307,15 @@ const IndexPage: React.FC<PageProps> = () => {
 
       {/* Placeholder for Editor Component */}
       <UncontrolledMdxEditor
-        value={parsedContent}
+        value={values.content}
         isEditing={true}
-        onUpdateValue={value => {
-          toc.setValue(value);
-
+        onMdast={mdast => {
+          toc.setValue(mdast);
+        }}
+        onUpdateValue={(mdast, value) => {
           setValues({
             ...values,
-            content: JSON.stringify(value)
+            content: value
           });
         }}
       />

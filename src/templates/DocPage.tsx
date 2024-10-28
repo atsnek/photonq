@@ -8,6 +8,7 @@ import MdxEditor from '../components/mdx-editor/MdxEditor';
 import Links from '../components/Links';
 import RightNav from '../components/navigation/RightNav';
 import MainBottomNav from '../components/navigation/MainBottomNav';
+import { useTOCContext } from '../contexts/toc';
 
 // Example links - these would probably be fetched from a CMS or other data source
 const links = [
@@ -22,7 +23,9 @@ const links = [
 ];
 
 const DocPage: React.FC<PageProps> = props => {
-  return <MdxEditor />;
+  const toc = useTOCContext();
+
+  return <MdxEditor onMdast={toc.setValue} />;
 };
 
 export default DocPage;

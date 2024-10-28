@@ -86,17 +86,17 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
     });
   }, [post]);
 
-  useEffect(() => {
-    if (values.content) {
-      try {
-        toc.setValue(JSON.parse(values.content));
-      } catch {
-        toc.setValue(undefined);
-      }
-    } else {
-      toc.setValue(undefined);
-    }
-  }, [values.content]);
+  // useEffect(() => {
+  //   if (values.content) {
+  //     try {
+  //       toc.setValue(JSON.parse(values.content));
+  //     } catch {
+  //       toc.setValue(undefined);
+  //     }
+  //   } else {
+  //     toc.setValue(undefined);
+  //   }
+  // }, [values.content]);
 
   const hasChanges = useMemo(() => {
     return (
@@ -114,10 +114,19 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
 
   const [isImageUploading, setIsImageUploading] = useState(false);
 
-  const parsedContent = useMemo(() => {
+  const parsedContext = useMemo(() => {
+    if (!values.content) {
+      return undefined;
+    }
+
     try {
-      return JSON.parse(values.content || '');
+      // Legacy parse to get posts with old content (MDAST)
+      return JSON.parse(values.content);
     } catch {
+      if (typeof values.content === 'string') {
+        return values.content;
+      }
+
       return undefined;
     }
   }, [values.content]);
@@ -528,14 +537,15 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
       >
         <UncontrolledMdxEditor
           key={mdxKey}
-          value={parsedContent}
+          value={parsedContext}
           isEditing={post.isOwner}
-          onUpdateValue={value => {
-            toc.setValue(value);
-
+          onMdast={mdast => {
+            toc.setValue(mdast);
+          }}
+          onUpdateValue={(_, value) => {
             setValues({
               ...values,
-              content: JSON.stringify(value)
+              content: value
             });
           }}
         />

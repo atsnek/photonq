@@ -8640,10 +8640,10 @@ gatsby-plugin-image@^3.11.0, gatsby-plugin-image@^3.13.1:
     objectFitPolyfill "^2.3.5"
     prop-types "^15.8.1"
 
-gatsby-plugin-jaen@^1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.3.4.tgz#a7d731c244a71fe8e79dccec78d2ced2abc27a7e"
-  integrity sha512-92DeOF1LxBxQu/hpfr59gd6YrVlJje1B3fy0QhnI/qzQP/T9dXmZ3pulv7z0T4QHzbQ43sGXufxYQ57tO3Y7pQ==
+gatsby-plugin-jaen@^1.3.6:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-jaen/-/gatsby-plugin-jaen-1.3.6.tgz#92ff9071c2a5275c537b3a43ecb18c575f84d08c"
+  integrity sha512-i/u9eZl+Vkbxvl9X2NytXcIDuSO77KbIAvlqFGHgK+la3u/NS3uA64kQ3G2I686df+puPKUyNHs9PEeV4HvmeA==
   dependencies:
     "@chakra-ui/react" "^2.8.0"
     "@emotion/react" "^11.11.1"
@@ -10500,10 +10500,10 @@ its-fine@^1.0.6, its-fine@^1.1.1:
   dependencies:
     "@types/react-reconciler" "^0.28.0"
 
-jaen-fields-mdx@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/jaen-fields-mdx/-/jaen-fields-mdx-1.0.1.tgz#73e5278ce09d77cf04847344cb1e6e760e6a389c"
-  integrity sha512-KrDT3hWw23U7dQs4Rown8AehPgi/FWqV06o3BIqMiwmz6ShoM+NE1EMQ9DEIPHPC+kZ224KbN8OoSylmU5Geuw==
+jaen-fields-mdx@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jaen-fields-mdx/-/jaen-fields-mdx-1.2.0.tgz#167c8fc0a7512cdd88829043a810049241f00cca"
+  integrity sha512-VvUBlnnE2fV+Br/QJMkfL+ElNcyfIVjtqLSNwlzdoqp+vDqXN/Y6RTHaLsC0alQKJSrYrdTuiwYayanHZavl4g==
   dependencies:
     "@chakra-ui/icons" "^2.1.0"
     "@chakra-ui/react" "^2.8.0"
@@ -10538,10 +10538,10 @@ jaen-fields-mdx@^1.0.1:
     vfile-message "^4.0.2"
     vfile-statistics "^3.0.0"
 
-jaen@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/jaen/-/jaen-1.2.0.tgz#aeb128239e135ca0244ec43b5883c0ad58b97b71"
-  integrity sha512-lBzGj3X2sLPBVzo3duc3X5qvKyX1wdmtF6avdHLDrF67QR191dfbggQ/ORs/QLI1ogyZ9/FpF14FNSPe4poATw==
+jaen@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/jaen/-/jaen-1.2.2.tgz#1c0d397bb251ac7121e112bfaf74bed0118e7ebc"
+  integrity sha512-mWUwBGoWsYkPVqfdCZr83MHYiPQZKHSSi8z/uBN/ybSUFfmjfLogZJIGdJVQl2Tog7uiakckm5Yo+RIpYafKWA==
   dependencies:
     "@chakra-ui/icons" "^2.1.1"
     "@chakra-ui/react" "^2.8.0"

@@ -40,6 +40,7 @@ import JaenImage from '../JaenImage';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
+  onMdast: (mdast: any) => void;
 }
 
 export const mdxEditorComponents: MdxFieldProps['components'] = {
@@ -114,7 +115,7 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   DocsIndex
 };
 
-const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
+const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash, onMdast }) => {
   const { isAuthenticated, user, isLoading } = useAuth();
   const { isEditing, toggleIsEditing } = useContentManagement();
   const { jaenPage } = usePageContext();
@@ -179,6 +180,7 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash }) => {
             wrapper: ({ children }) => <Stack>{children}</Stack>,
             ...mdxEditorComponents
           }}
+          onMdast={onMdast}
         />
       </div>
     </Stack>

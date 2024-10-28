@@ -8,6 +8,7 @@ import MdxEditor from '../components/mdx-editor/MdxEditor';
 import Links from '../components/Links';
 import RightNav from '../components/navigation/RightNav';
 import MainBottomNav from '../components/navigation/MainBottomNav';
+import { useTOCContext } from '../contexts/toc';
 
 // Example links - these would probably be fetched from a CMS or other data source
 const links = [
@@ -27,7 +28,9 @@ const DocsPage: React.FC<PageProps> = () => {
   // This can be memoized since it doesn't change and switching pages re-renders most of the app anyway.
   const MemoizedToc = React.memo(TableOfContent, () => false);
 
-  return <MdxEditor />;
+  const toc = useTOCContext();
+
+  return <MdxEditor onMdast={toc.setValue} />;
 
   return (
     <>
