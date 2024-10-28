@@ -92,6 +92,8 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
       />
     );
   },
+  img: props => <JaenImage {...props} />,
+  Image: props => <JaenImage {...props} />,
   // CUSTOM COMPONENTS
   QASMPlayground: props => {
     return (
