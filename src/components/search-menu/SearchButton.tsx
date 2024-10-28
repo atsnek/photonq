@@ -1,6 +1,7 @@
 import { withRedux } from 'jaen';
-import { Button, Kbd } from '@chakra-ui/react';
+import { Button, IconButton, Kbd } from '@chakra-ui/react';
 import { FC } from 'react';
+import { SearchIcon } from '@chakra-ui/icons';
 
 interface ISearchButtonProps {
   openModal: () => void;
@@ -53,43 +54,64 @@ const SearchButton: FC<ISearchButtonProps> = withRedux(
     // }
 
     return (
-      <Button
-        display="flex"
-        size="sm"
-        minH="9"
-        variant="outline"
-        bgColor="blackAlpha.50"
-        color="topNav.input.color"
-        borderColor="topNav.input.borderColor"
-        fontWeight="normal"
-        _hover={{
-          borderColor: 'topNav.input.hover.borderColor'
-        }}
-        _active={{
-          bgColor: 'topNav.input.active.bgColor'
-        }}
-        onFocus={e => {
-          e.currentTarget.addEventListener('keypress', onKeyPress);
-        }}
-        onBlur={e => {
-          e.currentTarget.removeEventListener('keypress', onKeyPress);
-        }}
-        onClick={openModal}
-      >
-        Type{' '}
-        <Kbd
-          borderBottomWidth={1}
-          borderRadius={4}
-          py={0.5}
-          mx={2}
-          bgColor={'transparent'}
-          borderColor={'topNav.input.borderColor'}
+      <>
+        <Button
+          display={{
+            base: 'none',
+            md: 'flex'
+          }}
+          size="sm"
+          minH="9"
           variant="outline"
+          bgColor="blackAlpha.50"
+          color="topNav.input.color"
+          borderColor="topNav.input.borderColor"
+          fontWeight="normal"
+          _hover={{
+            borderColor: 'topNav.input.hover.borderColor'
+          }}
+          _active={{
+            bgColor: 'topNav.input.active.bgColor'
+          }}
+          onFocus={e => {
+            e.currentTarget.addEventListener('keypress', onKeyPress);
+          }}
+          onBlur={e => {
+            e.currentTarget.removeEventListener('keypress', onKeyPress);
+          }}
+          onClick={openModal}
         >
-          /
-        </Kbd>
-        to search
-      </Button>
+          Type{' '}
+          <Kbd
+            borderBottomWidth={1}
+            borderRadius={4}
+            py={0.5}
+            mx={2}
+            bgColor={'transparent'}
+            borderColor={'topNav.input.borderColor'}
+            variant="outline"
+          >
+            /
+          </Kbd>
+          to search
+        </Button>
+
+        <IconButton
+          display={{
+            base: 'flex',
+            md: 'none'
+          }}
+          variant="outline"
+          bgColor="blackAlpha.50"
+          color="topNav.input.color"
+          borderColor="topNav.input.borderColor"
+          fontWeight="normal"
+          icon={<SearchIcon />}
+          aria-label="Search"
+          onClick={openModal}
+          onKeyDown={onKeyPress}
+        />
+      </>
     );
   }
 );
