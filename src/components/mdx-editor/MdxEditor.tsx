@@ -44,20 +44,31 @@ interface IMdxEditorProps {
 
 export const mdxEditorComponents: MdxFieldProps['components'] = {
   // TEXT
-  p: props => <Text children={props.children} />,
+  p: props => <Text id={props.id} children={props.children} />,
   // LIST
-  ul: (props: any) => <UnorderedList children={props.children}></UnorderedList>,
-  ol: (props: any) => <OrderedList children={props.children}></OrderedList>,
-  li: (props: any) => <ListItem children={props.children}></ListItem>,
+  ul: (props: any) => (
+    <UnorderedList id={props.id} children={props.children}></UnorderedList>
+  ),
+  ol: (props: any) => (
+    <OrderedList id={props.id} children={props.children}></OrderedList>
+  ),
+  li: (props: any) => (
+    <ListItem id={props.id} children={props.children}></ListItem>
+  ),
   // TABLE
   table: (props: any) => (
-    <Table variant="striped" w="fit-content" children={props.children} />
+    <Table
+      id={props.id}
+      variant="striped"
+      w="fit-content"
+      children={props.children}
+    />
   ),
-  thead: (props: any) => <Thead children={props.children} />,
-  tbody: (props: any) => <Tbody children={props.children} />,
-  tr: (props: any) => <Tr children={props.children} />,
-  th: (props: any) => <Th children={props.children} />,
-  td: (props: any) => <Td children={props.children} />,
+  thead: (props: any) => <Thead id={props.id} children={props.children} />,
+  tbody: (props: any) => <Tbody id={props.id} children={props.children} />,
+  tr: (props: any) => <Tr id={props.id} children={props.children} />,
+  th: (props: any) => <Th id={props.id} children={props.children} />,
+  td: (props: any) => <Td id={props.id} children={props.children} />,
   // MISC
   code: ({
     className,
