@@ -35,9 +35,9 @@ const config: GatsbyConfig = {
           projectIds: ['263491274097563233']
         },
         sentry: {
-          org: 'cronit',
-          project: 'photonq',
-          dsn: 'https://0500df0c84c0af9c06527751e6f640b8@sentry.cronit.io/12'
+          org: 'photonq',
+          project: 'photonq-org',
+          dsn: 'https://0351d2d359e678723fc0215bfcb90356@sentry.cronit.io/17'
         },
         googleAnalytics: {
           trackingIds: ['G-M58K75M9PG']
