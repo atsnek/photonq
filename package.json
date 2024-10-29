@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "jaen": "^1.2.2",
-    "jaen-fields-mdx": "^1.2.0",
+    "jaen-fields-mdx": "^1.2.1",
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
