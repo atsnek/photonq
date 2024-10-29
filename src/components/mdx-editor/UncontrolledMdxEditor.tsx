@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { CSSProperties, FC } from 'react';
 import {
   MdxFieldProps,
   UncontrolledMdxField,
@@ -12,16 +12,30 @@ import {
   Flex,
   Icon,
   Image,
+  ImageProps,
   Stack,
+  StyleProps,
   Text
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { useMediaModal } from 'jaen';
 
-const InjectImage: React.FC<{ id: string; src: string; alt: string }> = ({
+const InjectImage: React.FC<{
+  id: string;
+  src: string;
+  alt: string;
+  fit: boolean;
+  objectFit?: CSSProperties['objectFit'];
+  height?: ImageProps['height'];
+  borderRadius?: StyleProps['borderRadius'];
+}> = ({
   id,
   src,
-  alt
+  alt,
+  fit = true,
+  objectFit = 'cover',
+  height = 'xs',
+  borderRadius
 }) => {
   const inject = useInjectMdxPropContext();
 
@@ -40,14 +54,29 @@ const InjectImage: React.FC<{ id: string; src: string; alt: string }> = ({
 
   return (
     <Box position="relative" cursor={inject ? 'pointer' : 'default'}>
-      <AspectRatio>
+      {fit ? (
+        <AspectRatio>
+          <Image
+            src={src}
+            alt={alt}
+            style={{ objectFit }}
+            transition="filter 0.3s"
+            borderRadius={borderRadius}
+            overflow={'hidden'}
+          />
+        </AspectRatio>
+      ) : (
         <Image
           src={src}
           alt={alt}
-          style={{ objectFit: 'contain' }}
           transition="filter 0.3s"
+          height={height}
+          objectFit={objectFit}
+          borderRadius={borderRadius}
+          overflow={'hidden'}
         />
-      </AspectRatio>
+      )}
+
       {inject && (
         <Flex
           position="absolute"
@@ -80,7 +109,8 @@ const InjectImage: React.FC<{ id: string; src: string; alt: string }> = ({
 InjectImage.defaultProps = {
   id: () => `image-${(Math.random() + 1).toString(36).substring(7)}`,
   src: 'https://placehold.co/600x400',
-  alt: 'This is a placeholder image'
+  alt: 'This is a placeholder image',
+  fit: true
 };
 
 const experimentEditorComponents: MdxFieldProps['components'] = {
