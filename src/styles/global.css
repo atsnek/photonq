@@ -4,7 +4,6 @@
 
 mjx-container {
     overflow-x: auto;
-    width: 100%;
 }
 
 /* Apply this to elements that have an ID and are jump targets */
