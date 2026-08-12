@@ -1,13 +1,13 @@
 import {
   Box,
   Center,
-  Divider,
   HStack,
   LinkBox,
   LinkOverlay,
   StackProps,
   Text,
-  VStack
+  VStack,
+  Separator
 } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
 import React, { FC } from 'react';
@@ -54,10 +54,10 @@ const Stepper: FC<IStepperProps> = ({ sections, ...props }) => {
     <VStack w="full" {...stepperStyling.wrapper} {...props}>
       {sections.map((section, i) => {
         return (
-          <VStack key={i} spacing={0} w="full" h="max-content">
+          <VStack key={i} gap={0} w="full" h="max-content">
             <HStack w="full" mb={3}>
               <Box {...section.titleProps}>{section.title}</Box>
-              <Divider flex={1} h="full" />
+              <Separator flex={1} h="full" />
             </HStack>
             {section.items.map((item, j) => (
               <StepperItem
@@ -96,7 +96,6 @@ const StepperItem: FC<IStepperItemProps> = ({
 }) => {
   return (
     <HStack
-      as={LinkBox}
       w="full"
       h="100%"
       py={3}
@@ -112,27 +111,35 @@ const StepperItem: FC<IStepperItemProps> = ({
         zIndex: -1
       }}
       {...props}
+      asChild
     >
-      <Box
-        as={Center}
-        boxSize="32px"
-        bgColor="components.stepper.item.icon.wrapper.bgColor"
-        borderRadius="full"
-        fontSize="16px"
-        border="3px solid"
-        borderColor="chakra-body-bg"
-        color="components.stepper.item.icon.color"
-      >
-        {icon}
-      </Box>
+      <LinkBox>
+        <Box
+          boxSize="32px"
+          bgColor="components.stepper.item.icon.wrapper.bgColor"
+          borderRadius="full"
+          fontSize="16px"
+          border="3px solid"
+          // v2 built-in, gone in v3. `chakra-body-bg` was
+          // {_light: white, _dark: gray.800}, and `shared.body.bgColor` is the
+          // same pair — semanticTokens/shared.ts says so in as many words. The
+          // ring punches the icon out of the connector line drawn above, so
+          // losing it to currentColor inverted the cut-out.
+          borderColor="shared.body.bgColor"
+          color="components.stepper.item.icon.color"
+          asChild
+        >
+          <Center>{icon}</Center>
+        </Box>
 
-      {to ? (
-        <LinkOverlay as={Link} to={to} w="full">
-          {title}
-        </LinkOverlay>
-      ) : (
-        <Text w="full">{title}</Text>
-      )}
+        {to ? (
+          <LinkOverlay w="full" asChild>
+            <Link to={to}>{title}</Link>
+          </LinkOverlay>
+        ) : (
+          <Text w="full">{title}</Text>
+        )}
+      </LinkBox>
     </HStack>
   );
 };

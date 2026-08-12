@@ -1,37 +1,38 @@
 import {
   Heading as ChakraHeading,
   HeadingProps as ChakraHeadingProps,
-  HeadingProps,
-  ResponsiveValue,
-  ThemeTypings
+  HeadingProps
 } from '@chakra-ui/react';
 import React, { Dispatch, FC, ReactNode, SetStateAction } from 'react';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
 import { Link } from 'gatsby-plugin-jaen';
 import FaHashtag from '../../../icons/fontawesome/FaHashtag';
 
-// Font sizes for the different heading variants
-export const variantFontSizes = {
-  h1: '36',
-  h2: '30',
-  h3: '24',
-  h4: '20',
-  h5: '18',
-  h6: '16'
-};
-
+/**
+ * Font sizes for the anchor beside each heading.
+ *
+ * The `px` is not cosmetic. These were bare numeric strings ('30', '24', ...)
+ * because v2's styled-system coerced a unitless number to pixels before it
+ * emitted the declaration. v3 does not: an unresolvable fontSize token is
+ * passed through verbatim, `font-size: 24` is invalid CSS, and the browser
+ * drops the declaration at parse time. tsc and gatsby build stay green while
+ * every hash icon in the docs inherits its heading's size instead.
+ *
+ * A flat prop is the right instrument here, unlike on the heading itself: the
+ * Link recipe declares no fontSize at any breakpoint, so there is no media
+ * entry for a prop to lose to. See `docsHeadingSizes` in styles/theme/recipes.
+ */
 const variantLinkFontSizes = {
-  h1: '30',
-  h2: '24',
-  h3: '18',
-  h4: '16',
-  h5: '14',
-  h6: '12'
+  h1: '30px',
+  h2: '24px',
+  h3: '18px',
+  h4: '16px',
+  h5: '14px',
+  h6: '12px'
 };
 
 export interface IHeadingProps
-  extends IMainContentComponentBaseProps,
-    HeadingProps {
+  extends IMainContentComponentBaseProps, HeadingProps {
   variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   id?: string;
   noAnchor?: boolean;
@@ -81,7 +82,23 @@ const Heading: FC<IHeadingProps> = ({
       {...props}
       as={variant}
       id={id}
-      fontSize={variantFontSizes[variant]}
+      /**
+       * A recipe size, not a fontSize prop.
+       *
+       * v2 sized these headings with a flat `fontSize` prop and got away with
+       * it, because v2 merged the styleConfig into the style props before
+       * serialising and a scalar replaced the styleConfig's whole responsive
+       * value. v3 serialises the recipe first, so its default `size: xl`
+       * contributes an `@media (min-width: 48rem)` font-size that no style
+       * prop can reach, whether the prop is scalar or names `md` itself.
+       * Selecting a size puts the value on the same side of that boundary as
+       * the recipe, which is where it always belonged.
+       *
+       * It stays before `compProps` on purpose: a caller passing `size` or
+       * `fontSize` still wins, and now a `fontSize` from a caller wins at every
+       * width, because the selected size emits no media rule for font-size.
+       */
+      size={variant}
       // mt={!noSpacing ? customSpacing ?? baseProps?.marginTop : 0}
       // mb="4"
       _hover={{
@@ -101,7 +118,9 @@ const Heading: FC<IHeadingProps> = ({
           opacity={activeLink ? 1 : 0}
           color="components.heading.link.color.default"
           fontSize={variantLinkFontSizes[variant]}
-          lineHeight={Number(variantLinkFontSizes[variant]) + 5 + 'px'}
+          // parseInt, not Number: the map now carries the unit, and
+          // Number('24px') is NaN.
+          lineHeight={parseInt(variantLinkFontSizes[variant], 10) + 5 + 'px'}
           verticalAlign="top"
           onClick={handleClick}
         >

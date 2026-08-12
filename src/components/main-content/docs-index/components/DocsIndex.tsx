@@ -1,5 +1,5 @@
 import { useCMSManagementContext, useJaenPageIndex } from 'jaen';
-import { ListItem, OrderedList, SimpleGrid, Text } from '@chakra-ui/react';
+import { SimpleGrid, Text, List } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
 
 import ImageCard from '../../image-card/components/ImageCard';
@@ -37,23 +37,23 @@ const DocsIndex: React.FC<{
 
   if (type === 'toc') {
     return (
-      <OrderedList marginInlineStart="2em">
+      <List.Root as="ol" marginInlineStart="2em">
         {pages.map((child, index) => (
-          <ListItem key={index} mb="2">
+          <List.Item key={index} mb="2">
             <Link to={manager.pagePath(child.id)} mb="2">
               {child.jaenPageMetadata?.title || 'Read Page'}
             </Link>{' '}
             <Text fontSize="sm" color="gray.600">
               {child.jaenPageMetadata?.description || ''}
             </Text>{' '}
-          </ListItem>
+          </List.Item>
         ))}
-      </OrderedList>
+      </List.Root>
     );
   }
 
   return (
-    <SimpleGrid columns={{ base: 1, sm: 2 }} spacing="4" gap="4">
+    <SimpleGrid columns={{ base: 1, sm: 2 }} gap="4">
       {pages.map((child, index) => {
         return (
           <ImageCard

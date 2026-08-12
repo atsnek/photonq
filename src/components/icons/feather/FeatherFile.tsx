@@ -7,6 +7,8 @@ import React from 'react';
 const FeatherFile = (props: IconProps) => {
   return (
     <Icon
+      asChild={false}
+      boxSize="1em"
       viewBox="0 0 24 24"
       strokeWidth={2}
       stroke="currentColor"

@@ -69,18 +69,17 @@ const NavbarControls: FC<NavbarControlsProps> = ({
       </Menu> */}
       {showExpandToggle && (
         <IconButton
-          icon={
-            <HideSidebarIcon
-              transform={!isExpanded ? 'rotate(180deg)' : undefined}
-              transition="transform 0.2s ease-in-out"
-            />
-          }
           aria-label={`${isExpanded ? 'Close' : 'Open'}`}
           size="sm"
           variant="ghost"
           color="shared.text.default"
           onClick={() => setIsExpanded(!isExpanded)}
-        />
+        >
+          <HideSidebarIcon
+            transform={!isExpanded ? 'rotate(180deg)' : undefined}
+            transition="transform 0.2s ease-in-out"
+          />
+        </IconButton>
       )}
     </Flex>
   );

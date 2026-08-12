@@ -61,7 +61,10 @@ export const TestimonialHeading = (props: Props) => {
   const { children } = props;
 
   return (
-    <Heading as={'h3'} fontSize={'xl'}>
+    // size, not fontSize: see `siteHeadingSizes` in styles/theme/recipes.
+    // Nothing imports Testimonials today, so this one is corrected on the
+    // strength of the call site rather than a measurement.
+    <Heading as={'h3'} size="card">
       {children}
     </Heading>
   );
@@ -91,14 +94,23 @@ export const TestimonialAvatar: React.FC<TestimonialAvatarProps> = ({
   to
 }) => {
   return (
-    <LinkBox as={Flex} align={'center'} mt={8} direction={'column'}>
-      <Avatar src={src} mb={2} />
-      <Stack spacing={-1} align={'center'}>
-        <Text fontWeight={600}>{name}</Text>
-        <LinkOverlay as={Link} fontSize={'sm'} to={to} isExternal>
-          {title}
-        </LinkOverlay>
-      </Stack>
+    // v2's `as={Flex}` let LinkBox take Flex's shorthands. Under asChild the
+    // Flex is a real child component again, so they belong to it.
+    <LinkBox asChild>
+      <Flex align={'center'} mt={8} direction={'column'}>
+        <Avatar.Root mb={2}>
+          <Avatar.Fallback />
+          <Avatar.Image src={src} />
+        </Avatar.Root>
+        <Stack gap={-1} align={'center'}>
+          <Text fontWeight={600}>{name}</Text>
+          <LinkOverlay fontSize={'sm'} asChild>
+            <Link to={to} target="_blank" rel="noopener noreferrer">
+              {title}
+            </Link>
+          </LinkOverlay>
+        </Stack>
+      </Flex>
     </LinkBox>
   );
 };

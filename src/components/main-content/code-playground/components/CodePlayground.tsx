@@ -4,7 +4,6 @@ import CodeSnippet, {
   ICodeSnippetProps
 } from '../../code-snippet/components/CodeSnippet';
 import CodeResultPreview from '../../code-result-preview/components/CodeResultPreview';
-import ReactDOM from 'react-dom/server';
 
 interface ICodePlaygroundProps {
   children: string;

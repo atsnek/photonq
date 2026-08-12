@@ -1,5 +1,5 @@
 import { Box, BoxProps } from '@chakra-ui/react';
-import { FC } from 'react';
+import { FC, MouseEventHandler } from 'react';
 
 export type THamburgerMenuIconStylerProps = BoxProps;
 
@@ -18,7 +18,7 @@ const HamburgerMenuIcon: FC<IHamburgerMenuIconProps> = ({
   iconProps
 }) => {
   const props = {
-    __css: {
+    css: {
       '&.open': {
         '& > div:nth-of-type(1)': {
           top: '8px',
@@ -36,13 +36,23 @@ const HamburgerMenuIcon: FC<IHamburgerMenuIconProps> = ({
         transition:
           'transform 0.2s ease-in-out, opacity 0.2s ease-in-out, top 0.2s ease-in-out, background-color 0.2s ease-in-out'
       },
-      ...wrapperProps?.__css
+      ...wrapperProps?.css
     },
+    // The trailing spread lets a caller's own css win outright over the merge
+    // above instead of extending it. Same as under v2's __css; kept so the
+    // rendered styles do not shift, not because it is what one would write.
     ...wrapperProps
   };
 
   return (
-    <Box position="relative" boxSize="11px" onClick={handleClick} {...props}>
+    <Box
+      position="relative"
+      boxSize="11px"
+      // handleClick is declared as (isOpen: boolean) but has always been wired
+      // straight to onClick, so it receives the click event, never a flag. The
+      // callers ignore the argument; unwinding that is a behaviour change.
+      onClick={handleClick as unknown as MouseEventHandler<HTMLDivElement>}
+      {...props}>
       <Box
         position="absolute"
         top={0}

@@ -7,6 +7,8 @@ import React from 'react';
 const BsFiletypeJava = (props: IconProps) => {
   return (
     <Icon
+      asChild={false}
+      boxSize="1em"
       viewBox="0 0 16 16"
       strokeWidth={0}
       stroke="currentColor"

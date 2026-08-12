@@ -1,9 +1,13 @@
-import { Flex, FlexProps, Spacer, Stack } from '@chakra-ui/react';
+import { Flex, Spacer, Stack, StackProps } from '@chakra-ui/react';
 import { Dispatch, FC, ReactNode, SetStateAction } from 'react';
 import useNavOffset from '../../hooks/use-nav-offset';
 import NavbarControls from './NavbarControls';
 
-export interface ILeftNavProps extends FlexProps {
+// Whatever a caller passes beyond the four props below lands on the Stack, so
+// Stack's props are the contract. v2 borrowed Flex's and got away with it
+// because the two `direction` types overlapped; v3 narrows Stack's to
+// StackDirection and the borrowed spelling no longer fits through.
+export interface ILeftNavProps extends StackProps {
   isExpanded?: boolean;
   setIsExpanded?: Dispatch<SetStateAction<boolean>>;
   hideControls?: boolean;
@@ -24,7 +28,7 @@ const LeftNav: FC<ILeftNavProps> = ({
 
   return (
     <Stack
-      spacing="4"
+      gap="4"
       position="sticky"
       top={`calc(20px + ${navTopOffset})`}
       flex="1"

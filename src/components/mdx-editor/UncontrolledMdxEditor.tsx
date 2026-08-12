@@ -13,8 +13,8 @@ import {
   Icon,
   Image,
   ImageProps,
+  JsxStyleProps,
   Stack,
-  StyleProps,
   Text
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
@@ -27,7 +27,7 @@ const InjectImage: React.FC<{
   fit: boolean;
   objectFit?: CSSProperties['objectFit'];
   height?: ImageProps['height'];
-  borderRadius?: StyleProps['borderRadius'];
+  borderRadius?: JsxStyleProps['borderRadius'];
 }> = ({
   id,
   src,
@@ -94,7 +94,9 @@ const InjectImage: React.FC<{
             opacity: 1
           }}
         >
-          <Icon as={EditIcon} w={8} h={8} color="brand.500" />
+          <Icon w={8} h={8} color="brand.500" asChild>
+            <EditIcon />
+          </Icon>
         </Flex>
       )}
       {alt && (
@@ -122,8 +124,10 @@ const experimentEditorComponents: MdxFieldProps['components'] = {
 delete experimentEditorComponents.Filesystem;
 delete experimentEditorComponents.DocsIndex;
 
-interface IUncontrolledMdxEditorProps
-  extends Omit<Parameters<typeof UncontrolledMdxField>[0], 'components'> {}
+interface IUncontrolledMdxEditorProps extends Omit<
+  Parameters<typeof UncontrolledMdxField>[0],
+  'components'
+> {}
 
 /**
  * Standalone MDX editor without automatic loading/saving by Jaen.
@@ -133,8 +137,8 @@ const UncontrolledMdxEditor: FC<IUncontrolledMdxEditorProps> = ({
 }) => {
   return (
     <Stack
-      sx={{
-        '.cm-editor': {
+      css={{
+        '& .cm-editor': {
           height: '60dvh'
         }
       }}

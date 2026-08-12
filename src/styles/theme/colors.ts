@@ -25,9 +25,34 @@ const themeColors = {
     800: '#035d9b',
     900: '#013d68'
   },
+  /**
+   * v2's gray, pinned in full.
+   *
+   * 550 and 750 were the only two the site ever wrote down; 50-900 came from
+   * @chakra-ui/theme and are blue-tinted (500 #718096). v3 replaced the ramp
+   * with a neutral zinc scale (500 #71717a), and 141 of this theme's 148
+   * semantic-token leaves resolve through gray, so inheriting v3's re-tints
+   * essentially every neutral surface, divider and line of body text on the
+   * site. 550/750 were picked to sit between 500/600 and 700/800 of THIS ramp,
+   * which is also why they look out of place against v3's.
+   *
+   * Read out of /home/snekmin/git/netsnek.com/node_modules/@chakra-ui/theme.
+   * v3's gray.950 (#111111) is left alone: v2 had no 950 and nothing here
+   * references one.
+   */
   gray: {
+    50: '#F7FAFC',
+    100: '#EDF2F7',
+    200: '#E2E8F0',
+    300: '#CBD5E0',
+    400: '#A0AEC0',
+    500: '#718096',
     550: '#5F6C81',
-    750: '#212836'
+    600: '#4A5568',
+    700: '#2D3748',
+    750: '#212836',
+    800: '#1A202C',
+    900: '#171923'
   },
   pq: {
     500: '#0580D2'

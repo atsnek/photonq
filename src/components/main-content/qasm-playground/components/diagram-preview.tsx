@@ -1,4 +1,4 @@
-import { Box, ButtonSpinner, Center, HStack, Text } from '@chakra-ui/react';
+import { Box, Center, HStack, Text } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 
 interface ICodeResultPreviewProps {

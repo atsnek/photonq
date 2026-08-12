@@ -1,7 +1,6 @@
 import { Text as ChText } from '@chakra-ui/react';
 import React, { FC, ReactNode } from 'react';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
-import { mainComponentBaseStyle } from '../../../../shared/containers/main/mainContent.vars';
 
 export interface ITextProps extends IMainContentComponentBaseProps {
   children?: ReactNode;
@@ -13,8 +12,12 @@ export interface ITextProps extends IMainContentComponentBaseProps {
 const Text: FC<ITextProps> = ({ baseProps, children }) => {
   return <ChText {...baseProps}>{children}</ChText>;
 };
-Text.defaultProps = {
-  baseProps: mainComponentBaseStyle.baseProps
-};
+// A defaultProps block stood here and read its value from
+// shared/containers/main/mainContent.vars, a module that exists neither in this
+// tree nor in v2's. Nothing but the type import in types/mainContent.ts reaches
+// this file, which is why a component that cannot even be loaded never showed
+// up. The spacing it was meant to default to is not recoverable from the
+// source, and borrowing the mt 8 that Heading and ImageCard use would be a
+// styling decision, not a migration.
 
 export default Text;

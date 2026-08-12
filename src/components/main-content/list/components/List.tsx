@@ -1,10 +1,5 @@
-import {
-  List as ChList,
-  UnorderedList,
-  OrderedList,
-  ListItem
-} from '@chakra-ui/react';
-import { ComponentType, FC, ReactNode } from 'react';
+import { List as ChList } from '@chakra-ui/react';
+import { FC, ReactNode } from 'react';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
 
 export type ListItem = {
@@ -25,10 +20,22 @@ const List: FC<IListProps> = ({
   variant = 'unordered',
   children
 }) => {
-  let ListComp: typeof UnorderedList | typeof OrderedList = UnorderedList;
-  if (variant === 'ordered') ListComp = OrderedList;
+  const isOrdered = variant === 'ordered';
 
-  return <ListComp {...baseProps}>{children}</ListComp>;
+  // v2's UnorderedList and OrderedList were thin wrappers over List that set
+  // exactly these three props, so spelling them out here keeps the markup and
+  // the indent identical. baseProps stays last, as it was when it was spread
+  // onto the wrapper.
+  return (
+    <ChList.Root
+      as={isOrdered ? 'ol' : 'ul'}
+      listStyleType={isOrdered ? 'decimal' : 'initial'}
+      marginStart="1em"
+      {...baseProps}
+    >
+      {children}
+    </ChList.Root>
+  );
 };
 
 export default List;

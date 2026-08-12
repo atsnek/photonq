@@ -7,6 +7,8 @@ import React from 'react';
 const FaRegFolder = (props: IconProps) => {
   return (
     <Icon
+      asChild={false}
+      boxSize="1em"
       viewBox="0 0 512 512"
       strokeWidth={2}
       stroke="currentColor"

@@ -1,17 +1,10 @@
 import {
   Button,
   ButtonGroup,
-  ListItem,
-  OrderedList,
   Stack,
   Table,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
-  UnorderedList
+  List
 } from '@chakra-ui/react';
 import { FC } from 'react';
 
@@ -48,28 +41,36 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   p: props => <Text id={props.id} children={props.children} />,
   // LIST
   ul: (props: any) => (
-    <UnorderedList id={props.id} children={props.children}></UnorderedList>
+    <List.Root as="ul" id={props.id} children={props.children}></List.Root>
   ),
   ol: (props: any) => (
-    <OrderedList id={props.id} children={props.children}></OrderedList>
+    <List.Root as="ol" id={props.id} children={props.children}></List.Root>
   ),
   li: (props: any) => (
-    <ListItem id={props.id} children={props.children}></ListItem>
+    <List.Item id={props.id} children={props.children}></List.Item>
   ),
   // TABLE
   table: (props: any) => (
-    <Table
+    <Table.Root
       id={props.id}
-      variant="striped"
+      // v3 turns striped from a variant VALUE into a boolean of its own, so it
+      // now stacks on the default line variant instead of replacing it. The
+      // site has no table recipe, so the stripe is v3's bg.muted where v2's
+      // was tinted by the colour scheme; restoring that tint is theme work.
+      striped
       w="fit-content"
       children={props.children}
     />
   ),
-  thead: (props: any) => <Thead id={props.id} children={props.children} />,
-  tbody: (props: any) => <Tbody id={props.id} children={props.children} />,
-  tr: (props: any) => <Tr id={props.id} children={props.children} />,
-  th: (props: any) => <Th id={props.id} children={props.children} />,
-  td: (props: any) => <Td id={props.id} children={props.children} />,
+  thead: (props: any) => (
+    <Table.Header id={props.id} children={props.children} />
+  ),
+  tbody: (props: any) => <Table.Body id={props.id} children={props.children} />,
+  tr: (props: any) => <Table.Row id={props.id} children={props.children} />,
+  th: (props: any) => (
+    <Table.ColumnHeader id={props.id} children={props.children} />
+  ),
+  td: (props: any) => <Table.Cell id={props.id} children={props.children} />,
   // MISC
   code: ({
     className,
@@ -124,9 +125,9 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash, onMdast }) => {
 
   return (
     <Stack
-      spacing={4}
-      sx={{
-        '.cm-editor': {
+      gap={4}
+      css={{
+        '& .cm-editor': {
           height: '60dvh'
         }
       }}
@@ -134,20 +135,23 @@ const MdxEditor: FC<IMdxEditorProps> = ({ hideHeadingHash, onMdast }) => {
       {canEdit && isLoading === false && (
         <ButtonGroup>
           <Button
-            leftIcon={<EditIcon />}
             variant="outline"
-            colorScheme={isEditing ? 'red' : undefined}
+            colorPalette={isEditing ? 'red' : undefined}
             onClick={() => toggleIsEditing()}
           >
+            <EditIcon />
             {isEditing ? 'Stop Editing' : 'Edit'}
           </Button>
 
+          {/* jaen's Link widens its props to anything, so leftIcon type-checks
+              here and then reaches a v3 Button that has no such prop and drops
+              the icon on the floor. As a child it renders again. */}
           <Link
-            leftIcon={<SettingsIcon />}
             variant="outline"
             as={Button}
             to={`/cms/pages/#${btoa(jaenPage.id)}`}
           >
+            <SettingsIcon />
             Page Settings
           </Link>
         </ButtonGroup>

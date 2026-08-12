@@ -7,6 +7,8 @@ import React from 'react';
 const FaHashtag = (props: IconProps) => {
   return (
     <Icon
+      asChild={false}
+      boxSize="1em"
       viewBox="0 0 448 512"
       strokeWidth={0}
       stroke="currentColor"

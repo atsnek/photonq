@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'react';
 import { TSearchResults } from '../utils/search/types';
-import useSearch from '../hooks/use-search';
 
 export type TSearchContext = {
   data: TSearchResults;
