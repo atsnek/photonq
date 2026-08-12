@@ -1,21 +1,23 @@
 /**
  * Converts the site's semantic-token tree from its v2 shape to v3's.
  *
- * The 27 files under `semanticTokens/` and `components/main-content/*\/styles/`
- * are a readable, hand-maintained data structure, and they stay in that shape.
- * Only the assembly step changes, which keeps the diff at one file instead of
- * twenty-seven hand-edits, each with its own chance of introducing exactly the
- * silent error this migration is trying to avoid.
+ * The 36 files under `semanticTokens/`, `photonq/semanticTokens/` and
+ * `components/main-content/*\/styles/` are a readable, hand-maintained data
+ * structure, and they stay in that shape. Only the assembly step changes, which
+ * keeps the diff at one file instead of thirty-six hand-edits, each with its
+ * own chance of introducing exactly the silent error this migration is trying
+ * to avoid.
  *
  *   v2   {default: 'brand.500', _dark: 'brand.200'}
  *   v3   {value: {base: '{colors.brand.500}', _dark: '{colors.brand.200}'}}
  *
- * The token PATHS are unchanged by construction, which is what lets all 117
- * consuming call sites stay untouched: v3 resolves tokens by path, so the
- * camelCase-to-kebab change in the emitted variable name is invisible to them.
+ * The token PATHS are unchanged by construction, which is what lets all 153
+ * consuming call sites across 44 files stay untouched: v3 resolves tokens by
+ * path, so the camelCase-to-kebab change in the emitted variable name is
+ * invisible to them.
  */
 
-/** The value forms measured across all 147 leaves in the real tree. */
+/** The value forms measured across all 174 leaves in the real tree. */
 const isTokenPath = (value: string): boolean =>
   // A dotted identifier chain and nothing else. Anything containing a bracket,
   // hash, percent or space is a literal colour or gradient; anything without a
@@ -34,8 +36,9 @@ const toValue = (raw: string): string =>
  * value: filesystem's three `color.{default,lowContrast}` pairs, heading's
  * `link.color.{default,active}`, callout's `{default,info,warning,error}` and
  * shared's `text.{default,bright}`. Testing only for the key's presence would
- * collapse all six, silently taking their siblings with them, and
- * `Heading.tsx:126` reads one of those full paths.
+ * collapse all six, silently taking their siblings with them, and the docs
+ * Heading reads one of those full paths
+ * (`components.heading.link.color.default`).
  */
 const isLeaf = (node: Record<string, unknown>): boolean =>
   'default' in node && typeof node.default === 'string';
