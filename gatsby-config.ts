@@ -45,9 +45,18 @@ const config: GatsbyConfig = {
       }
     },
     {
-      resolve: `gatsby-jaen-mailpress`,
+      /**
+       * `gatsby-jaen-mailpress` is gone: emailwerk IS mailpress v3, and the
+       * published mailpress plugin is a Chakra v2 package, so keeping it would
+       * pull the old runtime back into the bundle it was just removed from.
+       *
+       * The option is named `url` rather than `pylonUrl`, and the endpoint is
+       * unchanged. Note that this plugin speaks emailwerk's schema, so the CMS
+       * mail screens only work once the pylon behind this URL is on v3.
+       */
+      resolve: `gatsby-jaen-emailwerk`,
       options: {
-        pylonUrl: 'https://pylons.photonq.org/mailpress/graphql'
+        url: 'https://pylons.photonq.org/mailpress/graphql'
       }
     },
     `gatsby-jaen-lens`

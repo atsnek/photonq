@@ -29,7 +29,11 @@
     /* Modules */
     "module": "esnext" /* Specify what module code is generated. */,
     // "rootDir": "./",                                  /* Specify the root folder within your source files. */
-    "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
+    /* The bundler's own algorithm, so the checker sees what webpack sees. Under
+       "node", TypeScript ignores an "exports" map entirely and falls back to
+       "main"/"types", which for @chakra-ui/react v3 is a different entry point
+       than the one Gatsby bundles. */
+    "moduleResolution": "bundler" /* Specify how TypeScript looks up a file from a given module specifier. */,
     // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
     // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
@@ -103,8 +107,28 @@
     "paths": {
       "@/clients/*": [
         "./src/clients/*"
+      ],
+
+      /* jaen ships its types from ./dist/index.d.ts, which only exists after
+         microbundle has run, so a fresh checkout cannot resolve `from 'jaen'`
+         at all and every consumer collapses into implicit any. The second
+         entry is the fallback TypeScript takes when dist is absent. Order
+         matters: reading the built package keeps jaen's internals under
+         skipLibCheck, where they belong, since this project is stricter than
+         jaen's own tsconfig and would otherwise report its source against
+         rules it was never written to. Runtime is unaffected, Gatsby's webpack
+         does not read these paths. */
+      "jaen": [
+        "../jaen/packages/jaen/dist/index.d.ts",
+        "../jaen/packages/jaen/src/index.ts"
       ]
-    },  
+    },
+
+    /* Nothing here is ever compiled by tsc, Gatsby owns the build. Without
+       this, a `tsc -p .` that forgets --noEmit drops a .js next to every
+       source, and webpack resolves .js before .tsx, so the emitted copy is
+       what ships. */
+    "noEmit": true,
   },
   "include": [
     "./src/**/*",
