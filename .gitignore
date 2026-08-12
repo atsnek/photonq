@@ -9,3 +9,8 @@ node_modules
 src/.DS_Store
 
 .vscode/tasks.json
+
+# Agent tooling, installed per-checkout with `npx skills add`
+.agents/
+.claude/
+skills-lock.json
