@@ -1,6 +1,5 @@
 import { PageConfig, PageProps, osg, useNotificationsContext } from 'jaen';
 import {
-  Steps,
   Avatar,
   Box,
   Breadcrumb,
@@ -14,12 +13,13 @@ import {
   LinkBox,
   LinkOverlay,
   Menu,
+  Portal,
+  Separator,
+  Skeleton,
   SkeletonCircle,
   SkeletonText,
   Stack,
-  Text,
-  Separator,
-  Portal,
+  Text
 } from '@chakra-ui/react';
 
 import { FaRegShareSquare } from '@react-icons/all-files/fa/FaRegShareSquare';
@@ -38,7 +38,14 @@ import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEd
 import TableOfContent from '../../components/navigation/TableOfContent';
 import PostCardRating from '../../components/post/PostCardRating';
 import { useTOCContext } from '../../contexts/toc';
-import { LuCheck, LuExternalLink, LuTrash2 } from 'react-icons/lu';
+// The three glyphs this page took from @chakra-ui/icons, vendored locally. The
+// codemod swapped in lucide look-alikes, which is a different icon set and a
+// different drawing; these are the paths v2 actually painted.
+import {
+  CheckIcon,
+  DeleteIcon,
+  ExternalLinkIcon
+} from '../../components/icons/chakra';
 
 const useId = () => {
   const [id, setId] = useState<string>(Math.random().toString(36).substring(2));
@@ -134,15 +141,29 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
       <Breadcrumb.Root mb="4">
         <Breadcrumb.List>
           <Breadcrumb.Item>
-            <Breadcrumb.Link asChild><Link to="/experiments">
+            <Breadcrumb.Link asChild>
+              <Link to="/experiments">
                 <HStack gap="1">
-                  <Icon display="inline-block" color="brand.500" mr="2" asChild><FaUsers /></Icon>
+                  <Icon display="inline-block" color="brand.500" mr="2" asChild>
+                    <FaUsers />
+                  </Icon>
                   <Text color="gray.600">Community Experiments</Text>
                 </HStack>
-              </Link></Breadcrumb.Link>
+              </Link>
+            </Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator /><Breadcrumb.Item>
-            <Breadcrumb.Link href="#">{post.title}</Breadcrumb.Link>
+          {/* v2's Breadcrumb defaulted `separator` to "/". v3 has no such prop
+              and its Separator falls back to a chevron, so the slash is
+              written out. */}
+          <Breadcrumb.Separator>/</Breadcrumb.Separator>
+          <Breadcrumb.Item>
+            {/* v2's `isCurrentPage` on the item made BreadcrumbLink render a
+                <span aria-current="page"> and drop the href; CurrentLink is
+                that span. `color` restores v2's `link: {color: inherit}` base,
+                which v3 replaced with the plain variant's `fg`. */}
+            <Breadcrumb.CurrentLink color="inherit">
+              {post.title}
+            </Breadcrumb.CurrentLink>
           </Breadcrumb.Item>
         </Breadcrumb.List>
       </Breadcrumb.Root>
@@ -152,7 +173,25 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
           <Flex justifyContent="space-between" alignItems="center">
             {post.privacy === 'PRIVATE' ? (
               <Button
-                variant='plain'
+                /**
+                 * v2 selected the built-in `link` variant, which v3 dropped.
+                 * `plain` is the nearest survivor, but it only carries the
+                 * colour: the size variant's 40px box and 16px gutter stay, so
+                 * this renders as a button-shaped block where v2 rendered bare
+                 * text. The props below are v2's own variantLink entry
+                 * (`padding: 0`, `height: auto`, `lineHeight: normal`,
+                 * `verticalAlign: baseline`, hover underline) plus its colour,
+                 * `mode(brand.500, brand.200)`, which `plain` maps to
+                 * colorPalette.fg (brand.600) instead. `minW` is left alone:
+                 * v2's link kept the size variant's 2.5rem and so does this.
+                 */
+                variant="plain"
+                px="0"
+                h="auto"
+                lineHeight="normal"
+                verticalAlign="baseline"
+                color={{ base: 'brand.500', _dark: 'brand.200' }}
+                _hover={{ textDecoration: 'underline' }}
                 fontWeight="normal"
                 onClick={async () => {
                   const confirm = await notify.confirm({
@@ -188,11 +227,22 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                       });
                     }
                   }
-                }}><FaRocket />Publish
-                              </Button>
+                }}
+              >
+                <FaRocket />
+                Publish
+              </Button>
             ) : (
               <Button
-                variant='plain'
+                // Same v2 `link` restoration as the Publish button above. No
+                // colour of its own here: v2's link colour lost to the
+                // explicit `color` prop, and still does.
+                variant="plain"
+                px="0"
+                h="auto"
+                lineHeight="normal"
+                verticalAlign="baseline"
+                _hover={{ textDecoration: 'underline' }}
                 colorPalette="green"
                 fontWeight="normal"
                 color="gray.500"
@@ -231,8 +281,11 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                       });
                     }
                   }
-                }}><Icon color="green.500" asChild><LuCheck /></Icon>Published
-                              </Button>
+                }}
+              >
+                <CheckIcon color="green.500" />
+                Published
+              </Button>
             )}
 
             <ButtonGroup flexDir={['column', 'row']}>
@@ -300,7 +353,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                 type="file"
                 ref={imageInputRef}
                 display="none"
-                onValueChange={async e => {
+                onChange={async e => {
                   const file = e.target.files?.[0];
 
                   if (file) {
@@ -360,21 +413,34 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                       navigate(`/users/${post.user().id}`);
                     }
                   }
-                }}><LuTrash2 /></IconButton>
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
             </ButtonGroup>
           </Flex>
           <Separator />
         </Stack>
 
         <HStack gap="4">
-          <SkeletonCircle
+          {/* v2's SkeletonCircle was `<Skeleton borderRadius="full"
+              boxSize="2rem" {...props}/>` and this call site overrode both
+              defaults, so the circle was never round. v3's wraps the Skeleton
+              in a Circle whose `border-radius: 9999px` is applied THROUGH
+              asChild and therefore outranks the prop, which would round the
+              square avatar's placeholder. Skeleton is what v2 rendered. */}
+          <Skeleton
             boxSize="unset"
-            isLoaded={isSafe && !isImageUploading}
+            loading={!(isSafe && !isImageUploading)}
             borderRadius="md"
           >
+            {/* v2 handed `borderRadius` to the container AND the img. In v3
+                both read `var(--avatar-radius)`, which only the shape variant
+                sets, so a borderRadius prop would round the box and leave the
+                image a circle. `rounded` is `radii.l3`, i.e. radii.md. */}
             <Avatar.Root
               size="md"
-              borderRadius="md"
+              shape="rounded"
               _hover={
                 post.isOwner
                   ? {
@@ -392,10 +458,14 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                 if (post.isOwner) {
                   imageInputRef.current?.click();
                 }
-              }}><Avatar.Fallback name={values.title} /><Avatar.Image src={values.avatarURL || undefined} /></Avatar.Root>
-          </SkeletonCircle>
+              }}
+            >
+              <Avatar.Fallback name={values.title} />
+              <Avatar.Image src={values.avatarURL || undefined} />
+            </Avatar.Root>
+          </Skeleton>
 
-          <SkeletonText isLoaded={isSafe}>
+          <SkeletonText loading={!isSafe}>
             <TextControl
               key={values.title}
               text={values.title}
@@ -411,7 +481,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
           </SkeletonText>
         </HStack>
 
-        <SkeletonText isLoaded={isSafe}>
+        <SkeletonText loading={!isSafe}>
           <TextControl
             key={values.summary}
             text={values.summary || undefined}
@@ -426,17 +496,26 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
           />
         </SkeletonText>
       </Stack>
-      <LinkBox alignItems="center" asChild><Flex>
-          <SkeletonCircle boxSize="unset" isLoaded={isSafe}>
-            <Avatar.Root size="md"><Avatar.Fallback name={post.user().profile.displayName} /><Avatar.Image src={post.user().profile.avatarUrl || ''} /></Avatar.Root>
+      {/* v2's `as={Flex}` let LinkBox take Flex's shorthands. Under asChild
+          the Flex is a real child component again, so they belong to it. */}
+      <LinkBox asChild>
+        <Flex alignItems="center">
+          <SkeletonCircle boxSize="unset" loading={!isSafe}>
+            <Avatar.Root size="md">
+              <Avatar.Fallback name={post.user().profile.displayName} />
+              <Avatar.Image src={post.user().profile.avatarUrl || ''} />
+            </Avatar.Root>
           </SkeletonCircle>
           <Box ml={2}>
-            <SkeletonText isLoaded={isSafe}>
+            <SkeletonText loading={!isSafe}>
               <Text>{post.user().profile.displayName}</Text>
 
               <Text fontSize="sm" color="gray.600">
-                <LinkOverlay asChild><Link to={`/users/${post.user().id}`}>@{post.user().profile.userName}
-                  </Link></LinkOverlay>
+                <LinkOverlay asChild>
+                  <Link to={`/users/${post.user().id}`}>
+                    @{post.user().profile.userName}
+                  </Link>
+                </LinkOverlay>
                 &bull;
                 {post.createdAt !== post.updatedAt ? (
                   <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
@@ -446,7 +525,8 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
               </Text>
             </SkeletonText>
           </Box>
-        </Flex></LinkBox>
+        </Flex>
+      </LinkBox>
       <Stack>
         <Separator />
         <Flex justifyContent="space-between">
@@ -464,15 +544,23 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
           />
 
           <Menu.Root>
-            <Menu.Trigger asChild><IconButton
+            {/* v3's IconButton has no `icon` prop; the glyph is a child. */}
+            <Menu.Trigger asChild>
+              <IconButton
                 size="sm"
                 color="gray.600"
-                icon={<FaRegShareSquare />}
                 aria-label="Share"
-                variant="ghost"></IconButton></Menu.Trigger>
-            <Portal><Menu.Positioner><Menu.Content>
+                variant="ghost"
+              >
+                <FaRegShareSquare />
+              </IconButton>
+            </Menu.Trigger>
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content>
+                  {/* Same for MenuItem's `icon`: v2's leading-icon span is a
+                      plain child in v3, spaced by the item's own gap. */}
                   <Menu.Item
-                    icon={<LuExternalLink />}
                     onSelect={() => {
                       // Copy to clipboard
                       navigator.clipboard.writeText(window.location.href);
@@ -483,10 +571,14 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                         description: 'Link copied to clipboard.'
                       });
                     }}
-                    value='item-0'>
+                    value="copy-link"
+                  >
+                    <ExternalLinkIcon />
                     Copy Link
                   </Menu.Item>
-                </Menu.Content></Menu.Positioner></Portal>
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
           </Menu.Root>
         </Flex>
         <Separator />
@@ -500,26 +592,41 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
         <TableOfContent />
       </Box>
       {/* Placeholder for Editor Component */}
+      {/* `noOfLines` survived into v3 on SkeletonText and is not `lineClamp`,
+          which the codemod substituted: the count is how many placeholder
+          lines to draw, not a text clamp. `skeletonHeight` is gone; each line
+          hard-codes `height: "4"` ahead of the spread, so a `height` prop is
+          the way back to v2's 6 — but only while loading, because the loaded
+          branch passes no height and would otherwise clip the editor. */}
       <SkeletonText
-        isLoaded={isSafe}
-        lineClamp={15}
+        loading={!isSafe}
+        noOfLines={15}
         gap="4"
-        skeletonHeight="6"
+        height={isSafe ? undefined : '6'}
       >
-        <UncontrolledMdxEditor
-          key={mdxKey}
-          value={parsedContext}
-          isEditing={post.isOwner}
-          onMdast={mdast => {
-            toc.setValue(mdast);
-          }}
-          onUpdateValue={(_, value) => {
-            setValues({
-              ...values,
-              content: value
-            });
-          }}
-        />
+        {/* v2 handed the children to the FIRST placeholder line and `undefined`
+            to the other fourteen. v3 spreads the rest props — children
+            included — into every line, so the MDX editor would mount fifteen
+            times behind `visibility: hidden`, each one firing `onMdast` into
+            toc.setValue. Withholding the child until the query is safe keeps it
+            mounted exactly once, as in v2; the one difference is that it now
+            mounts with the post's content rather than mounting empty first. */}
+        {isSafe ? (
+          <UncontrolledMdxEditor
+            key={mdxKey}
+            value={parsedContext}
+            isEditing={post.isOwner}
+            onMdast={mdast => {
+              toc.setValue(mdast);
+            }}
+            onUpdateValue={(_, value) => {
+              setValues({
+                ...values,
+                content: value
+              });
+            }}
+          />
+        ) : null}
       </SkeletonText>
     </Stack>
   );

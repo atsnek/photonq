@@ -1,4 +1,4 @@
-import { Steps, IconProps, Icon } from '@chakra-ui/react';
+import { IconProps, Icon } from '@chakra-ui/react';
 
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 
@@ -8,7 +8,11 @@ import TbUserShare from '../components/icons/tabler/TbUserShare';
 import TbUsers from '../components/icons/tabler/TbUsers';
 import { FC } from 'react';
 
-const FaFlaskIcon = (props: IconProps) => <Icon {...props} asChild><FaFlask /></Icon>;
+// `as` survives into v3: Icon only falls back to `asChild` when no `as` is
+// given (it computes `asChild: !props.as`), so v2's one-liner is still the
+// right one. Keeping the spread last also keeps v2's precedence, where a
+// caller's props win over the ones set here.
+const FaFlaskIcon = (props: IconProps) => <Icon as={FaFlask} {...props} />;
 
 /**
  * Icons for the profile stats

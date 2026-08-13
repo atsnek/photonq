@@ -1,8 +1,8 @@
-import { Steps, Box, Center, Flex, HStack, Text } from '@chakra-ui/react';
+import { ArrowBackIcon, InfoIcon } from '../../../../components/icons/chakra';
+import { Box, Center, Flex, HStack, Text } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
 import { FC, ReactNode } from 'react';
 import { TLinkData } from '../../../types';
-import { LuArrowLeft, LuInfo } from 'react-icons/lu';
 
 interface IIconCardProps {
   icon: string | ReactNode;

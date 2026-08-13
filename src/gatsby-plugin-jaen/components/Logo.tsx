@@ -1,5 +1,8 @@
-import { Steps, chakra } from '@chakra-ui/react';
-import { useColorMode, useColorModeValue, LightMode, DarkMode } from "../../components/ui/color-mode";
+import { chakra } from '@chakra-ui/react';
+// v3 exports no color-mode hook, and the codemod's `components/ui/color-mode`
+// snippet was never generated in this repo. jaen re-exports one over
+// next-themes, which is what the rest of the site imports.
+import { useColorMode } from 'jaen';
 import { FC } from 'react';
 
 interface LogoProps {

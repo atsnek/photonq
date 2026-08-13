@@ -11,7 +11,6 @@ import {
   useNotificationsContext
 } from 'jaen';
 import {
-  Steps,
   Avatar,
   Box,
   Breadcrumb,
@@ -22,11 +21,11 @@ import {
   Icon,
   IconButton,
   Input,
-  SkeletonCircle,
+  Separator,
+  Skeleton,
   Stack,
   Switch,
-  Text,
-  Separator,
+  Text
 } from '@chakra-ui/react';
 import { graphql, Link, navigate } from 'gatsby';
 
@@ -38,7 +37,9 @@ import { useTOCContext } from '../../contexts/toc';
 import TableOfContent from '../../components/navigation/TableOfContent';
 import { globalHistory, useLocation } from '@reach/router';
 import { FaUsers } from '@react-icons/all-files/fa/FaUsers';
-import { LuX } from 'react-icons/lu';
+// v2's @chakra-ui/icons CloseIcon, vendored locally. The codemod substituted
+// lucide's LuX, which is a different icon set and a different drawing.
+import { CloseIcon } from '../../components/icons/chakra';
 
 const IndexPage: React.FC<PageProps> = () => {
   const notify = useNotificationsContext();
@@ -116,34 +117,57 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
       <Breadcrumb.Root mb="4">
         <Breadcrumb.List>
           <Breadcrumb.Item>
-            <Breadcrumb.Link asChild><Link to="/experiments">
+            <Breadcrumb.Link asChild>
+              <Link to="/experiments">
                 <HStack gap="1">
-                  <Icon display="inline-block" color="brand.500" mr="2" asChild><FaUsers /></Icon>
+                  <Icon display="inline-block" color="brand.500" mr="2" asChild>
+                    <FaUsers />
+                  </Icon>
                   <Text color="gray.600">Community Experiments</Text>
                 </HStack>
-              </Link></Breadcrumb.Link>
+              </Link>
+            </Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator /><Breadcrumb.Item>
-            <Breadcrumb.Link href="#">New</Breadcrumb.Link>
+          {/* v2's Breadcrumb defaulted `separator` to "/". v3 has no such prop
+              and its Separator falls back to a chevron, so the slash is
+              written out. */}
+          <Breadcrumb.Separator>/</Breadcrumb.Separator>
+          <Breadcrumb.Item>
+            {/* v2's `isCurrentPage` on the item made BreadcrumbLink render a
+                <span aria-current="page"> and drop the href; CurrentLink is
+                that span. `color` restores v2's `link: {color: inherit}` base,
+                which v3 replaced with the plain variant's `fg`. */}
+            <Breadcrumb.CurrentLink color="inherit">
+              New
+            </Breadcrumb.CurrentLink>
           </Breadcrumb.Item>
         </Breadcrumb.List>
       </Breadcrumb.Root>
       <Stack>
         <Separator />
         <Flex justifyContent="space-between" alignItems="center">
-          <Switch
+          {/* v3's Switch is a compound component; the codemod left v2's
+              single-element form with a prop (`onValueChange`) that exists on
+              neither. The parts below are v2's own markup: hidden input,
+              track with a thumb, then the label. `onCheckedChange` hands over
+              a details object rather than the change event. */}
+          <Switch.Root
             checked={values.privacy === 'PUBLIC'}
-            onValueChange={e => {
+            onCheckedChange={e => {
               setValues({
                 ...values,
-                privacy: e.target.checked
+                privacy: e.checked
                   ? PrivacyInput.PUBLIC
                   : PrivacyInput.PRIVATE
               });
             }}
           >
-            Public
-          </Switch>
+            <Switch.HiddenInput />
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+            <Switch.Label>Public</Switch.Label>
+          </Switch.Root>
 
           <ButtonGroup flexDir={['column', 'row']}>
             <Button
@@ -193,7 +217,7 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
               type="file"
               ref={imageInputRef}
               display="none"
-              onValueChange={async e => {
+              onChange={async e => {
                 const file = e.target.files?.[0];
 
                 if (file) {
@@ -229,20 +253,33 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
                 if (confirm) {
                   navigate(`/users/${user?.profile?.sub}`);
                 }
-              }}><LuX /></IconButton>
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
           </ButtonGroup>
         </Flex>
         <Separator />
       </Stack>
       <HStack gap="4">
-        <SkeletonCircle
+        {/* v2's SkeletonCircle was `<Skeleton borderRadius="full"
+            boxSize="2rem" {...props}/>` and this call site overrode both
+            defaults, so the circle was never round. v3's wraps the Skeleton in
+            a Circle whose `border-radius: 9999px` is applied THROUGH asChild
+            and therefore outranks the prop, which would round the square
+            avatar's placeholder. Skeleton is what v2 rendered. */}
+        <Skeleton
           boxSize="unset"
-          isLoaded={!isImageUploading}
+          loading={isImageUploading}
           borderRadius="md"
         >
+          {/* v2 handed `borderRadius` to the container AND the img. In v3 both
+              read `var(--avatar-radius)`, which only the shape variant sets,
+              so a borderRadius prop would round the box and leave the image a
+              circle. `rounded` is `radii.l3`, i.e. radii.md. */}
           <Avatar.Root
             size="md"
-            borderRadius="md"
+            shape="rounded"
             _hover={{
               cursor: 'pointer',
               filter: 'brightness(0.8)',
@@ -254,8 +291,12 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
             cursor={'pointer'}
             onClick={() => {
               imageInputRef.current?.click();
-            }}><Avatar.Fallback name={values.title} /><Avatar.Image src={values.avatarURL || undefined} /></Avatar.Root>
-        </SkeletonCircle>
+            }}
+          >
+            <Avatar.Fallback name={values.title} />
+            <Avatar.Image src={values.avatarURL || undefined} />
+          </Avatar.Root>
+        </Skeleton>
 
         <TextControl
           key={values.title}

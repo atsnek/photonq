@@ -1,4 +1,4 @@
-import { Steps, Card, HStack, Skeleton, VStack } from '@chakra-ui/react';
+import { Card, HStack, Skeleton, VStack } from '@chakra-ui/react';
 import { FC } from 'react';
 
 interface PostCardSkeletonProps {

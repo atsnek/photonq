@@ -1,7 +1,11 @@
 import { Field } from 'jaen';
-import { JaenFieldProps } from 'jaen/dist/connectors/connect-field';
-import { ImageFieldProps } from 'jaen/dist/fields/ImageField';
-import { Steps, AspectRatio, Box } from '@chakra-ui/react';
+// Both types used to come in through `jaen/dist/...`. jaen's package.json
+// declares an `exports` map that lists only `.`, `./dist/types` and
+// `./package.json`, and this branch's tsconfig resolves modules the way the
+// bundler does, where that map is authoritative rather than advisory. The two
+// deep paths therefore stop resolving; the package root re-exports both.
+import { ImageFieldProps, JaenFieldProps } from 'jaen';
+import { AspectRatio, Box } from '@chakra-ui/react';
 import { FC } from 'react';
 
 interface IImageProps {

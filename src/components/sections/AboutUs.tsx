@@ -1,4 +1,11 @@
-import { Steps, Button, Box, Container, Center, Wrap, WrapItem } from '@chakra-ui/react';
+import {
+  Button,
+  Box,
+  Container,
+  Center,
+  Wrap,
+  WrapItem
+} from '@chakra-ui/react';
 import { Field } from 'jaen';
 import { FC } from 'react';
 import {
@@ -90,32 +97,48 @@ const AboutUs: FC = () => {
           />
         </Center>
 
-        <Wrap justify="center" mt={10} gap={10} shouldWrapChildren>
+        {/*
+          v3's Wrap has no `shouldWrapChildren`. The codemod renamed `spacing`
+          to `gap` and left the flag standing, where it is neither a style prop
+          nor a DOM attribute: React would warn and drop it, and every child
+          would become a bare flex item.
+
+          v2's flag was pure sugar for `React.Children.map(children, (child, i)
+          => <WrapItem key={i}>{child}</WrapItem>)`, so the wrappers are written
+          out here instead. They are load-bearing: WrapItem carries
+          `display: flex; align-items: flex-start`, which is what keeps a short
+          testimonial card from stretching to the height of the tallest one in
+          its row. `key` moves onto the WrapItem for the same reason v2 put it
+          there.
+        */}
+        <Wrap justify="center" mt={10} gap={10}>
           {testamonialsDefaults.map((testimonial, index) => (
-            <Testimonial>
-              <TestimonialContent>
-                <TestimonialHeading>
-                  <Field.Text
-                    textAlign="center"
-                    name={`TestimonialHeading${index}`}
-                    defaultValue={testimonial.heading}
-                    color="pq.sections.aboutUs.testimonial.heading.color"
-                  />
-                </TestimonialHeading>
-                <TestimonialText>
-                  <Field.Text
-                    name={`TestimonialText${index}`}
-                    defaultValue={testimonial.text}
-                  />
-                </TestimonialText>
-              </TestimonialContent>
-              <TestimonialAvatar
-                src={testimonial.avatar.src}
-                name={testimonial.avatar.name}
-                title={testimonial.avatar.title}
-                to={testimonial.avatar.to}
-              />
-            </Testimonial>
+            <WrapItem key={index}>
+              <Testimonial>
+                <TestimonialContent>
+                  <TestimonialHeading>
+                    <Field.Text
+                      textAlign="center"
+                      name={`TestimonialHeading${index}`}
+                      defaultValue={testimonial.heading}
+                      color="pq.sections.aboutUs.testimonial.heading.color"
+                    />
+                  </TestimonialHeading>
+                  <TestimonialText>
+                    <Field.Text
+                      name={`TestimonialText${index}`}
+                      defaultValue={testimonial.text}
+                    />
+                  </TestimonialText>
+                </TestimonialContent>
+                <TestimonialAvatar
+                  src={testimonial.avatar.src}
+                  name={testimonial.avatar.name}
+                  title={testimonial.avatar.title}
+                  to={testimonial.avatar.to}
+                />
+              </Testimonial>
+            </WrapItem>
           ))}
         </Wrap>
       </Container>

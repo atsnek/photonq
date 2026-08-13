@@ -201,11 +201,11 @@ export const generateMenuItem = (
         {...styleProps}
         key={item.href + item.name}
         to={item.href}
-        {/* `isExternal` is gone: jaen's Link decides externality from `to`
-            itself and sets target and rel accordingly. Its props are widened to
-            `any`, so passing it here still type-checks and would simply be
-            spread onto the anchor as an unknown DOM attribute. `item.isExternal`
-            is still what draws the arrow glyph below. */}
+        // `isExternal` is gone from here: jaen's Link decides externality from
+        // `to` itself and sets target and rel accordingly. Its props are
+        // widened to `any`, so passing it would still type-check and would
+        // simply be spread onto the anchor as an unknown DOM attribute.
+        // `item.isExternal` is still what draws the arrow glyph below.
         display="block"
         py={1.5}
         px={4}

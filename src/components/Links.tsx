@@ -1,4 +1,4 @@
-import { Steps, LinkProps } from '@chakra-ui/react';
+import { LinkProps } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
 import { FC } from 'react';
 import { TLinkData } from './types';

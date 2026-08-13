@@ -1,7 +1,16 @@
-import { Steps, Box, BoxProps, Button, Center, Container, HStack, Stack, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Button,
+  Center,
+  Container,
+  HStack,
+  Stack,
+  VStack
+} from '@chakra-ui/react';
 import { FC } from 'react';
 import { Field } from 'jaen';
-import { TextFieldProps } from 'jaen/dist/fields/TextField/TextField';
+import { TextFieldProps } from 'jaen';
 import { Link } from 'gatsby-plugin-jaen';
 import { QASMPlayground } from '../main-content/qasm-playground/components/qasm-playground';
 import SectionTitle from '../SectionTitle';
@@ -70,13 +79,21 @@ const Features: FC = () => {
                 color="pq.components.featureCard.color"
                 mt={3}
               />
-              <Button my={5} variant="pq-solid" asChild><Link href="/docs">
+              {/*
+                v2's `as={Link}` rendered the Link with the button's styles on
+                it, which is what `asChild` does in v3. The Link keeps `href`
+                rather than `to`: with no `to` it falls through to jaen's plain
+                branch and emits an <a href>, exactly as it did in v2.
+              */}
+              <Button my={5} variant="pq-solid" asChild>
+                <Link href="/docs">
                   <Field.Text
                     as="span"
                     name="LeftCardButtonText"
                     defaultValue="Get Started"
                   ></Field.Text>
-                </Link></Button>
+                </Link>
+              </Button>
             </Box>
             <Box {...cardProps}>
               <Box>
@@ -91,13 +108,15 @@ const Features: FC = () => {
                   color="pq.components.featureCard.color"
                   mt={3}
                 />
-                <Button my={5} variant="pq-solid" asChild><Link href="/docs">
+                <Button my={5} variant="pq-solid" asChild>
+                  <Link href="/docs">
                     <Field.Text
                       as="span"
                       name="RightCardButtonText"
                       defaultValue="Get Started"
                     ></Field.Text>
-                  </Link></Button>
+                  </Link>
+                </Button>
               </Box>
               <Box w="90%" ml="auto" borderTopLeftRadius="lg" overflow="hidden">
                 <Field.Image name="RightCardImage" />
@@ -106,6 +125,7 @@ const Features: FC = () => {
           </HStack>
         </VStack>
       </Container>
+
       <Box>
         <Container maxW="8xl" py="10">
           <Stack gap="4">
@@ -169,6 +189,7 @@ measure cout[0] -> ans[4];`}
           </Stack>
         </Container>
       </Box>
+
       {/* <Box {...cardProps} w="100%" mt={7}>
               <Box w="30%" minW={{ base: '100px', md: '300px' }} m="auto">
                 <Field.Image name="BottomCardImage" />

@@ -1,7 +1,7 @@
 import { sq } from '@/clients/social';
 import { PageConfig, PageProps } from 'jaen';
 
-import { Steps, Box, Heading, SimpleGrid, Stack, VStack, keyframes } from '@chakra-ui/react';
+import { Box, Heading, SimpleGrid, Stack, VStack } from '@chakra-ui/react';
 import { graphql } from 'gatsby';
 import * as React from 'react';
 import { useQuery } from 'snek-query/react-hooks';
@@ -13,11 +13,18 @@ import { asEnumKey } from 'snek-query';
 
 export const POST_FETCH_LIMIT = 3;
 
-const gradientAnimation = keyframes`
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-`;
+/**
+ * The three steps below used to be an emotion `keyframes` tagged template,
+ * imported from @chakra-ui/react. v3 does not re-export `keyframes`, and
+ * changing the import would not have helped: the helper only injects its
+ * @keyframes rule when the same emotion instance serialises the style that
+ * names it, and a v3 style prop goes through Chakra's own engine instead. The
+ * name would have been interpolated into the shorthand and the rule would
+ * never have existed, so the gradient would simply have stopped moving with
+ * nothing to show for it. The rule is registered in the theme as
+ * `theme.keyframes['gradient-shift']` and named by that string below.
+ */
+const GRADIENT_ANIMATION_NAME = 'gradient-shift';
 
 const IndexPage: React.FC<PageProps> = () => {
   const { data, isSafe, refetch } = useQuery(sq);
@@ -47,7 +54,7 @@ const IndexPage: React.FC<PageProps> = () => {
         p={1}
         background="blueGradient"
         background-size="600% 600%"
-        animation={`5s ease 0s infinite normal none running ${gradientAnimation}`}
+        animation={`5s ease 0s infinite normal none running ${GRADIENT_ANIMATION_NAME}`}
         w="full"
       >
         <Box bgColor="shared.body.bgColor" borderRadius="xl">

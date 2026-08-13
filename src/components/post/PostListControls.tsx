@@ -1,19 +1,16 @@
 import {
-  Steps,
+  Collapsible,
+  Group,
   HStack,
+  IconButton,
   Input,
+  InputAddon,
   Menu,
   Button,
-  StackProps,
-  VStack,
-  IconButton,
-  InputGroup,
-  InputLeftAddon,
-  InputRightAddon,
   NativeSelect,
-  Collapsible,
+  StackProps,
+  VStack
 } from '@chakra-ui/react';
-import { Tooltip } from '@/components/ui/tooltip';
 import { ChangeEvent, FC, useMemo, useRef, useState } from 'react';
 import { TDebounceData } from '../../shared/types/comm';
 import { EnPostLanguage, TPostListData, TPostPreview } from './types/post';
@@ -25,7 +22,6 @@ import Link from '../../shared/components/Link';
 import { sq } from '@snek-functions/origin';
 import { formatPostDate } from '../../shared/utils/features/post';
 import { useAuth } from 'jaen';
-import { LuCheck, LuChevronDown } from 'react-icons/lu';
 
 interface IPostListControlsProps extends StackProps {
   fetchPosts: (
@@ -141,13 +137,24 @@ const PostListControls: FC<IPostListControlsProps> = ({
   return (
     <VStack w="full">
       <HStack gap={3} w="full" {...props}>
+        {/* `onValueChange` is not an Input prop — the codemod renamed the
+            handler and the debounce stopped firing. v3's Input is still a plain
+            <input> with `onChange`.
+
+            `focusBorderColor` is gone with no rename; v3 paints the focus ring
+            from `--focus-ring-color`, which `focusRingColor` sets. */}
         <Input
           flex="1"
           placeholder="Find a experiment..."
           size="sm"
           borderRadius="lg"
           defaultValue={defaultQuery}
-          onValueChange={handleInputChange} />
+          onChange={handleInputChange}
+          focusRingColor="theme.600"
+          //! focusBorderColor - semantic token not working
+          // focusBorderColor="components.input._focus.borderColor"
+          // bgColor="components.input._focus.borderColor"
+        />
         {/* <Menu>
           <MenuButton
             as={Button}
@@ -176,23 +183,41 @@ const PostListControls: FC<IPostListControlsProps> = ({
             size="sm"
             variant="outline"
             aria-label={'Toggle advanced search filter visibility'}
-            onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}>{isAdvancedSearchOpen ? <TbFilterDown /> : <TbFilterUp />}</IconButton>
+            onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
+          >
+            {isAdvancedSearchOpen ? <TbFilterDown /> : <TbFilterUp />}
+          </IconButton>
         )}
         {showCreatePostButton && isAuthenticated && (
-          <Button aria-label="New experiment" size="sm" asChild><Link href="/new/experiment"><TbPlus />New
-                                    </Link></Button>
+          <Button aria-label="New experiment" size="sm" asChild>
+            <Link href="/new/experiment">
+              <TbPlus />
+              New
+            </Link>
+          </Button>
         )}
       </HStack>
       <Collapsible.Root open={isAdvancedSearchOpen} style={{ width: '75%' }}>
         <Collapsible.Content>
           <HStack gap={5} w="full">
             {!!setDateRange && (
-              <InputGroup size="sm">
-                <InputLeftAddon borderLeftRadius="lg">Date from</InputLeftAddon>
+              // v3's InputGroup clones a SINGLE child (React.Children.only), so
+              // it cannot hold two addons and two inputs the way v2's did — it
+              // throws. `Group attached` is the part that does what this markup
+              // used v2's InputGroup for: it squares off the inner corners and
+              // pulls the borders together with the same -1px, which is exactly
+              // the border radii v2's InputGroup cloned onto its children.
+              // v2's InputGroup also pushed its `size` down to every child;
+              // Group does not, so each child names its own.
+              <Group attached w="full">
+                <InputAddon size="sm" borderLeftRadius="lg">
+                  Date from
+                </InputAddon>
                 <Input
                   ref={dateFromRef}
+                  size="sm"
                   type="date"
-                  onValueChange={e => {
+                  onChange={e => {
                     const date = e.currentTarget.valueAsDate;
                     date?.setMonth(date.getMonth() + 1);
 
@@ -213,14 +238,15 @@ const PostListControls: FC<IPostListControlsProps> = ({
                     );
                   }}
                 />
-                <InputRightAddon>Date to</InputRightAddon>
+                <InputAddon size="sm">Date to</InputAddon>
                 <Input
                   ref={dateToRef}
+                  size="sm"
                   type="date"
                   css={{
                     borderRightRadius: 'lg'
                   }}
-                  onValueChange={e => {
+                  onChange={e => {
                     const date = e.currentTarget.valueAsDate;
                     date?.setMonth(date.getMonth() + 1);
                     if (!date) return;
@@ -239,16 +265,20 @@ const PostListControls: FC<IPostListControlsProps> = ({
                     );
                   }}
                 />
-              </InputGroup>
+              </Group>
             )}
             {!!setFilterLanguage && (
-              <NativeSelect.Root>
+              // `size` is a NativeSelect.Root recipe variant and is explicitly
+              // omitted from NativeSelect.Field's props, so the codemod's
+              // placement neither typed nor rendered. `onChange` for the same
+              // reason as the inputs above: the field is a real <select>.
+              <NativeSelect.Root size="sm">
                 <NativeSelect.Field
                   placeholder="Language"
-                  size="sm"
                   borderRadius="lg"
-                  onValueChange={handleLanguageChange}
-                  defaultValue={filterLanguage}>
+                  onChange={handleLanguageChange}
+                  defaultValue={filterLanguage}
+                >
                   <option value="EN">English 🇺🇸</option>
                   <option value="DE">German 🇦🇹</option>
                 </NativeSelect.Field>

@@ -1,17 +1,14 @@
 import { Privacy, PrivacyInput } from '@/clients/social/src/schema.generated';
 import {
-  Steps,
   Button,
   Collapsible,
+  Group,
   HStack,
   IconButton,
   Input,
-  InputGroup,
-  InputLeftAddon,
-  InputRightAddon,
+  InputAddon,
   List,
-  NativeSelect,
-  Stack,
+  Stack
 } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
@@ -24,7 +21,7 @@ import TbFilterUp from '../icons/tabler/TbFilterUp';
 import TbPlus from '../icons/tabler/TbPlus';
 import { useAuth } from 'jaen';
 import { asEnumKey } from 'snek-query';
-import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import { ChevronLeftIcon, ChevronRightIcon } from '../icons/chakra';
 
 interface PostListProps {
   userId?: string;
@@ -154,36 +151,64 @@ const PostList: FC<PostListProps> = props => {
   return (
     <Stack w="full">
       <HStack gap="3" w="full">
+        {/* `onValueChange` is not an Input prop — the codemod renamed the
+            handler and the field stopped updating. v3's Input is still a plain
+            controlled <input> with `onChange`.
+
+            `focusBorderColor` is gone with no rename. v3 paints the focus ring
+            from `--focus-ring-color`, which `focusRingColor` sets, so this is
+            the same theme.600 v2 put on the border and the ring. */}
         <Input
           flex="1"
           placeholder="Find a experiment..."
           size="sm"
           borderRadius="lg"
+          focusRingColor="theme.600"
           value={query}
-          onValueChange={e => setQuery(e.target.value)} />
+          onChange={e => setQuery(e.target.value)}
+        />
 
         <IconButton
           colorPalette="gray"
           size="sm"
           variant="outline"
           aria-label={'Toggle advanced search filter visibility'}
-          onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}>{isAdvancedSearchOpen ? <TbFilterDown /> : <TbFilterUp />}</IconButton>
+          onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
+        >
+          {isAdvancedSearchOpen ? <TbFilterDown /> : <TbFilterUp />}
+        </IconButton>
 
         {isAuthenticated && (
-          <Button aria-label="New experiment" size="sm" asChild><Link href="/new/experiment"><TbPlus />New
-                                    </Link></Button>
+          <Button aria-label="New experiment" size="sm" asChild>
+            <Link href="/new/experiment">
+              <TbPlus />
+              New
+            </Link>
+          </Button>
         )}
       </HStack>
+
       <Collapsible.Root open={isAdvancedSearchOpen} style={{ width: '75%' }}>
         <Collapsible.Content>
           <HStack gap={5} w="full">
             {!!setDateRange && (
-              <InputGroup size="sm">
-                <InputLeftAddon borderLeftRadius="lg">Date from</InputLeftAddon>
+              // v3's InputGroup clones a SINGLE child (React.Children.only), so
+              // it cannot hold two addons and two inputs the way v2's did — it
+              // throws. `Group attached` is the part that does what this markup
+              // used v2's InputGroup for: it squares off the inner corners and
+              // pulls the borders together with the same -1px, which is exactly
+              // the border radii v2's InputGroup cloned onto its children.
+              // v2's InputGroup also pushed its `size` down to every child;
+              // Group does not, so each child names its own.
+              <Group attached w="full">
+                <InputAddon size="sm" borderLeftRadius="lg">
+                  Date from
+                </InputAddon>
                 <Input
                   ref={dateFromRef}
+                  size="sm"
                   type="date"
-                  onValueChange={e => {
+                  onChange={e => {
                     const date = e.currentTarget.valueAsDate;
 
                     if (!date) {
@@ -199,14 +224,15 @@ const PostList: FC<PostListProps> = props => {
                     }
                   }}
                 />
-                <InputRightAddon>Date to</InputRightAddon>
+                <InputAddon size="sm">Date to</InputAddon>
                 <Input
                   ref={dateToRef}
+                  size="sm"
                   type="date"
                   css={{
                     borderRightRadius: 'lg'
                   }}
-                  onValueChange={e => {
+                  onChange={e => {
                     const date = e.currentTarget.valueAsDate;
 
                     if (!date) {
@@ -227,12 +253,27 @@ const PostList: FC<PostListProps> = props => {
                     }
                   }}
                 />
-              </InputGroup>
+              </Group>
             )}
           </HStack>
         </Collapsible.Content>
       </Collapsible.Root>
-      <List.Root gap={3} mt="4">
+
+      {/* v2's <List> was a bare <ul> with `listStyleType: none` and no indent,
+          and it spaced its children with a sibling margin. v3's List.Root
+          defaults to `variant="marker"`, whose `listStyle: revert` puts the
+          browser's bullets back, and this site's list recipe gives the root
+          `display: block` and a 1em indent for the MDX lists it was written
+          for. `plain` drops the bullets, and the three layout props restore the
+          box `gap` needs — none of which the cards had in v2. */}
+      <List.Root
+        variant="plain"
+        display="flex"
+        flexDirection="column"
+        ms="0"
+        gap={3}
+        mt="4"
+      >
         {allPosts.nodes.map((post, idx) => (
           <PostCard
             key={idx}
@@ -244,21 +285,28 @@ const PostList: FC<PostListProps> = props => {
           />
         ))}
       </List.Root>
+
       <HStack justifyContent="center">
         <Button
           variant="ghost-hover-outline"
           size="sm"
           borderRadius="lg"
           disabled={!hasPreviousPage}
-          onClick={previousPage}><LuChevronLeft />Previous
-                  </Button>
+          onClick={previousPage}
+        >
+          <ChevronLeftIcon />
+          Previous
+        </Button>
         <Button
           variant="ghost-hover-outline"
           size="sm"
           borderRadius="lg"
           disabled={!hasNextPage}
-          onClick={nextPage}>Next
-                  <LuChevronRight /></Button>
+          onClick={nextPage}
+        >
+          Next
+          <ChevronRightIcon />
+        </Button>
       </HStack>
     </Stack>
   );

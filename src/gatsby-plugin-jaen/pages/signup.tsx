@@ -1,25 +1,22 @@
 import {
-  Steps,
   Alert,
   Box,
   Button,
   Container as ChakraContainer,
   Checkbox,
   CloseButton,
-  FormControlProps,
+  Field,
+  FieldRootProps,
   HStack,
   Heading,
   IconButton,
   Input,
   InputGroup,
   InputProps,
-  InputRightElement,
   Progress,
   Stack,
-  Text,
-  Field,
+  Text
 } from '@chakra-ui/react';
-import { useColorModeValue } from "../../components/ui/color-mode";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Particles from 'react-tsparticles';
@@ -32,7 +29,10 @@ import { FaEye } from '@react-icons/all-files/fa/FaEye';
 import { FaEyeSlash } from '@react-icons/all-files/fa/FaEyeSlash';
 import zxcvbn from 'zxcvbn';
 
-import { PageConfig, PageProps } from 'jaen';
+// v3 exports no color-mode hook, and the codemod's `components/ui/color-mode`
+// snippet was never generated in this repo. jaen re-exports one over
+// next-themes, which is what the rest of the site imports.
+import { PageConfig, PageProps, useColorModeValue } from 'jaen';
 import { sq } from '@/clients/signup';
 
 const Page: React.FC<PageProps> = () => {
@@ -145,7 +145,12 @@ const Page: React.FC<PageProps> = () => {
           <Stack gap="8">
             <Stack gap="6">
               <HStack justify="center">
-                <Link as={Button} leftIcon={<FaArrowLeft />} to="/">
+                {/* jaen's Link widens its props to anything, so `leftIcon`
+                    type-checked here and then reached a v3 Button that has no
+                    such prop and dropped the icon. As a child it renders again,
+                    spaced by the `gap` the button recipe restores. */}
+                <Link as={Button} to="/">
+                  <FaArrowLeft />
                   Back to website
                 </Link>
               </HStack>
@@ -326,7 +331,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
               lastName: data.details.lastName
             }
           },
-          organizationId: __JAEN_ZITADEL__.organizationId
+          organizationId: __JAEN_ZITADEL_GQL__.organizationId
         })
       );
 
@@ -403,8 +408,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
               required
               id="login_form_email"
             >
+              {/* v2's FormLabel rendered the red asterisk itself whenever its
+                  FormControl was isRequired. v3's Field.Label does not, so the
+                  indicator has to be named to keep the five required fields
+                  marked the way they were. */}
               <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
                 Enter your email
+                <Field.RequiredIndicator />
               </Field.Label>
               <HStack>
                 <Input
@@ -431,6 +441,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
               >
                 <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
                   Enter your password
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <HStack>
                   <PasswordInput
@@ -456,6 +467,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
               >
                 <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
                   Enter your username
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <HStack>
                   <Input
@@ -483,6 +495,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
               >
                 <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
                   Enter your first and last name
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <HStack>
                   <HStack w="full">
@@ -515,24 +528,39 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
               >
                 <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
                   Terms and conditions
+                  <Field.RequiredIndicator />
                 </Field.Label>
                 <Controller
                   control={control}
                   name="terms"
                   render={({ field: { onChange, value } }) => (
+                    // v3 hands onCheckedChange a details object, not a change
+                    // event, and its `checked` is `boolean | 'indeterminate'`.
+                    // The codemod left `e.target.checked` in place, which reads
+                    // undefined off the details object, so the box could never
+                    // advance the step.
                     <Checkbox.Root
-                      onCheckedChange={e => {
-                        onChange(e.target.checked);
+                      onCheckedChange={({ checked }) => {
+                        const isChecked = checked === true;
 
-                        if (e.target.checked) {
+                        onChange(isChecked);
+
+                        if (isChecked) {
                           setStep(step + 1);
                         } else {
                           setStep(step - 1);
                         }
                       }}
                       checked={value}
-                    ><Checkbox.HiddenInput /><Checkbox.Control><Checkbox.Indicator /></Checkbox.Control><Checkbox.Label>I agree to the terms and conditions
-                                          </Checkbox.Label></Checkbox.Root>
+                    >
+                      <Checkbox.HiddenInput />
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      <Checkbox.Label>
+                        I agree to the terms and conditions
+                      </Checkbox.Label>
+                    </Checkbox.Root>
                   )}
                 />
               </Field.Root>
@@ -555,7 +583,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
 
 interface PasswordInput {
   control: Control<any>;
-  isInvalid?: FormControlProps['isInvalid'];
+  isInvalid?: FieldRootProps['invalid'];
   errorMessage?: string;
   inputRightElement?: JSX.Element;
 }
@@ -606,38 +634,66 @@ const PasswordInput: React.FC<PasswordInput> = ({
         render={({ field }) => (
           <Stack>
             <HStack>
-              <InputGroup>
+              {/* v3 dropped InputRightElement: the group takes the element as
+                  a prop and pads the input for it. `endElement` is the only one
+                  of the two that stays clickable — `startElement` is the one
+                  v3 gives `pointer-events: none`. */}
+              <InputGroup
+                endElement={
+                  <IconButton
+                    aria-label="Show password"
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </IconButton>
+                }
+              >
                 <Input
                   {...field}
                   type={showPassword ? 'text' : 'password'}
-                  onValueChange={e => {
+                  onChange={e => {
                     field.onChange(e);
                     checkPasswordStrength(e.target.value);
                   }}
                   autoComplete="current-password"
                 />
-
-                <InputRightElement>
-                  <IconButton
-                    aria-label="Show password"
-                    size="xs"
-                    variant="ghost"
-                    onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</IconButton>
-                </InputRightElement>
               </InputGroup>
 
               {inputRightElement}
             </HStack>
 
+            {/* photonq's v2 theme never overrode Progress, so this bar wore
+                @chakra-ui/theme's own styles and there is no recipe to select
+                here. The three declarations v3 changed are put back on the
+                parts, spelled `bgColor` rather than `bg` because v3 sorts
+                shorthands before longhands and the recipe's own `bgColor`
+                would otherwise be emitted after a `bg` prop and win.
+
+                  track  v2 mode('gray.100', 'whiteAlpha.300') and no shadow;
+                         v3 paints bg.muted under an inset shadow.
+                  range  v2 mode(`${c}.500`, `${c}.200`); v3's
+                         colorPalette.solid is `${c}.600` in both modes.
+                  shape  v2's track carried no border-radius. */}
             <Progress.Root
               value={
                 passwordStrength === null ? 0 : (passwordStrength + 1) * 25
               }
               colorPalette={getPasswordStrengthColor()}
               size="sm"
-              animated>
-              <Progress.Track>
-                <Progress.Range />
+              shape="square"
+              animated
+            >
+              <Progress.Track
+                bgColor="gray.100"
+                shadow="none"
+                _dark={{ bgColor: 'whiteAlpha.300' }}
+              >
+                <Progress.Range
+                  bgColor="colorPalette.500"
+                  _dark={{ bgColor: 'colorPalette.200' }}
+                />
               </Progress.Track>
             </Progress.Root>
           </Stack>

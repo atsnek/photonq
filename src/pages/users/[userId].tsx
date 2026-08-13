@@ -7,7 +7,6 @@ import {
   useAuthUser
 } from 'jaen';
 import {
-  Steps,
   Avatar,
   Box,
   BoxProps,
@@ -27,20 +26,17 @@ import {
   LinkBox,
   LinkOverlay,
   List,
+  Portal,
   SimpleGrid,
   SkeletonText,
   Spacer,
   Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
   Tabs,
   Text,
   Textarea,
-  Wrap,
+  Tooltip,
+  Wrap
 } from '@chakra-ui/react';
-import { Tooltip } from '@/components/ui/tooltip';
 import { useLazyQuery, useQuery } from 'snek-query/react-hooks';
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import MainGrid from '../../components/MainGrid';
@@ -78,6 +74,64 @@ const AvatarImage: React.FC<{
   cursor?: BoxProps['cursor'];
   onClick?: () => void;
 }> = ({ src, displayName, onClick, cursor }) => {
+  /**
+   * v2's `fallback` prop, by hand.
+   *
+   * v2's Image ran `useImage` and, with the default `fallbackStrategy`
+   * ("beforeLoadOrError"), rendered the `fallback` element INSTEAD of the
+   * <img> until the source had loaded — so a user with no `avatarUrl`, which
+   * is the common case, saw their initials rather than a broken image. v3's
+   * Image is a plain chakra.img: no `fallback`, no `fallbackSrc`, no status.
+   * The codemod dropped the prop and the whole fallback element with it, which
+   * is why the preloading Image() below is here. It is v2's useImage reduced
+   * to the one strategy this call site used.
+   */
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(false);
+
+    if (!src) {
+      return;
+    }
+
+    // window.Image, because `Image` is Chakra's in this module.
+    const image = new window.Image();
+
+    image.onload = () => setIsLoaded(true);
+    image.src = src;
+
+    return () => {
+      image.onload = null;
+    };
+  }, [src]);
+
+  if (!isLoaded) {
+    return (
+      <Center
+        onClick={onClick}
+        cursor={cursor}
+        aspectRatio={1}
+        boxSize="full"
+        bg="gray.100"
+        _hover={{
+          boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
+          transform: 'scale(1.02)'
+        }}
+        borderRadius="full"
+        transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
+      >
+        <Text>
+          {displayName
+            .split(' ')
+            .map(name => name[0])
+            .slice(0, 2)
+            .join('')}
+        </Text>
+      </Center>
+    );
+  }
+
   return (
     <Image
       src={src}
@@ -92,7 +146,8 @@ const AvatarImage: React.FC<{
         transform: 'scale(1.02)'
       }}
       borderRadius="full"
-      transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)" />
+      transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
+    />
   );
 };
 
@@ -111,7 +166,7 @@ const EditableImage: React.FC<{
         display="none"
         type="file"
         ref={imageRef}
-        onValueChange={async e => {
+        onChange={async e => {
           if (userId !== authUser.user.id) {
             return;
           }
@@ -400,65 +455,98 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 'start'
               }}
             >
+              {/* Three props, three traps. v2's `isLoaded` is v3's `loading`,
+                  INVERTED — left as `isLoaded` it is not a prop at all and the
+                  bar never resolves into text. `noOfLines` stays `noOfLines`:
+                  SkeletonText reads it itself, as the number of bars to draw,
+                  so the codemod's blanket `lineClamp` rename would have clamped
+                  the content instead of counting bars. And `skeletonHeight` is
+                  `height`, but only while loading: v3 spreads the remaining
+                  props onto the skeleton in both states, where v2's
+                  `skeletonHeight` only ever sized the placeholder. */}
               <SkeletonText
-                isLoaded={isSafe}
-                lineClamp={1}
-                skeletonHeight={'24px'}
+                loading={!isSafe}
+                noOfLines={1}
+                height={isSafe ? undefined : '24px'}
               >
-                <Heading as="h6" fontSize="24px">
+                {/* v2 said `fontSize="24px"` here and got 24px everywhere,
+                    because it merged the style prop over the styleConfig before
+                    serialising. v3 serialises the recipe first, so the default
+                    size's `fontSize: ['3xl', null, '4xl']` leaves behind an
+                    `@media (min-width: 48rem)` rule the prop cannot reach and
+                    the name would jump to 36px on desktop. `size="h3"` is the
+                    theme's flat 24px with the same line-height pair — the size
+                    axis is the only place a recipe's responsive value can be
+                    replaced rather than fought. */}
+                <Heading as="h6" size="h3">
                   {user.profile.displayName}
                 </Heading>
               </SkeletonText>
 
-              <SkeletonText isLoaded={isSafe} lineClamp={1}>
+              <SkeletonText loading={!isSafe} noOfLines={1}>
                 <Text>@{user.profile.userName}</Text>
               </SkeletonText>
 
               <Spacer />
 
-              <Tooltip
-                content="Sign up to follow users"
+              {/* The codemod pointed this at `@/components/ui/tooltip`, a CLI
+                  snippet this repo does not have and an alias (`@/`) that only
+                  resolves `@/clients/*`. Spelled out as the compound component
+                  instead, the way the sibling site's Filesystem tooltip is.
+                  The two delays are v2's: its Tooltip opened and closed with no
+                  delay at all, where zag's defaults are 400ms and 150ms. */}
+              <Tooltip.Root
                 disabled={auth.isAuthenticated}
+                openDelay={0}
+                closeDelay={0}
               >
-                <Button
-                  display={
-                    !isSafe || userId === auth.user?.profile?.sub
-                      ? 'none'
-                      : 'block'
-                  }
-                  variant="outline"
-                  loading={isFollow}
-                  onClick={async () => {
-                    if (!auth.isAuthenticated) {
-                      auth.signinRedirect({
-                        prompt: 'create'
-                      });
-                      return;
+                <Tooltip.Trigger asChild>
+                  <Button
+                    display={
+                      !isSafe || userId === auth.user?.profile?.sub
+                        ? 'none'
+                        : 'block'
                     }
+                    variant="outline"
+                    loading={isFollow}
+                    onClick={async () => {
+                      if (!auth.isAuthenticated) {
+                        auth.signinRedirect({
+                          prompt: 'create'
+                        });
+                        return;
+                      }
 
-                    setIsFollow(true);
-                    const [_, errors] = user.isFollowed
-                      ? await sq.mutate(m =>
-                          m.userUnfollow({
-                            followedId: userId
-                          })
-                        )
-                      : await sq.mutate(m =>
-                          m.userFollow({
-                            followedId: userId
-                          })
-                        );
+                      setIsFollow(true);
+                      const [_, errors] = user.isFollowed
+                        ? await sq.mutate(m =>
+                            m.userUnfollow({
+                              followedId: userId
+                            })
+                          )
+                        : await sq.mutate(m =>
+                            m.userFollow({
+                              followedId: userId
+                            })
+                          );
 
-                    if (!errors) {
-                      refetch();
-                    }
+                      if (!errors) {
+                        refetch();
+                      }
 
-                    setIsFollow(false);
-                  }}
-                >
-                  {user.isFollowed ? 'Unfollow' : 'Follow'}
-                </Button>
-              </Tooltip>
+                      setIsFollow(false);
+                    }}
+                  >
+                    {user.isFollowed ? 'Unfollow' : 'Follow'}
+                  </Button>
+                </Tooltip.Trigger>
+
+                <Portal>
+                  <Tooltip.Positioner>
+                    <Tooltip.Content>Sign up to follow users</Tooltip.Content>
+                  </Tooltip.Positioner>
+                </Portal>
+              </Tooltip.Root>
             </Stack>
 
             <TextControl
@@ -478,13 +566,24 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             />
           </Box>
 
+          {/* `marginInlineStart="0"` undoes the site list recipe's `1em`. That
+              indent belongs to v2's UnorderedList, which the recipe restores
+              for the docs; this is a plain v2 <List>, which had none. */}
           <List.Root
             fontSize="sm"
+            marginInlineStart="0"
             alignSelf={{
               base: 'center',
               md: 'start'
             }}
           >
+            {/* v2's ListIcon was an Icon with exactly three declarations of its
+                own: `marginEnd: 0.5rem`, `display: inline` and
+                `verticalAlign: text-bottom`. v3's List.Indicator keeps the
+                first (marginEnd: 2) and replaces the other two with
+                `inline-block` / `middle`, then adds `minHeight: 1lh`, which
+                grows every one of these rows by half a line. The three props
+                below are v2's values, restated. */}
             <List.Item
               display={{
                 base: 'inline-block',
@@ -495,7 +594,14 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 4
               }}
             >
-              <List.Indicator asChild><TbUsers /></List.Indicator>
+              <List.Indicator
+                asChild
+                display="inline"
+                verticalAlign="text-bottom"
+                minHeight="auto"
+              >
+                <TbUsers />
+              </List.Indicator>
               <Link
                 onClick={() => {
                   handleTabsChange(3);
@@ -514,7 +620,14 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 4
               }}
             >
-              <List.Indicator asChild><TbUserShare /></List.Indicator>
+              <List.Indicator
+                asChild
+                display="inline"
+                verticalAlign="text-bottom"
+                minHeight="auto"
+              >
+                <TbUserShare />
+              </List.Indicator>
               <Link
                 onClick={() => {
                   handleTabsChange(4);
@@ -534,7 +647,14 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 0
               }}
             >
-              <List.Indicator asChild><TbEye /></List.Indicator>
+              <List.Indicator
+                asChild
+                display="inline"
+                verticalAlign="text-bottom"
+                minHeight="auto"
+              >
+                <TbEye />
+              </List.Indicator>
               <b>{formatNumber(user.receivedUserViews().totalCount)}</b> Views
             </List.Item>
 
@@ -548,7 +668,14 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 4
               }}
             >
-              <List.Indicator asChild><FaFlask /></List.Indicator>
+              <List.Indicator
+                asChild
+                display="inline"
+                verticalAlign="text-bottom"
+                minHeight="auto"
+              >
+                <FaFlask />
+              </List.Indicator>
               <Link
                 onClick={() => {
                   handleTabsChange(1);
@@ -560,24 +687,42 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
           </List.Root>
         </Stack>
 
-        <Tabs.Root value={tabIndex} onValueChange={handleTabsChange} fitted>
+        {/* v3 addresses tabs by string value where v2 addressed them by index.
+            The index is what `tabIndex`, `handleTabsChange` and the four
+            `handleTabsChange(n)` links above all speak, and two of the panels
+            (3 and 4, the follower lists) have no trigger at all and are only
+            ever reached through those links, so the position is stringified at
+            this boundary and nothing else in the file changes. */}
+        <Tabs.Root
+          value={String(tabIndex)}
+          onValueChange={({ value }) => handleTabsChange(Number(value))}
+          fitted
+        >
+          {/* The icons drop v2's `mr="2"`: v3's trigger is a flex box with
+              `gap: 2` of its own, which v2's Tab did not have, so keeping the
+              margin would have put a full 1rem between glyph and label. The
+              gap is the same 0.5rem the margin was. */}
           <Tabs.List>
-            <Tab fontSize="sm">
-              <Icon mr="2" asChild><TbUser /></Icon>
+            <Tabs.Trigger value="0" fontSize="sm">
+              <Icon as={TbUser} />
               Overview
-            </Tab>
-            <Tab fontSize="sm">
-              <Icon mr="2" asChild><FaFlask /></Icon>
+            </Tabs.Trigger>
+            <Tabs.Trigger value="1" fontSize="sm">
+              <Icon as={FaFlask} />
               Experiments ({formatNumber(user.posts().totalCount)})
-            </Tab>
-            <Tab fontSize="sm">
-              <Icon mr="2" asChild><TbStar /></Icon>
+            </Tabs.Trigger>
+            <Tabs.Trigger value="2" fontSize="sm">
+              <Icon as={TbStar} />
               Stars ({formatNumber(user.starredPosts().totalCount)})
-            </Tab>
+            </Tabs.Trigger>
           </Tabs.List>
 
-          <TabPanels mt="12">
-            <TabPanel>
+          {/* `p="4"` per panel is v2's TabPanel base, which was a flat
+              `padding: 4`. v3's content pads the top only, so the panels would
+              otherwise lose their side and bottom inset. The value is the same
+              1rem the recipe puts on top, so the two agree. */}
+          <Tabs.ContentGroup mt="12">
+            <Tabs.Content value="0" p="4">
               <Stack gap="16">
                 <SimpleGrid
                   columns={{
@@ -674,23 +819,23 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                   />
                 </Stack>
               </Stack>
-            </TabPanel>
+            </Tabs.Content>
 
-            <TabPanel>
+            <Tabs.Content value="1" p="4">
               <Stack verticalAlign="top" direction="row" gap={4}>
                 {user.id && tabIndex === 1 && (
                   <PostList userId={user.id} hideAuthor />
                 )}
               </Stack>
-            </TabPanel>
+            </Tabs.Content>
 
-            <TabPanel>
+            <Tabs.Content value="2" p="4">
               {user.id && tabIndex === 2 && (
                 <PostList userId={user.id} useStars />
               )}
-            </TabPanel>
+            </Tabs.Content>
 
-            <TabPanel>
+            <Tabs.Content value="3" p="4">
               <Stack gap={4}>
                 {user.followers().nodes.map(follow => (
                   <UserCard
@@ -711,9 +856,9 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
               {user.followers().totalCount === 0 && (
                 <Text>No followers yet</Text>
               )}
-            </TabPanel>
+            </Tabs.Content>
 
-            <TabPanel>
+            <Tabs.Content value="4" p="4">
               <Stack gap={4}></Stack>
               {user.followings().nodes.map(follow => (
                 <UserCard
@@ -733,8 +878,8 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
               {user.followings().totalCount === 0 && (
                 <Text>Not following anyone yet</Text>
               )}
-            </TabPanel>
-          </TabPanels>
+            </Tabs.Content>
+          </Tabs.ContentGroup>
         </Tabs.Root>
       </MainGrid>
     </Box>
