@@ -1,4 +1,4 @@
-import { Card, HStack, Skeleton, VStack } from '@chakra-ui/react';
+import { Steps, Card, HStack, Skeleton, VStack } from '@chakra-ui/react';
 import { FC } from 'react';
 
 interface PostCardSkeletonProps {
@@ -7,8 +7,8 @@ interface PostCardSkeletonProps {
 
 const PostCardSkeleton: FC<PostCardSkeletonProps> = ({ hideAuthor }) => {
   return (
-    <Card variant="outline" p="5" borderRadius="xl">
-      <HStack w="full" spacing="3">
+    <Card.Root variant="outline" p="5" borderRadius="xl">
+      <HStack w="full" gap="3">
         <Skeleton boxSize="3rem" />
         <VStack flex={1} alignItems="flex-start">
           {!hideAuthor && <Skeleton w="25%" h="0.875rem" />}
@@ -20,7 +20,7 @@ const PostCardSkeleton: FC<PostCardSkeletonProps> = ({ hideAuthor }) => {
         <Skeleton w="20%" h="0.875rem" />
         <Skeleton w="10%" h="0.875rem" />
       </HStack>
-    </Card>
+    </Card.Root>
   );
 };
 

@@ -1,14 +1,14 @@
 import {
+  Steps,
   Avatar,
   Card,
-  CardBody,
   Heading,
   Icon,
   LinkBox,
   LinkOverlay,
   Stack,
   Text,
-  Wrap
+  Wrap,
 } from '@chakra-ui/react';
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import { Link } from 'gatsby';
@@ -31,9 +31,7 @@ export interface UserCardProps {
 
 const UserCard: React.FC<UserCardProps> = props => {
   return (
-    <Card
-      as={LinkBox}
-      key={props.id}
+    <Card.Root
       variant="outline"
       borderRadius="xl"
       _hover={{
@@ -45,38 +43,37 @@ const UserCard: React.FC<UserCardProps> = props => {
           color: 'theme.500'
         }
       }}
-    >
-      <CardBody>
-        <Stack flexDir="row">
-          <Avatar src={props.avatarUrl || undefined} name={props.displayName} />
+      asChild><LinkBox key={props.id}>
+        <Card.Body>
+          <Stack flexDir="row">
+            <Avatar.Root><Avatar.Fallback name={props.displayName} /><Avatar.Image src={props.avatarUrl || undefined} /></Avatar.Root>
 
-          <Stack>
-            <Stack flexDir="row">
-              <Heading as="h5" size="sm" lineHeight="unset">
-                {props.displayName}
-              </Heading>
-              <LinkOverlay as={Link} to={`/users/${props.id}`} color="gray.500">
-                @{props.userName}
-              </LinkOverlay>
+            <Stack>
+              <Stack flexDir="row">
+                <Heading as="h5" size="sm" lineHeight="unset">
+                  {props.displayName}
+                </Heading>
+                <LinkOverlay color="gray.500" asChild><Link to={`/users/${props.id}`}>@{props.userName}
+                  </Link></LinkOverlay>
+              </Stack>
+              <Wrap>
+                <Text fontSize="sm">
+                  <Icon mr="2" asChild><FaFlask /></Icon>
+                  {formatNumber(props.stats.posts)} Experiments
+                </Text>
+                <Text fontSize="sm">
+                  <Icon mr="2" asChild><TbUsers /></Icon>
+                  {formatNumber(props.stats.followers)} Followers
+                </Text>
+                <Text fontSize="sm">
+                  <Icon mr="2" asChild><TbUserShare /></Icon>
+                  {formatNumber(props.stats.following)} Following
+                </Text>
+              </Wrap>
             </Stack>
-            <Wrap>
-              <Text fontSize="sm">
-                <Icon as={FaFlask} mr="2" />
-                {formatNumber(props.stats.posts)} Experiments
-              </Text>
-              <Text fontSize="sm">
-                <Icon as={TbUsers} mr="2" />
-                {formatNumber(props.stats.followers)} Followers
-              </Text>
-              <Text fontSize="sm">
-                <Icon as={TbUserShare} mr="2" />
-                {formatNumber(props.stats.following)} Following
-              </Text>
-            </Wrap>
           </Stack>
-        </Stack>
-      </CardBody>
-    </Card>
+        </Card.Body>
+      </LinkBox></Card.Root>
   );
 };
 

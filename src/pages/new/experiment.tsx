@@ -10,16 +10,13 @@ import {
   useAuth,
   useNotificationsContext
 } from 'jaen';
-import { CloseIcon } from '@chakra-ui/icons';
 import {
+  Steps,
   Avatar,
   Box,
   Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   ButtonGroup,
-  Divider,
   Flex,
   HStack,
   Icon,
@@ -28,10 +25,11 @@ import {
   SkeletonCircle,
   Stack,
   Switch,
-  Text
+  Text,
+  Separator,
 } from '@chakra-ui/react';
-
 import { graphql, Link, navigate } from 'gatsby';
+
 import * as React from 'react';
 import { asEnumKey } from 'snek-query';
 import { TextControl } from '../../components/TextControl';
@@ -40,6 +38,7 @@ import { useTOCContext } from '../../contexts/toc';
 import TableOfContent from '../../components/navigation/TableOfContent';
 import { globalHistory, useLocation } from '@reach/router';
 import { FaUsers } from '@react-icons/all-files/fa/FaUsers';
+import { LuX } from 'react-icons/lu';
 
 const IndexPage: React.FC<PageProps> = () => {
   const notify = useNotificationsContext();
@@ -113,33 +112,28 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
   }, [isCreating]);
 
   return (
-    <Stack spacing="8">
-      <Breadcrumb mb="4">
-        <BreadcrumbItem>
-          <BreadcrumbLink as={Link} to="/experiments">
-            <HStack spacing="1">
-              <Icon
-                as={FaUsers}
-                display="inline-block"
-                color="brand.500"
-                mr="2"
-              />
-              <Text color="gray.600">Community Experiments</Text>
-            </HStack>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-
-        <BreadcrumbItem isCurrentPage>
-          <BreadcrumbLink href="#">New</BreadcrumbLink>
-        </BreadcrumbItem>
-      </Breadcrumb>
-
+    <Stack gap="8">
+      <Breadcrumb.Root mb="4">
+        <Breadcrumb.List>
+          <Breadcrumb.Item>
+            <Breadcrumb.Link asChild><Link to="/experiments">
+                <HStack gap="1">
+                  <Icon display="inline-block" color="brand.500" mr="2" asChild><FaUsers /></Icon>
+                  <Text color="gray.600">Community Experiments</Text>
+                </HStack>
+              </Link></Breadcrumb.Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Separator /><Breadcrumb.Item>
+            <Breadcrumb.Link href="#">New</Breadcrumb.Link>
+          </Breadcrumb.Item>
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
       <Stack>
-        <Divider />
+        <Separator />
         <Flex justifyContent="space-between" alignItems="center">
           <Switch
-            isChecked={values.privacy === 'PUBLIC'}
-            onChange={e => {
+            checked={values.privacy === 'PUBLIC'}
+            onValueChange={e => {
               setValues({
                 ...values,
                 privacy: e.target.checked
@@ -154,7 +148,7 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
           <ButtonGroup flexDir={['column', 'row']}>
             <Button
               variant="outline"
-              isLoading={isCreating}
+              loading={isCreating}
               onClick={async () => {
                 setIsCreating(true);
 
@@ -199,7 +193,7 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
               type="file"
               ref={imageInputRef}
               display="none"
-              onChange={async e => {
+              onValueChange={async e => {
                 const file = e.target.files?.[0];
 
                 if (file) {
@@ -223,10 +217,9 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
             />
 
             <IconButton
-              icon={<CloseIcon />}
               aria-label="Cancel"
               variant="ghost"
-              colorScheme="red"
+              colorPalette="red"
               onClick={async () => {
                 const confirm = await notify.confirm({
                   title: 'Delete Experiment',
@@ -236,24 +229,20 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
                 if (confirm) {
                   navigate(`/users/${user?.profile?.sub}`);
                 }
-              }}
-            />
+              }}><LuX /></IconButton>
           </ButtonGroup>
         </Flex>
-        <Divider />
+        <Separator />
       </Stack>
-
-      <HStack spacing="4">
+      <HStack gap="4">
         <SkeletonCircle
           boxSize="unset"
           isLoaded={!isImageUploading}
           borderRadius="md"
         >
-          <Avatar
+          <Avatar.Root
             size="md"
             borderRadius="md"
-            src={values.avatarURL || undefined}
-            name={values.title}
             _hover={{
               cursor: 'pointer',
               filter: 'brightness(0.8)',
@@ -265,8 +254,7 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
             cursor={'pointer'}
             onClick={() => {
               imageInputRef.current?.click();
-            }}
-          />
+            }}><Avatar.Fallback name={values.title} /><Avatar.Image src={values.avatarURL || undefined} /></Avatar.Root>
         </SkeletonCircle>
 
         <TextControl
@@ -282,7 +270,6 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
           editable={true}
         />
       </HStack>
-
       <TextControl
         key={values.summary}
         text={values.summary || undefined}
@@ -295,7 +282,6 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
         type="text"
         editable={true}
       />
-
       <Box
         display={{
           base: 'block',
@@ -304,7 +290,6 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
       >
         <TableOfContent />
       </Box>
-
       {/* Placeholder for Editor Component */}
       <UncontrolledMdxEditor
         value={values.content}

@@ -1,13 +1,4 @@
-import {
-  Box,
-  BoxProps,
-  Button,
-  Center,
-  Container,
-  HStack,
-  Stack,
-  VStack
-} from '@chakra-ui/react';
+import { Steps, Box, BoxProps, Button, Center, Container, HStack, Stack, VStack } from '@chakra-ui/react';
 import { FC } from 'react';
 import { Field } from 'jaen';
 import { TextFieldProps } from 'jaen/dist/fields/TextField/TextField';
@@ -49,7 +40,7 @@ const Features: FC = () => {
       color="pq.shared.section.color"
     >
       <Container maxW="7xl">
-        <VStack spacing="10">
+        <VStack gap="10">
           <SectionTitle
             label="Features"
             labelFieldname="featuresLabel"
@@ -79,13 +70,13 @@ const Features: FC = () => {
                 color="pq.components.featureCard.color"
                 mt={3}
               />
-              <Button as={Link} my={5} variant="pq-solid" href="/docs">
-                <Field.Text
-                  as="span"
-                  name="LeftCardButtonText"
-                  defaultValue="Get Started"
-                ></Field.Text>
-              </Button>
+              <Button my={5} variant="pq-solid" asChild><Link href="/docs">
+                  <Field.Text
+                    as="span"
+                    name="LeftCardButtonText"
+                    defaultValue="Get Started"
+                  ></Field.Text>
+                </Link></Button>
             </Box>
             <Box {...cardProps}>
               <Box>
@@ -100,13 +91,13 @@ const Features: FC = () => {
                   color="pq.components.featureCard.color"
                   mt={3}
                 />
-                <Button as={Link} my={5} variant="pq-solid" href="/docs">
-                  <Field.Text
-                    as="span"
-                    name="RightCardButtonText"
-                    defaultValue="Get Started"
-                  ></Field.Text>
-                </Button>
+                <Button my={5} variant="pq-solid" asChild><Link href="/docs">
+                    <Field.Text
+                      as="span"
+                      name="RightCardButtonText"
+                      defaultValue="Get Started"
+                    ></Field.Text>
+                  </Link></Button>
               </Box>
               <Box w="90%" ml="auto" borderTopLeftRadius="lg" overflow="hidden">
                 <Field.Image name="RightCardImage" />
@@ -115,10 +106,9 @@ const Features: FC = () => {
           </HStack>
         </VStack>
       </Container>
-
       <Box>
         <Container maxW="8xl" py="10">
-          <Stack spacing="4">
+          <Stack gap="4">
             <VStack w="full">
               <Field.Text
                 {...cardTitleProps}
@@ -179,7 +169,6 @@ measure cout[0] -> ans[4];`}
           </Stack>
         </Container>
       </Box>
-
       {/* <Box {...cardProps} w="100%" mt={7}>
               <Box w="30%" minW={{ base: '100px', md: '300px' }} m="auto">
                 <Field.Image name="BottomCardImage" />

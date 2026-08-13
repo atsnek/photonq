@@ -7,12 +7,12 @@ import {
   useAuthUser
 } from 'jaen';
 import {
+  Steps,
   Avatar,
   Box,
   BoxProps,
   Button,
   Card,
-  CardBody,
   Center,
   Container,
   Editable,
@@ -27,13 +27,10 @@ import {
   LinkBox,
   LinkOverlay,
   List,
-  ListIcon,
-  ListItem,
   SimpleGrid,
   SkeletonText,
   Spacer,
   Stack,
-  StackDivider,
   Tab,
   TabList,
   TabPanel,
@@ -41,9 +38,9 @@ import {
   Tabs,
   Text,
   Textarea,
-  Tooltip,
-  Wrap
+  Wrap,
 } from '@chakra-ui/react';
+import { Tooltip } from '@/components/ui/tooltip';
 import { useLazyQuery, useQuery } from 'snek-query/react-hooks';
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import MainGrid from '../../components/MainGrid';
@@ -85,29 +82,6 @@ const AvatarImage: React.FC<{
     <Image
       src={src}
       cursor={cursor}
-      fallback={
-        <Center
-          onClick={onClick}
-          cursor={cursor}
-          aspectRatio={1}
-          boxSize="full"
-          bg="gray.100"
-          _hover={{
-            boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
-            transform: 'scale(1.02)'
-          }}
-          borderRadius="full"
-          transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
-        >
-          <Text>
-            {displayName
-              .split(' ')
-              .map(name => name[0])
-              .slice(0, 2)
-              .join('')}
-          </Text>
-        </Center>
-      }
       onClick={onClick}
       boxSize="full"
       objectFit="cover"
@@ -118,8 +92,7 @@ const AvatarImage: React.FC<{
         transform: 'scale(1.02)'
       }}
       borderRadius="full"
-      transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)"
-    />
+      transition="box-shadow 0.2s cubic-bezier(.17,.67,.83,.67), transform 0.2s cubic-bezier(.17,.67,.83,.67)" />
   );
 };
 
@@ -138,7 +111,7 @@ const EditableImage: React.FC<{
         display="none"
         type="file"
         ref={imageRef}
-        onChange={async e => {
+        onValueChange={async e => {
           if (userId !== authUser.user.id) {
             return;
           }
@@ -153,7 +126,6 @@ const EditableImage: React.FC<{
           }
         }}
       />
-
       <AvatarImage
         src={authUser.user?.human?.profile?.avatarUrl || avatarUrl || undefined}
         displayName={displayName}
@@ -430,7 +402,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             >
               <SkeletonText
                 isLoaded={isSafe}
-                noOfLines={1}
+                lineClamp={1}
                 skeletonHeight={'24px'}
               >
                 <Heading as="h6" fontSize="24px">
@@ -438,15 +410,15 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 </Heading>
               </SkeletonText>
 
-              <SkeletonText isLoaded={isSafe} noOfLines={1}>
+              <SkeletonText isLoaded={isSafe} lineClamp={1}>
                 <Text>@{user.profile.userName}</Text>
               </SkeletonText>
 
               <Spacer />
 
               <Tooltip
-                label="Sign up to follow users"
-                isDisabled={auth.isAuthenticated}
+                content="Sign up to follow users"
+                disabled={auth.isAuthenticated}
               >
                 <Button
                   display={
@@ -455,7 +427,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                       : 'block'
                   }
                   variant="outline"
-                  isLoading={isFollow}
+                  loading={isFollow}
                   onClick={async () => {
                     if (!auth.isAuthenticated) {
                       auth.signinRedirect({
@@ -506,14 +478,14 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             />
           </Box>
 
-          <List
+          <List.Root
             fontSize="sm"
             alignSelf={{
               base: 'center',
               md: 'start'
             }}
           >
-            <ListItem
+            <List.Item
               display={{
                 base: 'inline-block',
                 md: 'block'
@@ -523,7 +495,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 4
               }}
             >
-              <ListIcon as={TbUsers} />
+              <List.Indicator asChild><TbUsers /></List.Indicator>
               <Link
                 onClick={() => {
                   handleTabsChange(3);
@@ -531,8 +503,8 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
               >
                 <b>{formatNumber(user.followers().totalCount)}</b> Followers
               </Link>
-            </ListItem>
-            <ListItem
+            </List.Item>
+            <List.Item
               display={{
                 base: 'inline-block',
                 md: 'block'
@@ -542,7 +514,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 4
               }}
             >
-              <ListIcon as={TbUserShare} />
+              <List.Indicator asChild><TbUserShare /></List.Indicator>
               <Link
                 onClick={() => {
                   handleTabsChange(4);
@@ -550,9 +522,9 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
               >
                 <b>{formatNumber(user.followings().totalCount)} </b>Following
               </Link>
-            </ListItem>
+            </List.Item>
 
-            <ListItem
+            <List.Item
               display={{
                 base: 'inline-block',
                 md: 'block'
@@ -562,11 +534,11 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 0
               }}
             >
-              <ListIcon as={TbEye} />
+              <List.Indicator asChild><TbEye /></List.Indicator>
               <b>{formatNumber(user.receivedUserViews().totalCount)}</b> Views
-            </ListItem>
+            </List.Item>
 
-            <ListItem
+            <List.Item
               display={{
                 base: 'inline-block',
                 md: 'block'
@@ -576,7 +548,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 md: 4
               }}
             >
-              <ListIcon as={FaFlask} />
+              <List.Indicator asChild><FaFlask /></List.Indicator>
               <Link
                 onClick={() => {
                   handleTabsChange(1);
@@ -584,35 +556,35 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
               >
                 <b>{formatNumber(user.posts().totalCount)}</b> Experiments
               </Link>
-            </ListItem>
-          </List>
+            </List.Item>
+          </List.Root>
         </Stack>
 
-        <Tabs index={tabIndex} onChange={handleTabsChange} isFitted>
-          <TabList>
+        <Tabs.Root value={tabIndex} onValueChange={handleTabsChange} fitted>
+          <Tabs.List>
             <Tab fontSize="sm">
-              <Icon as={TbUser} mr="2" />
+              <Icon mr="2" asChild><TbUser /></Icon>
               Overview
             </Tab>
             <Tab fontSize="sm">
-              <Icon as={FaFlask} mr="2" />
+              <Icon mr="2" asChild><FaFlask /></Icon>
               Experiments ({formatNumber(user.posts().totalCount)})
             </Tab>
             <Tab fontSize="sm">
-              <Icon as={TbStar} mr="2" />
+              <Icon mr="2" asChild><TbStar /></Icon>
               Stars ({formatNumber(user.starredPosts().totalCount)})
             </Tab>
-          </TabList>
+          </Tabs.List>
 
           <TabPanels mt="12">
             <TabPanel>
-              <Stack spacing="16">
+              <Stack gap="16">
                 <SimpleGrid
                   columns={{
                     base: 1,
                     lg: 2
                   }}
-                  spacing={4}
+                  gap={4}
                 >
                   {user.featuredPosts.nodes.map(post => (
                     <PostCard
@@ -626,7 +598,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                   ))}
                 </SimpleGrid>
 
-                <Stack spacing="8">
+                <Stack gap="8">
                   <Heading as="h3" size="md">
                     Trending Experiments
                   </Heading>
@@ -635,7 +607,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                       base: 1,
                       lg: 2
                     }}
-                    spacing={4}
+                    gap={4}
                   >
                     {data
                       .allTrendingPost({
@@ -657,7 +629,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                   </SimpleGrid>
                 </Stack>
 
-                <Stack spacing="8">
+                <Stack gap="8">
                   <Heading as="h3" size="md">
                     Recent Experiments
                   </Heading>
@@ -666,7 +638,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                       base: 1,
                       lg: 2
                     }}
-                    spacing={4}
+                    gap={4}
                   >
                     {user
                       .posts({
@@ -688,7 +660,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                   </SimpleGrid>
                 </Stack>
 
-                <Stack spacing="8">
+                <Stack gap="8">
                   <Heading size="md">Activity</Heading>
 
                   <ActivityList
@@ -705,7 +677,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             </TabPanel>
 
             <TabPanel>
-              <Stack verticalAlign="top" direction="row" spacing={4}>
+              <Stack verticalAlign="top" direction="row" gap={4}>
                 {user.id && tabIndex === 1 && (
                   <PostList userId={user.id} hideAuthor />
                 )}
@@ -719,7 +691,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             </TabPanel>
 
             <TabPanel>
-              <Stack spacing={4}>
+              <Stack gap={4}>
                 {user.followers().nodes.map(follow => (
                   <UserCard
                     key={follow.id}
@@ -742,7 +714,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
             </TabPanel>
 
             <TabPanel>
-              <Stack spacing={4}></Stack>
+              <Stack gap={4}></Stack>
               {user.followings().nodes.map(follow => (
                 <UserCard
                   key={follow.id}
@@ -763,7 +735,7 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
               )}
             </TabPanel>
           </TabPanels>
-        </Tabs>
+        </Tabs.Root>
       </MainGrid>
     </Box>
   );

@@ -1,4 +1,4 @@
-import { ListItem as ChListItem } from '@chakra-ui/react';
+import { Steps, ListItem as ChListItem } from '@chakra-ui/react';
 import React, { FC, ReactNode } from 'react';
 
 interface IListItemProps {

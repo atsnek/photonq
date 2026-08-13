@@ -1,13 +1,11 @@
 import { PageConfig, PageProps, osg, useNotificationsContext } from 'jaen';
 import {
+  Steps,
   Avatar,
   Box,
   Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   ButtonGroup,
-  Divider,
   Flex,
   HStack,
   Icon,
@@ -16,13 +14,12 @@ import {
   LinkBox,
   LinkOverlay,
   Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   SkeletonCircle,
   SkeletonText,
   Stack,
-  Text
+  Text,
+  Separator,
+  Portal,
 } from '@chakra-ui/react';
 
 import { FaRegShareSquare } from '@react-icons/all-files/fa/FaRegShareSquare';
@@ -31,7 +28,6 @@ import { FaUsers } from '@react-icons/all-files/fa/FaUsers';
 
 import { sq } from '@/clients/social';
 import { PrivacyInput } from '@/clients/social/src/schema.generated';
-import { CheckIcon, DeleteIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import { graphql, navigate } from 'gatsby';
 import { Link } from 'gatsby-plugin-jaen';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -42,6 +38,7 @@ import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEd
 import TableOfContent from '../../components/navigation/TableOfContent';
 import PostCardRating from '../../components/post/PostCardRating';
 import { useTOCContext } from '../../contexts/toc';
+import { LuCheck, LuExternalLink, LuTrash2 } from 'react-icons/lu';
 
 const useId = () => {
   const [id, setId] = useState<string>(Math.random().toString(36).substring(2));
@@ -54,6 +51,7 @@ const useId = () => {
 const DocsPage: React.FC<PageProps> = ({ params }) => {
   const notify = useNotificationsContext();
 
+  // Use React.useId instead (available in React 18+)
   const [mdxKey, refreshMdxKey] = useId();
 
   const [_, { data, isLoading, refetch, isSafe }] = useLazyQuery(sq);
@@ -132,34 +130,29 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
   }, [values.content]);
 
   return (
-    <Stack key={post.id} spacing={8}>
-      <Breadcrumb mb="4">
-        <BreadcrumbItem>
-          <BreadcrumbLink as={Link} to="/experiments">
-            <HStack spacing="1">
-              <Icon
-                as={FaUsers}
-                display="inline-block"
-                color="brand.500"
-                mr="2"
-              />
-              <Text color="gray.600">Community Experiments</Text>
-            </HStack>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-
-        <BreadcrumbItem isCurrentPage>
-          <BreadcrumbLink href="#">{post.title}</BreadcrumbLink>
-        </BreadcrumbItem>
-      </Breadcrumb>
-      <Stack spacing="4">
+    <Stack key={post.id} gap={8}>
+      <Breadcrumb.Root mb="4">
+        <Breadcrumb.List>
+          <Breadcrumb.Item>
+            <Breadcrumb.Link asChild><Link to="/experiments">
+                <HStack gap="1">
+                  <Icon display="inline-block" color="brand.500" mr="2" asChild><FaUsers /></Icon>
+                  <Text color="gray.600">Community Experiments</Text>
+                </HStack>
+              </Link></Breadcrumb.Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Separator /><Breadcrumb.Item>
+            <Breadcrumb.Link href="#">{post.title}</Breadcrumb.Link>
+          </Breadcrumb.Item>
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
+      <Stack gap="4">
         <Stack display={post.isOwner ? 'flex' : 'none'}>
-          <Divider />
+          <Separator />
           <Flex justifyContent="space-between" alignItems="center">
             {post.privacy === 'PRIVATE' ? (
               <Button
-                leftIcon={<FaRocket />}
-                variant="link"
+                variant='plain'
                 fontWeight="normal"
                 onClick={async () => {
                   const confirm = await notify.confirm({
@@ -195,15 +188,12 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                       });
                     }
                   }
-                }}
-              >
-                Publish
-              </Button>
+                }}><FaRocket />Publish
+                              </Button>
             ) : (
               <Button
-                leftIcon={<CheckIcon color="green.500" />}
-                variant="link"
-                colorScheme="green"
+                variant='plain'
+                colorPalette="green"
                 fontWeight="normal"
                 color="gray.500"
                 onClick={async () => {
@@ -241,17 +231,15 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                       });
                     }
                   }
-                }}
-              >
-                Published
-              </Button>
+                }}><Icon color="green.500" asChild><LuCheck /></Icon>Published
+                              </Button>
             )}
 
             <ButtonGroup flexDir={['column', 'row']}>
               <Button
                 variant="outline"
-                isDisabled={!hasChanges}
-                isLoading={isSaving}
+                disabled={!hasChanges}
+                loading={isSaving}
                 onClick={async () => {
                   setIsSaving(true);
 
@@ -292,7 +280,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
               {hasChanges && (
                 <Button
                   variant="ghost"
-                  colorScheme="red"
+                  colorPalette="red"
                   onClick={() => {
                     setValues({
                       title: post.title,
@@ -312,7 +300,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                 type="file"
                 ref={imageInputRef}
                 display="none"
-                onChange={async e => {
+                onValueChange={async e => {
                   const file = e.target.files?.[0];
 
                   if (file) {
@@ -340,10 +328,9 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
               />
 
               <IconButton
-                icon={<DeleteIcon />}
                 aria-label="Delete"
                 variant="ghost"
-                colorScheme="red"
+                colorPalette="red"
                 onClick={async () => {
                   const confirm = await notify.confirm({
                     title: 'Delete Experiment',
@@ -373,24 +360,21 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                       navigate(`/users/${post.user().id}`);
                     }
                   }
-                }}
-              />
+                }}><LuTrash2 /></IconButton>
             </ButtonGroup>
           </Flex>
-          <Divider />
+          <Separator />
         </Stack>
 
-        <HStack spacing="4">
+        <HStack gap="4">
           <SkeletonCircle
             boxSize="unset"
             isLoaded={isSafe && !isImageUploading}
             borderRadius="md"
           >
-            <Avatar
+            <Avatar.Root
               size="md"
               borderRadius="md"
-              src={values.avatarURL || undefined}
-              name={values.title}
               _hover={
                 post.isOwner
                   ? {
@@ -408,8 +392,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                 if (post.isOwner) {
                   imageInputRef.current?.click();
                 }
-              }}
-            />
+              }}><Avatar.Fallback name={values.title} /><Avatar.Image src={values.avatarURL || undefined} /></Avatar.Root>
           </SkeletonCircle>
 
           <SkeletonText isLoaded={isSafe}>
@@ -443,37 +426,29 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
           />
         </SkeletonText>
       </Stack>
+      <LinkBox alignItems="center" asChild><Flex>
+          <SkeletonCircle boxSize="unset" isLoaded={isSafe}>
+            <Avatar.Root size="md"><Avatar.Fallback name={post.user().profile.displayName} /><Avatar.Image src={post.user().profile.avatarUrl || ''} /></Avatar.Root>
+          </SkeletonCircle>
+          <Box ml={2}>
+            <SkeletonText isLoaded={isSafe}>
+              <Text>{post.user().profile.displayName}</Text>
 
-      <LinkBox as={Flex} alignItems="center">
-        <SkeletonCircle boxSize="unset" isLoaded={isSafe}>
-          <Avatar
-            size="md"
-            src={post.user().profile.avatarUrl || ''}
-            name={post.user().profile.displayName}
-          />
-        </SkeletonCircle>
-
-        <Box ml={2}>
-          <SkeletonText isLoaded={isSafe}>
-            <Text>{post.user().profile.displayName}</Text>
-
-            <Text fontSize="sm" color="gray.600">
-              <LinkOverlay as={Link} to={`/users/${post.user().id}`}>
-                @{post.user().profile.userName}
-              </LinkOverlay>
-              &bull;
-              {post.createdAt !== post.updatedAt ? (
-                <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
-              ) : (
-                <> Created: {new Date(post.createdAt).toLocaleString()}</>
-              )}
-            </Text>
-          </SkeletonText>
-        </Box>
-      </LinkBox>
-
+              <Text fontSize="sm" color="gray.600">
+                <LinkOverlay asChild><Link to={`/users/${post.user().id}`}>@{post.user().profile.userName}
+                  </Link></LinkOverlay>
+                &bull;
+                {post.createdAt !== post.updatedAt ? (
+                  <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
+                ) : (
+                  <> Created: {new Date(post.createdAt).toLocaleString()}</>
+                )}
+              </Text>
+            </SkeletonText>
+          </Box>
+        </Flex></LinkBox>
       <Stack>
-        <Divider />
+        <Separator />
         <Flex justifyContent="space-between">
           <PostCardRating
             id={post.id}
@@ -488,37 +463,34 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
             }}
           />
 
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              size="sm"
-              color="gray.600"
-              icon={<FaRegShareSquare />}
-              aria-label="Share"
-              variant="ghost"
-            />
-            <MenuList>
-              <MenuItem
-                icon={<ExternalLinkIcon />}
-                onClick={() => {
-                  // Copy to clipboard
-                  navigator.clipboard.writeText(window.location.href);
+          <Menu.Root>
+            <Menu.Trigger asChild><IconButton
+                size="sm"
+                color="gray.600"
+                icon={<FaRegShareSquare />}
+                aria-label="Share"
+                variant="ghost"></IconButton></Menu.Trigger>
+            <Portal><Menu.Positioner><Menu.Content>
+                  <Menu.Item
+                    icon={<LuExternalLink />}
+                    onSelect={() => {
+                      // Copy to clipboard
+                      navigator.clipboard.writeText(window.location.href);
 
-                  notify.toast({
-                    title: 'Share',
-                    status: 'info',
-                    description: 'Link copied to clipboard.'
-                  });
-                }}
-              >
-                Copy Link
-              </MenuItem>
-            </MenuList>
-          </Menu>
+                      notify.toast({
+                        title: 'Share',
+                        status: 'info',
+                        description: 'Link copied to clipboard.'
+                      });
+                    }}
+                    value='item-0'>
+                    Copy Link
+                  </Menu.Item>
+                </Menu.Content></Menu.Positioner></Portal>
+          </Menu.Root>
         </Flex>
-        <Divider />
+        <Separator />
       </Stack>
-
       <Box
         display={{
           base: 'block',
@@ -527,12 +499,11 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
       >
         <TableOfContent />
       </Box>
-
       {/* Placeholder for Editor Component */}
       <SkeletonText
         isLoaded={isSafe}
-        noOfLines={15}
-        spacing="4"
+        lineClamp={15}
+        gap="4"
         skeletonHeight="6"
       >
         <UncontrolledMdxEditor

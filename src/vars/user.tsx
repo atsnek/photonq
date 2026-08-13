@@ -1,4 +1,4 @@
-import { IconProps, Icon } from '@chakra-ui/react';
+import { Steps, IconProps, Icon } from '@chakra-ui/react';
 
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 
@@ -8,7 +8,7 @@ import TbUserShare from '../components/icons/tabler/TbUserShare';
 import TbUsers from '../components/icons/tabler/TbUsers';
 import { FC } from 'react';
 
-const FaFlaskIcon = (props: IconProps) => <Icon as={FaFlask} {...props} />;
+const FaFlaskIcon = (props: IconProps) => <Icon {...props} asChild><FaFlask /></Icon>;
 
 /**
  * Icons for the profile stats

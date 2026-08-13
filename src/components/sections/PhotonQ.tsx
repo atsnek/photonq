@@ -1,4 +1,4 @@
-import { Box, Button, Container, Flex, Spacer } from '@chakra-ui/react';
+import { Steps, Box, Button, Container, Flex, Spacer } from '@chakra-ui/react';
 import { FC } from 'react';
 import { Field, useAuth } from 'jaen';
 import SectionTitle from '../SectionTitle';
@@ -33,15 +33,9 @@ const PhotonQ: FC = () => {
             mt={5}
             color="pq.sections.photonq.description.color"
           />
-          <Button
-            as={Link}
-            mt={7}
-            variant="pq-solid"
-            mx={{ base: 'auto', sm: 0 }}
-            to={isAuthenticated ? '/new/experiment' : '/signup'}
-          >
-            {isAuthenticated ? 'New experiment' : 'Register Now'}
-          </Button>
+          <Button mt={7} variant="pq-solid" mx={{ base: 'auto', sm: 0 }} asChild><Link to={isAuthenticated ? '/new/experiment' : '/signup'}>
+              {isAuthenticated ? 'New experiment' : 'Register Now'}
+            </Link></Button>
         </Box>
         <Spacer display={{ base: 'none', sm: 'inherit' }} />
         <Box

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Steps, Box } from '@chakra-ui/react';
 import { Field } from 'jaen';
 import { FC } from 'react';
 

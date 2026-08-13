@@ -1,10 +1,5 @@
-import {
-  chakra,
-  useColorMode,
-  useColorModeValue,
-  LightMode,
-  DarkMode
-} from '@chakra-ui/react';
+import { Steps, chakra } from '@chakra-ui/react';
+import { useColorMode, useColorModeValue, LightMode, DarkMode } from "../../components/ui/color-mode";
 import { FC } from 'react';
 
 interface LogoProps {

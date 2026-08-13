@@ -1,22 +1,19 @@
-import { CheckIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import {
+  Steps,
   HStack,
   Input,
   Menu,
-  MenuButton,
   Button,
-  MenuList,
-  MenuItem,
   StackProps,
   VStack,
   IconButton,
   InputGroup,
   InputLeftAddon,
   InputRightAddon,
-  Select,
-  Collapse,
-  Tooltip
+  NativeSelect,
+  Collapsible,
 } from '@chakra-ui/react';
+import { Tooltip } from '@/components/ui/tooltip';
 import { ChangeEvent, FC, useMemo, useRef, useState } from 'react';
 import { TDebounceData } from '../../shared/types/comm';
 import { EnPostLanguage, TPostListData, TPostPreview } from './types/post';
@@ -28,6 +25,7 @@ import Link from '../../shared/components/Link';
 import { sq } from '@snek-functions/origin';
 import { formatPostDate } from '../../shared/utils/features/post';
 import { useAuth } from 'jaen';
+import { LuCheck, LuChevronDown } from 'react-icons/lu';
 
 interface IPostListControlsProps extends StackProps {
   fetchPosts: (
@@ -142,19 +140,14 @@ const PostListControls: FC<IPostListControlsProps> = ({
 
   return (
     <VStack w="full">
-      <HStack spacing={3} w="full" {...props}>
+      <HStack gap={3} w="full" {...props}>
         <Input
           flex="1"
           placeholder="Find a experiment..."
           size="sm"
           borderRadius="lg"
           defaultValue={defaultQuery}
-          onChange={handleInputChange}
-          focusBorderColor="theme.600"
-          //! focusBorderColor - semantic token not working
-          // focusBorderColor="components.input._focus.borderColor"
-          // bgColor="components.input._focus.borderColor"
-        />
+          onValueChange={handleInputChange} />
         {/* <Menu>
           <MenuButton
             as={Button}
@@ -179,99 +172,92 @@ const PostListControls: FC<IPostListControlsProps> = ({
         </Menu> */}
         {enableAdvancedSearch && (
           <IconButton
-            colorScheme="gray"
+            colorPalette="gray"
             size="sm"
             variant="outline"
-            icon={isAdvancedSearchOpen ? <TbFilterDown /> : <TbFilterUp />}
             aria-label={'Toggle advanced search filter visibility'}
-            onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
-          />
+            onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}>{isAdvancedSearchOpen ? <TbFilterDown /> : <TbFilterUp />}</IconButton>
         )}
         {showCreatePostButton && isAuthenticated && (
-          <Button
-            aria-label="New experiment"
-            as={Link}
-            href="/new/experiment"
-            size="sm"
-            leftIcon={<TbPlus />}
-          >
-            New
-          </Button>
+          <Button aria-label="New experiment" size="sm" asChild><Link href="/new/experiment"><TbPlus />New
+                                    </Link></Button>
         )}
       </HStack>
-      <Collapse
-        in={isAdvancedSearchOpen}
-        animateOpacity
-        style={{ width: '75%' }}
-      >
-        <HStack gap={5} w="full">
-          {!!setDateRange && (
-            <InputGroup size="sm">
-              <InputLeftAddon borderLeftRadius="lg">Date from</InputLeftAddon>
-              <Input
-                ref={dateFromRef}
-                type="date"
-                onChange={e => {
-                  const date = e.currentTarget.valueAsDate;
-                  date?.setMonth(date.getMonth() + 1);
+      <Collapsible.Root open={isAdvancedSearchOpen} style={{ width: '75%' }}>
+        <Collapsible.Content>
+          <HStack gap={5} w="full">
+            {!!setDateRange && (
+              <InputGroup size="sm">
+                <InputLeftAddon borderLeftRadius="lg">Date from</InputLeftAddon>
+                <Input
+                  ref={dateFromRef}
+                  type="date"
+                  onValueChange={e => {
+                    const date = e.currentTarget.valueAsDate;
+                    date?.setMonth(date.getMonth() + 1);
 
-                  if (!date) return;
+                    if (!date) return;
 
-                  let dateTo: Date | null | undefined = undefined;
-                  if (
-                    date.getTime() >
-                    (dateToRef.current?.valueAsDate?.getTime() ?? Infinity)
-                  ) {
-                    if (!dateToRef.current) return;
-                    dateToRef.current.value = '';
-                    dateTo = null;
-                  }
-                  setDateRange(
-                    isNaN(date.getTime()) ? undefined : date,
-                    dateTo
-                  );
-                }}
-              />
-              <InputRightAddon>Date to</InputRightAddon>
-              <Input
-                ref={dateToRef}
-                type="date"
-                sx={{ borderRightRadius: 'lg' }}
-                onChange={e => {
-                  const date = e.currentTarget.valueAsDate;
-                  date?.setMonth(date.getMonth() + 1);
-                  if (!date) return;
-                  let dateFrom: Date | null | undefined = undefined;
-                  if (
-                    date.getTime() <
-                    (dateFromRef.current?.valueAsDate?.getTime() ?? 0)
-                  ) {
-                    if (!dateFromRef.current) return;
-                    dateFromRef.current.value = '';
-                    dateFrom = null;
-                  }
-                  setDateRange(
-                    dateFrom,
-                    isNaN(date.getTime()) ? undefined : date
-                  );
-                }}
-              />
-            </InputGroup>
-          )}
-          {!!setFilterLanguage && (
-            <Select
-              placeholder="Language"
-              size="sm"
-              borderRadius="lg"
-              onChange={handleLanguageChange}
-              defaultValue={filterLanguage}
-            >
-              <option value="EN">English 🇺🇸</option>
-              <option value="DE">German 🇦🇹</option>
-            </Select>
-          )}
-        </HStack>
-      </Collapse>
+                    let dateTo: Date | null | undefined = undefined;
+                    if (
+                      date.getTime() >
+                      (dateToRef.current?.valueAsDate?.getTime() ?? Infinity)
+                    ) {
+                      if (!dateToRef.current) return;
+                      dateToRef.current.value = '';
+                      dateTo = null;
+                    }
+                    setDateRange(
+                      isNaN(date.getTime()) ? undefined : date,
+                      dateTo
+                    );
+                  }}
+                />
+                <InputRightAddon>Date to</InputRightAddon>
+                <Input
+                  ref={dateToRef}
+                  type="date"
+                  css={{
+                    borderRightRadius: 'lg'
+                  }}
+                  onValueChange={e => {
+                    const date = e.currentTarget.valueAsDate;
+                    date?.setMonth(date.getMonth() + 1);
+                    if (!date) return;
+                    let dateFrom: Date | null | undefined = undefined;
+                    if (
+                      date.getTime() <
+                      (dateFromRef.current?.valueAsDate?.getTime() ?? 0)
+                    ) {
+                      if (!dateFromRef.current) return;
+                      dateFromRef.current.value = '';
+                      dateFrom = null;
+                    }
+                    setDateRange(
+                      dateFrom,
+                      isNaN(date.getTime()) ? undefined : date
+                    );
+                  }}
+                />
+              </InputGroup>
+            )}
+            {!!setFilterLanguage && (
+              <NativeSelect.Root>
+                <NativeSelect.Field
+                  placeholder="Language"
+                  size="sm"
+                  borderRadius="lg"
+                  onValueChange={handleLanguageChange}
+                  defaultValue={filterLanguage}>
+                  <option value="EN">English 🇺🇸</option>
+                  <option value="DE">German 🇦🇹</option>
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
+            )}
+          </HStack>
+        </Collapsible.Content>
+      </Collapsible.Root>
     </VStack>
   );
 };

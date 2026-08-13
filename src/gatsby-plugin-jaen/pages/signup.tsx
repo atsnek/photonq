@@ -1,18 +1,12 @@
 import {
+  Steps,
   Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
   Container as ChakraContainer,
   Checkbox,
   CloseButton,
-  FormControl,
   FormControlProps,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
   HStack,
   Heading,
   IconButton,
@@ -23,8 +17,9 @@ import {
   Progress,
   Stack,
   Text,
-  useColorModeValue
+  Field,
 } from '@chakra-ui/react';
+import { useColorModeValue } from "../../components/ui/color-mode";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Control, Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Particles from 'react-tsparticles';
@@ -141,22 +136,21 @@ const Page: React.FC<PageProps> = () => {
           detectRetina: true
         }}
       />
-
       <Box pos="relative">
         <ChakraContainer
           maxW="2xl"
           py={{ base: '6', md: '12' }}
           px={{ base: '4', sm: '8' }}
         >
-          <Stack spacing="8">
-            <Stack spacing="6">
+          <Stack gap="8">
+            <Stack gap="6">
               <HStack justify="center">
                 <Link as={Button} leftIcon={<FaArrowLeft />} to="/">
                   Back to website
                 </Link>
               </HStack>
 
-              <Stack spacing={{ base: '2', md: '3' }} textAlign="center">
+              <Stack gap={{ base: '2', md: '3' }} textAlign="center">
                 <Heading size={{ base: 'xs', md: 'sm' }}>
                   Create your account
                 </Heading>
@@ -167,11 +161,11 @@ const Page: React.FC<PageProps> = () => {
             </Stack>
 
             {alert && (
-              <Alert status={alert.status}>
-                <AlertIcon />
+              <Alert.Root status={alert.status}>
+                <Alert.Indicator />
                 <Box w="full">
-                  <AlertTitle>{alert.message}</AlertTitle>
-                  <AlertDescription>{alert.description}</AlertDescription>
+                  <Alert.Title>{alert.message}</Alert.Title>
+                  <Alert.Description>{alert.description}</Alert.Description>
                 </Box>
                 <CloseButton
                   alignSelf="flex-start"
@@ -180,7 +174,7 @@ const Page: React.FC<PageProps> = () => {
                   top={-1}
                   onClick={resetAlert}
                 />
-              </Alert>
+              </Alert.Root>
             )}
 
             <Box
@@ -382,13 +376,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
   }, [isSubmitSuccessful, reset]);
 
   return (
-    <Stack spacing="4">
+    <Stack gap="4">
       {alert && (
-        <Alert status={alert.status}>
-          <AlertIcon />
+        <Alert.Root status={alert.status}>
+          <Alert.Indicator />
           <Box w="full">
-            <AlertTitle>{alert.message}</AlertTitle>
-            <AlertDescription>{alert.description}</AlertDescription>
+            <Alert.Title>{alert.message}</Alert.Title>
+            <Alert.Description>{alert.description}</Alert.Description>
           </Box>
           <CloseButton
             alignSelf="flex-start"
@@ -397,166 +391,163 @@ const SignupForm: React.FC<SignupFormProps> = ({ welcomeText }) => {
             top={-1}
             onClick={() => setAlert(null)}
           />
-        </Alert>
+        </Alert.Root>
       )}
       <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize="md">
         {displayText}
       </Text>
       {showInput && (
-        <Stack as="form" onSubmit={handleSubmit(onSubmit)}>
-          <FormControl
-            isInvalid={!!errors.email}
-            isRequired
-            id="login_form_email"
-          >
-            <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
-              Enter your email
-            </FormLabel>
-            <HStack>
-              <Input
-                autoFocus
-                type="email"
-                {...register('email', {
-                  required: true
-                })}
-              />
-
-              {step === 0 && (
-                <Button type="submit" isLoading={isSubmitting}>
-                  Continue
-                </Button>
-              )}
-            </HStack>
-            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-          </FormControl>
-          {step > 0 && (
-            <FormControl
-              isInvalid={!!errors.password}
-              isRequired
-              id="login_form_password"
+        <Stack asChild><form onSubmit={handleSubmit(onSubmit)}>
+            <Field.Root
+              invalid={!!errors.email}
+              required
+              id="login_form_email"
             >
-              <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
-                Enter your password
-              </FormLabel>
-              <HStack>
-                <PasswordInput
-                  control={control}
-                  inputRightElement={
-                    step === 1 ? (
-                      <Button type="submit" isLoading={isSubmitting}>
-                        Continue
-                      </Button>
-                    ) : undefined
-                  }
-                />
-              </HStack>
-              <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
-            </FormControl>
-          )}
-          {step > 1 && (
-            // username
-            <FormControl
-              isInvalid={!!errors.username}
-              isRequired
-              id="login_form_username"
-            >
-              <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
-                Enter your username
-              </FormLabel>
+              <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
+                Enter your email
+              </Field.Label>
               <HStack>
                 <Input
-                  type="text"
-                  {...register('username', {
+                  autoFocus
+                  type="email"
+                  {...register('email', {
                     required: true
                   })}
                 />
 
-                {step === 2 && (
-                  <Button type="submit" isLoading={isSubmitting}>
+                {step === 0 && (
+                  <Button type="submit" loading={isSubmitting}>
                     Continue
                   </Button>
                 )}
               </HStack>
-              <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
-            </FormControl>
-          )}
-          {step > 2 && (
-            // first and last name
-            <FormControl
-              isInvalid={!!errors.details}
-              isRequired
-              id="login_form_details"
-            >
-              <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
-                Enter your first and last name
-              </FormLabel>
-              <HStack>
-                <HStack w="full">
-                  <Input
-                    {...register('details.firstName', {
-                      required: true
-                    })}
-                  />
-                  <Input
-                    {...register('details.lastName', {
-                      required: true
-                    })}
+              <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
+            </Field.Root>
+            {step > 0 && (
+              <Field.Root
+                invalid={!!errors.password}
+                required
+                id="login_form_password"
+              >
+                <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
+                  Enter your password
+                </Field.Label>
+                <HStack>
+                  <PasswordInput
+                    control={control}
+                    inputRightElement={
+                      step === 1 ? (
+                        <Button type="submit" loading={isSubmitting}>
+                          Continue
+                        </Button>
+                      ) : undefined
+                    }
                   />
                 </HStack>
+                <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
+              </Field.Root>
+            )}
+            {step > 1 && (
+              // username
+              (<Field.Root
+                invalid={!!errors.username}
+                required
+                id="login_form_username"
+              >
+                <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
+                  Enter your username
+                </Field.Label>
+                <HStack>
+                  <Input
+                    type="text"
+                    {...register('username', {
+                      required: true
+                    })}
+                  />
 
-                {step === 3 && (
-                  <Button type="submit" isLoading={isSubmitting}>
-                    Continue
-                  </Button>
-                )}
-              </HStack>
-              <FormErrorMessage>{errors.details?.message}</FormErrorMessage>
-            </FormControl>
-          )}
+                  {step === 2 && (
+                    <Button type="submit" loading={isSubmitting}>
+                      Continue
+                    </Button>
+                  )}
+                </HStack>
+                <Field.ErrorText>{errors.username?.message}</Field.ErrorText>
+              </Field.Root>)
+            )}
+            {step > 2 && (
+              // first and last name
+              (<Field.Root
+                invalid={!!errors.details}
+                required
+                id="login_form_details"
+              >
+                <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
+                  Enter your first and last name
+                </Field.Label>
+                <HStack>
+                  <HStack w="full">
+                    <Input
+                      {...register('details.firstName', {
+                        required: true
+                      })}
+                    />
+                    <Input
+                      {...register('details.lastName', {
+                        required: true
+                      })}
+                    />
+                  </HStack>
 
-          {step > 3 && (
-            <FormControl
-              isInvalid={!!errors.terms}
-              isRequired
-              id="login_form_terms"
-            >
-              <FormLabel fontSize="md" fontFamily="monospace" fontWeight="bold">
-                Terms and conditions
-              </FormLabel>
-              <Controller
-                control={control}
-                name="terms"
-                render={({ field: { onChange, value } }) => (
-                  <Checkbox
-                    onChange={e => {
-                      onChange(e.target.checked);
+                  {step === 3 && (
+                    <Button type="submit" loading={isSubmitting}>
+                      Continue
+                    </Button>
+                  )}
+                </HStack>
+                <Field.ErrorText>{errors.details?.message}</Field.ErrorText>
+              </Field.Root>)
+            )}
+            {step > 3 && (
+              <Field.Root
+                invalid={!!errors.terms}
+                required
+                id="login_form_terms"
+              >
+                <Field.Label fontSize="md" fontFamily="monospace" fontWeight="bold">
+                  Terms and conditions
+                </Field.Label>
+                <Controller
+                  control={control}
+                  name="terms"
+                  render={({ field: { onChange, value } }) => (
+                    <Checkbox.Root
+                      onCheckedChange={e => {
+                        onChange(e.target.checked);
 
-                      if (e.target.checked) {
-                        setStep(step + 1);
-                      } else {
-                        setStep(step - 1);
-                      }
-                    }}
-                    checked={value}
-                  >
-                    I agree to the terms and conditions
-                  </Checkbox>
-                )}
-              />
-            </FormControl>
-          )}
-
-          {step > 4 && (
-            <Button
-              mt="4"
-              type="submit"
-              isLoading={isSubmitting}
-              isDisabled={isSubmitted}
-            >
-              Sign up for PhotonQ
-            </Button>
-          )}
-        </Stack>
+                        if (e.target.checked) {
+                          setStep(step + 1);
+                        } else {
+                          setStep(step - 1);
+                        }
+                      }}
+                      checked={value}
+                    ><Checkbox.HiddenInput /><Checkbox.Control><Checkbox.Indicator /></Checkbox.Control><Checkbox.Label>I agree to the terms and conditions
+                                          </Checkbox.Label></Checkbox.Root>
+                  )}
+                />
+              </Field.Root>
+            )}
+            {step > 4 && (
+              <Button
+                mt="4"
+                type="submit"
+                loading={isSubmitting}
+                disabled={isSubmitted}
+              >
+                Sign up for PhotonQ
+              </Button>
+            )}
+          </form></Stack>
       )}
     </Stack>
   );
@@ -596,8 +587,8 @@ const PasswordInput: React.FC<PasswordInput> = ({
   };
 
   return (
-    <FormControl isInvalid={isInvalid}>
-      <FormLabel htmlFor="newPassword">Password</FormLabel>
+    <Field.Root invalid={isInvalid}>
+      <Field.Label htmlFor="newPassword">Password</Field.Label>
       <Controller
         name="password"
         control={control}
@@ -619,7 +610,7 @@ const PasswordInput: React.FC<PasswordInput> = ({
                 <Input
                   {...field}
                   type={showPassword ? 'text' : 'password'}
-                  onChange={e => {
+                  onValueChange={e => {
                     field.onChange(e);
                     checkPasswordStrength(e.target.value);
                   }}
@@ -629,36 +620,36 @@ const PasswordInput: React.FC<PasswordInput> = ({
                 <InputRightElement>
                   <IconButton
                     aria-label="Show password"
-                    icon={showPassword ? <FaEyeSlash /> : <FaEye />}
                     size="xs"
                     variant="ghost"
-                    onClick={() => setShowPassword(!showPassword)}
-                  />
+                    onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</IconButton>
                 </InputRightElement>
               </InputGroup>
 
               {inputRightElement}
             </HStack>
 
-            <Progress
+            <Progress.Root
               value={
                 passwordStrength === null ? 0 : (passwordStrength + 1) * 25
               }
-              colorScheme={getPasswordStrengthColor()}
+              colorPalette={getPasswordStrengthColor()}
               size="sm"
-              isAnimated
-            />
+              animated>
+              <Progress.Track>
+                <Progress.Range />
+              </Progress.Track>
+            </Progress.Root>
           </Stack>
         )}
       />
-
       {passwordSuggestions.length > 0 && (
-        <FormHelperText color="red">
+        <Field.HelperText color="red">
           Suggestions: {passwordSuggestions.join(' ')}
-        </FormHelperText>
+        </Field.HelperText>
       )}
-      <FormErrorMessage>{errorMessage}</FormErrorMessage>
-    </FormControl>
+      <Field.ErrorText>{errorMessage}</Field.ErrorText>
+    </Field.Root>
   );
 };
 

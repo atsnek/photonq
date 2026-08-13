@@ -1,7 +1,7 @@
 import { Field } from 'jaen';
 import { JaenFieldProps } from 'jaen/dist/connectors/connect-field';
 import { ImageFieldProps } from 'jaen/dist/fields/ImageField';
-import { AspectRatio, Box } from '@chakra-ui/react';
+import { Steps, AspectRatio, Box } from '@chakra-ui/react';
 import { FC } from 'react';
 
 interface IImageProps {

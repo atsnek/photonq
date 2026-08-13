@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { BoxProps, LinkProps } from '@chakra-ui/react';
+import { Steps, BoxProps, LinkProps } from '@chakra-ui/react';
 
 export type NavMenuItem = {
   name: string;

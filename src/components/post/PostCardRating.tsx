@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
-import { Box, Button, HStack, Text, Tooltip } from '@chakra-ui/react';
+import { Steps, Box, Button, HStack, Text } from '@chakra-ui/react';
+import { Tooltip } from '@/components/ui/tooltip';
 import TbStar from '../icons/tabler/TbStar';
 import { formatNumber } from '../../utils/general';
 import { useAuth } from 'jaen';
@@ -50,7 +51,6 @@ const PostCardRating: FC<PostCardRatingProps> = ({
     return (
       <Button
         display="flex"
-        variant="unstyled"
         size="sm"
         color={`features.rating.${hasRated ? 'rated' : 'unrated'}.color`}
         _hover={
@@ -65,9 +65,11 @@ const PostCardRating: FC<PostCardRatingProps> = ({
         }
         onClick={handleRating}
         px={2}
-        isDisabled={isRating}
-        zIndex={1} // prevents the button to to be placed underneath the link overlay
+        disabled={isRating}
+        // prevents the button to to be placed underneath the link overlay
+        zIndex={1}
         transition="color 0.2s ease-in-out, background-color 0.2s ease-in-out"
+        unstyled
       >
         <TbStar
           boxSize={3}
@@ -82,7 +84,7 @@ const PostCardRating: FC<PostCardRatingProps> = ({
   }
   return (
     <Tooltip
-      label="Sign up to rate this post"
+      content="Sign up to rate this post"
       aria-label="Sign up to rate this post"
     >
       <Button
@@ -90,7 +92,6 @@ const PostCardRating: FC<PostCardRatingProps> = ({
         variant={'unstyled'}
         size={'sm'}
         px="2"
-        leftIcon={<TbStar fill="none" stroke="currentColor" />}
         color="features.rating.disabled.color"
         _hover={{
           color: 'features.rating._hover.disabled.color'
@@ -101,10 +102,7 @@ const PostCardRating: FC<PostCardRatingProps> = ({
             prompt: 'create'
           })
         }
-        fontSize={12}
-      >
-        {formatNumber(likes)}
-      </Button>
+        fontSize={12}><TbStar fill="none" stroke="currentColor" />{formatNumber(likes)}</Button>
     </Tooltip>
   );
 };

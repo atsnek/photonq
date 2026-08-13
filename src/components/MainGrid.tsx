@@ -1,4 +1,4 @@
-import { Grid, GridProps } from '@chakra-ui/react';
+import { Steps, Grid, GridProps } from '@chakra-ui/react';
 import { FC } from 'react';
 import { mainContentWrapperProps } from '../vars/layout';
 import useNavOffset from '../hooks/use-nav-offset';

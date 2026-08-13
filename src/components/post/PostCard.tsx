@@ -1,10 +1,10 @@
 import { Post, Privacy } from '@/clients/social/src/schema.generated';
 import {
+  Steps,
   Avatar,
   Badge,
   Box,
   Card,
-  CardBody,
   HStack,
   Heading,
   IconButton,
@@ -12,15 +12,14 @@ import {
   LinkBox,
   LinkOverlay,
   Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Skeleton,
   SkeletonText,
   Stack,
   Text,
   VStack,
-  Wrap
+  Wrap,
+  Icon,
+  Portal,
 } from '@chakra-ui/react';
 import { Link } from 'gatsby-plugin-jaen';
 import { FC, useState } from 'react';
@@ -28,12 +27,7 @@ import PostCardRating from './PostCardRating';
 import { useAuth } from 'jaen';
 import { sq } from '@/clients/social';
 import NoSSR from '../NoSSR';
-import {
-  DeleteIcon,
-  SettingsIcon,
-  ViewIcon,
-  ViewOffIcon
-} from '@chakra-ui/icons';
+import { LuEye, LuEyeOff, LuSettings, LuTrash2 } from 'react-icons/lu';
 
 interface PostCardProps {
   hideAuthor?: boolean;
@@ -54,8 +48,6 @@ const PostCard: FC<PostCardProps> = ({
 
   return (
     <LinkBox
-      key={post.id}
-      as={Card}
       variant="outline"
       borderRadius="xl"
       _hover={{
@@ -70,140 +62,126 @@ const PostCard: FC<PostCardProps> = ({
           opacity: 1
         }
       }}
-    >
-      <CardBody as={Stack} justifyContent="end">
-        <HStack justifyContent="space-between">
-          <HStack w="full" spacing="3">
-            <Avatar
-              boxSize="3rem"
-              borderRadius="md"
-              objectFit="cover"
-              src={post.avatarURL}
-              name={post.title}
-            />
+      asChild><Card key={post.id}>
+            <Card.Body justifyContent="end" asChild><Stack>
+                <HStack justifyContent="space-between">
+                  <HStack w="full" gap="3">
+                    <Avatar.Root boxSize="3rem" borderRadius="md" objectFit="cover"><Avatar.Fallback name={post.title} /><Avatar.Image src={post.avatarURL} /></Avatar.Root>
 
-            <Stack>
-              {!hideAuthor && (
-                <SkeletonText isLoaded={isLoaded} noOfLines={1} minW="50px">
-                  <Link
-                    noOfLines={1}
-                    variant="hover-theme"
-                    fontSize="sm"
-                    href={`/users/${post.user().id}`}
+                    <Stack>
+                      {!hideAuthor && (
+                        <SkeletonText isLoaded={isLoaded} lineClamp={1} minW="50px">
+                          <Link
+                            noOfLines={1}
+                            variant="hover-theme"
+                            fontSize="sm"
+                            href={`/users/${post.user().id}`}
+                          >
+                            @{post.user().profile.userName}
+                          </Link>
+                        </SkeletonText>
+                      )}
+                      <Heading
+                        as="h5"
+                        size="sm"
+                        transition="color 0.2s ease-in-out"
+                        flex={1}
+                        w={{ base: 'full', md: 'auto' }}
+                      >
+                        <LinkOverlay asChild><Link to={`/experiments/${post.slug}`}>
+                            {post.title}
+                          </Link></LinkOverlay>
+                      </Heading>
+                    </Stack>
+                  </HStack>
+
+                  {post.isOwner && (
+                    <Menu.Root>
+                      <Menu.Trigger asChild><IconButton variant="outline" mb="auto" size="sm" icon={<LuSettings />}></IconButton></Menu.Trigger>
+                      <Portal><Menu.Positioner><Menu.Content>
+                            <Menu.Item
+                              onSelect={() =>
+                                onSetPrivacy(
+                                  post.id,
+                                  post.privacy === Privacy.PUBLIC
+                                    ? Privacy.PRIVATE
+                                    : Privacy.PUBLIC
+                                )
+                              }
+                              icon={
+                                post.privacy === Privacy.PUBLIC ? (
+                                  <Icon color="green.600" asChild><LuEyeOff /></Icon>
+                                ) : (
+                                  <Icon color="yellow.300" asChild><LuEye /></Icon>
+                                )
+                              }
+                              value='item-0'>
+                              {post.privacy === Privacy.PUBLIC
+                                ? 'Make Private'
+                                : 'Make Public'}
+                            </Menu.Item>
+                            <Menu.Item
+                              icon={<Icon color="red.500" asChild><LuTrash2 /></Icon>}
+                              onSelect={() => onDelete(post.id)}
+                              value='item-1'>
+                              Delete
+                            </Menu.Item>
+                          </Menu.Content></Menu.Positioner></Portal>
+                    </Menu.Root>
+                  )}
+                </HStack>
+                <SkeletonText isLoaded={isLoaded}>
+                  <Text
+                    mt="2"
+                    flexGrow={1}
+                    lineClamp={2}
+                    opacity={0.75}
+                    className="sd-pp-summary"
+                    transition="opacity 0.2s ease-in-out"
                   >
-                    @{post.user().profile.userName}
-                  </Link>
+                    {post.summary}
+                  </Text>
                 </SkeletonText>
-              )}
-              <Heading
-                as="h5"
-                size="sm"
-                transition="color 0.2s ease-in-out"
-                flex={1}
-                w={{ base: 'full', md: 'auto' }}
-              >
-                <LinkOverlay as={Link} to={`/experiments/${post.slug}`}>
-                  {post.title}
-                </LinkOverlay>
-              </Heading>
-            </Stack>
-          </HStack>
+                <SkeletonText isLoaded={isLoaded} lineClamp={1}>
+                  <HStack mt="4" justifyContent="space-between">
+                    <Wrap>
+                      <Text fontSize={12} color="gray.600">
+                        <NoSSR>{new Date(post.createdAt).toLocaleDateString()}</NoSSR>
+                      </Text>
 
-          {post.isOwner && (
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                variant="outline"
-                mb="auto"
-                size="sm"
-                icon={<SettingsIcon />}
-              />
-              <MenuList>
-                <MenuItem
-                  onClick={() =>
-                    onSetPrivacy(
-                      post.id,
-                      post.privacy === Privacy.PUBLIC
-                        ? Privacy.PRIVATE
-                        : Privacy.PUBLIC
-                    )
-                  }
-                  icon={
-                    post.privacy === Privacy.PUBLIC ? (
-                      <ViewOffIcon color="green.600" />
-                    ) : (
-                      <ViewIcon color="yellow.300" />
-                    )
-                  }
-                >
-                  {post.privacy === Privacy.PUBLIC
-                    ? 'Make Private'
-                    : 'Make Public'}
-                </MenuItem>
-                <MenuItem
-                  icon={<DeleteIcon color="red.500" />}
-                  onClick={() => onDelete(post.id)}
-                >
-                  Delete
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          )}
-        </HStack>
+                      <Badge colorPalette="gray" borderRadius="md">
+                        {post.language}
+                      </Badge>
 
-        <SkeletonText isLoaded={isLoaded}>
-          <Text
-            mt="2"
-            flexGrow={1}
-            noOfLines={2}
-            opacity={0.75}
-            className="sd-pp-summary"
-            transition="opacity 0.2s ease-in-out"
-          >
-            {post.summary}
-          </Text>
-        </SkeletonText>
+                      <Badge
+                        display={post.isOwner ? 'block' : 'none'}
+                        size="sm"
+                        borderRadius="md"
+                        colorPalette={
+                          post.privacy === Privacy.PUBLIC ? 'yellow' : 'green'
+                        }
+                      >
+                        {post.privacy === Privacy.PUBLIC && 'Public'}
+                        {post.privacy === Privacy.PRIVATE && 'Private'}
+                      </Badge>
+                    </Wrap>
 
-        <SkeletonText isLoaded={isLoaded} noOfLines={1}>
-          <HStack mt="4" justifyContent="space-between">
-            <Wrap>
-              <Text fontSize={12} color="gray.600">
-                <NoSSR>{new Date(post.createdAt).toLocaleDateString()}</NoSSR>
-              </Text>
-
-              <Badge colorScheme="gray" borderRadius="md">
-                {post.language}
-              </Badge>
-
-              <Badge
-                display={post.isOwner ? 'block' : 'none'}
-                size="sm"
-                borderRadius="md"
-                colorScheme={
-                  post.privacy === Privacy.PUBLIC ? 'yellow' : 'green'
-                }
-              >
-                {post.privacy === Privacy.PUBLIC && 'Public'}
-                {post.privacy === Privacy.PRIVATE && 'Private'}
-              </Badge>
-            </Wrap>
-
-            <PostCardRating
-              id={post.id}
-              likes={post.stars().totalCount || 0}
-              hasRated={!!post.hasStarred}
-              toggleRating={async (id: string) => {
-                if (post.hasStarred === false) {
-                  await sq.mutate(m => m.postStar({ postId: id }));
-                } else if (post.hasStarred === true) {
-                  await sq.mutate(m => m.postUnstar({ postId: id }));
-                }
-              }}
-            />
-          </HStack>
-        </SkeletonText>
-      </CardBody>
-    </LinkBox>
+                    <PostCardRating
+                      id={post.id}
+                      likes={post.stars().totalCount || 0}
+                      hasRated={!!post.hasStarred}
+                      toggleRating={async (id: string) => {
+                        if (post.hasStarred === false) {
+                          await sq.mutate(m => m.postStar({ postId: id }));
+                        } else if (post.hasStarred === true) {
+                          await sq.mutate(m => m.postUnstar({ postId: id }));
+                        }
+                      }}
+                    />
+                  </HStack>
+                </SkeletonText>
+              </Stack></Card.Body>
+          </Card></LinkBox>
   );
 };
 

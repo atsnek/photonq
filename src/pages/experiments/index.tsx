@@ -1,14 +1,7 @@
 import { sq } from '@/clients/social';
 import { PageConfig, PageProps } from 'jaen';
 
-import {
-  Box,
-  Heading,
-  SimpleGrid,
-  Stack,
-  VStack,
-  keyframes
-} from '@chakra-ui/react';
+import { Steps, Box, Heading, SimpleGrid, Stack, VStack, keyframes } from '@chakra-ui/react';
 import { graphql } from 'gatsby';
 import * as React from 'react';
 import { useQuery } from 'snek-query/react-hooks';
@@ -126,7 +119,7 @@ const IndexPage: React.FC<PageProps> = () => {
             /> */}
         </Box>
       </Box>
-      <Stack py={10} px={3} w="full" spacing="4">
+      <Stack py={10} px={3} w="full" gap="4">
         <Heading as="h2" size="md">
           Latest Experiments
         </Heading>

@@ -1,11 +1,4 @@
-import {
-  Button,
-  Box,
-  Container,
-  Center,
-  Wrap,
-  WrapItem
-} from '@chakra-ui/react';
+import { Steps, Button, Box, Container, Center, Wrap, WrapItem } from '@chakra-ui/react';
 import { Field } from 'jaen';
 import { FC } from 'react';
 import {
@@ -97,7 +90,7 @@ const AboutUs: FC = () => {
           />
         </Center>
 
-        <Wrap justify="center" mt={10} spacing={10} shouldWrapChildren>
+        <Wrap justify="center" mt={10} gap={10} shouldWrapChildren>
           {testamonialsDefaults.map((testimonial, index) => (
             <Testimonial>
               <TestimonialContent>
