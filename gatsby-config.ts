@@ -24,7 +24,18 @@ const config: GatsbyConfig = {
         remote: {
           repository: 'atsnek/photonq'
         },
-        zitadel: {
+        /**
+         * `zitadel` is `zitadelGql` in the v3 plugin, same shape.
+         *
+         * The rename is not cosmetic: jaen no longer talks to Zitadel's own
+         * management API from the browser, it talks to a zitadel-gql facade in
+         * front of it, and `graphqlUrl` is where that lives. It defaults to
+         * `${authority}/graphql`, which is what this relies on. If
+         * accounts.photonq.org is a plain Zitadel with no facade in front, sign
+         * in still works — that half is OIDC against `authority` — but the CMS
+         * user-management screens under /cms/accounts have nothing to query.
+         */
+        zitadelGql: {
           organizationId: '268207341512496739',
           clientId: '268418317486724723@photonq',
           authority: 'https://accounts.photonq.org',
