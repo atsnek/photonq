@@ -294,7 +294,9 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
             }}
           >
             <Avatar.Fallback name={values.title} />
-            <Avatar.Image src={values.avatarURL || undefined} />
+            {/* v2's `alt={name}`, taken from the sibling Fallback: v3's
+                Avatar.Image sets no alt of its own. */}
+            <Avatar.Image src={values.avatarURL || undefined} alt={values.title} />
           </Avatar.Root>
         </Skeleton>
 

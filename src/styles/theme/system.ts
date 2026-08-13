@@ -25,7 +25,9 @@ import themeFonts from './fonts';
 import {
   accordionSlotRecipe,
   alertSlotRecipe,
+  avatarSlotRecipe,
   breadcrumbSlotRecipe,
+  cardSlotRecipe,
   buttonRecipe,
   containerRecipe,
   headingRecipe,
@@ -162,6 +164,16 @@ export const siteConfig = defineConfig({
      * The animation would simply not run, silently.
      */
     keyframes: {
+      /**
+       * v2's Skeleton animation. The component carried its own emotion
+       * `keyframes` in v2 and v3 drives every animation from the theme, so the
+       * pair of stops moves here. It animates background-color, where v3's own
+       * `pulse` animates opacity.
+       */
+      'skeleton-fade': {
+        from: { background: 'var(--skeleton-start-color)' },
+        to: { background: 'var(--skeleton-end-color)' }
+      },
       'gradient-shift': {
         '0%': { backgroundPosition: '0% 50%' },
         '50%': { backgroundPosition: '100% 50%' },
@@ -238,7 +250,9 @@ export const siteConfig = defineConfig({
     slotRecipes: {
       accordion: accordionSlotRecipe,
       alert: alertSlotRecipe,
+      avatar: avatarSlotRecipe,
       breadcrumb: breadcrumbSlotRecipe,
+      card: cardSlotRecipe,
       list: listSlotRecipe,
       menu: menuSlotRecipe,
       tooltip: tooltipSlotRecipe

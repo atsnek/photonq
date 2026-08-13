@@ -365,8 +365,69 @@ export const linkRecipe = defineRecipe({
   }
 });
 
+/**
+ * v2's Skeleton, restored in the variant rather than the base.
+ *
+ * The base is where photonq's v2 styleConfig put `borderRadius: 'md'`, and in
+ * v3 that is the one place it cannot go: `cva()` applies the base first and
+ * v3's built-in `loading: true` variant then sets `borderRadius: 'l2'` on top,
+ * so the site's radius never reached a single skeleton. Everything below sits
+ * in the variant for that reason.
+ *
+ * The rest is v2's own look, which v3 replaced wholesale. v2's skeleton was a
+ * gray.100 block at 0.7 opacity fading its BACKGROUND-COLOR to gray.400 and
+ * back, 0.8s linear alternate (@chakra-ui/theme components/skeleton.js plus the
+ * component's own `fade` keyframes). v3 paints a flat `bg.emphasized` at full
+ * opacity and animates OPACITY between 1 and 0.5 over 1.2s. Different colour,
+ * different rhythm, one step darker in light mode.
+ *
+ * The two custom properties keep v2's spelling, so a call site that wants a
+ * different pair can still set `--skeleton-start-color` the way it could in v2.
+ */
 export const skeletonRecipe = defineRecipe({
-  base: { borderRadius: 'md' }
+  variants: {
+    loading: {
+      // Only the radius and the two variables live here. Anything that PAINTS
+      // has to go in the `variant` group below, because cva walks the merged
+      // recipe's variant keys in the default recipe's own order — `loading`
+      // first, `variant` second — so v3's `pulse` is applied after this block
+      // and would overwrite a background declared in it.
+      true: {
+        borderRadius: 'md',
+        '--skeleton-start-color': {
+          base: 'colors.gray.100',
+          _dark: 'colors.gray.800'
+        },
+        '--skeleton-end-color': {
+          base: 'colors.gray.400',
+          _dark: 'colors.gray.600'
+        }
+      }
+    },
+    variant: {
+      // Named `pulse` because that is v3's default variant and therefore what
+      // every unadorned <Skeleton> in the site selects. The animation itself is
+      // v2's: background-color, not opacity.
+      pulse: {
+        background: 'var(--skeleton-start-color)',
+        opacity: 0.7,
+        animation: 'skeleton-fade 0.8s linear infinite alternate',
+        /**
+         * Spelled out rather than left to the shorthand above, and this is the
+         * shorthand-before-longhand rule biting again.
+         *
+         * v3's own pulse variant carries `animationDuration: var(--duration,
+         * 1.2s)` as a LONGHAND. Merging happens per key, so that longhand
+         * survives beside this variant's `animation` shorthand, and v3 sorts
+         * the final declarations shorthand-first so a longhand can refine a
+         * shorthand. The 1.2s would therefore have been emitted after the
+         * shorthand's 0.8s and won. Setting it to `undefined` does not help:
+         * the default's key is still there to be sorted in.
+         */
+        animationDuration: '0.8s'
+      }
+    }
+  }
 });
 
 /**
@@ -606,6 +667,70 @@ export const accordionSlotRecipe = defineSlotRecipe({
         },
         itemBody: { paddingTop: 0, paddingRight: 0, paddingLeft: 4 },
         itemIndicator: { color: 'inherit', display: 'flex' }
+      }
+    }
+  }
+});
+
+/**
+ * v2's Avatar size scale, restored for the one size the site uses.
+ *
+ * v2 built every size with `getSize(n)`: `--avatar-size: sizes.n` and
+ * `--avatar-font-size: calc(sizes.n / 2.5)`. `md` was `getSize(12)`, so 3rem
+ * with a 1.2rem label. v3's `md` is `sizes.10` with `fontSizes.md`, so 2.5rem
+ * with a 1rem label, and v3's `xl` is not a substitute either: it gives the
+ * 3rem box back but labels it 1.125rem.
+ *
+ * All six Avatars in the site are `md`, three by name and three by default, and
+ * they are the same author avatar rendered in four places. Two of those places
+ * had already been patched at the call site with this exact pair of custom
+ * properties, which is what made the omission in the two experiment-page
+ * avatars visible: the same person's avatar was 48px on the user card and 40px
+ * on the experiment beside it. Declaring it once here is what stops that
+ * drifting again, and the call-site patches come back out.
+ *
+ * The other sizes are left at v3's. Nothing selects them, and inventing v2
+ * values for scales the site never rendered would be guessing.
+ */
+export const avatarSlotRecipe = defineSlotRecipe({
+  slots: ['root', 'image', 'fallback'],
+  variants: {
+    size: {
+      md: {
+        root: {
+          '--avatar-size': 'sizes.12',
+          '--avatar-font-size': 'calc(3rem / 2.5)'
+        }
+      }
+    }
+  }
+});
+
+/**
+ * v2's Card surface, restored in dark mode.
+ *
+ * v2's card container was `--card-bg: colors.chakra-body-bg`, which is
+ * `{white, _dark: gray.800}` — the same pair the body itself uses, so a card
+ * sat flush with the page and was told apart by its border alone. v3's outline
+ * variant uses `bg: bg.panel`, whose dark half is gray.950 (#111111), and pairs
+ * it with `borderColor: border`, whose dark half is gray.800 (#1A202C). In dark
+ * mode that turns the card into a near-black panel against a gray.800 page and
+ * draws its border in almost exactly the page's own colour, which is to say
+ * invisibly.
+ *
+ * Light mode was already right in both and is left alone. Five cards are
+ * affected: both post cards, the user card, the docs image card and the qasm
+ * playground.
+ */
+export const cardSlotRecipe = defineSlotRecipe({
+  slots: ['root', 'header', 'body', 'footer', 'title', 'description'],
+  variants: {
+    variant: {
+      outline: {
+        root: {
+          bg: { base: 'white', _dark: 'gray.800' },
+          borderColor: { base: 'gray.200', _dark: 'whiteAlpha.300' }
+        }
       }
     }
   }

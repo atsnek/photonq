@@ -288,7 +288,12 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
               </Button>
             )}
 
-            <ButtonGroup flexDir={['column', 'row']}>
+            {/* v2's ButtonGroup was a bare `display: inline-flex` div with no
+                align-items, so in the base breakpoint's column direction the
+                controls stretched to a common width. v3's ButtonGroup delegates
+                to Group, which passes `align="center"` ahead of the rest props
+                and leaves each control at its natural width. */}
+            <ButtonGroup flexDir={['column', 'row']} align="stretch">
               <Button
                 variant="outline"
                 disabled={!hasChanges}
@@ -461,39 +466,57 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
               }}
             >
               <Avatar.Fallback name={values.title} />
-              <Avatar.Image src={values.avatarURL || undefined} />
+              {/* v2's AvatarImage emitted `alt={name}` from the Avatar's own
+                  name. v3 forwards to ark's Avatar.Image, which sets no alt, so
+                  the name is repeated here from the sibling Fallback. */}
+              <Avatar.Image
+                src={values.avatarURL || undefined}
+                alt={values.title}
+              />
             </Avatar.Root>
           </Skeleton>
 
-          <SkeletonText loading={!isSafe}>
-            <TextControl
-              key={values.title}
-              text={values.title}
-              onSubmit={title => {
-                setValues({
-                  ...values,
-                  title
-                });
-              }}
-              type="heading"
-              editable={post.isOwner}
-            />
+          {/* Same two SkeletonText deltas as the editor block below: v3 spreads
+              the children into every placeholder line, and hard-codes each
+              line's `height` to "4" where v2's skeletonHeight defaulted to
+              0.5rem. Withholding the child and restoring the height while
+              loading leaves the loaded DOM untouched. */}
+          <SkeletonText
+            loading={!isSafe}
+            height={isSafe ? undefined : '0.5rem'}
+          >
+            {isSafe ? (
+              <TextControl
+                key={values.title}
+                text={values.title}
+                onSubmit={title => {
+                  setValues({
+                    ...values,
+                    title
+                  });
+                }}
+                type="heading"
+                editable={post.isOwner}
+              />
+            ) : null}
           </SkeletonText>
         </HStack>
 
-        <SkeletonText loading={!isSafe}>
-          <TextControl
-            key={values.summary}
-            text={values.summary || undefined}
-            onSubmit={summary => {
-              setValues({
-                ...values,
-                summary
-              });
-            }}
-            type="text"
-            editable={post.isOwner}
-          />
+        <SkeletonText loading={!isSafe} height={isSafe ? undefined : '0.5rem'}>
+          {isSafe ? (
+            <TextControl
+              key={values.summary}
+              text={values.summary || undefined}
+              onSubmit={summary => {
+                setValues({
+                  ...values,
+                  summary
+                });
+              }}
+              type="text"
+              editable={post.isOwner}
+            />
+          ) : null}
         </SkeletonText>
       </Stack>
       {/* v2's `as={Flex}` let LinkBox take Flex's shorthands. Under asChild
@@ -503,26 +526,42 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
           <SkeletonCircle boxSize="unset" loading={!isSafe}>
             <Avatar.Root size="md">
               <Avatar.Fallback name={post.user().profile.displayName} />
-              <Avatar.Image src={post.user().profile.avatarUrl || ''} />
+              {/* v2's `alt={name}`, again from the sibling Fallback. */}
+              <Avatar.Image
+                src={post.user().profile.avatarUrl || ''}
+                alt={post.user().profile.displayName}
+              />
             </Avatar.Root>
           </SkeletonCircle>
           <Box ml={2}>
-            <SkeletonText loading={!isSafe}>
-              <Text>{post.user().profile.displayName}</Text>
+            {/* The children here are the costly case of v3 spreading them into
+                every placeholder line: three copies of the LinkOverlay, so
+                three stacked `_before` boxes over the LinkBox and three gatsby
+                route prefetches for /users/<id>. v2 gave the children to line 0
+                only. `height` restores v2's 0.5rem per line over v3's "4". */}
+            <SkeletonText
+              loading={!isSafe}
+              height={isSafe ? undefined : '0.5rem'}
+            >
+              {isSafe ? (
+                <>
+                  <Text>{post.user().profile.displayName}</Text>
 
-              <Text fontSize="sm" color="gray.600">
-                <LinkOverlay asChild>
-                  <Link to={`/users/${post.user().id}`}>
-                    @{post.user().profile.userName}
-                  </Link>
-                </LinkOverlay>
-                &bull;
-                {post.createdAt !== post.updatedAt ? (
-                  <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
-                ) : (
-                  <> Created: {new Date(post.createdAt).toLocaleString()}</>
-                )}
-              </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    <LinkOverlay asChild>
+                      <Link to={`/users/${post.user().id}`}>
+                        @{post.user().profile.userName}
+                      </Link>
+                    </LinkOverlay>
+                    &bull;
+                    {post.createdAt !== post.updatedAt ? (
+                      <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
+                    ) : (
+                      <> Created: {new Date(post.createdAt).toLocaleString()}</>
+                    )}
+                  </Text>
+                </>
+              ) : null}
             </SkeletonText>
           </Box>
         </Flex>

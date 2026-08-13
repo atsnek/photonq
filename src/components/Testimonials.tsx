@@ -100,7 +100,11 @@ export const TestimonialAvatar: React.FC<TestimonialAvatarProps> = ({
       <Flex align={'center'} mt={8} direction={'column'}>
         <Avatar.Root mb={2}>
           <Avatar.Fallback />
-          <Avatar.Image src={src} />
+          {/* v2's AvatarImage emitted `alt={name}` off the Avatar's own `name`.
+              v3 forwards to ark's Avatar.Image, which sets none, so the portrait
+              would otherwise reach a screen reader unlabelled. The Fallback here
+              carries no name, so the alt comes from the testimonial's. */}
+          <Avatar.Image src={src} alt={name} />
         </Avatar.Root>
         <Stack gap={-1} align={'center'}>
           <Text fontWeight={600}>{name}</Text>

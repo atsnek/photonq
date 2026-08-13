@@ -60,14 +60,14 @@ const UserCard: React.FC<UserCardProps> = props => {
                 root and the fallback slot read, so restating the pair restores
                 v2's avatar without pinning width and height behind the slot
                 that uses them. */}
-            <Avatar.Root
-              css={{
-                '--avatar-size': '3rem',
-                '--avatar-font-size': '1.2rem'
-              }}
-            >
+            <Avatar.Root>
               <Avatar.Fallback name={props.displayName} />
-              <Avatar.Image src={props.avatarUrl || undefined} />
+              {/* v2's `alt={name}`, taken from the sibling Fallback: v3's
+                  Avatar.Image sets no alt of its own. */}
+              <Avatar.Image
+                src={props.avatarUrl || undefined}
+                alt={props.displayName}
+              />
             </Avatar.Root>
 
             <Stack>

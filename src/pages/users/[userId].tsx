@@ -364,6 +364,23 @@ const ActivityList: React.FC<{
   );
 };
 
+/**
+ * v2's `line` tab, restated. See the block comment on <Tabs.List> for why.
+ *
+ * `--indicator-color` rather than a border: v3 paints the underline through a
+ * `layerStyle: indicator.bottom` that reads that variable, so setting the
+ * variable is what reaches it. brand.600 is the colour v2's `currentColor`
+ * border resolved to, because v2 set the label and the border together.
+ */
+const tabTriggerProps = {
+  color: 'inherit',
+  _selected: {
+    color: 'brand.600',
+    '--indicator-color': 'colors.brand.600',
+    _dark: { color: 'brand.300', '--indicator-color': 'colors.brand.300' }
+  }
+} as const;
+
 const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
   useEffect(() => {
     // add sq to window
@@ -483,7 +500,14 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 </Heading>
               </SkeletonText>
 
-              <SkeletonText loading={!isSafe} noOfLines={1}>
+              {/* v2 passed no `skeletonHeight` here, so it took the 0.5rem
+                  default; v3 hard-codes 16px per line while loading. The
+                  sibling above spells out 24px because v2 did. */}
+              <SkeletonText
+                loading={!isSafe}
+                noOfLines={1}
+                height={isSafe ? undefined : '0.5rem'}
+              >
                 <Text>@{user.profile.userName}</Text>
               </SkeletonText>
 
@@ -701,17 +725,30 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
           {/* The icons drop v2's `mr="2"`: v3's trigger is a flex box with
               `gap: 2` of its own, which v2's Tab did not have, so keeping the
               margin would have put a full 1rem between glyph and label. The
-              gap is the same 0.5rem the margin was. */}
-          <Tabs.List>
-            <Tabs.Trigger value="0" fontSize="sm">
+              gap is the same 0.5rem the margin was.
+
+              The two props here and `tabTriggerProps` are v2's `line` variant,
+              which v3's `line` is not. v2 drew a 2px rule under the whole list
+              in `inherit`, gave every tab a 2px transparent bottom border pulled
+              up by -2px, left unselected labels at the body colour, and on
+              selection set the label to `${c}.600` with the border at
+              `currentColor` — so the underline WAS the label's colour. v3 draws
+              a 1px rule in `border` grey, dims unselected labels to `fg.muted`,
+              blackens the selected one to `fg`, and moves the underline into a
+              separate indicator layer coloured `colorPalette.solid` (brand.500).
+              Left alone the bar reads grey on grey with a near-black active tab
+              instead of photonq's blue. This is the site's only Tabs, so the
+              values are restored here rather than in a recipe. */}
+          <Tabs.List borderBottomWidth="2px" borderColor="inherit">
+            <Tabs.Trigger value="0" fontSize="sm" {...tabTriggerProps}>
               <Icon as={TbUser} />
               Overview
             </Tabs.Trigger>
-            <Tabs.Trigger value="1" fontSize="sm">
+            <Tabs.Trigger value="1" fontSize="sm" {...tabTriggerProps}>
               <Icon as={FaFlask} />
               Experiments ({formatNumber(user.posts().totalCount)})
             </Tabs.Trigger>
-            <Tabs.Trigger value="2" fontSize="sm">
+            <Tabs.Trigger value="2" fontSize="sm" {...tabTriggerProps}>
               <Icon as={TbStar} />
               Stars ({formatNumber(user.starredPosts().totalCount)})
             </Tabs.Trigger>

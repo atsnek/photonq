@@ -92,27 +92,24 @@ const PostCard: FC<PostCardProps> = ({
             <HStack justifyContent="space-between">
               <HStack w="full" gap="3">
                 {/* v2's Avatar handed its `borderRadius` prop to the container
-                    AND to the <img> (avatar.js passes it down to AvatarImage),
-                    and sized the initials from the avatar's own size with
-                    `--avatar-font-size: calc(size / 2.5)` — 1.2rem here.
-
+                    AND to the <img> (avatar.js passes it down to AvatarImage).
                     In v3 the root, the image and the fallback all read
                     `var(--avatar-radius)`, which only the `shape` variant sets,
                     so the codemod's `borderRadius` prop rounded the box and
                     left the image a circle inside it. `rounded` is `radii.l3`,
-                    i.e. radii.md, which is what v2 asked for. The font size now
-                    comes from the `size` variant (1rem for md), so v2's value
-                    is restated as the custom property the fallback reads — the
-                    same pair UserCard restates. Both are visible whenever a
-                    post has no avatarURL, which is the common case. */}
-                <Avatar.Root
-                  boxSize="3rem"
-                  shape="rounded"
-                  objectFit="cover"
-                  css={{ '--avatar-font-size': '1.2rem' }}
-                >
+                    i.e. radii.md, which is what v2 asked for.
+
+                    The 3rem box and its 1.2rem initials are v2's `getSize(12)`
+                    pair and live in `avatarSlotRecipe` (size md) in
+                    src/styles/theme/recipes.ts, so nothing is restated here.
+
+                    `alt` is spelled out because v2's AvatarImage emitted
+                    `alt={name}` from the avatar's own `name` and v3's does not:
+                    Ark's Avatar.Image forwards only what the call site gives
+                    it, so the image would otherwise be unlabelled. */}
+                <Avatar.Root boxSize="3rem" shape="rounded" objectFit="cover">
                   <Avatar.Fallback name={post.title} />
-                  <Avatar.Image src={post.avatarURL} />
+                  <Avatar.Image src={post.avatarURL} alt={post.title} />
                 </Avatar.Root>
 
                 <Stack>
@@ -123,15 +120,37 @@ const PostCard: FC<PostCardProps> = ({
                     // ready. `noOfLines` survives on SkeletonText and means the
                     // number of skeleton lines; the codemod's `lineClamp` is a
                     // different prop and would have been dropped on the floor.
-                    <SkeletonText loading={!isLoaded} noOfLines={1} minW="50px">
-                      <Link
-                        lineClamp={1}
-                        variant="hover-theme"
-                        fontSize="sm"
-                        href={`/users/${post.user().id}`}
-                      >
-                        @{post.user().profile.userName}
-                      </Link>
+                    //
+                    // `height` and the `isLoaded` guard around the children are
+                    // the two halves of v3's SkeletonText rewrite, and all
+                    // three blocks in this file need both.
+                    //
+                    // v3 renders `Array.from({length: loading ? noOfLines : 1})`
+                    // and spreads `...rest`, children included, into EVERY
+                    // line, where v2 handed them to line 0 alone. It also
+                    // hard-codes `height: "4"` (16px) per line while loading;
+                    // v2's SkeletonText defaulted `skeletonHeight="0.5rem"`.
+                    // `...rest` comes after both, so a prop from here wins,
+                    // and rendering nothing while loading keeps the extra lines
+                    // from mounting the children again. The wrapper and the
+                    // loaded children are untouched, so the loaded card is
+                    // byte-for-byte what it was.
+                    <SkeletonText
+                      loading={!isLoaded}
+                      noOfLines={1}
+                      minW="50px"
+                      height={!isLoaded ? '0.5rem' : undefined}
+                    >
+                      {isLoaded ? (
+                        <Link
+                          lineClamp={1}
+                          variant="hover-theme"
+                          fontSize="sm"
+                          href={`/users/${post.user().id}`}
+                        >
+                          @{post.user().profile.userName}
+                        </Link>
+                      ) : null}
                     </SkeletonText>
                   )}
                   <Heading
@@ -196,60 +215,80 @@ const PostCard: FC<PostCardProps> = ({
               )}
             </HStack>
 
-            <SkeletonText loading={!isLoaded}>
-              <Text
-                mt="2"
-                flexGrow={1}
-                lineClamp={2}
-                opacity={0.75}
-                className="sd-pp-summary"
-                transition="opacity 0.2s ease-in-out"
-              >
-                {post.summary}
-              </Text>
+            {/* The block that pays for v3's `height: "4"` most visibly: it
+                names no `noOfLines`, so it takes the default of 3 and the
+                placeholder is 3x16px plus two 8px Stack gaps, i.e. 64px, where
+                v2 drew 3x0.5rem plus the same gaps, i.e. 40px. It is also where
+                `...rest` mounted the summary three times over. */}
+            <SkeletonText
+              loading={!isLoaded}
+              height={!isLoaded ? '0.5rem' : undefined}
+            >
+              {isLoaded ? (
+                <Text
+                  mt="2"
+                  flexGrow={1}
+                  lineClamp={2}
+                  opacity={0.75}
+                  className="sd-pp-summary"
+                  transition="opacity 0.2s ease-in-out"
+                >
+                  {post.summary}
+                </Text>
+              ) : null}
             </SkeletonText>
 
-            <SkeletonText loading={!isLoaded} noOfLines={1}>
-              <HStack mt="4" justifyContent="space-between">
-                <Wrap>
-                  {/* Unitless numbers are no longer coerced to px in v3, so a
-                      bare 12 emits `font-size: 12` and the browser drops it. */}
-                  <Text fontSize="12px" color="gray.600">
-                    <NoSSR>
-                      {new Date(post.createdAt).toLocaleDateString()}
-                    </NoSSR>
-                  </Text>
+            {/* Same pattern once more. The children here are the badge row and
+                PostCardRating, whose star is a real <Button> with an onClick,
+                so leaving them mounted behind the placeholder puts interactive
+                controls under a `pointer-events: none` skeleton. */}
+            <SkeletonText
+              loading={!isLoaded}
+              noOfLines={1}
+              height={!isLoaded ? '0.5rem' : undefined}
+            >
+              {isLoaded ? (
+                <HStack mt="4" justifyContent="space-between">
+                  <Wrap>
+                    {/* Unitless numbers are no longer coerced to px in v3, so a
+                        bare 12 emits `font-size: 12` and the browser drops it. */}
+                    <Text fontSize="12px" color="gray.600">
+                      <NoSSR>
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </NoSSR>
+                    </Text>
 
-                  <Badge colorPalette="gray" borderRadius="md">
-                    {post.language}
-                  </Badge>
+                    <Badge colorPalette="gray" borderRadius="md">
+                      {post.language}
+                    </Badge>
 
-                  <Badge
-                    display={post.isOwner ? 'block' : 'none'}
-                    size="sm"
-                    borderRadius="md"
-                    colorPalette={
-                      post.privacy === Privacy.PUBLIC ? 'yellow' : 'green'
-                    }
-                  >
-                    {post.privacy === Privacy.PUBLIC && 'Public'}
-                    {post.privacy === Privacy.PRIVATE && 'Private'}
-                  </Badge>
-                </Wrap>
+                    <Badge
+                      display={post.isOwner ? 'block' : 'none'}
+                      size="sm"
+                      borderRadius="md"
+                      colorPalette={
+                        post.privacy === Privacy.PUBLIC ? 'yellow' : 'green'
+                      }
+                    >
+                      {post.privacy === Privacy.PUBLIC && 'Public'}
+                      {post.privacy === Privacy.PRIVATE && 'Private'}
+                    </Badge>
+                  </Wrap>
 
-                <PostCardRating
-                  id={post.id}
-                  likes={post.stars().totalCount || 0}
-                  hasRated={!!post.hasStarred}
-                  toggleRating={async (id: string) => {
-                    if (post.hasStarred === false) {
-                      await sq.mutate(m => m.postStar({ postId: id }));
-                    } else if (post.hasStarred === true) {
-                      await sq.mutate(m => m.postUnstar({ postId: id }));
-                    }
-                  }}
-                />
-              </HStack>
+                  <PostCardRating
+                    id={post.id}
+                    likes={post.stars().totalCount || 0}
+                    hasRated={!!post.hasStarred}
+                    toggleRating={async (id: string) => {
+                      if (post.hasStarred === false) {
+                        await sq.mutate(m => m.postStar({ postId: id }));
+                      } else if (post.hasStarred === true) {
+                        await sq.mutate(m => m.postUnstar({ postId: id }));
+                      }
+                    }}
+                  />
+                </HStack>
+              ) : null}
             </SkeletonText>
           </Stack>
         </Card.Body>
