@@ -8,10 +8,10 @@ import {
   Stack,
   Container,
   Avatar,
-  useColorModeValue,
   LinkBox,
   LinkOverlay
 } from '@chakra-ui/react';
+import { useColorModeValue } from 'jaen';
 import { Link } from 'gatsby-plugin-jaen';
 
 interface Props {

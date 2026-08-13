@@ -1,4 +1,4 @@
-import { MdastRoot } from 'jaen-fields-mdx/dist/MdxField/components/types';
+import { MdastRoot } from 'jaen-fields-mdx';
 import { createContext, useContext, useState } from 'react';
 
 export type TOCContext = {

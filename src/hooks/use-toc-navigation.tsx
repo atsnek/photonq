@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useField } from 'jaen';
 import GithubSlugger from 'github-slugger';
-import { MdastRoot } from 'jaen-fields-mdx/dist/MdxField/components/types';
+import { MdastRoot } from 'jaen-fields-mdx';
 
 export type TableOfContentItem = {
   id: string;

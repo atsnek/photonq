@@ -1,19 +1,16 @@
-import { useAuth } from 'jaen';
+import { DarkMode, LightMode, useAuth, useColorMode } from 'jaen';
 import {
   Box,
   BoxProps,
   Button,
   ButtonProps,
   Center,
-  DarkMode,
   Flex,
   HStack,
   ImageProps,
-  LightMode,
   LinkProps,
   Spacer,
   VStack,
-  useColorMode,
   useDisclosure
 } from '@chakra-ui/react';
 import { useLocation } from '@reach/router';

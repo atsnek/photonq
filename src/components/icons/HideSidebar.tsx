@@ -1,4 +1,4 @@
-import { Icon, IconProps } from '@chakra-ui/icons';
+import { Icon, IconProps } from '@chakra-ui/react';
 import React, { FC } from 'react';
 
 /**

@@ -18,7 +18,7 @@ import {
   usePageContext
 } from 'jaen';
 import { MdxField, MdxFieldProps } from 'jaen-fields-mdx';
-import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
+import { EditIcon, SettingsIcon } from '../../components/icons/chakra';
 import { Link } from 'gatsby-plugin-jaen';
 
 import Heading from '../main-content/heading/components/Heading';

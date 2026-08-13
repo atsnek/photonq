@@ -1,4 +1,5 @@
-import { Flex, FlexProps, IconButton, useColorMode } from '@chakra-ui/react';
+import { Flex, FlexProps, IconButton } from '@chakra-ui/react';
+import { useColorMode } from 'jaen';
 import { Dispatch, FC, SetStateAction } from 'react';
 import ThemeChooser from '../ThemeChooser';
 import HideSidebarIcon from '../icons/HideSidebar';

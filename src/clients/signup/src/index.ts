@@ -9,10 +9,10 @@ export const sq = makeSnekQuery(
     apiURL: 'https://pylons.photonq.org/signup/graphql',
     middlewares: [
       ({ context }) => {
-        context.headers['x-org-id'] = __JAEN_ZITADEL__.organizationId;
+        context.headers['x-org-id'] = __JAEN_ZITADEL_GQL__.organizationId;
 
         const oidcStorage = sessionStorage.getItem(
-          `oidc.user:${__JAEN_ZITADEL__.authority}:${__JAEN_ZITADEL__.clientId}`
+          `oidc.user:${__JAEN_ZITADEL_GQL__.authority}:${__JAEN_ZITADEL_GQL__.clientId}`
         );
 
         if (oidcStorage) {
