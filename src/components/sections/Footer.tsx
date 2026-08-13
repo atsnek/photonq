@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   Flex,
   Grid,
   Heading,
@@ -11,7 +10,8 @@ import {
   Link,
   Stack,
   Text,
-  VStack
+  VStack,
+  Separator
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import { Link as GatsbyLink } from 'gatsby-plugin-jaen';
@@ -21,15 +21,26 @@ const FooterLink: FC<{ href: string; children: React.ReactNode }> = ({
   href,
   children
 }) => (
-  <Link
-    as={GatsbyLink}
-    to={href}
-    variant="hover-theme"
-    opacity={0.7}
-    _hover={{ opacity: 1 }}
-    isExternal={href.startsWith('http')}
-  >
-    {children}
+  /**
+   * v2's `as={GatsbyLink}` typed the anchor's `to` through the Link. v3's `as`
+   * no longer carries the target component's props, so the router link is a
+   * real child again and `asChild` hands it the Link's box — the same shape the
+   * register button further down this file uses.
+   *
+   * `isExternal` is gone with it. It was never more than these two attributes
+   * (@chakra-ui/react v2 link.tsx: `target: isExternal ? '_blank' : undefined`,
+   * `rel: isExternal ? 'noopener' : undefined`), and `noreferrer` is added
+   * because a footer link to another origin has no reason to leak this one.
+   */
+  <Link variant="hover-theme" opacity={0.7} _hover={{ opacity: 1 }} asChild>
+    <GatsbyLink
+      to={href}
+      {...(href.startsWith('http')
+        ? { target: '_blank', rel: 'noopener noreferrer' }
+        : {})}
+    >
+      {children}
+    </GatsbyLink>
   </Link>
 );
 
@@ -37,7 +48,7 @@ const FooterLinkGroup: FC<{
   title: string;
   links: Array<{ label: string; href: string }>;
 }> = ({ title, links }) => (
-  <VStack spacing={3} alignItems="start">
+  <VStack gap={3} alignItems="start">
     <Heading as="h3" size="sm" fontWeight="500">
       {title}
     </Heading>
@@ -122,7 +133,7 @@ const Footer: FC<{
         filter="blur(140px)"
       />
       <Container maxW="7xl">
-        <Stack spacing={10}>
+        <Stack gap={10}>
           <Flex
             direction={{ base: 'column', md: 'row' }}
             align="center"
@@ -130,7 +141,7 @@ const Footer: FC<{
           >
             <VStack
               align={{ base: 'center', md: 'start' }}
-              spacing={4}
+              gap={4}
               mb={{ base: 6, md: 0 }}
             >
               <Field.Text
@@ -158,17 +169,22 @@ const Footer: FC<{
                 opacity={0.8}
               />
             </VStack>
+            {/* v2's `as={GatsbyLink}` typed the link's `to` through the
+                button. v3's `as` no longer carries the target component's
+                props, so the link is a real child again and asChild is what
+                hands it the button's box. */}
             <Button
-              as={GatsbyLink}
               variant="pq-outline"
-              colorScheme="blue"
+              colorPalette="blue"
               borderRadius="xl"
               bgColor="rgba(2, 116, 192, 0.07)"
               px={5}
               mt={{ base: 4, md: 0 }}
-              to={isAuthenticated ? '/new/experiment' : '/signup'}
+              asChild
             >
-              {isAuthenticated ? 'New experiment' : 'Register Now'}
+              <GatsbyLink to={isAuthenticated ? '/new/experiment' : '/signup'}>
+                {isAuthenticated ? 'New experiment' : 'Register Now'}
+              </GatsbyLink>
             </Button>
           </Flex>
 
@@ -195,7 +211,7 @@ const Footer: FC<{
             ))}
           </Grid>
 
-          <Divider opacity={0.1} />
+          <Separator opacity={0.1} />
 
           <Field.Text
             name="FooterBottomText"

@@ -9,13 +9,20 @@ import useSocialSearch from './use-social-search';
 import TbBooks from '../../components/icons/tabler/TbBooks';
 import TbUsers from '../../components/icons/tabler/TbUsers';
 
+/**
+ * @param query The current search query.
+ * @param enabled Whether the search index may be loaded. Left off until the
+ *   user actually opens search, which keeps /search-index.json off the
+ *   critical path of every page load.
+ */
 const useSearch = (
-  query?: string
+  query?: string,
+  enabled = true
 ): {
   searchResult: TSearchResults;
   isLoading: boolean;
 } => {
-  const docsSearch = useDocsSearch(query || '');
+  const docsSearch = useDocsSearch(query || '', enabled);
   const socialSearch = useSocialSearch(query);
 
   const searchResult = useMemo(() => {

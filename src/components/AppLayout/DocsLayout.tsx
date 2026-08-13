@@ -147,12 +147,12 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
                       <Links
                         links={links}
                         props={{
-                          // Kept as a string because the site's link recipe is
-                          // where this belongs, not the call site. The recipe
-                          // in styles/theme/recipes.ts dropped the variant on
-                          // the premise that nothing used it, so until it comes
-                          // back these links render without its 0.7 opacity
-                          // fade. The cast is only about the missing typegen.
+                          // This file and pages/docs are the only two
+                          // consumers of `right-bottom-nav`, and both select it
+                          // from inside this object rather than as a `variant=`
+                          // attribute — which is exactly how it nearly got
+                          // pruned out of the link recipe. It is back in
+                          // styles/theme/recipes.ts and typed by typegen.
                           variant: 'right-bottom-nav' as LinkProps['variant'],
                           w: '100%',
                           display: 'block'

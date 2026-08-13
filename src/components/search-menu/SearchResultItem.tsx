@@ -9,7 +9,7 @@ import {
   Stack
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
-import { TSearchResult } from '../../../shared/types/search';
+import { TSearchResult } from '../../utils/search/types';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'gatsby-plugin-jaen';
 
@@ -33,7 +33,11 @@ export const SearchResultItem: FC<{
   icon,
   isDocs
 }) => {
-  let props: MenuItemProps = {};
+  // Nothing spreads `props` onto the markup below, so the defaultFocus
+  // background never reached the DOM in v2 either. Left dead rather than
+  // wired up, because wiring it up would change how the list looks. The
+  // Omit is what keeps the empty literal legal: v3 made `value` required.
+  let props: Omit<MenuItemProps, 'value'> = {};
 
   if (defaultFocus) {
     props = {
@@ -53,8 +57,6 @@ export const SearchResultItem: FC<{
 
   return (
     <LinkBox
-      as={Flex}
-      key={id}
       id={`sd-search-ri-${id}`}
       _hover={{
         bgColor: 'features.search.section.item._hover.bgColor',
@@ -74,67 +76,76 @@ export const SearchResultItem: FC<{
         bgColor: 'features.search.section.item._hover.bgColor',
         color: 'features.search.section.item._hover.color'
       })}
+      asChild
     >
-      <Box
-        display="flex"
-        alignItems="center"
-        __css={{
-          '& svg': {
-            stroke: 'features.search.section.item.icon.color',
-            verticalAlign: 'middle'
-          }
-        }}
-        w={isDocs ? 'calc(95% - 20px)' : 'calc(95%)'}
-      >
-        {icon}
-        <LinkOverlay
-          as={Link}
-          to={item.to}
-          ml={2}
-          _focus={{
-            outline: 'none'
+      <Flex key={id}>
+        <Box
+          display="flex"
+          alignItems="center"
+          css={{
+            // One ampersand: emotion expands each `&` to this element's own
+            // class, so `& & svg` was `.css-x .css-x svg` and never matched.
+            '& svg': {
+              stroke: 'features.search.section.item.icon.color',
+              verticalAlign: 'middle'
+            }
           }}
-          textOverflow="ellipsis"
-          overflow="hidden"
-          whiteSpace="nowrap"
+          w={isDocs ? 'calc(95% - 20px)' : 'calc(95%)'}
         >
-          {isDocs ? (
-            <Stack spacing="0.5">
-              <Text
-                fontSize="sm"
-                color="features.search.section.item.title.color"
-                fontWeight="bold"
-              >
-                <Highlighter
-                  searchWords={queryTokens}
-                  autoEscape
-                  textToHighlight={item.title}
-                  highlightTag={highlightTag}
-                />
-              </Text>
-              {item.description && (
-                <Text
-                  fontSize="sm"
-                  color="features.search.section.item.description.color"
-                >
-                  <Highlighter
-                    searchWords={queryTokens}
-                    autoEscape
-                    textToHighlight={item.description}
-                    highlightTag={highlightTag}
-                  />
-                </Text>
+          {icon}
+          <LinkOverlay
+            ml={2}
+            _focus={{
+              outline: 'none'
+            }}
+            textOverflow="ellipsis"
+            overflow="hidden"
+            whiteSpace="nowrap"
+            asChild
+          >
+            <Link to={item.to}>
+              {isDocs ? (
+                <Stack gap="0.5">
+                  <Text
+                    fontSize="sm"
+                    color="features.search.section.item.title.color"
+                    fontWeight="bold"
+                  >
+                    <Highlighter
+                      searchWords={queryTokens}
+                      autoEscape
+                      textToHighlight={item.title}
+                      highlightTag={highlightTag}
+                    />
+                  </Text>
+                  {item.description && (
+                    <Text
+                      fontSize="sm"
+                      color="features.search.section.item.description.color"
+                    >
+                      <Highlighter
+                        searchWords={queryTokens}
+                        autoEscape
+                        textToHighlight={item.description}
+                        highlightTag={highlightTag}
+                      />
+                    </Text>
+                  )}
+                </Stack>
+              ) : (
+                item.title || item.description
               )}
-            </Stack>
-          ) : (
-            item.title || item.description
-          )}
-        </LinkOverlay>
-      </Box>
-      <Spacer />
-      <Text whiteSpace="nowrap" color="features.search.section.item.goto.color">
-        Go to
-      </Text>
+            </Link>
+          </LinkOverlay>
+        </Box>
+        <Spacer />
+        <Text
+          whiteSpace="nowrap"
+          color="features.search.section.item.goto.color"
+        >
+          Go to
+        </Text>
+      </Flex>
     </LinkBox>
   );
 };

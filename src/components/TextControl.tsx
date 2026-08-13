@@ -11,9 +11,9 @@ import {
   Input,
   Text,
   Textarea,
-  useEditableControls
+  useEditableContext
 } from '@chakra-ui/react';
-import { CheckIcon, CloseIcon, EditIcon } from '@chakra-ui/icons';
+import { CheckIcon, CloseIcon, EditIcon } from './icons/chakra';
 
 export const TextControl: React.FC<{
   text?: string;
@@ -24,51 +24,58 @@ export const TextControl: React.FC<{
   /* Here's a custom control */
   function EditableControls() {
     const {
-      isEditing,
-      getSubmitButtonProps,
-      getCancelButtonProps,
-      getEditButtonProps
-    } = useEditableControls();
+      editing,
+      getSubmitTriggerProps,
+      getCancelTriggerProps,
+      getEditTriggerProps
+    } = useEditableContext();
 
-    return isEditing ? (
+    return editing ? (
       <ButtonGroup justifyContent="center" size="sm">
         <IconButton
-          icon={<CheckIcon />}
-          {...getSubmitButtonProps()}
+          {...getSubmitTriggerProps()}
+          // This button confirms the edit; it was mislabelled "Edit".
           aria-label="Edit"
-        />
+        >
+          <CheckIcon />
+        </IconButton>
         <IconButton
           variant="outline"
-          icon={<CloseIcon />}
-          {...getCancelButtonProps()}
+          {...getCancelTriggerProps()}
           aria-label="Close"
-        />
+        >
+          <CloseIcon />
+        </IconButton>
       </ButtonGroup>
     ) : (
       <Flex justifyContent="center">
         <IconButton
           variant="ghost"
           size="sm"
-          icon={<EditIcon />}
-          {...getEditButtonProps()}
+          {...getEditTriggerProps()}
           aria-label="Edit"
-        />
+        >
+          <EditIcon />
+        </IconButton>
       </Flex>
     );
   }
 
   return (
-    <Editable
+    <Editable.Root
       key={props.text}
       as={HStack}
       textAlign={'left'}
-      isPreviewFocusable={props.editable ? true : false}
+      // v2's isPreviewFocusable. With editing off the preview took no focus
+      // and could not open the editor, which is what 'none' is: zag drops the
+      // preview's tabIndex for every mode but 'focus'.
+      activationMode={props.editable ? 'focus' : 'none'}
       defaultValue={props.text}
-      onSubmit={props.onSubmit}
+      onValueCommit={details => props.onSubmit(details.value)}
       fontSize={props.type === 'heading' ? '2xl' : 'xl'}
       fontWeight={props.type === 'heading' ? 'bold' : '400'}
     >
-      <EditablePreview as={props.type === 'heading' ? Heading : Text} />
+      <Editable.Preview as={props.type === 'heading' ? Heading : Text} />
       {/* Here is the custom input */}
       {props.type === 'heading' ? (
         <Input as={EditableInput} fontSize="2xl" fontWeight="bold" />
@@ -81,6 +88,6 @@ export const TextControl: React.FC<{
         />
       )}
       {props.editable && <EditableControls />}
-    </Editable>
+    </Editable.Root>
   );
 };

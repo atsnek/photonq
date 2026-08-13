@@ -14,10 +14,17 @@
  * Checkbox recipe (`rounded`), the Switch recipe (`privacy`, `brand` — no
  * `<Switch>` exists in the site at all), Input's, Textarea's and InputGroup's
  * `ghost` (all seven `variant="ghost"` uses are Buttons or IconButtons, where
- * ghost is a v3 built-in), Menu's `search-result`, Link's `hover-opacity`,
- * `right-bottom-nav` and `pq-footer`, and six of the twelve Button variants:
- * invisible, ghost-hover-opacity, outline-hover-filled, pq-ghost, filledGreen,
+ * ghost is a v3 built-in), Menu's `search-result`, Link's `hover-opacity` and
+ * `pq-footer`, and six of the twelve Button variants: invisible,
+ * ghost-hover-opacity, outline-hover-filled, pq-ghost, filledGreen,
  * filledYellow and filledRed.
+ *
+ * Counting the attribute alone is not enough, and this cost one variant on the
+ * first pass: DocsLayout and pages/docs select Link's `right-bottom-nav` from
+ * inside a props OBJECT, never as a `variant=` attribute. A variant a recipe
+ * does not know is ignored without an error, so the miss would have shown up as
+ * two docs links quietly losing their layout. Every string was re-counted
+ * against object literals as well.
  *
  * Token paths are untouched. v3 resolves tokens by path, so every
  * `components.button.ghost.hover.bgColor` string here means what it did in v2.
@@ -332,6 +339,27 @@ export const linkRecipe = defineRecipe({
       'hover-theme': {
         _hover: { color: 'components.link._hover.color' },
         transition: 'color 0.1s ease-in-out'
+      },
+      /**
+       * The docs prev/next pair at the foot of every documentation page.
+       *
+       * This one is not selected with a `variant=` attribute, which is why a
+       * grep for the attribute misses it: DocsLayout and pages/docs both build
+       * their link props as an object and set `variant: 'right-bottom-nav'`
+       * inside it. Dropping it would have left both call sites resolving to
+       * nothing — a v3 recipe silently ignores a variant it does not know, so
+       * the two links would simply have gone back to inline flow at full
+       * opacity with no error anywhere.
+       *
+       * `display: block` beats the base's `inline` because a variant is applied
+       * after the base.
+       */
+      'right-bottom-nav': {
+        display: 'block',
+        width: '100%',
+        opacity: 0.7,
+        _hover: { opacity: 1 },
+        transition: 'opacity 0.1s ease-in-out'
       }
     }
   }

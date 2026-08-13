@@ -1,7 +1,7 @@
 import { withRedux } from 'jaen';
 import { Button, IconButton, Kbd } from '@chakra-ui/react';
 import { FC } from 'react';
-import { SearchIcon } from '@chakra-ui/icons';
+import { SearchIcon } from '../icons/chakra';
 
 interface ISearchButtonProps {
   openModal: () => void;
@@ -84,7 +84,9 @@ const SearchButton: FC<ISearchButtonProps> = withRedux(
           Type{' '}
           <Kbd
             borderBottomWidth={1}
-            borderRadius={4}
+            // 4px, not 4. The radii scale has no numeric keys, so v2 appended
+            // the unit and v3 emits `border-radius: 4`, which the parser drops.
+            borderRadius="4px"
             py={0.5}
             mx={2}
             bgColor={'transparent'}
@@ -106,11 +108,15 @@ const SearchButton: FC<ISearchButtonProps> = withRedux(
           color="topNav.input.color"
           borderColor="topNav.input.borderColor"
           fontWeight="normal"
-          icon={<SearchIcon />}
           aria-label="Search"
           onClick={openModal}
           onKeyDown={onKeyPress}
-        />
+        >
+          {/* v2 took the glyph through an `icon` prop and wrapped it in a
+              span; v3's IconButton is a Button that renders its children, so
+              the icon is a child and the wrapper span is gone. */}
+          <SearchIcon />
+        </IconButton>
       </>
     );
   }

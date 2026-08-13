@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { buildSearchIndex } from '../../utils/search/build-search-index';
 import { getBuiltSearchIndex } from '../../utils/search/get-built-search-index';
@@ -26,11 +26,15 @@ export interface UseSearchResult {
 
 /**
  * Custom hook for searching content within a Jaen website.
+ * @param query The current search query.
+ * @param enabled Whether the index may be loaded. Nothing renders search
+ *   results before the modal is opened, so the index is left unfetched
+ *   until then. Once loaded it stays loaded, so re-opening the modal costs
+ *   nothing.
  * @returns The search index and loading status.
  */
-const useDocsSearch = (query?: string): UseSearchResult => {
+const useDocsSearch = (query?: string, enabled = true): UseSearchResult => {
   const [searchIndex, setSearchIndex] = useState<SearchIndex | null>(null);
-  const builtSearchIndexRef = useRef<SearchIndex | null>(null); // Ref to cache builtSearchIndex
 
   const pages = useAppSelector(state => state.page.pages.nodes);
 
@@ -44,31 +48,22 @@ const useDocsSearch = (query?: string): UseSearchResult => {
      * Loads the search index by merging the builtSearchIndex with the page search index.
      */
     const loadSearchIndex = async () => {
-      if (builtSearchIndexRef.current) {
-        // Use the cached builtSearchIndex if available
-        setSearchIndex(builtSearchIndexRef.current);
-      } else {
-        const builtSearchIndex = await getBuiltSearchIndex();
-
-        if (builtSearchIndex) {
-          builtSearchIndexRef.current = builtSearchIndex; // Cache the builtSearchIndex
-        }
-      }
+      // getBuiltSearchIndex holds a module-level promise, so this is one
+      // request per document no matter how many SearchMenus are mounted.
+      const builtSearchIndex = await getBuiltSearchIndex();
 
       const pageValuesWithId = Object.entries(pages).map(([pageId, value]) => {
         const dynamicPagePath = Object.entries(dynamicPaths).find(
           ([_, node]) => node.jaenPageId === pageId
         )?.[0];
 
-        const builtPagePath = Object.entries(
-          builtSearchIndexRef.current || {}
-        ).find(([_, node]) => node.id === pageId)?.[0];
+        const builtPagePath = Object.entries(builtSearchIndex).find(
+          ([_, node]) => node.id === pageId
+        )?.[0];
 
         const title =
           value?.jaenPageMetadata?.title ||
-          (builtPagePath
-            ? builtSearchIndexRef.current?.[builtPagePath]?.title
-            : undefined);
+          (builtPagePath ? builtSearchIndex[builtPagePath]?.title : undefined);
 
         return {
           ...value,
@@ -83,16 +78,15 @@ const useDocsSearch = (query?: string): UseSearchResult => {
       });
 
       const pageSearchIndex = await buildSearchIndex(pageValuesWithId as any);
-      const merged = mergeSearchIndex(
-        builtSearchIndexRef.current || {},
-        pageSearchIndex
-      );
+      const merged = mergeSearchIndex(builtSearchIndex, pageSearchIndex);
 
       setSearchIndex(merged);
     };
 
+    if (!enabled) return;
+
     void loadSearchIndex();
-  }, [pages, dynamicPaths]);
+  }, [enabled, pages, dynamicPaths]);
 
   const [searchResults, setSearchResults] = useState<TSearchResultSection[]>(
     []
@@ -105,8 +99,16 @@ const useDocsSearch = (query?: string): UseSearchResult => {
       setIsLoading(true);
 
       if (!searchIndex) {
+        // Either nothing has been requested yet (search still closed) or the
+        // index is in flight. The modal is the only consumer and it shows a
+        // spinner while loading, so staying "loading" here is what keeps the
+        // first open from flashing an empty result list.
         setSearchResults([]);
-      } else if (!query) {
+
+        return;
+      }
+
+      if (!query) {
         setSearchResults(searchDocs('OpenQASM', searchIndex));
       } else {
         const docsResults = searchDocs(query, searchIndex);

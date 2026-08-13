@@ -3,6 +3,7 @@ import {
   Accordion,
   Box,
   HStack,
+  StackProps,
   Text,
   useBreakpointValue
 } from '@chakra-ui/react';
@@ -43,9 +44,13 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
   const { isAuthenticated, signinRedirect } = useAuth();
+  // v2 was handed the string 'false', which is not a breakpoint name, so no
+  // fallback ever matched and the pre-hydration value came back undefined. v3
+  // types the option and resolves an unmatched name to the widest breakpoint in
+  // the map, so 'md' is what reproduces that same falsy first render.
   const isSmallScreen = useBreakpointValue(
     { base: true, md: false },
-    { fallback: 'false' }
+    { fallback: 'md' }
   );
 
   const updateExpandedIdx = (idx: number, mode: 'toggle' | 'set') => {
@@ -89,34 +94,44 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   let menuRootExpandedIdx = 0;
 
   return (
-    <Accordion
+    <Accordion.Root
       id="left-nav-accordion"
       visibility={isExpanded ? 'visible' : 'hidden'}
       opacity={isExpanded ? 1 : 0}
       w={isExpanded ? '100%' : 'max-content'}
-      allowMultiple
+      multiple
       css={{
         // Remove border from last accordion item
         '& .chakra-accordion__item:last-child': {
           borderBottomWidth: 0
         }
       }}
+      // leftNav comes from the site's accordion slot recipe, and it type-checks
+      // without an assertion: `chakra typegen` runs on postinstall and writes
+      // the recipe's own variant names into node_modules.
       variant="leftNav"
       transition="opacity 0.2s ease-in-out, width 0.2s ease-in-out"
       mb={isMobile ? 12 : undefined}
-      index={expandedIdx}
+      // v2 drove the accordion by numeric `index`. v3 drives it by item value,
+      // so the same numbering is carried across as strings and every item
+      // stringifies the index it was handed in generateMenuItem.
+      value={expandedIdx.map(String)}
     >
       {[...data.menu, ...baseMenuItems].map((section, i) => (
         <Fragment key={i}>
           {section.name && (
             <HStack
               key={0}
-              spacing={2}
+              gap={2}
               ml={4}
               mt={i === 0 ? 0 : 9}
               fontSize="sm"
               fontWeight="bold"
-              {...section.styling}
+              // NavMenuSection.styling is a BoxProps, where `direction` is the
+              // CSS writing direction; Stack narrows the same name to a flex
+              // direction. No section supplies either, so the assertion only
+              // bridges the two spellings of one prop name.
+              {...(section.styling as StackProps)}
               color="components.pageDirectory.section.title.color"
               opacity={1}
             >
@@ -139,7 +154,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
           </Box>
         </Fragment>
       ))}
-    </Accordion>
+    </Accordion.Root>
   );
 };
 

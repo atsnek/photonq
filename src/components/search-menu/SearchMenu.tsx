@@ -1,11 +1,10 @@
 import {
   Center,
-  Divider,
-  ThemeProvider,
   VStack,
   useDisclosure,
   Text,
-  Box
+  Box,
+  Separator
 } from '@chakra-ui/react';
 import {
   FC,
@@ -18,14 +17,11 @@ import {
 } from 'react';
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 
-import {
-  fetchDefaultSearchresult,
-  searchDocs,
-  searchSocialPosts,
-  searchUser
-} from '../../utils/search';
+// `fetchDefaultSearchresult` and `searchUser` were in this list and have never
+// existed in utils/search — the module exports searchDocs, getDefaultSearchDocs
+// and searchSocialPosts. Two unresolved names that no line in this file calls.
+import { searchDocs, searchSocialPosts } from '../../utils/search';
 import useSearch from '../../hooks/use-search';
-import theme from '../../styles/theme/theme';
 import {
   SearchResultSection,
   SearchResultSectionTitle
@@ -61,7 +57,15 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
 
   const [query] = useDebounce(searchQuery, 500);
 
-  const search = useSearch(query);
+  /**
+   * Gated on the modal being open. Nothing on the page renders a search
+   * result before the user opens search: SearchButton draws a label and a
+   * keycap, and SearchModal only paints `searchResultItems` inside a
+   * Dialog.Root that is closed. So /search-index.json, 153 KB, has no
+   * business being on the initial page load at all. Once it has been
+   * fetched the index stays in the hook's state, so re-opening is instant.
+   */
+  const search = useSearch(query, modalDisclosure.open);
 
   const location = useLocation();
 
@@ -264,7 +268,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
     return data.map((chapter, cidx) => {
       return (
         <Fragment key={cidx}>
-          {cidx > 0 && <Divider />}
+          {cidx > 0 && <Separator />}
           <SearchResultSectionTitle
             title={chapter.title}
             idx={itemIdx * -1}
@@ -276,7 +280,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
             icon={chapter.icon}
           />
           <VStack
-            spacing={1}
+            gap={1}
             w="full"
             textAlign="left"
             _last={{
@@ -310,11 +314,26 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   }, [data, navigateIdx]);
 
   return (
-    <ThemeProvider theme={theme}>
+    /**
+     * No provider of its own. It used to carry `chromeSystem` so that the CMS
+     * routes, where Layout mounts no site system, would still resolve the
+     * site's tokens.
+     *
+     * The cost of putting it here was that SearchMenu renders at more than one
+     * mount per page (TopNav and MobileNavDrawer) and each of them emitted the
+     * complete token block again, for variables that were byte for byte the
+     * same as the ones the site system already emits. In v3 a provider is also
+     * the global-style emitter, so every extra provider is another full copy.
+     *
+     * Both of those call sites sit inside Layout's site provider already. Only
+     * the CMS path needs its own, so the provider moved to the Toolbar shadow,
+     * which is the only mount that renders inside jaen's frame.
+     */
+    <>
       <SearchButton openModal={onOpen} navigate={handleNavigate} />
       <SearchModal
         defaultQuery={searchQuery}
-        isOpen={modalDisclosure.isOpen}
+        isOpen={modalDisclosure.open}
         onClose={modalDisclosure.onClose}
         isLoading={search.isLoading}
         searchResultItems={results}
@@ -322,7 +341,7 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
         handleNavigate={handleNavigate}
         openActiveItem={handleOpenActiveItem}
       />
-    </ThemeProvider>
+    </>
   );
 };
 

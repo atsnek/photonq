@@ -1,16 +1,13 @@
 import {
   Alert,
-  AlertDescription,
-  AlertIcon,
   Box,
-  ButtonSpinner,
   Center,
   Flex,
   HStack,
-  ListItem,
+  Spinner,
   Stack,
   Text,
-  UnorderedList
+  List
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 
@@ -73,54 +70,72 @@ const CodeResultPreview: FC<ICodeResultPreviewProps> = ({
       <Box p={3}>
         {isExecuting ? (
           <Center my={5}>
-            <ButtonSpinner
+            {/*
+              v3 has no ButtonSpinner. Inlined is exactly what v2's rendered for
+              these props: a flex box carrying boxSize and colour, around a 1em
+              Spinner picking that colour up through currentColor.
+
+              position="absolute" is v2's too — ButtonSpinner only went relative
+              when handed a `label`, which a bare call never does, so this
+              spinner has never actually sat inside the Center. Ported as-is;
+              centring it is a visual change and belongs in its own commit.
+            */}
+            <Box
+              display="flex"
+              alignItems="center"
+              position="absolute"
+              marginStart={0}
+              fontSize="1em"
+              lineHeight="normal"
               boxSize="20px"
               color="components.codeResultPreview.loadingSpinner.color"
-            />
+            >
+              <Spinner color="currentColor" width="1em" height="1em" />
+            </Box>
           </Center>
         ) : (
           <Stack>
             {errors && errors.length > 0 && (
-              <Alert status="error" my={2}>
-                <AlertIcon />
-                <AlertDescription overflowX="auto">
-                  <UnorderedList>
+              <Alert.Root status="error" my={2}>
+                <Alert.Indicator />
+                <Alert.Description overflowX="auto">
+                  <List.Root as="ul">
                     {errors.map((error, index) => (
-                      <ListItem key={index} fontSize="sm">
+                      <List.Item key={index} fontSize="sm">
                         {error}
-                      </ListItem>
+                      </List.Item>
                     ))}
-                  </UnorderedList>
-                </AlertDescription>
-              </Alert>
+                  </List.Root>
+                </Alert.Description>
+              </Alert.Root>
             )}
             {warnings && warnings.length > 0 && (
-              <Alert status="warning" my={2}>
-                <AlertIcon />
-                <AlertDescription overflowX="auto">
-                  <UnorderedList>
+              <Alert.Root status="warning" my={2}>
+                <Alert.Indicator />
+                <Alert.Description overflowX="auto">
+                  <List.Root as="ul">
                     {warnings.map((warning, index) => (
-                      <ListItem key={index} fontSize="sm">
+                      <List.Item key={index} fontSize="sm">
                         {warning}
-                      </ListItem>
+                      </List.Item>
                     ))}
-                  </UnorderedList>
-                </AlertDescription>
-              </Alert>
+                  </List.Root>
+                </Alert.Description>
+              </Alert.Root>
             )}
             {infos && infos.length > 0 && (
-              <Alert status="info" my={2}>
-                <AlertIcon />
-                <AlertDescription overflowX="auto">
-                  <UnorderedList>
+              <Alert.Root status="info" my={2}>
+                <Alert.Indicator />
+                <Alert.Description overflowX="auto">
+                  <List.Root as="ul">
                     {infos.map((info, index) => (
-                      <ListItem key={index} fontSize="sm">
+                      <List.Item key={index} fontSize="sm">
                         {info}
-                      </ListItem>
+                      </List.Item>
                     ))}
-                  </UnorderedList>
-                </AlertDescription>
-              </Alert>
+                  </List.Root>
+                </Alert.Description>
+              </Alert.Root>
             )}
 
             {result ? (

@@ -1,23 +1,20 @@
-import { CheckIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
+// v3 dropped colour mode out of @chakra-ui/react altogether (it is next-themes
+// now), so ColorMode, DarkMode, LightMode and useColorMode come from jaen's
+// re-export instead of from chakra, where v2 had them.
+import { ColorMode, DarkMode, LightMode, useColorMode } from 'jaen';
+import { CheckIcon, MoonIcon, SunIcon } from './icons/chakra';
 import {
   Button,
   ButtonProps,
-  ColorMode,
-  DarkMode,
   Icon,
   IconProps,
-  LightMode,
   Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  MenuProps,
-  useColorMode
+  MenuRootProps
 } from '@chakra-ui/react';
 import { FC, ReactNode, memo } from 'react';
 
 interface IThemeChooserProps {
-  menuProps?: Partial<MenuProps>;
+  menuProps?: Partial<MenuRootProps>;
   buttonProps?: Partial<ButtonProps>;
   buttonIconProps?: IconProps;
   buttonContent?: ReactNode;
@@ -39,13 +36,18 @@ const ThemeChooser: FC<IThemeChooserProps> = ({
   const isLightColorMode = colorMode === 'light';
 
   const menuList = (() => {
+    // No portal, as in v2. DarkMode and LightMode are DOM elements in v3, and
+    // a portal would drop the list outside the one wrapping it here, which is
+    // the whole of forceMenuColorMode.
     const list = (
-      <MenuList>
-        <MemoizedColorModeMenuItems
-          currentColorMode={colorMode}
-          toggleColorMode={toggleColorMode}
-        />
-      </MenuList>
+      <Menu.Positioner>
+        <Menu.Content>
+          <MemoizedColorModeMenuItems
+            currentColorMode={colorMode}
+            toggleColorMode={toggleColorMode}
+          />
+        </Menu.Content>
+      </Menu.Positioner>
     );
     if (!forceMenuColorMode) {
       return list;
@@ -58,26 +60,51 @@ const ThemeChooser: FC<IThemeChooserProps> = ({
   })();
 
   return (
-    <Menu id="navbar-color-mode-menu" placement="top" {...menuProps} isLazy>
-      <MenuButton
-        as={Button}
-        size="sm"
-        flexGrow={1}
-        variant="ghost-hover"
-        textAlign="left"
-        color="shared.text.default"
-        {...buttonProps}
-      >
-        <Icon as={isLightColorMode ? SunIcon : MoonIcon} {...buttonIconProps} />
-        {buttonContent}
-      </MenuButton>
+    <Menu.Root
+      id="navbar-color-mode-menu"
+      {...menuProps}
+      lazyMount
+      unmountOnExit
+      positioning={{
+        placement: 'top'
+      }}
+    >
+      <Menu.Trigger asChild>
+        <Button
+          size="sm"
+          flexGrow={1}
+          // One of the site's own button variants (styles/theme/recipes.ts),
+          // and no assertion is needed for it: postinstall runs
+          // `chakra typegen`, so ButtonProps['variant'] already names it.
+          variant="ghost-hover"
+          textAlign="left"
+          color="shared.text.default"
+          {...buttonProps}
+        >
+          <Icon
+            as={isLightColorMode ? SunIcon : MoonIcon}
+            {...buttonIconProps}
+          />
+          {buttonContent}
+        </Button>
+      </Menu.Trigger>
       {menuList}
-    </Menu>
+    </Menu.Root>
   );
 };
 
 const colorModes = ['Light', 'Dark', 'System'];
-//TODO: Fix system color mode toggle (doesnt work - doesnt stay in sync with system)
+// TODO: the System row still cannot be chosen. All three rows call
+// toggleColorMode, which only ever writes 'light' or 'dark', and the check is
+// against currentColorMode, which is the RESOLVED mode ('light' | 'dark') — so
+// System never selects system and never shows the tick. That is v2's behaviour
+// verbatim and is left alone here on purpose, this pass being a like-for-like
+// v3 migration. The original reason recorded for it no longer holds: once
+// 'system' IS set, next-themes keeps it in sync with the OS through a
+// matchMedia listener. Fixing it needs
+// onSelect={() => setColorMode(mode.toLocaleLowerCase())} plus the preference
+// (next-themes' `theme`) rather than the resolved mode to compare against,
+// which the jaen seam does not hand out yet.
 /**
  * Memoized color mode menu items.
  */
@@ -92,11 +119,19 @@ const MemoizedColorModeMenuItems = memo<{
           const isCurrentColorMode =
             currentColorMode === mode.toLocaleLowerCase();
           return (
-            <MenuItem
+            <Menu.Item
               key={i}
               position="relative"
               disabled={isCurrentColorMode}
-              onClick={!isCurrentColorMode ? toggleColorMode : undefined}
+              onSelect={!isCurrentColorMode ? toggleColorMode : undefined}
+              // The codemod stamped the literal "item-0" on all three. In v3
+              // the value IS the item's DOM id (zag builds `${menuId}/${value}`
+              // and resolves both the select listener and the highlight by
+              // getElementById), so three identical values collapse the rows
+              // onto one node: all three paint data-highlighted together and
+              // only the first one's handler ever fires. The lowercased mode
+              // name is the same stable key the selected check compares on.
+              value={mode.toLocaleLowerCase()}
             >
               {mode}
               {isCurrentColorMode && (
@@ -108,7 +143,7 @@ const MemoizedColorModeMenuItems = memo<{
                   boxSize="10px"
                 />
               )}
-            </MenuItem>
+            </Menu.Item>
           );
         })}
       </>

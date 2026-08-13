@@ -1,13 +1,12 @@
+// v3 no longer exports a color-mode hook; jaen re-exports one over next-themes.
+import { useColorModeValue } from 'jaen';
 import {
-  FocusLock,
   Input,
+  InputElementProps,
   InputGroup,
   InputProps,
-  InputRightElement,
-  InputRightElementProps,
   Kbd,
-  useColorModeValue,
-  useMenuButton,
+  Menu,
   useMenuContext
 } from '@chakra-ui/react';
 import {
@@ -15,8 +14,6 @@ import {
   SetStateAction,
   forwardRef,
   useEffect,
-  useMemo,
-  KeyboardEvent as ReactKeyboardEvent,
   useState
 } from 'react';
 
@@ -24,7 +21,7 @@ import { getPlatform, isTouchDevice } from '../../utils/general';
 
 export type TSearchInputStyleProps = {
   parent?: InputProps;
-  kbd?: InputRightElementProps;
+  kbd?: InputElementProps;
 };
 
 interface SearchInputProps {
@@ -36,29 +33,11 @@ interface SearchInputProps {
 /**
  * The search input component for the search menu.
  */
-const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
+// The ref lands on the input, which is what v2 handed to useMenuButton as well;
+// only the element type it was declared with was wrong.
+const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ({ setSearchQuery, openFirstLink, styleProps }, ref) => {
     const menu = useMenuContext();
-    const menuButton = useMenuButton(
-      {
-        onKeyDown: (e: ReactKeyboardEvent<HTMLInputElement>) => {
-          if (e.key === 'Escape') {
-            menu.onClose();
-
-            // Clear input
-            e.currentTarget.value = '';
-          } else if (e.key === 'ArrowDown') {
-            if (menu.isOpen) {
-              menu.setFocusedIndex(1);
-            }
-
-            // Prevent default behavior
-            e.preventDefault();
-          }
-        }
-      },
-      ref
-    );
 
     const [kbd, setKbd] = useState<string | null>(null);
     const focusBorderColor = useColorModeValue('theme.500', 'theme.700'); // We need this because semanticTokens seem to be broken for that prop
@@ -66,24 +45,24 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
     useEffect(() => {
       const platform = getPlatform();
 
-      if (menu.isOpen) {
+      if (menu.open) {
         setKbd('Esc');
       } else {
         setKbd(platform === 'mac' ? '⌘ K' : 'Ctrl+K');
       }
     }, [kbd]);
 
-    const isFocusLocked = useMemo(() => {
-      return menu.isOpen && menu.focusedIndex === -1;
-    }, [menu.isOpen, menu.focusedIndex]);
-
     useEffect(() => {
       // Focus the input when the user presses the shortcut
       const handleGlobalKeydown = (e: KeyboardEvent) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k')
-          menu.buttonRef.current?.focus();
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          // v2 reached through the menu's buttonRef. v3 keeps no ref, but the
+          // input is the trigger and the machine owns the trigger's id.
+          const triggerId = menu.getTriggerProps().id;
+          if (triggerId) document.getElementById(triggerId)?.focus();
+        }
 
-        if (e.key === 'Enter' && menu.isOpen) {
+        if (e.key === 'Enter' && menu.open) {
           openFirstLink();
         }
       };
@@ -95,18 +74,44 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
       };
     }, []);
 
-    useEffect(() => {
-      if (!menu.isOpen) {
-        menu.setFocusedIndex(-1);
-      }
-    }, [menu.isOpen]);
-
+    // v2 wrapped all of this in Chakra's FocusLock whenever the menu stood open
+    // with nothing highlighted. v3 exports no FocusLock, and its menu machine
+    // already parks focus on the trigger until an item is highlighted, so the
+    // wrapper is dropped rather than rebuilt.
     return (
-      <FocusLock isDisabled={!isFocusLocked}>
-        <InputGroup size="sm">
+      <InputGroup
+        // v2 nested the Kbd inside an InputRightElement; v3's group renders
+        // that element itself and takes its content as a prop.
+        endElement={
+          isTouchDevice() ? undefined : (
+            <Kbd
+              borderBottomWidth={1}
+              background="transparent"
+              // 4px, not 4. See SearchButton: the radii scale has no numeric
+              // keys, so the bare number reaches the browser as invalid CSS.
+              borderRadius="4px"
+              py={0.5}
+              {...styleProps?.kbd}
+            >
+              {kbd}
+            </Kbd>
+          )
+        }
+        endElementProps={{ pr: '10px', color: 'topNav.input.kbd.color' }}
+      >
+        {/* v2 spread useMenuButton over the input to make it the menu's button.
+            asChild is how v3 hands that role to a foreign element: Ark runs the
+            child's handlers first and skips its own once they have called
+            preventDefault, which is exactly what v2's callAllHandlers did, so
+            the guards below still cancel the menu where they used to. */}
+        <Menu.Trigger asChild>
           <Input
+            ref={ref}
             type="text"
             htmlSize={20}
+            // v2 read the size off the enclosing InputGroup. v3 has no such
+            // context, the control carries its own size.
+            size="sm"
             placeholder="Search"
             borderRadius="md"
             backgroundColor="blackAlpha.50"
@@ -119,64 +124,60 @@ const SearchInput = forwardRef<HTMLDivElement, SearchInputProps>(
             _focus={{
               backgroundColor: 'topNav.input.focus.bgColor'
             }}
-            focusBorderColor={focusBorderColor}
-            {...menuButton}
+            css={{
+              '--focus-color': focusBorderColor
+            }}
             {...styleProps?.parent}
-            onClick={e => {
-              const value = e.currentTarget.value;
+            onKeyDown={e => {
+              if (e.key === 'Escape') {
+                menu.setOpen(false);
 
+                // Clear input
+                e.currentTarget.value = '';
+              } else if (e.key === 'ArrowDown') {
+                // v2 pushed the focus ring onto the second item by index and
+                // swallowed the menu's own ArrowDown on the way. v3 highlights
+                // items by value, so only the swallowing survives the port.
+                e.preventDefault();
+              }
+            }}
+            onClick={e => {
               // Cancel if the value is empty
-              if (!value) {
-                return;
+              if (!e.currentTarget.value) {
+                e.preventDefault();
               }
 
-              // Otherwise use the default behavior
-              menuButton.onClick(e);
+              // Otherwise the trigger's own handler opens the menu
             }}
             onInput={e => {
               const query = e.currentTarget.value.trim();
-              if (!menu.isOpen && query.length > 0) {
-                menu.onOpen();
+              if (!menu.open && query.length > 0) {
+                menu.setOpen(true);
               }
               setSearchQuery(e.currentTarget.value.trim());
             }}
             onKeyDownCapture={e => {
               if (e.key === 'Escape') {
                 // Close the menu and blur the input when the user presses the escape key
-                menu.onClose();
+                menu.setOpen(false);
                 e.currentTarget.blur();
               } else if (
                 e.key === 'Enter' &&
-                menu.isOpen &&
-                menu.focusedIndex === -1
+                menu.open &&
+                // v2 asked whether the focus ring sat on no item at all; v3
+                // spells that as no highlighted value.
+                menu.highlightedValue === null
               ) {
                 // Open the link from the first result item
                 // and close the menu automatically
                 // when the user presses the enter key
                 openFirstLink();
-                menu.onClose();
+                menu.setOpen(false);
               }
             }}
           />
-          {!isTouchDevice() && (
-            <InputRightElement
-              children={
-                <Kbd
-                  borderBottomWidth={1}
-                  background="transparent"
-                  borderRadius={4}
-                  py={0.5}
-                  {...styleProps?.kbd}
-                >
-                  {kbd}
-                </Kbd>
-              }
-              pr="10px"
-              color="topNav.input.kbd.color"
-            />
-          )}
-        </InputGroup>
-      </FocusLock>
+        </Menu.Trigger>
+      </InputGroup>
     );
   }
 );

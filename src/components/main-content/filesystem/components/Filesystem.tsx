@@ -1,16 +1,10 @@
-import {
-  Box,
-  BoxProps,
-  Tooltip,
-  TooltipProps,
-  useColorModeValue
-} from '@chakra-ui/react';
+import { Box, BoxProps, Portal, Tooltip } from '@chakra-ui/react';
 import { FC, useState } from 'react';
 
 import BsFileEarmark from '../../../icons/bootstrap/BsFileEarmark';
 import BsFolder from '../../../icons/bootstrap/BsFolder';
 import BsFolder2Open from '../../../icons/bootstrap/BsFolder2Open';
-import { TFilesystemItem } from '../types/filesystem';
+import { TFilesystemItem, TooltipPlacement } from '../types/filesystem';
 
 interface IFilesystemItemProps {
   item: TFilesystemItem;
@@ -31,26 +25,19 @@ const FilesystemItem: FC<IFilesystemItemProps> = ({
     isFolder && (item.defaultOpen ?? true)
   );
   const toggleShowChildren = () => setShowChildren(!showChildren);
-  //!Bug: Chakra doesnt set the bg color via the background-color css prop but via the bg prop, which allows our default tooltip props to take precedence. This is a temporary workaround
-  const tooltipBgColor = useColorModeValue('theme.700', 'theme.800');
 
   // Tooltip sttings
   const tooltipText =
     typeof item.tooltip === 'string' ? item.tooltip : item.tooltip?.text;
-  let tooltipProps: TooltipProps = {
-    label: tooltipText,
-    bgColor: 'components.filesystem.tooltip.bgColor',
+  // v2 spread these onto <Tooltip> and then re-stated label, bgColor,
+  // borderRadius and openDelay after the spread, so an item's own tooltip
+  // object only ever reached colour, placement and arrow.
+  const tooltip = {
     color: 'components.filesystem.tooltip.color',
-    borderRadius: 'md',
-    placement: 'right',
-    children: undefined
+    placement: 'right' as TooltipPlacement,
+    hasArrow: false,
+    ...(typeof item.tooltip === 'object' ? item.tooltip : {})
   };
-  if (typeof item.tooltip === 'object') {
-    tooltipProps = {
-      ...tooltipProps,
-      ...item.tooltip
-    };
-  }
 
   // Icon settings
   let IconComp;
@@ -138,15 +125,34 @@ const FilesystemItem: FC<IFilesystemItemProps> = ({
         // color={item.isSelected ? 'components.filesystem.selected.color' : 'components.filesystem.color'}
       >
         {tooltipText && tooltipText.length ? (
-          <Tooltip
-            {...tooltipProps}
-            label={tooltipText}
-            bgColor={`${tooltipBgColor} !important`}
-            borderRadius="md"
+          <Tooltip.Root
             openDelay={500}
+            positioning={{ placement: tooltip.placement }}
           >
-            {itemContent}
-          </Tooltip>
+            <Tooltip.Trigger asChild>{itemContent}</Tooltip.Trigger>
+            <Portal>
+              <Tooltip.Positioner>
+                {/*
+                  No bgColor here on purpose. v2 passed
+                  `${useColorModeValue('theme.700','theme.800')} !important`,
+                  which its css() could not read as a token: it emitted
+                  `background-color: theme.700 !important` and the browser
+                  dropped the whole declaration, so the tooltip has always worn
+                  the recipe's components.tooltip.bgColor. v3 parses the
+                  !important suffix and would resolve the token, which would
+                  repaint the tooltip orange. Recolouring it is its own change.
+                */}
+                <Tooltip.Content color={tooltip.color} borderRadius="md">
+                  {tooltip.hasArrow && (
+                    <Tooltip.Arrow>
+                      <Tooltip.ArrowTip />
+                    </Tooltip.Arrow>
+                  )}
+                  {tooltipText}
+                </Tooltip.Content>
+              </Tooltip.Positioner>
+            </Portal>
+          </Tooltip.Root>
         ) : (
           itemContent
         )}

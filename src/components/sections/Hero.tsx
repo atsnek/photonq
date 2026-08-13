@@ -15,7 +15,7 @@ const Hero: FC = () => {
       h={{ base: 'max-content', md: `calc(100vh - ${navOffset} - 200px)` }}
       minH="700px"
       bgColor="pq.shared.body.bgColor"
-      spacing={0}
+      gap={0}
       id="hero"
       overflow="hidden"
       p={{ base: 5, lg: 0 }}
@@ -70,17 +70,22 @@ const Hero: FC = () => {
                 mt={5}
                 defaultValue="Learn quantum computing and run your circuits on your photonic quantum hardawre"
               />
+              {/* v2's `as={Link}` typed the gatsby link's `to` through the
+                  button. v3's `as` no longer carries the target component's
+                  props, so the link is a real child again and asChild is what
+                  hands it the button's box. */}
               <Button
-                as={Link}
                 mt={10}
                 variant="pq-outline"
-                colorScheme="brand"
+                colorPalette="brand"
                 px={5}
                 borderRadius="xl"
                 bgColor="rgba(2, 116, 192, 0.07)"
-                to={isAuthenticated ? '/new/experiment' : '/signup'}
+                asChild
               >
-                {isAuthenticated ? 'New experiment' : 'Register Now'}
+                <Link to={isAuthenticated ? '/new/experiment' : '/signup'}>
+                  {isAuthenticated ? 'New experiment' : 'Register Now'}
+                </Link>
               </Button>
               <Center>
                 <Box mt={20} w="50vw" maxW="300px" minW="250px">

@@ -8,13 +8,13 @@ import {
   LinkOverlay,
   Spacer,
   Text,
-  VStack,
-  useColorModeValue
+  VStack
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import GrayedUniWienLogo from '../../assets/icons/uni-wien-logo-gray.svg';
 import ColorizedUniWienLogo from '../../assets/icons/uni-wien-logo-colorized.svg';
 import { Link } from 'gatsby-plugin-jaen';
+import { useColorModeValue } from 'jaen';
 
 const year = new Date().getFullYear();
 
@@ -30,8 +30,12 @@ const Footer: FC = () => {
         <VStack alignItems="start">
           <HStack>
             <LinkBox
+              // `'& img'`, not `img`. v3 resolves a nested key as a CSS
+              // property unless it looks like a selector, so a bare tag name is
+              // emitted as `img: {...}`, which the browser drops at parse time.
+              // v2's styled-system treated any non-property key as a selector.
               _hover={{
-                img: {
+                '& img': {
                   transform: 'scale(1.1)'
                 }
               }}
@@ -54,7 +58,7 @@ const Footer: FC = () => {
         </VStack>
         <Spacer />
         <Box>
-          <VStack spacing={1} alignItems="end">
+          <VStack gap={1} alignItems="end">
             <Link href="/imprint" fontSize="xs" variant="hover-theme">
               Imprint
             </Link>

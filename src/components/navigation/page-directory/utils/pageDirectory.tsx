@@ -1,10 +1,10 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
-  AccordionButton,
-  AccordionButtonProps,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
+  ArrowForwardIcon,
+  ChevronDownIcon
+} from '../../../../components/icons/chakra';
+import {
+  Accordion,
+  AccordionItemTriggerProps,
   Box,
   Center,
   CenterProps,
@@ -54,7 +54,7 @@ export const generateMenuItem = (
     <ArrowForwardIcon transform={`rotate(-45deg)`} ml={2} />
   );
 
-  const styleProps: CenterProps & AccordionButtonProps & LinkProps = {
+  const styleProps: CenterProps & AccordionItemTriggerProps & LinkProps = {
     _hover: { opacity: 1 }
   };
   if (item.isActive)
@@ -90,13 +90,17 @@ export const generateMenuItem = (
       item.isActive ? '' : 'in'
     }activeItem.`;
     resultObj.item = (
-      <AccordionItem
+      <Accordion.Item
         ref={accordionItemRef}
         key={item.href + item.name}
-        id={item.href + item.name}
+        // v2 kept href+name as the item's DOM id and expanded items by their
+        // numeric position. v3 expands by value, so the value has to carry that
+        // same position, which is what PageDirectory holds in its state.
+        value={String(expandedIdx)}
         css={{
-          // Remove padding from last accordion item
-          '& .chakra-accordion__panel': {
+          // Remove padding from last accordion item. v3 moved the panel's
+          // padding from the panel itself onto the body slot inside it.
+          '& .chakra-accordion__itemBody': {
             paddingBottom: 0
           }
         }}
@@ -104,78 +108,91 @@ export const generateMenuItem = (
         // This is a hack to remove the bottom border from the last accordion item
         borderBottomWidth="0 !important"
       >
-        {({ isExpanded }) => (
-          <>
-            <Link
-              to={item.href}
-              onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                const target = e.target as HTMLElement;
-                const hasClickedOnArrow =
-                  target instanceof SVGElement ||
-                  target instanceof SVGPathElement;
-                updateExpandedIdx(
-                  expandedIdx,
-                  hasClickedOnArrow ? 'toggle' : 'set'
-                );
-                linkClickHandler(e);
-                if (!hasClickedOnArrow && closeMobileDrawer) {
-                  closeMobileDrawer();
-                }
+        <Link
+          to={item.href}
+          onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+            const target = e.target as HTMLElement;
+            const hasClickedOnArrow =
+              target instanceof SVGElement || target instanceof SVGPathElement;
+            updateExpandedIdx(
+              expandedIdx,
+              hasClickedOnArrow ? 'toggle' : 'set'
+            );
+            linkClickHandler(e);
+            if (!hasClickedOnArrow && closeMobileDrawer) {
+              closeMobileDrawer();
+            }
+          }}
+        >
+          <Accordion.ItemTrigger
+            {...(item.isActive ? activeMenuItemProps : inactiveMenuItemProps)}
+            {...styleProps}
+            borderRadius="md"
+            py={1.5}
+            backgroundColor={
+              item.isActive ? semanticPath + 'bgColor' : undefined
+            }
+          >
+            <Box as="span" flex="1" wordBreak="break-all">
+              {item.name}
+              {item.isExternal && externalLinkIcon}
+            </Box>
+            <Center
+              {...styleProps}
+              as="span"
+              borderRadius="sm"
+              transition="background-color 0.2s ease-in-out"
+              backgroundColor="transparent"
+              _hover={{
+                bgColor: semanticPath + 'button.icon.hoverContainerBgColor'
               }}
             >
-              <AccordionButton
-                {...(item.isActive
-                  ? activeMenuItemProps
-                  : inactiveMenuItemProps)}
-                {...styleProps}
-                borderRadius="md"
-                py={1.5}
-                backgroundColor={
-                  item.isActive ? semanticPath + 'bgColor' : undefined
-                }
+              <Accordion.ItemIndicator
+                className="prv-link"
+                opacity="inherit"
+                // Driven by the item's own accordion state, so the arrow can
+                // never disagree with the panel below it. v2 read that state
+                // from the item's render prop, v3 exposes it as data-state.
+                transform="rotate(-90deg)"
+                // v3's base recipe turns the open indicator with the CSS
+                // `rotate` property, which composes with `transform` rather
+                // than replacing it, so it has to be pinned back to zero for
+                // the arrow to land where v2 put it.
+                _open={{ transform: 'rotate(0deg)', rotate: '0deg' }}
+                // v2's AccordionIcon carried its own `transform 0.2s`, so the
+                // turn has to be declared here to keep it.
+                transition="transform 0.2s ease-in-out"
               >
-                <Box as="span" flex="1" wordBreak="break-all">
-                  {item.name}
-                  {item.isExternal && externalLinkIcon}
-                </Box>
-                <Center
-                  {...styleProps}
-                  as="span"
-                  borderRadius="sm"
-                  transition="background-color 0.2s ease-in-out"
-                  backgroundColor="transparent"
-                  _hover={{
-                    bgColor: semanticPath + 'button.icon.hoverContainerBgColor'
-                  }}
-                >
-                  <AccordionIcon
-                    className="prv-link"
-                    opacity="inherit"
-                    transform={`rotate(${isExpanded ? 0 : -90}deg)`}
-                  />
-                </Center>
-              </AccordionButton>
-            </Link>
-            <AccordionPanel position="relative">
-              <Box
-                _before={{
-                  content: '""',
-                  display: 'block',
-                  position: 'absolute',
-                  top: 2,
-                  borderRadius: 'full',
-                  left: '10px',
-                  width: '1px',
-                  height: 'calc(100% - 0.5rem)',
-                  backgroundColor: 'leftNav.accordion.panel.borderLeftColor'
-                }}
-              >
-                {children?.map(child => child.item)}
-              </Box>
-            </AccordionPanel>
-          </>
-        )}
-      </AccordionItem>
+                {/* v2's AccordionIcon was Chakra v2's own ChevronDown at
+                    `fontSize: 1.25em`, which is the glyph vendored into
+                    icons/chakra. An ItemIndicator with no children falls back
+                    to v3's built-in chevron instead, a different path that
+                    renders a visibly different arrow at this size. */}
+                <ChevronDownIcon boxSize="1.25em" />
+              </Accordion.ItemIndicator>
+            </Center>
+          </Accordion.ItemTrigger>
+        </Link>
+        <Accordion.ItemContent position="relative">
+          <Accordion.ItemBody>
+            <Box
+              _before={{
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 2,
+                borderRadius: 'full',
+                left: '10px',
+                width: '1px',
+                height: 'calc(100% - 0.5rem)',
+                backgroundColor: 'leftNav.accordion.panel.borderLeftColor'
+              }}
+            >
+              {children?.map(child => child.item)}
+            </Box>
+          </Accordion.ItemBody>
+        </Accordion.ItemContent>
+      </Accordion.Item>
     );
   } else {
     resultObj.item = (
@@ -184,7 +201,11 @@ export const generateMenuItem = (
         {...styleProps}
         key={item.href + item.name}
         to={item.href}
-        isExternal={item.isExternal}
+        {/* `isExternal` is gone: jaen's Link decides externality from `to`
+            itself and sets target and rel accordingly. Its props are widened to
+            `any`, so passing it here still type-checks and would simply be
+            spread onto the anchor as an unknown DOM attribute. `item.isExternal`
+            is still what draws the arrow glyph below. */}
         display="block"
         py={1.5}
         px={4}

@@ -202,9 +202,12 @@ export const siteConfig = defineConfig({
        * `border="1px"` no longer resolves. The literal `1px` is emitted
        * instead, which resets border-style to its initial `none` and paints
        * nothing — and v3's preflight `border-style: solid` on `*` loses to the
-       * shorthand. One call site depends on it, the rule under the app footer's
-       * bottom row, and it is the kind of thing that is invisible in review and
-       * obvious on the page.
+       * shorthand.
+       *
+       * No call site depends on it TODAY: the one rule that did was netsnek's
+       * own footer separator, which did not come across. It is pinned anyway,
+       * because the failure mode is a border that silently stops being drawn
+       * and the scale costs four declarations.
        */
       borders: {
         '1px': { value: '1px solid' },

@@ -1,4 +1,4 @@
-import { Box, Collapse, Flex, Spacer } from '@chakra-ui/react';
+import { Box, Collapsible, Flex, Spacer } from '@chakra-ui/react';
 import { Global } from '@emotion/react';
 import { useLocation } from '@reach/router';
 import { FaLink } from '@react-icons/all-files/fa/FaLink';
@@ -39,52 +39,54 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({
         }}
       />
       <Box position="fixed" top={`calc(64px)`} left={0} zIndex={3}>
-        <Collapse in={isOpen} animateOpacity>
-          <Flex
-            direction="column"
-            w="100vw"
-            h={`calc(100vh - ${navOffset})`}
-            bg="shared.body.bgColor"
-            pt={9}
-            px={9}
-            overflowY="scroll"
-          >
-            <SearchMenu />
-            <Box mt={5}>
-              <PageDirectory
-                isMobile
-                closeMobileDrawer={onClose}
-                data={menuStructure}
-                baseMenuItems={[
-                  {
-                    name: 'Community Research',
-                    icon: <TbUsers />,
-                    items: [
-                      {
-                        name: 'Experiments',
-                        href: '/experiments',
-                        isActive: pathname?.startsWith('/experiments')
-                      }
-                    ]
-                  },
-                  {
-                    name: 'More',
-                    icon: <FaLink />,
-                    items: [
-                      {
-                        name: 'PhotonQ',
-                        href: '/'
-                      }
-                    ]
-                  }
-                ]}
-                path={pathname}
-              />
-            </Box>
-            <Spacer />
-            <NavbarControls isMobile />
-          </Flex>
-        </Collapse>
+        <Collapsible.Root open={isOpen}>
+          <Collapsible.Content>
+            <Flex
+              direction="column"
+              w="100vw"
+              h={`calc(100vh - ${navOffset})`}
+              bg="shared.body.bgColor"
+              pt={9}
+              px={9}
+              overflowY="scroll"
+            >
+              <SearchMenu />
+              <Box mt={5}>
+                <PageDirectory
+                  isMobile
+                  closeMobileDrawer={onClose}
+                  data={menuStructure}
+                  baseMenuItems={[
+                    {
+                      name: 'Community Research',
+                      icon: <TbUsers />,
+                      items: [
+                        {
+                          name: 'Experiments',
+                          href: '/experiments',
+                          isActive: pathname?.startsWith('/experiments')
+                        }
+                      ]
+                    },
+                    {
+                      name: 'More',
+                      icon: <FaLink />,
+                      items: [
+                        {
+                          name: 'PhotonQ',
+                          href: '/'
+                        }
+                      ]
+                    }
+                  ]}
+                  path={pathname}
+                />
+              </Box>
+              <Spacer />
+              <NavbarControls isMobile />
+            </Flex>
+          </Collapsible.Content>
+        </Collapsible.Root>
       </Box>
     </>
   );

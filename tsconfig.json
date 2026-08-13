@@ -109,6 +109,16 @@
         "./src/clients/*"
       ],
 
+      /* snek-query declares its react-hooks types through `typesVersions`, and
+         "bundler" resolution reads the `exports` map instead — where that
+         subpath has a runtime entry and no `types` condition. The hooks then
+         come through as implicit any, taking every component that calls
+         useQuery with them. Pointing at the declaration directly restores what
+         "node" resolution used to find. */
+      "snek-query/react-hooks": [
+        "./node_modules/snek-query/dist/react-hooks/index.d.ts"
+      ],
+
       /* jaen ships its types from ./dist/index.d.ts, which only exists after
          microbundle has run, so a fresh checkout cannot resolve `from 'jaen'`
          at all and every consumer collapses into implicit any. The second
