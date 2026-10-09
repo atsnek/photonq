@@ -1,10 +1,43 @@
-import { Box, BoxProps, Flex, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Flex,
+  Stack,
+  Text,
+  VisuallyHidden
+} from '@chakra-ui/react';
 import 'highlight.js/styles/atom-one-dark.css';
 import { highlight, languages } from 'prismjs';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useId, useMemo, useState } from 'react';
 import Editor from 'react-simple-code-editor';
 import { IMainContentComponentBaseProps } from '../../types/mainContent';
 import '../styles/prism-one-dark.css';
+
+/**
+ * One Dark base colours, kept in sync with ../styles/prism-one-dark.css.
+ *
+ * Ported from netsnek.com (bbcbceb6), which renders the same component. The
+ * imported theme paints its dark ground only through
+ * `code[class*="language-"], pre[class*="language-"]`, and
+ * react-simple-code-editor renders its pre without a language class and with
+ * an inline `background: none`. The rule never matched, so the One Dark token
+ * colours sat on whatever was behind the editor: the white card in light
+ * mode, where punctuation, numbers and strings read 2.0 to 2.5:1, and the
+ * gray.800 card in dark mode, where the comments read 2.7:1. The editor
+ * container repeats the two base values instead.
+ */
+const ONE_DARK_BG = 'hsl(220, 13%, 18%)';
+const ONE_DARK_FG = 'hsl(220, 14%, 71%)';
+
+/** One Dark accent, the only caret colour that stays visible on ONE_DARK_BG. */
+const ONE_DARK_CARET = 'hsl(220, 100%, 66%)';
+
+/**
+ * Selection band for the editor textarea. It has to stay translucent because
+ * the textarea lies on top of the highlighted pre, so an opaque band would
+ * cover the code it marks.
+ */
+const ONE_DARK_SELECTION = 'hsla(220, 13%, 45%, 0.5)';
 
 export interface ICodeSnippetProps extends IMainContentComponentBaseProps {
   parentRef?: React.RefObject<HTMLDivElement>;
@@ -34,6 +67,14 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
 }) => {
   const [code, setCode] = useState(children);
   const [buttonIcon, setButtonIcon] = React.useState<'copy' | 'check'>('copy');
+
+  // react-simple-code-editor forwards the rest of its props to the wrapping
+  // div, never to the textarea, so aria-label cannot reach the form control.
+  // Only textareaId addresses it, which leaves an explicit label as the way to
+  // give the textarea an accessible name. React ids carry colons, which are
+  // legal in HTML but need escaping in CSS selectors, so they are dropped.
+  const reactId = useId();
+  const editorId = `code-snippet-editor-${reactId.replace(/:/g, '')}`;
 
   const grammar = useMemo(() => {
     try {
@@ -133,7 +174,15 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
       )}
       <Flex
         fontSize="sm"
-        borderRadius="md"
+        // The One Dark ground the prism theme expects but never applies here,
+        // see the note on ONE_DARK_BG. The foreground covers everything prism
+        // leaves untokenised.
+        bgColor={ONE_DARK_BG}
+        color={ONE_DARK_FG}
+        // Squared off on purpose. The surrounding Box already clips with its
+        // own radius, and a second radius on the now visible ground would cut
+        // light notches into the corners where it meets the header.
+        borderRadius="0"
         w="full"
         transition="box-shadow 0.2s cubic-bezier(0.000, 0.735, 0.580, 1.000)"
         css={{
@@ -142,7 +191,28 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
           // and never matched, leaving the editor's focus outline showing.
           '& textarea:focus': {
             outline: 'none'
-          }
+          },
+          // The textarea paints its own glyphs transparent and sits above the
+          // highlighted pre, so caret and selection are all that stays visible
+          // of it. Both inherited dark values from the old light ground.
+          '& textarea': {
+            caretColor: ONE_DARK_CARET
+          },
+          '& textarea::selection': {
+            background: ONE_DARK_SELECTION
+          },
+          // Two One Dark token groups fall under 4.5:1 on their own ground.
+          // They are lifted here rather than in the vendored theme file, which
+          // stays a verbatim copy. Lightness is the only channel that moves.
+          '& .token.comment, & .token.prolog, & .token.cdata': {
+            // hsl(220, 10%, 40%) reads 2.31:1 on ONE_DARK_BG
+            color: 'hsl(220, 10%, 60%)'
+          },
+          '& .token.property, & .token.tag, & .token.symbol, & .token.deleted, & .token.important':
+            {
+              // hsl(355, 65%, 65%) reads 4.37:1 on ONE_DARK_BG
+              color: 'hsl(355, 65%, 67%)'
+            }
         }}
         p="1"
         maxH={{
@@ -153,7 +223,11 @@ const CodeSnippet: FC<ICodeSnippetProps> = ({
         }}
         overflowY="scroll"
       >
+        <VisuallyHidden asChild>
+          <label htmlFor={editorId}>Code editor</label>
+        </VisuallyHidden>
         <Editor
+          textareaId={editorId}
           value={code}
           highlight={code => highlight(code, grammar, language)}
           onValueChange={code => {
