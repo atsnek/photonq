@@ -34,6 +34,7 @@ import zxcvbn from 'zxcvbn';
 // next-themes, which is what the rest of the site imports.
 import { PageConfig, PageProps, useColorModeValue } from 'jaen';
 import { sq } from '@/clients/signup';
+import { siteFontStack } from '../../styles/theme/system';
 
 const Page: React.FC<PageProps> = () => {
   const [alert, setAlert] = useState<{
@@ -60,7 +61,24 @@ const Page: React.FC<PageProps> = () => {
   );
 
   return (
-    <Box pos="relative" id="coco">
+    /**
+     * The site's typeface, on a page that does not render under the site's
+     * system. The signup page uses jaen's `full` layout, so its tokens are
+     * jaen's, and jaen's heading and body fonts ("Spline Sans Variable",
+     * "Open Sans Variable") are never loaded on a site route. Every word fell
+     * back to system-ui, DejaVu Sans on Linux, unlike any other page of the
+     * site. Re-pointing jaen's two font variables at the site's stack covers
+     * the headings and labels that read them as well as the inherited text.
+     */
+    <Box
+      pos="relative"
+      id="coco"
+      fontFamily={siteFontStack}
+      css={{
+        '--jaen-fonts-heading': siteFontStack,
+        '--jaen-fonts-body': siteFontStack
+      }}
+    >
       <Particles
         id="tsparticles"
         init={particlesInit}

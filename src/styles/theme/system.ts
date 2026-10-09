@@ -119,6 +119,14 @@ const brandColorPalette = {
 };
 
 /**
+ * v2's body and heading font stack, exported for the one page that renders
+ * under jaen's system rather than this one: the signup page
+ * (gatsby-plugin-jaen/pages/signup.tsx).
+ */
+export const siteFontStack =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
+
+/**
  * v2's font stack, pinned.
  *
  * `fonts.ts` is empty, which in v2 meant "use @chakra-ui/theme's default" — the
@@ -130,14 +138,8 @@ const brandColorPalette = {
  * ever stops being empty.
  */
 const v2Fonts = {
-  heading: {
-    value:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
-  },
-  body: {
-    value:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
-  },
+  heading: { value: siteFontStack },
+  body: { value: siteFontStack },
   mono: {
     value:
       'SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace'
