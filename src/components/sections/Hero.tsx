@@ -8,7 +8,11 @@ import { Link } from 'gatsby-plugin-jaen';
 const Hero: FC = () => {
   const navOffset = useNavOffset();
 
-  const isAuthenticated = useAuth().user !== null;
+  // `isAuthenticated`, not `user !== null`. jaen v3's useAuth always returns
+  // a user object (the OIDC profile spread together with the roles), so the
+  // old check was true for every visitor: signed out, the button offered
+  // "New experiment" and led to the sign-in gate instead of "Register Now".
+  const { isAuthenticated } = useAuth();
 
   return (
     <VStack
