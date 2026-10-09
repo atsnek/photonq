@@ -133,7 +133,11 @@ export const generateMenuItem = (
               item.isActive ? semanticPath + 'bgColor' : undefined
             }
           >
-            <Box as="span" flex="1" wordBreak="break-all">
+            {/* Lines break at spaces. `break-all` broke every line at the
+                last character that fit, mid-word ("Quantu|m Information",
+                "Learn about Op|enQASM"). `anywhere` still breaks a single
+                word that is wider than the column. */}
+            <Box as="span" flex="1" overflowWrap="anywhere">
               {item.name}
               {item.isExternal && externalLinkIcon}
             </Box>
