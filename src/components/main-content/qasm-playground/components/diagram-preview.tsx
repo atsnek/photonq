@@ -27,6 +27,8 @@ const DiagramPreview: FC<ICodeResultPreviewProps> = ({
       borderRadius={isStandalone ? 'md' : 'none'}
       border="1px solid"
       borderColor="components.codeResultPreview.borderColor"
+      // Clips the white body below to the rounded corners.
+      overflow="hidden"
     >
       {headerText && (
         <Text
@@ -43,8 +45,14 @@ const DiagramPreview: FC<ICodeResultPreviewProps> = ({
           {headerText}
         </Text>
       )}
+      {/* White in both modes. quantum-circuit draws its wires, qubit labels
+          and captions in hard-coded black and dark grey, so on the dark card
+          in dark mode only the white gate boxes could be seen. The drawing is
+          a figure made for a white page, so it gets one. */}
       <Box
         p="1"
+        bg="white"
+        color="gray.800"
         maxH={{
           base: 'xs',
           sm: 'sm',
