@@ -1,6 +1,7 @@
 import {
   Button,
   ButtonGroup,
+  Flex,
   Stack,
   Table,
   Text,
@@ -111,6 +112,19 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
   },
   img: JaenImage,
   Image: JaenImage,
+  /**
+   * `<center>`, which the docs content wraps around its figures.
+   *
+   * jaen-fields-mdx sanitises the rendered tree against GitHub's schema, which
+   * does not allow `center`, so the element was unwrapped and every figure
+   * sat flush left. The sanitiser does allow every name in this map, so
+   * naming `center` here both keeps the element and decides what it renders:
+   * a column that centres each child at its own width (300px or 70% in the
+   * content), which is what the tag did in a browser.
+   */
+  center: (props: any) => (
+    <Flex direction="column" align="center" children={props.children} />
+  ),
   // CUSTOM COMPONENTS
   QASMPlayground,
   Filesystem,
