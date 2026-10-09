@@ -242,7 +242,15 @@ export const buttonRecipe = defineRecipe({
         bg: 'transparent',
         opacity: 0.7,
         _hover: { bg: 'components.button.ghost.hover.bgColor', opacity: 1 },
-        _focus: { bg: 'components.button.ghost.hover.bgColor', opacity: 1 }
+        // `_focusVisible`, not v2's `_focus`. A pointer click focuses the
+        // button and leaves it focused, so `_focus` kept the hover fill on the
+        // hamburger after it had opened the drawer: a grey square behind the
+        // close button until the next click elsewhere. Keyboard focus still
+        // gets the fill.
+        _focusVisible: {
+          bg: 'components.button.ghost.hover.bgColor',
+          opacity: 1
+        }
       },
       'ghost-hover-outline': {
         textTransform: 'capitalize',

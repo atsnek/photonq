@@ -187,8 +187,6 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
 
   const scrollPos = useScrollPosition();
 
-  const topNavDisclosure = useDisclosure(); // Mobile menu drawer
-
   const { colorMode: chakraColorMode } = useColorMode();
 
   const [colorMode, setColorMode] = useState<'light' | 'dark'>(
@@ -200,9 +198,12 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
       const heroHeight = document.querySelector<HTMLDivElement>('#hero');
       if (!heroHeight) return;
       const heroHeightPx = heroHeight.getBoundingClientRect().height;
+      // `open` is the drawer's own state. This used to read a second
+      // useDisclosure that nothing ever opened, so on the home page in light
+      // mode the bar stayed in its dark hero style above the white drawer and
+      // the close button's white bars sat on a light grey square.
       const newColorMode =
-        chakraColorMode === 'dark' ||
-        (scrollPos < heroHeightPx && !topNavDisclosure.open)
+        chakraColorMode === 'dark' || (scrollPos < heroHeightPx && !open)
           ? 'dark'
           : 'light';
 
@@ -212,7 +213,7 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
     } else {
       setColorMode('light');
     }
-  }, [path, scrollPos, topNavDisclosure.open, chakraColorMode]);
+  }, [path, scrollPos, open, chakraColorMode]);
 
   let linkProps: TTopNavLinkProps = { transition: 'opacity 0.2s ease-in-out' };
 
@@ -251,7 +252,7 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
   } else {
     wrapperProps = {
       ...wrapperProps,
-      bgColor: topNavDisclosure.open ? 'white' : 'rgba(255, 255, 255, 0.7)',
+      bgColor: open ? 'white' : 'rgba(255, 255, 255, 0.7)',
       color: 'black'
     };
     linkProps = {
