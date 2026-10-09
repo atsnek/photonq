@@ -164,7 +164,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                   <Icon display="inline-block" color="brand.500" mr="2" asChild>
                     <FaUsers />
                   </Icon>
-                  <Text color="gray.600">Community Experiments</Text>
+                  <Text color="shared.text.muted">Community Experiments</Text>
                 </HStack>
               </Link>
             </Breadcrumb.Link>
@@ -564,7 +564,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                 <>
                   <Text>{authorDisplayName}</Text>
 
-                  <Text fontSize="sm" color="gray.600">
+                  <Text fontSize="sm" color="shared.text.muted">
                     <LinkOverlay asChild>
                       <Link to={`/users/${authorId}`}>@{authorUserName}</Link>
                     </LinkOverlay>

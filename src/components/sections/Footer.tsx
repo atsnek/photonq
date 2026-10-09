@@ -213,10 +213,12 @@ const Footer: FC<{
 
           <Separator opacity={0.1} />
 
+          {/* White at 0.2 on the near-black footer was 1.8:1, which is not
+              legible. 0.6 is 7.1:1, still the quietest line in the footer. */}
           <Field.Text
             name="FooterBottomText"
             defaultValue={`Copyright © ${new Date().getFullYear()} Walther Group, Faculty of Physics, University of Vienna. All rights reserved.`}
-            opacity={0.2}
+            opacity={0.6}
             _hover={{ opacity: 1 }}
             transition="opacity 0.2s ease-in-out"
             fontSize="sm"

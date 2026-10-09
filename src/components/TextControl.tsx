@@ -90,7 +90,7 @@ export const TextControl: React.FC<{
         </Editable.Input>
       ) : (
         <Editable.Textarea asChild>
-          <Textarea fontSize="xl" color="gray.600" fontWeight="400" />
+          <Textarea fontSize="xl" color="shared.text.muted" fontWeight="400" />
         </Editable.Textarea>
       )}
       {props.editable && <EditableControls />}

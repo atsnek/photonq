@@ -244,7 +244,10 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
     };
     linkProps = {
       ...linkProps,
-      opacity: 0.4,
+      // White at 0.4 on the near-black bar was 3.75:1, under the 4.5:1 a 14px
+      // label needs. 0.6 is 7.1:1 and still reads as dimmed next to the
+      // hovered and the active link.
+      opacity: 0.6,
       _hover: {
         opacity: 1
       }

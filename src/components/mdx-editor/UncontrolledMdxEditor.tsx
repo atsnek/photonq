@@ -100,7 +100,7 @@ const InjectImage: React.FC<{
         </Flex>
       )}
       {alt && (
-        <Text mt={2} fontSize="sm" color="gray.600" textAlign="center">
+        <Text mt={2} fontSize="sm" color="shared.text.muted" textAlign="center">
           {alt}
         </Text>
       )}

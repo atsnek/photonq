@@ -40,13 +40,18 @@ const smtTopNav = {
         _dark: 'gray.700'
       },
     },
+    // The dark halves of these two are read on the near-black top bar
+    // (#111319 once its 70% black is laid over the page). gray.700 drew the
+    // search box and the Sign Up box at 1.5:1, barely there. gray.600 is
+    // 2.5:1. White at 0.4 for the label was 3.75:1, under the 4.5:1 a 14px
+    // label needs; at 0.6 it is 7.1:1, the same dimming as the nav links.
     borderColor: {
       default: 'gray.300',
-      _dark: 'gray.700'
+      _dark: 'gray.600'
     },
     color: {
       default: 'gray.800',
-      _dark: 'rgba(255, 255, 255, 0.4)',
+      _dark: 'rgba(255, 255, 255, 0.6)',
     },
     kbd: {
       color: {
@@ -79,9 +84,10 @@ const smtTopNav = {
   },
   links: {
     active: {
+      // Text on the bar, so the contrast-checked text token. The old dark
+      // half, brand.600, was 2.7:1 on the dark bar.
       color: {
-        default: 'brand.500',
-        _dark: 'brand.600'
+        default: 'shared.text.brand'
       }
     }
   }

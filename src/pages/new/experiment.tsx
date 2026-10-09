@@ -123,7 +123,7 @@ cx qubits[0], qubits[1]; // Apply CNOT gate between qubits[^4]
                   <Icon display="inline-block" color="brand.500" mr="2" asChild>
                     <FaUsers />
                   </Icon>
-                  <Text color="gray.600">Community Experiments</Text>
+                  <Text color="shared.text.muted">Community Experiments</Text>
                 </HStack>
               </Link>
             </Breadcrumb.Link>

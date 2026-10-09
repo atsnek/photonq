@@ -43,7 +43,7 @@ const DocsIndex: React.FC<{
             <Link to={manager.pagePath(child.id)} mb="2">
               {child.jaenPageMetadata?.title || 'Read Page'}
             </Link>{' '}
-            <Text fontSize="sm" color="gray.600">
+            <Text fontSize="sm" color="shared.text.muted">
               {child.jaenPageMetadata?.description || ''}
             </Text>{' '}
           </List.Item>

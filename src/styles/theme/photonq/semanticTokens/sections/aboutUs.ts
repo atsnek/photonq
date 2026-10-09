@@ -7,9 +7,10 @@ const smtPqAboutUsSection = {
     },
     testimonial: {
         heading: {
+            // Text, so the contrast-checked text token (see
+            // shared.text.brand). The old dark half, brand.600, was 2.4:1.
             color: {
-                default: 'brand.500',
-                _dark: 'brand.600'
+                default: 'shared.text.brand'
             }
         }
     }

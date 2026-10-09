@@ -282,7 +282,7 @@ const PostCard: FC<PostCardProps> = ({
                   <Wrap>
                     {/* Unitless numbers are no longer coerced to px in v3, so a
                         bare 12 emits `font-size: 12` and the browser drops it. */}
-                    <Text fontSize="12px" color="gray.600">
+                    <Text fontSize="12px" color="shared.text.muted">
                       <NoSSR>{new Date(createdAt).toLocaleDateString()}</NoSSR>
                     </Text>
 

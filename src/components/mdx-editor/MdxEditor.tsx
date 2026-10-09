@@ -30,6 +30,7 @@ import IconCard from '../main-content/icon-card/components/IconCard';
 import ImageCard from '../main-content/image-card/components/ImageCard';
 import { QASMPlayground } from '../main-content/qasm-playground/components/qasm-playground';
 import JaenImage from '../JaenImage';
+import DocsLink from '../main-content/link/components/Link';
 
 interface IMdxEditorProps {
   hideHeadingHash?: boolean;
@@ -39,6 +40,9 @@ interface IMdxEditorProps {
 export const mdxEditorComponents: MdxFieldProps['components'] = {
   // TEXT
   p: props => <Text id={props.id} children={props.children} />,
+  // LINK. Replaces jaen-fields-mdx's own `a`, whose colour is fixed at
+  // brand.600 and unreadable in dark mode. See DocsLink.
+  a: (props: any) => <DocsLink href={props.href} children={props.children} />,
   // LIST
   ul: (props: any) => (
     <List.Root as="ul" id={props.id} children={props.children}></List.Root>

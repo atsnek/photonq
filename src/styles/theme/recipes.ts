@@ -272,12 +272,19 @@ export const buttonRecipe = defineRecipe({
         transition:
           'background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out'
       },
+      /**
+       * Both pq-outline buttons sit on a ground that is dark in BOTH modes,
+       * the home hero and the footer, so the colour is a fixed light shade
+       * and not a mode-aware token. brand.500 on that near-black ground
+       * (#0d0e11) was 2.9:1. brand.400 (rgb 46 171 255) is 7.7:1 for the
+       * label and keeps the outline the same blue as the label.
+       */
       'pq-outline': {
         textTransform: 'capitalize',
         bg: 'rgba(2, 116, 192, 0.07)',
         borderWidth: '1px',
-        borderColor: 'brand.500',
-        color: 'brand.500',
+        borderColor: 'brand.400',
+        color: 'brand.400',
         px: 5,
         borderRadius: 'lg',
         _hover: { bg: 'brand.600', color: 'white', transform: 'scale(1.05)' },
