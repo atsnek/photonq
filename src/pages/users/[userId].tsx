@@ -114,7 +114,8 @@ const AvatarImage: React.FC<{
         cursor={cursor}
         aspectRatio={1}
         boxSize="full"
-        bg="gray.100"
+        // gray.100 in dark mode was a glaring light disc on the dark page.
+        bg={{ base: 'gray.100', _dark: 'gray.700' }}
         _hover={{
           boxShadow: 'rgba(0, 0, 0, 0.2) 6px 12px 28px -5px',
           transform: 'scale(1.02)'
@@ -627,8 +628,10 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 base: 'inline-block',
                 md: 'block'
               }}
+              // The rows sit side by side on a phone and need a gap there.
+              // A base of 0 ran them together: "0 Followers0 Following".
               mr={{
-                base: 0,
+                base: 4,
                 md: 4
               }}
             >
@@ -653,8 +656,10 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                 base: 'inline-block',
                 md: 'block'
               }}
+              // The rows sit side by side on a phone and need a gap there.
+              // A base of 0 ran them together: "0 Followers0 Following".
               mr={{
-                base: 0,
+                base: 4,
                 md: 4
               }}
             >
