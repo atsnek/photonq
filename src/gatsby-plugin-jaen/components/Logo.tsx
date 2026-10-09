@@ -1,15 +1,40 @@
-import { chakra } from '@chakra-ui/react';
+import { chakra, type HTMLChakraProps } from '@chakra-ui/react';
 // v3 exports no color-mode hook, and the codemod's `components/ui/color-mode`
 // snippet was never generated in this repo. jaen re-exports one over
 // next-themes, which is what the rest of the site imports.
 import { useColorMode } from 'jaen';
 import { FC } from 'react';
 
-interface LogoProps {
+interface LogoProps extends HTMLChakraProps<'svg'> {
   forceColorMode?: 'light' | 'dark';
 }
 
-const Logo: FC<LogoProps> = ({ forceColorMode }) => {
+/**
+ * The University of Vienna mark, the site's logo in TopNav and, through this
+ * Gatsby shadow, in jaen's CMS frame and its app drawer.
+ *
+ * It carries a height of its own and takes its width from the viewBox.
+ *
+ * v2 drew it at `width: 100%; height: 100%`, which only means something
+ * inside a box with a definite height, and TopNav's 150x60 link is one. jaen
+ * v3's frame puts the logo in a link whose recipe is `inline-flex` with an
+ * automatic height, so 100% resolved to auto, the SVG took its size from the
+ * width alone (up to the frame's 12rem) and came out up to 96px tall in the
+ * 64px header, the seal and the "wien" line hanging out under it. The frame
+ * hands the logo no props, so the default has to be right on its own.
+ *
+ * 60px is TopNav's box, so the mark is the same size in the signed-out bar
+ * and in the signed-in frame. The artwork fills only the middle half of the
+ * viewBox's height (y 99 to 279 of 378), so in the 64px frame header it lands
+ * centred even though the link itself sits at the top. Callers with a box of
+ * their own, like TopNav, pass `w="full" h="full"`.
+ *
+ * The two inks are scoped to this element through `css`. They used to be a
+ * global `<style>` with the class names `.st0x` and `.st1x`, so two logos on
+ * one page in different modes repainted each other, and the stylesheet text
+ * ended up in the header's text content.
+ */
+const Logo: FC<LogoProps> = ({ forceColorMode, ...props }) => {
   const { colorMode } = useColorMode();
   const isLightMode = (forceColorMode ?? colorMode) === 'light';
   const textColor = isLightMode ? '#1266ac' : '#fff';
@@ -17,18 +42,17 @@ const Logo: FC<LogoProps> = ({ forceColorMode }) => {
 
   return (
     <chakra.svg
-      width="full"
-      height="full"
-      x="0px"
-      y="0px"
       viewBox="0 0 755.907 377.947"
+      role="img"
+      aria-label="Universität Wien"
+      h="60px"
+      w="auto"
+      {...props}
+      css={{
+        '& .st0x': { fill: iconColor },
+        '& .st1x': { fill: textColor }
+      }}
     >
-      <style type="text/css">
-        {`
-      .st0x{fill:${iconColor};}
-      .st1x{fill:${textColor};}
-     `}
-      </style>
       <g transform="matrix(1.33333 0 0 -1.33333 0 377.947)">
         <g
           fillOpacity="1"

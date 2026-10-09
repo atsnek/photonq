@@ -291,7 +291,14 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
                 }}
                 transition="transform 0.2s ease-in-out"
               >
-                <Logo forceColorMode={path === '/' ? colorMode : undefined} />
+                {/* The link is the logo's box here, so the mark fills it as it
+                    did in v2. The logo's own default height is for the CMS
+                    frame, which gives it no box at all. */}
+                <Logo
+                  w="full"
+                  h="full"
+                  forceColorMode={path === '/' ? colorMode : undefined}
+                />
               </Link>
               <HStack
                 gap={4}
