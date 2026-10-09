@@ -41,9 +41,17 @@ interface IMdxEditorProps {
 export const mdxEditorComponents: MdxFieldProps['components'] = {
   // TEXT
   p: props => <Text id={props.id} children={props.children} />,
-  // LINK. Replaces jaen-fields-mdx's own `a`, whose colour is fixed at
-  // brand.600 and unreadable in dark mode. See DocsLink.
+  // LINKS. Replace jaen-fields-mdx's own two, whose colour is fixed at
+  // brand.600 and unreadable in dark mode. See DocsLink. `a` is a Markdown
+  // link, `Link` the JSX form some pages write (`<Link to="../openqasm">`).
   a: (props: any) => <DocsLink href={props.href} children={props.children} />,
+  Link: (props: any) => (
+    <DocsLink
+      href={props.to}
+      isExternal={props.isExternal}
+      children={props.children}
+    />
+  ),
   // LIST
   ul: (props: any) => (
     <List.Root as="ul" id={props.id} children={props.children}></List.Root>

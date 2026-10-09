@@ -42,14 +42,18 @@ const linkProps: LinkProps = {
 
 interface ILinkProps {
   href?: string;
+  isExternal?: boolean;
   children?: ReactNode;
 }
 
 /**
  * Component for displaying a link (in the main content)
  */
-const Link: FC<ILinkProps> = ({ href = '/', children }) => {
-  const isExternal = href.startsWith('http://') || href.startsWith('https://');
+const Link: FC<ILinkProps> = ({ href = '/', children, ...props }) => {
+  const isExternal =
+    props.isExternal !== undefined
+      ? props.isExternal
+      : href.startsWith('http://') || href.startsWith('https://');
 
   if (isExternal) {
     return (
