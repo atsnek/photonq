@@ -13,16 +13,11 @@ const DiagramPreview: FC<ICodeResultPreviewProps> = ({
   headerText,
   children
 }) => {
-  let baseProps = {};
-
-  if (isStandalone)
-    baseProps = {
-      mt: '8'
-    };
-
+  // The only standalone diagram sits inside the playground card, whose own
+  // 40px padding already spaces it. The extra `mt: 8` it used to get made
+  // 72px of empty card above the panel against 40px at the sides.
   return (
     <Box
-      {...baseProps}
       color="components.codeResultPreview.text.color"
       borderRadius={isStandalone ? 'md' : 'none'}
       border="1px solid"
