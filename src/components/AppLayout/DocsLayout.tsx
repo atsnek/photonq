@@ -20,10 +20,12 @@ import MainBreadcrumb from '../navigation/MainBreadcrumb';
 import TableOfContent from '../navigation/TableOfContent';
 import PageDirectory from '../navigation/page-directory/PageDirectory';
 
+// The site has no /contact page. The imprint opens with the group's contact
+// details, so that is where a question goes.
 const links = [
   {
     name: 'Question? Give us feedback',
-    href: '/contact'
+    href: '/imprint/'
   },
   {
     name: 'Edit this page on Jaen',

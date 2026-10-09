@@ -62,7 +62,9 @@ const Footer: FC = () => {
             <Link href="/imprint" fontSize="xs" variant="hover-theme">
               Imprint
             </Link>
-            <Link href="/contact" fontSize="xs" variant="hover-theme">
+            {/* No /contact page exists. The imprint carries the contact
+                details. */}
+            <Link href="/imprint" fontSize="xs" variant="hover-theme">
               Contact
             </Link>
           </VStack>

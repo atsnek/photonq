@@ -19,10 +19,12 @@ import MainBottomNav from '../components/navigation/MainBottomNav';
 import { useTOCContext } from '../contexts/toc';
 
 // Example links - these would probably be fetched from a CMS or other data source
+// The site has no /contact page. The imprint opens with the group's contact
+// details, so that is where a question goes.
 const links = [
   {
     name: 'Question? Give us feedback',
-    href: '/contact'
+    href: '/imprint/'
   },
   {
     name: 'Edit this page on Jaen',

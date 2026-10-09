@@ -72,7 +72,10 @@ const Footer: FC<{
         { label: 'Documentation', href: '/docs' },
         { label: 'Experiments', href: '/experiments' },
         { label: 'Imprint', href: '/imprint' },
-        { label: 'Contact', href: '/contact' }
+        // There is no /contact page, so the link used to land on the home
+        // page. The imprint's first section is "Contact Us", with the group's
+        // address, phone and e-mail.
+        { label: 'Contact', href: '/imprint' }
       ]
     },
     {
