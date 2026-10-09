@@ -72,7 +72,10 @@ const IndexPage: React.FC<PageProps> = () => {
             ml={5}
             borderRadius="full"
           >
-            <Heading as="h1" size="lg" color="#1FA2FF">
+            {/* One step smaller on a phone. At `lg` the label and its pill
+                ran almost the width of the frame and covered the top edge of
+                the gradient border, its top-right corner included. */}
+            <Heading as="h1" size={{ base: 'md', md: 'lg' }} color="#1FA2FF">
               Featured Experiments
             </Heading>
           </Box>
