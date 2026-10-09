@@ -1,9 +1,6 @@
 import {
   ButtonGroup,
   Editable,
-  EditableInput,
-  EditablePreview,
-  EditableTextarea,
   Flex,
   HStack,
   Heading,
@@ -76,16 +73,25 @@ export const TextControl: React.FC<{
       fontWeight={props.type === 'heading' ? 'bold' : '400'}
     >
       <Editable.Preview as={props.type === 'heading' ? Heading : Text} />
-      {/* Here is the custom input */}
+      {/* The field is the Editable's own part, wearing Input's and
+          Textarea's look through `asChild`.
+
+          v2 wrote `<Input as={EditableInput}>`, and v3 does not honour that
+          swap here: Input forwards `as` to Ark's Field.Input as an ordinary
+          prop, so a plain input.chakra-input was rendered with none of the
+          Editable's props. It was not hidden outside editing and not wired to
+          the value, so every visitor saw an empty input under the experiment
+          title and an empty textarea under its description and under every
+          user's bio. Editable.Input and Editable.Textarea carry the `hidden`
+          and value props and hand them to the child. */}
       {props.type === 'heading' ? (
-        <Input as={EditableInput} fontSize="2xl" fontWeight="bold" />
+        <Editable.Input asChild>
+          <Input fontSize="2xl" fontWeight="bold" />
+        </Editable.Input>
       ) : (
-        <Textarea
-          as={EditableTextarea}
-          fontSize="xl"
-          color="gray.600"
-          fontWeight="400"
-        />
+        <Editable.Textarea asChild>
+          <Textarea fontSize="xl" color="gray.600" fontWeight="400" />
+        </Editable.Textarea>
       )}
       {props.editable && <EditableControls />}
     </Editable.Root>
