@@ -8,6 +8,7 @@ import { useQuery } from 'snek-query/react-hooks';
 import PostCard from '../../components/post/PostCard';
 import PostCardSkeleton from '../../components/post/PostCardSkeleton';
 import PostList from '../../components/post/PostList';
+import PostLoadError from '../../components/post/PostLoadError';
 import { Privacy, PrivacyInput } from '@/clients/social/src/schema.generated';
 import { asEnumKey } from 'snek-query';
 
@@ -27,7 +28,11 @@ export const POST_FETCH_LIMIT = 3;
 const GRADIENT_ANIMATION_NAME = 'gradient-shift';
 
 const IndexPage: React.FC<PageProps> = () => {
-  const { data, isSafe, refetch } = useQuery(sq);
+  const { data, isSafe, refetch, errors, networkError } = useQuery(sq);
+
+  // A failed query still hands back snek-query's placeholder posts, which
+  // render as blank cards. See PostLoadError.
+  const hasFailed = isSafe && (!!errors?.length || !!networkError);
 
   const handlePostDelete = async (id: string) => {
     await sq.mutate(m => m.postDelete({ id }));
@@ -85,30 +90,37 @@ const IndexPage: React.FC<PageProps> = () => {
             <PostCardSkeleton />
           </SimpleGrid> */}
 
-          <SimpleGrid
-            columns={{
-              base: 1,
-              md: 2
-            }}
-            gap={4}
-            px={5}
-            py="10"
-            w="full"
-          >
-            {data
-              .allTrendingPost({ pagination: { first: 4 } })
-              .nodes.map(post => {
-                return (
-                  <PostCard
-                    key={post.id}
-                    post={post}
-                    isSafe={isSafe}
-                    onDelete={handlePostDelete}
-                    onSetPrivacy={handlePostPrivacy}
-                  />
-                );
-              })}
-          </SimpleGrid>
+          {hasFailed ? (
+            <PostLoadError
+              subject="The featured experiments"
+              onRetry={refetch}
+            />
+          ) : (
+            <SimpleGrid
+              columns={{
+                base: 1,
+                md: 2
+              }}
+              gap={4}
+              px={5}
+              py="10"
+              w="full"
+            >
+              {data
+                .allTrendingPost({ pagination: { first: 4 } })
+                .nodes.map(post => {
+                  return (
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      isSafe={isSafe}
+                      onDelete={handlePostDelete}
+                      onSetPrivacy={handlePostPrivacy}
+                    />
+                  );
+                })}
+            </SimpleGrid>
+          )}
 
           {/* <PostList
               postData={featuredPosts}

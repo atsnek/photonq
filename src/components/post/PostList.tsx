@@ -14,6 +14,7 @@ import { Link } from 'gatsby-plugin-jaen';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import PostCardSkeleton from './PostCardSkeleton';
 import PostCard from './PostCard';
+import PostLoadError from './PostLoadError';
 import { useLazyQuery, useQuery } from 'snek-query/react-hooks';
 import { sq } from '@/clients/social';
 import TbFilterDown from '../icons/tabler/TbFilterDown';
@@ -32,7 +33,11 @@ interface PostListProps {
 const PostList: FC<PostListProps> = props => {
   const { isAuthenticated } = useAuth();
 
-  const [_, { data, refetch, isSafe }] = useLazyQuery(sq);
+  const [_, { data, refetch, isSafe, errors, networkError }] = useLazyQuery(sq);
+
+  // A failed query still hands back snek-query's placeholder posts, which
+  // render as blank cards. See PostLoadError.
+  const hasFailed = isSafe && (!!errors?.length || !!networkError);
 
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
 
@@ -266,27 +271,31 @@ const PostList: FC<PostListProps> = props => {
           `display: block` and a 1em indent for the MDX lists it was written
           for. `plain` drops the bullets, and the three layout props restore the
           box `gap` needs — none of which the cards had in v2. */}
-      <List.Root
-        variant="plain"
-        display="flex"
-        flexDirection="column"
-        ms="0"
-        gap={3}
-        mt="4"
-      >
-        {allPosts.nodes.map((post, idx) => (
-          <PostCard
-            key={idx}
-            post={post}
-            hideAuthor={props.hideAuthor}
-            isSafe={isSafe}
-            onDelete={handlePostDelete}
-            onSetPrivacy={handlePostPrivacy}
-          />
-        ))}
-      </List.Root>
+      {hasFailed ? (
+        <PostLoadError subject="The experiments" onRetry={refetch} />
+      ) : (
+        <List.Root
+          variant="plain"
+          display="flex"
+          flexDirection="column"
+          ms="0"
+          gap={3}
+          mt="4"
+        >
+          {allPosts.nodes.map((post, idx) => (
+            <PostCard
+              key={idx}
+              post={post}
+              hideAuthor={props.hideAuthor}
+              isSafe={isSafe}
+              onDelete={handlePostDelete}
+              onSetPrivacy={handlePostPrivacy}
+            />
+          ))}
+        </List.Root>
+      )}
 
-      <HStack justifyContent="center">
+      <HStack justifyContent="center" display={hasFailed ? 'none' : 'flex'}>
         <Button
           variant="ghost-hover-outline"
           size="sm"
