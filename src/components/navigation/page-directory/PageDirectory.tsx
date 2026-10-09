@@ -62,34 +62,30 @@ const PageDirectory: FC<PageDirectoryProps> = ({
     if (!isIncluded) setExpandedIdx([...expandedIdx, idx]);
   };
 
-  if (path === '/') {
-    baseMenuItems.unshift({
-      name: 'Navigation',
-      items: [
-        {
-          name: 'Documentation',
-          href: '/docs'
-        }
-      ]
-    });
-  }
+  /**
+   * The sections under the docs tree, built anew on every render.
+   *
+   * The "Navigation" section used to be pushed into the `baseMenuItems` prop
+   * itself. The callers build that array in their own render, but this
+   * component also re-renders on its own whenever `useBreakpointValue` flips,
+   * and then it is handed the same, already mutated array. A "Sign In" entry
+   * added while the viewport was narrow therefore stayed in the desktop nav
+   * after a resize or a tablet rotation, and every further narrow render added
+   * another one. The order is the old one: Sign In first, then Documentation.
+   */
+  const navigationItems: NavMenuItem[] = [];
 
   if (isSmallScreen && !isAuthenticated) {
-    const item = {
-      name: 'Sign In',
-      onClick: signinRedirect
-    };
-    const section = baseMenuItems.find(bmi => bmi.name === 'Navigation');
-
-    if (section) {
-      section.items.unshift(item);
-    } else {
-      baseMenuItems.unshift({
-        name: 'Navigation',
-        items: [item]
-      });
-    }
+    navigationItems.push({ name: 'Sign In', onClick: signinRedirect });
   }
+
+  if (path === '/') {
+    navigationItems.push({ name: 'Documentation', href: '/docs' });
+  }
+
+  const menuSections: NavMenuSection[] = navigationItems.length
+    ? [{ name: 'Navigation', items: navigationItems }, ...baseMenuItems]
+    : baseMenuItems;
 
   let menuRootExpandedIdx = 0;
 
@@ -117,7 +113,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
       // stringifies the index it was handed in generateMenuItem.
       value={expandedIdx.map(String)}
     >
-      {[...data.menu, ...baseMenuItems].map((section, i) => (
+      {[...data.menu, ...menuSections].map((section, i) => (
         <Fragment key={i}>
           {section.name && (
             <HStack
