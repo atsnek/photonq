@@ -95,7 +95,17 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
           borderRadius: 'lg',
           h: 9,
           px: 2,
-          lineHeight: 9
+          /**
+           * A length, not the scale step `9`.
+           *
+           * v2's theme had numeric line heights (`lineHeights['9']` was
+           * 2.25rem), so `lineHeight: 9` matched the box's own `h: 9` and
+           * centred the label in it. v3's lineHeights scale has no numeric
+           * keys, so the 9 went out unitless and meant nine times the font
+           * size: 126px of line box inside a 36px box, which drew the label
+           * 56px below its border, over the page.
+           */
+          lineHeight: '2.25rem'
         }
       }
     ]
