@@ -18,6 +18,29 @@ export const TextControl: React.FC<{
   type: 'heading' | 'text';
   editable: boolean;
 }> = props => {
+  /**
+   * The preview, as a heading or a paragraph that shows the current value.
+   *
+   * v2 wrote `<Editable.Preview as={Heading} />`. In v3 the preview's `as` is
+   * turned into Ark's asChild with a fresh `<Heading>` as the child, and Ark
+   * lets the child's own children (none) win over the value text the preview
+   * would otherwise render, so the title and the description were never shown
+   * at all, only an empty heading. The value is handed to the child here.
+   */
+  function EditablePreviewText() {
+    const { valueText } = useEditableContext();
+
+    return (
+      <Editable.Preview asChild>
+        {props.type === 'heading' ? (
+          <Heading>{valueText}</Heading>
+        ) : (
+          <Text>{valueText}</Text>
+        )}
+      </Editable.Preview>
+    );
+  }
+
   /* Here's a custom control */
   function EditableControls() {
     const {
@@ -72,7 +95,7 @@ export const TextControl: React.FC<{
       fontSize={props.type === 'heading' ? '2xl' : 'xl'}
       fontWeight={props.type === 'heading' ? 'bold' : '400'}
     >
-      <Editable.Preview as={props.type === 'heading' ? Heading : Text} />
+      <EditablePreviewText />
       {/* The field is the Editable's own part, wearing Input's and
           Textarea's look through `asChild`.
 
