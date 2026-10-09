@@ -237,7 +237,29 @@ export const siteConfig = defineConfig({
         // (components, blueGradient, modals, pages, views, features, shared,
         // topNav, leftNav, main, rightNav, footer, pq), so this adds rather
         // than overwrites.
-        brand: brandColorPalette
+        brand: brandColorPalette,
+        /**
+         * v2's border colour, restored in dark mode for everything that draws
+         * with v3's default `border` token: inputs, textareas, separators,
+         * table rules.
+         *
+         * v2 drew those in `chakra-border-color`, {gray.200, whiteAlpha.300}.
+         * v3's `border` is {gray.200, gray.800}, which works on v3's own zinc
+         * ramp, where gray.800 sits well above the near-black page. This site
+         * pins v2's gray ramp, where gray.800 IS the dark page (#1A202C), so
+         * in dark mode every one of those borders was drawn in the colour of
+         * the page behind it: the experiments search field, for one, showed
+         * as a placeholder floating on nothing. Only the dark half moves.
+         * cardSlotRecipe in recipes.ts already restates the same pair for cards.
+         */
+        border: {
+          DEFAULT: {
+            value: {
+              _light: '{colors.gray.200}',
+              _dark: '{colors.whiteAlpha.300}'
+            }
+          }
+        }
       } as never
     },
     recipes: {
