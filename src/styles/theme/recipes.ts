@@ -536,6 +536,20 @@ export const separatorRecipe = defineRecipe({
  *                   `gap: 2` here.
  *
  * `separator.opacity` is v3's too. v2's separator had none.
+ *
+ * Two more of v3's opinions cut long trails off on a phone, without the
+ * ellipsis the crumbs ask for:
+ *
+ *   list.flexWrap   v3's list is a flex row that does not wrap. v2's was a
+ *                   block <ol> of inline-flex items, so a trail longer than
+ *                   the column broke onto a second line between crumbs.
+ *                   `wrap` restores that.
+ *   link.display    MainBreadcrumb passes `truncate` to every crumb, but v3's
+ *                   link is `inline-flex`, and text-overflow never renders on
+ *                   a flex container, because the text sits in an anonymous
+ *                   flex item. The crumbs were clipped mid-word ("Docume",
+ *                   "The Quant") instead of ending in an ellipsis. As a block
+ *                   the link truncates the way v2's did.
  */
 export const breadcrumbSlotRecipe = defineSlotRecipe({
   slots: [
@@ -551,7 +565,8 @@ export const breadcrumbSlotRecipe = defineSlotRecipe({
   // declares both inside `size`, and a variant is applied after the base it
   // would otherwise be overriding.
   base: {
-    list: { color: 'inherit' },
+    list: { color: 'inherit', flexWrap: 'wrap' },
+    link: { display: 'block' },
     separator: { color: 'inherit', opacity: 1 }
   },
   variants: {
