@@ -56,6 +56,7 @@ import {
 } from '@/clients/social/src/schema.generated';
 import { asEnumKey } from 'snek-query';
 import PostCard from '../../components/post/PostCard';
+import PostLoadError from '../../components/post/PostLoadError';
 import { Link } from 'gatsby-plugin-jaen';
 import { useEffect, useRef, useState } from 'react';
 import UserCard from '../../components/user/UserCard';
@@ -393,7 +394,8 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
 
   const auth = useAuth();
 
-  const [_, { data, isLoading, isSafe, refetch }] = useLazyQuery(sq);
+  const [_, { data, isLoading, isSafe, refetch, errors, networkError }] =
+    useLazyQuery(sq);
 
   const user = data.user({
     where: {
@@ -439,6 +441,18 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
 
     refetch();
   };
+
+  // A failed query hands back snek-query's placeholder user, which rendered
+  // as "@", zero counts, placeholder cards and "January 2001". Every hook
+  // above has run, so returning early is safe, and a retry renders the full
+  // page again so that the next request asks for every field.
+  if (isSafe && (!!errors?.length || !!networkError)) {
+    return (
+      <Box minH="100dvh" mt={offset}>
+        <PostLoadError subject="This profile" onRetry={refetch} py="24" />
+      </Box>
+    );
+  }
 
   return (
     <Box minH="100dvh" mt={offset}>

@@ -37,6 +37,7 @@ import { TextControl } from '../../components/TextControl';
 import UncontrolledMdxEditor from '../../components/mdx-editor/UncontrolledMdxEditor';
 import TableOfContent from '../../components/navigation/TableOfContent';
 import PostCardRating from '../../components/post/PostCardRating';
+import PostLoadError from '../../components/post/PostLoadError';
 import { useTOCContext } from '../../contexts/toc';
 // The three glyphs this page took from @chakra-ui/icons, vendored locally. The
 // codemod swapped in lucide look-alikes, which is a different icon set and a
@@ -61,7 +62,8 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
   // Use React.useId instead (available in React 18+)
   const [mdxKey, refreshMdxKey] = useId();
 
-  const [_, { data, isLoading, refetch, isSafe }] = useLazyQuery(sq);
+  const [_, { data, isLoading, refetch, isSafe, errors, networkError }] =
+    useLazyQuery(sq);
 
   const toc = useTOCContext();
 
@@ -152,6 +154,14 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
       return undefined;
     }
   }, [values.content]);
+
+  // A failed query hands back snek-query's placeholder post, which rendered
+  // as an empty title, "@" and "Invalid Date". Every hook above has run, so
+  // returning early here is safe, and a retry renders the full page again so
+  // that the next request asks for every field.
+  if (isSafe && (!!errors?.length || !!networkError)) {
+    return <PostLoadError subject="This experiment" onRetry={refetch} />;
+  }
 
   return (
     <Stack key={post.id} gap={8}>
