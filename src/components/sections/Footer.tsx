@@ -211,7 +211,12 @@ const Footer: FC<{
             ))}
           </Grid>
 
-          <Separator opacity={0.1} />
+          {/* A fixed colour, because the footer is dark in both modes. v3's
+              separator draws in the `border` token, gray.200 in light mode
+              and gray.800 in dark, so at 0.1 opacity the rule vanished
+              entirely on the dark footer in dark mode. gray.200 is the light
+              mode line, now in both. */}
+          <Separator opacity={0.1} borderColor="gray.200" />
 
           {/* White at 0.2 on the near-black footer was 1.8:1, which is not
               legible. 0.6 is 7.1:1, still the quietest line in the footer. */}
