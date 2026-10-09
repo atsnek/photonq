@@ -44,7 +44,7 @@ const NotFoundPage: React.FC<PageProps> = () => {
           Chakra link and would bring the link recipe's `display: inline`
           along with it. */}
       <Button asChild>
-        <Link to="/">Back to the home page</Link>
+        <Link to="/">Back home</Link>
       </Button>
     </Box>
   );
