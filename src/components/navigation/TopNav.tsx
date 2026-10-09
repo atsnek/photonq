@@ -1,4 +1,4 @@
-import { DarkMode, LightMode, useAuth, useColorMode } from 'jaen';
+import { useAuth, useColorMode } from 'jaen';
 import {
   Box,
   BoxProps,
@@ -10,12 +10,13 @@ import {
   ImageProps,
   LinkProps,
   Spacer,
+  Theme,
   VStack,
   useDisclosure
 } from '@chakra-ui/react';
 import { useLocation } from '@reach/router';
 import { Link } from 'gatsby-plugin-jaen';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import Logo from '../../gatsby-plugin-jaen/components/Logo';
 import useWindowSize from '../../hooks/use-current-window-size';
 import useScrollPosition from '../../hooks/use-scroll-position';
@@ -49,6 +50,41 @@ interface ITopNavProps {
   path: string;
   children?: React.ReactNode;
 }
+
+/**
+ * Re-declares the theme's tokens for the bar in the colour mode the bar is
+ * painted in, which is not always the page's.
+ *
+ * The bar is dark over the home hero in light mode, and dark on every route in
+ * dark mode, while everything inside it reads semantic tokens: the search
+ * control's text and border, the Sign Up border, the active link. v2's
+ * DarkMode and LightMode only switched a React context and left those tokens
+ * to follow the page. v3 has no such context, and jaen's two wrappers are a
+ * `<Theme>` that re-declares the whole token block for its subtree, so the
+ * wrapper has to name the bar's own mode or the bar ends up in the other one.
+ *
+ * This is jaen's DarkMode/LightMode (jaen/src/hooks/use-color-mode.tsx) with
+ * the appearance as a prop, and the props after it are jaen's for the same
+ * reasons: no surface of its own, no box in the layout, and neither the
+ * foreground colour nor the palette `Theme` would otherwise force on the
+ * subtree. Swapping jaen's two components instead would be two different
+ * element types, so React would remount the whole bar, logo and search
+ * included, every time the home page scrolls past the hero.
+ */
+const NavAppearance: FC<{ mode: 'light' | 'dark'; children: ReactNode }> = ({
+  mode,
+  children
+}) => (
+  <Theme
+    appearance={mode}
+    hasBackground={false}
+    display="contents"
+    color={undefined}
+    colorPalette={undefined}
+  >
+    {children}
+  </Theme>
+);
 
 /**
  * Top navigation bar.
@@ -185,7 +221,20 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
     w: '100%'
   };
 
-  if (colorMode === 'dark' || chakraColorMode === 'dark') {
+  /**
+   * The mode the bar is painted in, and therefore the one its contents have to
+   * read their tokens in.
+   *
+   * `colorMode` alone is not it. Away from the home page it is pinned to
+   * 'light', while the bar below still turns dark whenever the site does. The
+   * search control and the hamburger used to follow `colorMode`, which in dark
+   * mode wrapped the search in LightMode inside a dark bar (gray.800 text on
+   * the near-black bar, contrast 1.14) and painted the hamburger's bars black.
+   */
+  const navColorMode: 'light' | 'dark' =
+    colorMode === 'dark' || chakraColorMode === 'dark' ? 'dark' : 'light';
+
+  if (navColorMode === 'dark') {
     wrapperProps = {
       ...wrapperProps,
       backgroundColor: 'rgba(13, 14, 17, 0.7)',
@@ -213,22 +262,6 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
     };
   }
 
-  const search = (() => {
-    if (!colorMode) return <SearchMenu />;
-    if (colorMode === 'dark')
-      return (
-        <DarkMode>
-          <SearchMenu />
-        </DarkMode>
-      );
-    if (colorMode === 'light')
-      return (
-        <LightMode>
-          <SearchMenu />
-        </LightMode>
-      );
-  })();
-
   return (
     <>
       <Center
@@ -247,81 +280,32 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
       >
         <VStack w="full" gap={0}>
           <Flex w="full" maxW="7xl">
-            <Link
-              h="60px"
-              to="/"
-              w="150px"
-              _hover={{
-                transform: 'scale(1.1)'
-              }}
-              transition="transform 0.2s ease-in-out"
-            >
-              <Logo forceColorMode={path === '/' ? colorMode : undefined} />
-            </Link>
-            <HStack
-              gap={4}
-              ml={5}
-              display={{
-                base: 'none',
-                md: 'flex'
-              }}
-            >
-              <Links
-                links={activatedLinks}
-                props={{
-                  ...navLinkProps,
-                  ...linkProps
+            <NavAppearance mode={navColorMode}>
+              <Link
+                h="60px"
+                to="/"
+                w="150px"
+                _hover={{
+                  transform: 'scale(1.1)'
                 }}
-                activeProps={{
-                  opacity: 1,
-                  fontWeight: 'semibold',
-                  color: 'topNav.links.active.color'
-                }}
-              />
-            </HStack>
-            <Spacer />
-            <Center>
-              <HStack gap={4}>
-                <Box display={{ base: 'none', md: 'initial' }}>{search}</Box>
-                <Button
-                  // ghost-hover comes from the site's own button recipe. v3
-                  // derives the variant union from generated recipe types,
-                  // which this site does not produce, so the theme's value has
-                  // to be cast past the built-in union.
-                  variant={'ghost-hover' as never}
-                  size="sm"
-                  display={{ base: 'initial', md: 'none' }}
-                  onClick={toggleMobileMenu}
-                  {...(colorMode === 'dark'
-                    ? {
-                        _hover: {
-                          bgColor:
-                            'pq.layout.topNav.dark.mobileMenuButton.backgroundColor'
-                        }
-                      }
-                    : {})}
-                >
-                  <HamburgerMenuIcon
-                    wrapperProps={{ className: hamburgerClass }}
-                    iconProps={{
-                      bgColor: `pq.layout.topNav.${colorMode}.hamburger.backgroundColor`
-                    }}
-                  />
-                </Button>
-              </HStack>
-            </Center>
-            <Center>
+                transition="transform 0.2s ease-in-out"
+              >
+                <Logo forceColorMode={path === '/' ? colorMode : undefined} />
+              </Link>
               <HStack
                 gap={4}
-                ml={4}
+                ml={5}
                 display={{
                   base: 'none',
                   md: 'flex'
                 }}
               >
                 <Links
-                  links={links.right}
-                  props={{ ...navLinkProps, ...linkProps }}
+                  links={activatedLinks}
+                  props={{
+                    ...navLinkProps,
+                    ...linkProps
+                  }}
                   activeProps={{
                     opacity: 1,
                     fontWeight: 'semibold',
@@ -329,7 +313,60 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
                   }}
                 />
               </HStack>
-            </Center>
+              <Spacer />
+              <Center>
+                <HStack gap={4}>
+                  <Box display={{ base: 'none', md: 'initial' }}>
+                    <SearchMenu />
+                  </Box>
+                  <Button
+                    // ghost-hover comes from the site's own button recipe. v3
+                    // derives the variant union from generated recipe types,
+                    // which this site does not produce, so the theme's value has
+                    // to be cast past the built-in union.
+                    variant={'ghost-hover' as never}
+                    size="sm"
+                    display={{ base: 'initial', md: 'none' }}
+                    onClick={toggleMobileMenu}
+                    {...(navColorMode === 'dark'
+                      ? {
+                          _hover: {
+                            bgColor:
+                              'pq.layout.topNav.dark.mobileMenuButton.backgroundColor'
+                          }
+                        }
+                      : {})}
+                  >
+                    <HamburgerMenuIcon
+                      wrapperProps={{ className: hamburgerClass }}
+                      iconProps={{
+                        bgColor: `pq.layout.topNav.${navColorMode}.hamburger.backgroundColor`
+                      }}
+                    />
+                  </Button>
+                </HStack>
+              </Center>
+              <Center>
+                <HStack
+                  gap={4}
+                  ml={4}
+                  display={{
+                    base: 'none',
+                    md: 'flex'
+                  }}
+                >
+                  <Links
+                    links={links.right}
+                    props={{ ...navLinkProps, ...linkProps }}
+                    activeProps={{
+                      opacity: 1,
+                      fontWeight: 'semibold',
+                      color: 'topNav.links.active.color'
+                    }}
+                  />
+                </HStack>
+              </Center>
+            </NavAppearance>
           </Flex>
           {children}
         </VStack>
