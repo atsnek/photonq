@@ -91,6 +91,11 @@ const SearchButton: FC<ISearchButtonProps> = withRedux(
             mx={2}
             bgColor={'transparent'}
             borderColor={'topNav.input.borderColor'}
+            // The glyph's own token. The outline variant colours it with
+            // `colorPalette.fg`, a variable that is resolved once on <html>,
+            // so the top bar's dark appearance over the home hero never
+            // reached it: a brand.600 slash on the near-black bar, 2.9:1.
+            color="topNav.input.kbd.color"
             variant="outline"
           >
             /
