@@ -222,22 +222,29 @@ const SearchMenu: FC<SearchMenuProps> = ({}) => {
   const data = useMemo(() => {
     let dataItemIdx = 0;
 
-    return Object.values(search.searchResult).map(chapter => {
-      return {
-        ...chapter,
-        sections: chapter.sections.map(section => {
-          return {
-            ...section,
-            results: section.results.map(result => {
-              return {
-                ...result,
-                isActive: dataItemIdx++ === navigateIdx
-              };
-            })
-          };
-        })
-      };
-    });
+    // A chapter without a single result is left out. Its title used to be
+    // drawn over nothing, which is how a failed user search showed up: an
+    // empty "Users" heading between the docs and the experiments.
+    return Object.values(search.searchResult)
+      .filter(chapter =>
+        chapter.sections.some(section => section.results.length > 0)
+      )
+      .map(chapter => {
+        return {
+          ...chapter,
+          sections: chapter.sections.map(section => {
+            return {
+              ...section,
+              results: section.results.map(result => {
+                return {
+                  ...result,
+                  isActive: dataItemIdx++ === navigateIdx
+                };
+              })
+            };
+          })
+        };
+      });
   }, [search.searchResult, navigateIdx]);
 
   /**
