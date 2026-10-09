@@ -313,7 +313,28 @@ export const system = createSystem(
        * Without this line they all revert to v3's grey, and both tsc and gatsby
        * build stay green while they do it.
        */
-      html: { colorPalette: 'brand' },
+      html: {
+        colorPalette: 'brand',
+        /**
+         * The page background, on the canvas and not only in the body box.
+         *
+         * v2 put the site's background on `body` alone, and with no
+         * background on `html` the body's propagated to the whole canvas, so
+         * it ran to the end of any page however long. jaen's system keeps
+         * v3's default `html { bg: 'bg' }` and sets `html, body { height:
+         * 100% }`, so the body box is one viewport tall and the canvas takes
+         * jaen's own `bg` instead: #09090B in dark mode, under a gray.800
+         * body. Every page longer than the window got a hard seam one window
+         * height down, with near black below it. Light mode hid it only
+         * because both sides happen to be white.
+         *
+         * Giving `html` the body's own token restores v2's single surface
+         * without touching jaen's height rule. This rule and jaen's have the
+         * same specificity, and the site's provider is mounted inside jaen's,
+         * so its global style is inserted after jaen's and wins.
+         */
+        bg: 'shared.body.bgColor'
+      },
       /**
        * v2's body rule, restored.
        *
