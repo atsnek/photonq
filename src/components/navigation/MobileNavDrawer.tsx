@@ -4,7 +4,6 @@ import { useLocation } from '@reach/router';
 import { FaLink } from '@react-icons/all-files/fa/FaLink';
 import { FC } from 'react';
 import { useMenuStructureContext } from '../../contexts/menu-structure';
-import useNavOffset from '../../hooks/use-nav-offset';
 import TbUsers from '../icons/tabler/TbUsers';
 import SearchMenu from '../search-menu';
 import NavbarControls from './NavbarControls';
@@ -26,7 +25,6 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({
   onClose
 }) => {
   const { menuStructure } = useMenuStructureContext();
-  const navOffset = useNavOffset();
   const { pathname } = useLocation();
 
   return (
@@ -41,10 +39,16 @@ const MobileNavDrawer: FC<MobileNavDrawerProps> = ({
       <Box position="fixed" top={`calc(64px)`} left={0} zIndex={3}>
         <Collapsible.Root open={isOpen}>
           <Collapsible.Content>
+            {/* The drawer hangs from the 64px bar, so it is the visible
+                height less the bar. It used `100vh` less use-nav-offset's
+                85px, which left a 21px strip at the bottom where the page
+                showed through and ran into the last entry. `dvh` follows the
+                height the browser currently shows, where `vh` on a phone is
+                the height with its toolbar hidden. */}
             <Flex
               direction="column"
               w="100vw"
-              h={`calc(100vh - ${navOffset})`}
+              h="calc(100dvh - 64px)"
               bg="shared.body.bgColor"
               pt={9}
               px={9}
