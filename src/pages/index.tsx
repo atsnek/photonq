@@ -10,9 +10,15 @@ import PhotonQ from '../components/sections/PhotonQ';
 const IndexPage: React.FC<PageProps> = () => {
   return (
     <>
+      {/* `html` as well as `body`. The site's globals give `html` the regular
+          page background so that it covers the whole canvas (see system.ts),
+          and on this page that would be white or gray.800 wherever the
+          sections leave the canvas showing, such as the rounded bottom
+          corners of the last section above the footer. In v2 the canvas took
+          this colour from `body`. */}
       <Global
         styles={{
-          body: {
+          'html, body': {
             backgroundColor: '#0D0E11'
           }
         }}
