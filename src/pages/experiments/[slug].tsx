@@ -71,6 +71,23 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
 
   const post = data.post({ where: { slug: params.slug } });
 
+  /**
+   * The author and the dates, read on every render, the loading one included.
+   *
+   * snek-query requests only the fields a render reads off its placeholder
+   * before the request goes out (see PostCard). The author line below renders
+   * its children only once the data is safe, so the handle, the profile link
+   * and both dates were never requested and the loaded page showed "@" and
+   * "Invalid Date". Reading them here puts them back into the request.
+   */
+  const author = typeof post.user === 'function' ? post.user() : undefined;
+  const authorId = author?.id;
+  const authorUserName = author?.profile?.userName;
+  const authorDisplayName = author?.profile?.displayName;
+  const authorAvatarUrl = author?.profile?.avatarUrl;
+  const createdAt = post.createdAt;
+  const updatedAt = post.updatedAt;
+
   useEffect(() => {
     document.title = post.title;
   }, [post]);
@@ -415,7 +432,7 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
                           'The experiment has been successfully deleted.'
                       });
 
-                      navigate(`/users/${post.user().id}`);
+                      navigate(`/users/${authorId}`);
                     }
                   }
                 }}
@@ -525,11 +542,11 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
         <Flex alignItems="center">
           <SkeletonCircle boxSize="unset" loading={!isSafe}>
             <Avatar.Root size="md">
-              <Avatar.Fallback name={post.user().profile.displayName} />
+              <Avatar.Fallback name={authorDisplayName} />
               {/* v2's `alt={name}`, again from the sibling Fallback. */}
               <Avatar.Image
-                src={post.user().profile.avatarUrl || ''}
-                alt={post.user().profile.displayName}
+                src={authorAvatarUrl || ''}
+                alt={authorDisplayName}
               />
             </Avatar.Root>
           </SkeletonCircle>
@@ -545,19 +562,17 @@ const DocsPage: React.FC<PageProps> = ({ params }) => {
             >
               {isSafe ? (
                 <>
-                  <Text>{post.user().profile.displayName}</Text>
+                  <Text>{authorDisplayName}</Text>
 
                   <Text fontSize="sm" color="gray.600">
                     <LinkOverlay asChild>
-                      <Link to={`/users/${post.user().id}`}>
-                        @{post.user().profile.userName}
-                      </Link>
+                      <Link to={`/users/${authorId}`}>@{authorUserName}</Link>
                     </LinkOverlay>
                     &bull;
-                    {post.createdAt !== post.updatedAt ? (
-                      <> Updated: {new Date(post.updatedAt).toLocaleString()}</>
+                    {createdAt !== updatedAt ? (
+                      <> Updated: {new Date(updatedAt).toLocaleString()}</>
                     ) : (
-                      <> Created: {new Date(post.createdAt).toLocaleString()}</>
+                      <> Created: {new Date(createdAt).toLocaleString()}</>
                     )}
                   </Text>
                 </>

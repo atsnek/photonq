@@ -49,6 +49,36 @@ const PostCard: FC<PostCardProps> = ({
 }) => {
   const isLoaded = isSafe !== undefined ? isSafe : true;
 
+  /**
+   * Every field the card shows, read on every render, the loading one
+   * included.
+   *
+   * snek-query writes no query document of its own. It records the fields a
+   * render reads off its placeholder proxy and requests exactly those, so a
+   * field that is not read before the request goes out is never fetched. The
+   * SkeletonText blocks below render their children only once the data is
+   * safe, which keeps v3 from mounting them once per skeleton line, but it
+   * also meant the author, the stars, the summary, the date and the badges
+   * were no longer read while loading. A loaded post then arrived without
+   * `user`, `post.user()` threw "is not a function", and React unmounted the
+   * whole experiments page.
+   *
+   * Reading them up here keeps both: the request asks for everything the card
+   * draws, and the children still mount once. The `typeof` checks only guard
+   * a post whose relations came back missing.
+   */
+  const author = typeof post.user === 'function' ? post.user() : undefined;
+  const authorId = author?.id;
+  const authorUserName = author?.profile?.userName;
+  const summary = post.summary;
+  const createdAt = post.createdAt;
+  const language = post.language;
+  const privacy = post.privacy;
+  const isOwner = post.isOwner;
+  const hasStarred = post.hasStarred;
+  const likes =
+    (typeof post.stars === 'function' ? post.stars()?.totalCount : 0) || 0;
+
   return (
     // v2's `as={Card}` is `asChild` here, and the codemod's `<Card>` was not a
     // component at all: v3 exports Card as a namespace, so it renders nothing
@@ -146,9 +176,9 @@ const PostCard: FC<PostCardProps> = ({
                           lineClamp={1}
                           variant="hover-theme"
                           fontSize="sm"
-                          href={`/users/${post.user().id}`}
+                          href={`/users/${authorId}`}
                         >
-                          @{post.user().profile.userName}
+                          @{authorUserName}
                         </Link>
                       ) : null}
                     </SkeletonText>
@@ -167,7 +197,7 @@ const PostCard: FC<PostCardProps> = ({
                 </Stack>
               </HStack>
 
-              {post.isOwner && (
+              {isOwner && (
                 <Menu.Root>
                   <Menu.Trigger asChild>
                     {/* v3's IconButton has no `icon` prop; the glyph is a child. */}
@@ -185,19 +215,19 @@ const PostCard: FC<PostCardProps> = ({
                           onSelect={() =>
                             onSetPrivacy(
                               post.id,
-                              post.privacy === Privacy.PUBLIC
+                              privacy === Privacy.PUBLIC
                                 ? Privacy.PRIVATE
                                 : Privacy.PUBLIC
                             )
                           }
                           value="item-0"
                         >
-                          {post.privacy === Privacy.PUBLIC ? (
+                          {privacy === Privacy.PUBLIC ? (
                             <ViewOffIcon color="green.600" />
                           ) : (
                             <ViewIcon color="yellow.300" />
                           )}
-                          {post.privacy === Privacy.PUBLIC
+                          {privacy === Privacy.PUBLIC
                             ? 'Make Private'
                             : 'Make Public'}
                         </Menu.Item>
@@ -233,7 +263,7 @@ const PostCard: FC<PostCardProps> = ({
                   className="sd-pp-summary"
                   transition="opacity 0.2s ease-in-out"
                 >
-                  {post.summary}
+                  {summary}
                 </Text>
               ) : null}
             </SkeletonText>
@@ -253,36 +283,34 @@ const PostCard: FC<PostCardProps> = ({
                     {/* Unitless numbers are no longer coerced to px in v3, so a
                         bare 12 emits `font-size: 12` and the browser drops it. */}
                     <Text fontSize="12px" color="gray.600">
-                      <NoSSR>
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </NoSSR>
+                      <NoSSR>{new Date(createdAt).toLocaleDateString()}</NoSSR>
                     </Text>
 
                     <Badge colorPalette="gray" borderRadius="md">
-                      {post.language}
+                      {language}
                     </Badge>
 
                     <Badge
-                      display={post.isOwner ? 'block' : 'none'}
+                      display={isOwner ? 'block' : 'none'}
                       size="sm"
                       borderRadius="md"
                       colorPalette={
-                        post.privacy === Privacy.PUBLIC ? 'yellow' : 'green'
+                        privacy === Privacy.PUBLIC ? 'yellow' : 'green'
                       }
                     >
-                      {post.privacy === Privacy.PUBLIC && 'Public'}
-                      {post.privacy === Privacy.PRIVATE && 'Private'}
+                      {privacy === Privacy.PUBLIC && 'Public'}
+                      {privacy === Privacy.PRIVATE && 'Private'}
                     </Badge>
                   </Wrap>
 
                   <PostCardRating
                     id={post.id}
-                    likes={post.stars().totalCount || 0}
-                    hasRated={!!post.hasStarred}
+                    likes={likes}
+                    hasRated={!!hasStarred}
                     toggleRating={async (id: string) => {
-                      if (post.hasStarred === false) {
+                      if (hasStarred === false) {
                         await sq.mutate(m => m.postStar({ postId: id }));
-                      } else if (post.hasStarred === true) {
+                      } else if (hasStarred === true) {
                         await sq.mutate(m => m.postUnstar({ postId: id }));
                       }
                     }}
