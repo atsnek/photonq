@@ -6,6 +6,21 @@ mjx-container {
     overflow-x: auto;
 }
 
+/*
+ * Inline math cannot shrink: the formula is one unbreakable box, and the
+ * overflow-x above only takes effect on display math, whose container is a
+ * block. A long inline formula, like the R_A(theta) line on the quantum gates
+ * page, therefore pushed past the column and made the whole page scroll
+ * sideways on a phone (scrollWidth 556 at 390). Letting the paragraph that
+ * holds it scroll keeps the formula's own baseline alignment, which turning
+ * the formula into an inline-block scroller would not. overflow-y is pinned
+ * so that a sub-pixel line height cannot add a vertical scrollbar.
+ */
+p:has(> mjx-container) {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 /* Apply this to elements that have an ID and are jump targets */
 [id] {
     scroll-margin-top: 100px; /* Adjust as needed */
