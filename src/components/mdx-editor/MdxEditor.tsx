@@ -38,6 +38,30 @@ interface IMdxEditorProps {
   onMdast: (mdast: any) => void;
 }
 
+/**
+ * A figure from the docs content, on a white surface in dark mode.
+ *
+ * The figures are black line art on a transparent ground: the fusion gates,
+ * the Bloch sphere, the multi-qubit gates, the circuit labels. They were drawn
+ * for a white page, and on the dark one most of each drawing disappeared. The
+ * QASM diagram got its white surface in 023514c. These get the same, with a
+ * little room so the lines do not touch the edge.
+ *
+ * The padding goes on the AspectRatio's child, not on the AspectRatio. Its
+ * child is absolutely positioned over the whole padding box, so padding on
+ * the box itself would not move the drawing in. Light mode is unchanged.
+ */
+const MdxImage = (props: any) => (
+  <JaenImage
+    {...props}
+    _dark={{
+      bg: 'white',
+      borderRadius: 'md',
+      '& > *:not(style)': { p: '2' }
+    }}
+  />
+);
+
 export const mdxEditorComponents: MdxFieldProps['components'] = {
   // TEXT
   p: props => <Text id={props.id} children={props.children} />,
@@ -118,8 +142,8 @@ export const mdxEditorComponents: MdxFieldProps['components'] = {
       />
     );
   },
-  img: JaenImage,
-  Image: JaenImage,
+  img: MdxImage,
+  Image: MdxImage,
   /**
    * `<center>`, which the docs content wraps around its figures.
    *
