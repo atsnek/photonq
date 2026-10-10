@@ -402,13 +402,27 @@ export const linkRecipe = defineRecipe({
 export const skeletonRecipe = defineRecipe({
   variants: {
     loading: {
-      // Only the radius and the two variables live here. Anything that PAINTS
-      // has to go in the `variant` group below, because cva walks the merged
-      // recipe's variant keys in the default recipe's own order — `loading`
-      // first, `variant` second — so v3's `pulse` is applied after this block
-      // and would overwrite a background declared in it.
+      // The radius, the two variables and the opacity live here. Anything
+      // else that PAINTS has to go in the `variant` group below, because cva
+      // walks the merged recipe's variant keys in the default recipe's own
+      // order, `loading` first and `variant` second, so v3's `pulse` is
+      // applied after this block and would overwrite a background declared in
+      // it.
       true: {
         borderRadius: 'md',
+        /**
+         * v2's 0.7, for the placeholder only.
+         *
+         * It sat in `pulse` below, and a variant applies whether or not the
+         * skeleton is still loading: v3 renders the loaded content inside the
+         * same element with the same variant selected. So the experiment's
+         * title, description, author and body, every post card's text and
+         * every user's bio stayed at 70% once their data had arrived, #1A202C
+         * drawn as #5D626A. v2 dropped all skeleton styles once loaded. v3's
+         * own `pulse` declares no opacity, so nothing applied after this block
+         * overrides it.
+         */
+        opacity: 0.7,
         '--skeleton-start-color': {
           base: 'colors.gray.100',
           _dark: 'colors.gray.800'
@@ -425,7 +439,6 @@ export const skeletonRecipe = defineRecipe({
       // v2's: background-color, not opacity.
       pulse: {
         background: 'var(--skeleton-start-color)',
-        opacity: 0.7,
         animation: 'skeleton-fade 0.8s linear infinite alternate',
         /**
          * Spelled out rather than left to the shorthand above, and this is the
