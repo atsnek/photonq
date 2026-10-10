@@ -94,6 +94,12 @@ export const TextControl: React.FC<{
       onValueCommit={details => props.onSubmit(details.value)}
       fontSize={props.type === 'heading' ? '2xl' : 'xl'}
       fontWeight={props.type === 'heading' ? 'bold' : '400'}
+      // v3's Editable root sets `textStyle: 'sm'`, and a textStyle is a pair:
+      // the size is overridden above, but its 1.25rem line height stayed, so
+      // the 20px description and bio wrapped onto 20px lines that touched.
+      // v2's Editable set none and the text inherited the body's 1.5. The
+      // heading preview's own recipe sets its line height and is unaffected.
+      lineHeight="1.5"
     >
       <EditablePreviewText />
       {/* The field is the Editable's own part, wearing Input's and
