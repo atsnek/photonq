@@ -1,4 +1,4 @@
-import { useAuth, useColorMode } from 'jaen';
+import { useColorMode } from 'jaen';
 import {
   Box,
   BoxProps,
@@ -25,6 +25,7 @@ import Links from '../Links';
 import SearchMenu from '../search-menu';
 import { TLinkData } from '../types';
 import MobileNavDrawer from './MobileNavDrawer';
+import { startSignIn, startSignUp } from '../../utils/auth-flow';
 
 const navLinkProps = {
   display: { base: 'none', md: 'initial' },
@@ -91,7 +92,6 @@ const NavAppearance: FC<{ mode: 'light' | 'dark'; children: ReactNode }> = ({
  */
 const TopNav: FC<ITopNavProps> = ({ path, children }) => {
   const [hamburgerClass, setHamburgerClass] = useState('');
-  const { signinRedirect } = useAuth();
   const { open, onOpen, onClose } = useDisclosure();
 
   const location = useLocation();
@@ -116,15 +116,26 @@ const TopNav: FC<ITopNavProps> = ({ path, children }) => {
       }
     ],
     right: [
+      /**
+       * Both start with a full page load of jaen's own page, which fetches
+       * the OIDC runtime and waits for it (see utils/auth-flow). Sign In used
+       * to call useAuth().signinRedirect, which is a placeholder that only
+       * rejects on a page without the runtime, so it did nothing for a
+       * signed-out visitor. Its anchor had no href either, which kept it out
+       * of the tab order. With one it is a real link again, and opening it in
+       * a new tab starts the sign-in there.
+       */
       {
         name: 'Sign In',
         matchMethod: 'exact',
-        onClick: signinRedirect
+        href: '/login',
+        onClick: startSignIn
       },
       {
         name: 'Sign Up',
         matchMethod: 'exact',
         href: '/signup',
+        onClick: startSignUp,
         style: {
           border: '1px solid',
           borderColor: 'topNav.input.borderColor',

@@ -1,4 +1,5 @@
 import { useAuth } from 'jaen';
+import { startSignIn } from '../../../utils/auth-flow';
 import {
   Accordion,
   Box,
@@ -43,7 +44,7 @@ const PageDirectory: FC<PageDirectoryProps> = ({
 
   // Keep track of the items that have been expanded by the user
   const [expandedIdx, setExpandedIdx] = useState<number[]>(defaultExpandedIdx);
-  const { isAuthenticated, signinRedirect } = useAuth();
+  const { isAuthenticated } = useAuth();
   // v2 was handed the string 'false', which is not a breakpoint name, so no
   // fallback ever matched and the pre-hydration value came back undefined. v3
   // types the option and resolves an unmatched name to the widest breakpoint in
@@ -76,7 +77,13 @@ const PageDirectory: FC<PageDirectoryProps> = ({
   const navigationItems: NavMenuItem[] = [];
 
   if (isSmallScreen && !isAuthenticated) {
-    navigationItems.push({ name: 'Sign In', onClick: signinRedirect });
+    // A full page load of /login, like the top bar's Sign In. A direct
+    // signinRedirect does nothing on a page without jaen's OIDC runtime.
+    navigationItems.push({
+      name: 'Sign In',
+      href: '/login',
+      onClick: startSignIn
+    });
   }
 
   if (path === '/') {
