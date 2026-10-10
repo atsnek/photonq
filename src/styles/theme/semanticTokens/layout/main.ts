@@ -4,7 +4,9 @@ const smtMain = {
     // the trail behind it dimmer, and the hover back up to the current
     // page's colour. The trail was gray.600 on the gray.800 body, 2.2:1, and
     // gray.400 is 7.2:1. The current page moves up to gray.200 so that it
-    // still reads as the brighter of the two.
+    // still reads as the brighter of the two. In light mode the trail was
+    // gray.400 on white, 2.26:1. gray.500 would still be 4.0:1, so it is
+    // gray.600 (7.5:1), one step lighter than the current page's gray.800.
     active: {
       color: {
         default: 'gray.800',
@@ -13,7 +15,7 @@ const smtMain = {
     },
     inactive: {
       color: {
-        default: 'gray.400',
+        default: 'gray.600',
         _dark: 'gray.400'
       },
       hover: {
