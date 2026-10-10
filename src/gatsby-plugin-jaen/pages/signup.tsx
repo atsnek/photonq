@@ -1,4 +1,12 @@
-import { Box, Button, Heading, Link, Spinner, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Heading,
+  Link,
+  Spinner,
+  Stack,
+  Text
+} from '@chakra-ui/react';
 import { navigate } from 'gatsby';
 import { PageConfig, PageProps, useAuth } from 'jaen';
 import { useEffect, useRef, useState } from 'react';
@@ -35,7 +43,9 @@ const loadedAtThisAddress = (): boolean => {
 
     const trim = (path: string) => path.replace(/\/+$/, '');
 
-    return trim(new URL(entry.name).pathname) === trim(window.location.pathname);
+    return (
+      trim(new URL(entry.name).pathname) === trim(window.location.pathname)
+    );
   } catch {
     return true;
   }
@@ -94,10 +104,22 @@ const SignupPage: React.FC<PageProps> = () => {
       return;
     }
 
-    auth.signinRedirect({ prompt: 'create' }).catch((error: unknown) => {
-      console.error('photonq: could not open the registration form', error);
-      setFailed(true);
-    });
+    // When the redirect works the browser leaves and this promise never
+    // settles. react-oidc-context does not reject on a failure either: it
+    // files the error under auth.error and resolves with null. So settling at
+    // all means the visitor is still here, for example because the provider's
+    // discovery document could not be fetched.
+    //
+    // `replace` takes this page out of the history. With the default
+    // `assign`, Back on the registration form returned here, and this page
+    // sent the visitor straight on to the form again.
+    auth.signinRedirect({ prompt: 'create', redirectMethod: 'replace' }).then(
+      () => setFailed(true),
+      (error: unknown) => {
+        console.error('photonq: could not open the registration form', error);
+        setFailed(true);
+      }
+    );
   }, [
     auth.isRuntimeLoaded,
     auth.isLoading,
