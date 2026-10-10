@@ -328,6 +328,23 @@ export const system = createSystem(
       },
 
       /**
+       * v3's preflight rule for the `hidden` attribute, the one rule of it the
+       * site cannot do without.
+       *
+       * Zag hides the parts it is not showing with `hidden` rather than with
+       * a style: the Editable's preview while its input is open, for one.
+       * With `preflight: false` above, and jaen's copy of the rule scoped to
+       * the CMS frame, the only global rule left was Tailwind's plain
+       * `[hidden] { display: none }` from jaen.css, and any component that
+       * sets its own `display` beats it. The preview's `inline-flex` did, so
+       * an owner editing an experiment saw its title twice, once as text and
+       * once in the input. Copied from @chakra-ui/react's preflight.
+       */
+      "[hidden]:where(:not([hidden='until-found']))": {
+        display: 'none !important'
+      },
+
+      /**
        * The replacement for `withDefaultColorScheme({colorScheme: 'brand'})`,
        * which v3 dropped with no equivalent.
        *
