@@ -3,6 +3,7 @@ import { Box, Button, HStack, Portal, Text, Tooltip } from '@chakra-ui/react';
 import TbStar from '../icons/tabler/TbStar';
 import { formatNumber } from '../../utils/general';
 import { useAuth } from 'jaen';
+import { startSignUp } from '../../utils/auth-flow';
 
 interface PostCardRatingProps {
   id: string;
@@ -25,7 +26,7 @@ const PostCardRating: FC<PostCardRatingProps> = ({
   useHighContrast,
   ...props
 }) => {
-  const { isAuthenticated, signinRedirect } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [likes, setLikes] = useState(props.likes);
 
@@ -131,11 +132,10 @@ const PostCardRating: FC<PostCardRatingProps> = ({
           // so keeping the line would have started repainting the label on
           // hover in a colour v2 never showed. Dropped to keep the v2 render.
           transition="color 0.2s ease-in-out"
-          onClick={() =>
-            signinRedirect({
-              prompt: 'create'
-            })
-          }
+          // Through /signup, which waits for jaen's OIDC runtime. Calling
+          // signinRedirect here did nothing: the runtime is not loaded on the
+          // experiments pages for a signed-out visitor.
+          onClick={() => startSignUp()}
           fontSize="12px"
         >
           <TbStar fill="none" stroke="currentColor" />

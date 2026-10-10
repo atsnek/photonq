@@ -41,6 +41,7 @@ import { useLazyQuery, useQuery } from 'snek-query/react-hooks';
 import { FaFlask } from '@react-icons/all-files/fa/FaFlask';
 import MainGrid from '../../components/MainGrid';
 import { formatNumber } from '../../utils/general';
+import { startSignUp } from '../../utils/auth-flow';
 import TbEye from '../../components/icons/tabler/TbEye';
 import TbUserShare from '../../components/icons/tabler/TbUserShare';
 import TbUsers from '../../components/icons/tabler/TbUsers';
@@ -550,9 +551,11 @@ const Page: React.FC<PageProps> = ({ location, pageContext, params }) => {
                     loading={isFollow}
                     onClick={async () => {
                       if (!auth.isAuthenticated) {
-                        auth.signinRedirect({
-                          prompt: 'create'
-                        });
+                        // Through /signup, which waits for jaen's OIDC
+                        // runtime. A direct signinRedirect did nothing,
+                        // because the runtime is not loaded here for a
+                        // signed-out visitor.
+                        startSignUp();
                         return;
                       }
 
