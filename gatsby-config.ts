@@ -57,17 +57,22 @@ const config: GatsbyConfig = {
     },
     {
       /**
-       * `gatsby-jaen-mailpress` is gone: emailwerk IS mailpress v3, and the
+       * `gatsby-jaen-mailpress` is gone. emailwerk is mailpress v3, and the
        * published mailpress plugin is a Chakra v2 package, so keeping it would
        * pull the old runtime back into the bundle it was just removed from.
        *
-       * The option is named `url` rather than `pylonUrl`, and the endpoint is
-       * unchanged. Note that this plugin speaks emailwerk's schema, so the CMS
-       * mail screens only work once the pylon behind this URL is on v3.
+       * The endpoint is photonq's own emailwerk instance. netsnek.com uses
+       * emailwerk.com, which photonq.org cannot share, because emailwerk
+       * trusts tokens from a single issuer and photonq.org signs in against
+       * accounts.photonq.org. The mailpress pylon this used to point at
+       * (/mailpress/graphql) is switched off. It never had the schema this
+       * plugin speaks, so the CMS mail screens failed against it with
+       * "Cannot query field templates". The option is named `url`, not
+       * `pylonUrl`.
        */
       resolve: `gatsby-jaen-emailwerk`,
       options: {
-        url: 'https://pylons.photonq.org/mailpress/graphql'
+        url: 'https://pylons.photonq.org/emailwerk/graphql'
       }
     },
     `gatsby-jaen-lens`
