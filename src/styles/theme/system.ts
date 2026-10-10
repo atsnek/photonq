@@ -119,11 +119,11 @@ const brandColorPalette = {
 };
 
 /**
- * v2's body and heading font stack, exported for the one page that renders
- * under jaen's system rather than this one: the signup page
- * (gatsby-plugin-jaen/pages/signup.tsx).
+ * v2's body and heading font stack. It was exported for the old signup form,
+ * which rendered under jaen's system. The signup page renders under this one
+ * now and gets the stack like every other page.
  */
-export const siteFontStack =
+const siteFontStack =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
 
 /**
