@@ -117,7 +117,12 @@ const DocsLayout: FC<DocsLayoutProps> = ({ children, path, isCommunity }) => {
             </Box>
           ) : (
             <>
-              <Container flex="1" mt="6" maxW="3xl">
+              {/* minW 0, because a flex item's automatic minimum width is
+                  its widest content. A wide display formula held the column
+                  open at 768 to 1024px and pushed the table of contents and
+                  the Sign In side of the top bar off screen, the page 1050px
+                  wide at 820. The formula scrolls inside its own box. */}
+              <Container flex="1" mt="6" maxW="3xl" minW={0}>
                 <MainBreadcrumb parts={breadcrumbParts} />
 
                 {memoedChildren}
