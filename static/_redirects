@@ -1,0 +1,12 @@
+# The client-only routes, in the form with a trailing slash. Gatsby's Link
+# always adds the slash, so every link inside the site has this form, and so
+# does every address copied from the address bar and shared from there.
+# gatsby-plugin-cloudflare-pages appends the same rules without the slash
+# below this block. Cloudflare matches a placeholder against exactly one path
+# segment and is not lenient about a trailing slash, so without these lines a
+# slashed address skipped the rewrite and got the top-level 404.html with
+# status 404.
+/experiments/:slug/  /experiments/[slug]/  200
+/users/:userId/  /users/[userId]/  200
+/cms/accounts/:userId/  /cms/accounts/[userId]/  200
+/emailwerk/templates/:templateId/  /emailwerk/templates/[templateId]/  200

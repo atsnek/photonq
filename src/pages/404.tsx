@@ -10,9 +10,12 @@ import useNavOffset from '../hooks/use-nav-offset';
  * Without one, Cloudflare Pages served the home page for every unknown path:
  * /contact/, /users/ and typos all rendered the full front page under their
  * own address. With a 404.html in the build, Cloudflare answers those with
- * this page and a 404 status. The two client-only routes are unaffected:
- * gatsby-plugin-cloudflare-pages rewrites /experiments/:slug and
- * /users/:userId to their shells before this page is considered.
+ * this page and a 404 status. The client-only routes are rewritten to their
+ * shells before this page is considered, in both spellings:
+ * gatsby-plugin-cloudflare-pages writes /experiments/:slug and /users/:userId
+ * without a trailing slash, and static/_redirects adds the same rules with
+ * one, the form every Gatsby Link and every shared address has. Without that
+ * file a slashed address fell through to this page.
  *
  * The shape is netsnek.com's 404, in photonq's colours and in English.
  */
