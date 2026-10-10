@@ -21,6 +21,16 @@ const config: GatsbyConfig = {
       resolve: `gatsby-plugin-jaen`,
       options: {
         pylonUrl: 'https://pylons.photonq.org/jaen-agent/graphql',
+        /**
+         * CMS media goes to the rebuilt storage gateway, as on netsnek.com.
+         * jaen's default, osg.snek.at, no longer accepts uploads: it still
+         * serves /storage/<id>, but every other path answers 404, so without
+         * this option every upload from the media library fails. Only new
+         * uploads move. The URLs already in the published patches are
+         * absolute and keep resolving against osg.snek.at, and osg.jaen.io
+         * serves the same file ids as well.
+         */
+        storageUrl: 'https://osg.jaen.io',
         remote: {
           repository: 'atsnek/photonq'
         },
